@@ -21,15 +21,20 @@ jobs:
           paths:
             - ~/.gradle/wrapper
           key: v1-gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
-      - save_cache:
-          paths:
-            - ~/.gradle/caches
-          key: v1-gradle-cache-{{ checksum "build.gradle.kts" }}
       - store_test_results:
           path: build/test-results/test
       - store_artifacts:
           path: build/test-results/test
           when: always
+      - run:
+          name: Assemble & Check Native
+          command: |
+            # Skip this for other nodes
+            if [ "$CIRCLE_NODE_INDEX" == 0 ]; then
+              ./gradlew checkNative
+            fi
+      - store_artifacts:
+          path: build/graal
       - run:
           name: Assemble
           command: |
@@ -39,6 +44,11 @@ jobs:
             fi
       - store_artifacts:
           path: build/libs
+      - save_cache:
+          paths:
+            - ~/.gradle/caches
+          key: v1-gradle-cache-{{ checksum "build.gradle.kts" }}
+
 workflows:
   version: 2
   workflow:
