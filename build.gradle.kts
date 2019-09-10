@@ -7,6 +7,7 @@ plugins {
     id("org.jetbrains.kotlin.jvm") version "1.3.50"
     application
     maven
+    id("com.palantir.graal") version "0.4.0"
 }
 
 repositories {
@@ -26,4 +27,9 @@ dependencies {
 
 application {
     mainClassName = "datamaintain.AppKt"
+}
+
+graal {
+    mainClass("datamaintain.AppKt")
+    outputName("datamaintain")
 }
