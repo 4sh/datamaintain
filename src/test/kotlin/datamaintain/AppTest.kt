@@ -10,7 +10,7 @@ class AppTest {
     fun `should have a greeting`() {
         val classUnderTest = App()
 
-        expectThat(classUnderTest.greeting) {
+        expectThat(classUnderTest.greeting).isNotNull().and {
             startsWith("Hello")
             contains("world")
         }
