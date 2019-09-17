@@ -27,11 +27,11 @@ jobs:
           path: build/test-results/test
           when: always
       - run:
-          name: Assemble & Check Native
+          name: Assemble & Graal Check Native
           command: |
             # Skip this for other nodes
             if [ "$CIRCLE_NODE_INDEX" == 0 ]; then
-              ./gradlew checkNative
+              ./gradlew graalCheckNative
             fi
       - store_artifacts:
           path: build/graal
