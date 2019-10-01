@@ -36,7 +36,7 @@ graal {
     outputName("datamaintain")
 }
 
-tasks.register<Exec>("checkNative") {
+tasks.register<Exec>("graalCheckNative") {
     dependsOn("nativeImage")
 
     val expected = "Hello world.\n"
