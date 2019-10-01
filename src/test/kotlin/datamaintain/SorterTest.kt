@@ -1,0 +1,48 @@
+package datamaintain
+
+import org.junit.jupiter.api.Test
+import strikt.api.expectThat
+import strikt.assertions.first
+import strikt.assertions.get
+import strikt.assertions.isEqualTo
+import strikt.assertions.last
+import java.nio.file.Paths
+
+internal class SorterTest {
+    private val sorter: Sorter = Sorter(Config(Paths.get(""), ""))
+
+    @Test
+    fun `should sort scripts list by name`() {
+        // Given
+        val superScript = ScriptWithoutContent("super script", "checksum")
+        val greatScript = ScriptWithoutContent("great script", "checksum")
+
+        // When
+        expectThat(sorter.sort(listOf(
+                superScript,
+                greatScript))) {
+            // Then
+            first().isEqualTo(greatScript)
+            last().isEqualTo(superScript)
+        }
+    }
+
+    @Test
+    fun `should sort scripts list by name containing numbers`() {
+        // Given
+        val script2 = ScriptWithoutContent("2", "checksum")
+        val script1 = ScriptWithoutContent("1", "checksum")
+        val script10 = ScriptWithoutContent("10", "checksum")
+
+        // When
+        expectThat(sorter.sort(listOf(
+                script2,
+                script1,
+                script10))) {
+            // Then
+            first().isEqualTo(script1)
+            get(1).isEqualTo(script10)
+            last().isEqualTo(script2)
+        }
+    }
+}
