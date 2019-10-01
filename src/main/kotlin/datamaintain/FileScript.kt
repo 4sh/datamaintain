@@ -1,6 +1,8 @@
 package datamaintain
 
+import java.math.BigInteger
 import java.nio.file.Path
+import java.security.MessageDigest
 
 class FileScript(val path: Path) : ScriptWithContent {
 
@@ -15,7 +17,8 @@ class FileScript(val path: Path) : ScriptWithContent {
     }
 
     private fun String.hash(): String {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val md = MessageDigest.getInstance("MD5")
+        return BigInteger(1, md.digest(toByteArray())).toString(16).padStart(32, '0')
     }
 }
 
