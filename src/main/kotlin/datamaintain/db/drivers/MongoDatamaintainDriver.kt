@@ -30,6 +30,6 @@ class MongoDatamaintainDriver(dbName: String) : DatamaintainDriver {
     }
 
     override fun markAsExecuted(script: Script) {
-        throw NotImplementedError("MongoDatamaintainDriver markAsExecuted method should not be used")
+        executedScriptsCollection.insertOne(ScriptWithoutContent(script.name, script.checksum))
     }
 }

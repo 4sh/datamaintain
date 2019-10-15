@@ -6,9 +6,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.litote.kmongo.KMongo
 import strikt.api.expectThat
-import strikt.assertions.first
+import strikt.assertions.contains
 import strikt.assertions.isEqualTo
-import strikt.assertions.last
 import strikt.assertions.size
 
 
@@ -43,8 +42,24 @@ internal class MongoDatamaintainDriverTest {
         // Then
         expectThat(executedScripts.toList()) {
             size.isEqualTo(2)
-            first().isEqualTo(script1)
-            last().isEqualTo(script2)
+            contains(script1, script2)
+        }
+    }
+
+    @Test
+    fun `should mark script as executed`() {
+        // Given
+        insertDataInDb()
+        val script3 = ScriptWithoutContent("script3.js", "d3d9446802a44259755d38e6d163e820")
+
+        // When
+        mongoDatamaintainDriver.markAsExecuted(script3)
+
+        // Then
+        val executedScripts = collection.find().toList()
+        expectThat(executedScripts.toList()) {
+            size.isEqualTo(3)
+            contains(script1, script2, script3)
         }
     }
 
