@@ -55,3 +55,9 @@ tasks.register<Exec>("graalCheckNative") {
         }
     }
 }
+
+tasks.getByPath("test").doFirst {
+    with(this as Test) {
+        useJUnitPlatform()
+    }
+}
