@@ -64,5 +64,4 @@ internal class SorterTest {
             last().isEqualTo(script2)
         }
     }
-
 }
