@@ -1,8 +1,9 @@
 import java.io.*
 
 object Versions {
-    val junit = "5.5.2"
-    val strikt = "0.21.1"
+    const val junit = "5.5.2"
+    const val strikt = "0.21.1"
+    const val mockk = "1.9.3"
 }
 
 plugins {
@@ -23,6 +24,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:${Versions.junit}")
     testImplementation("org.junit.jupiter:junit-jupiter-params:${Versions.junit}")
     testImplementation("io.strikt:strikt-core:${Versions.strikt}")
+    testImplementation("io.mockk:mockk:${Versions.mockk}")
 
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${Versions.junit}")
 }
