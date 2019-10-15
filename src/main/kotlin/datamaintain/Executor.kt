@@ -1,7 +1,21 @@
 package datamaintain
 
+import datamaintain.report.ExecutionLineReport
+import datamaintain.report.ExecutionReport
+import java.time.Instant
+
 class Executor(val config: Config) {
     fun execute(scripts: List<ScriptWithContent>): ExecutionReport {
-        TODO()
+        val reportLines = scripts.map { it to config.dbDriver.executeScript(it) }
+                .map { (script, scriptExecutionReport) ->
+                    ExecutionLineReport(
+                            scriptExecutionReport.date,
+                            scriptExecutionReport.message,
+                            script,
+                            scriptExecutionReport.executionStatus
+                    )
+                }
+
+        return ExecutionReport(reportLines, Instant.now())
     }
 }
