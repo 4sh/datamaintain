@@ -45,4 +45,23 @@ internal class SorterTest {
             last().isEqualTo(script2)
         }
     }
+
+    @Test
+    fun `should sort scripts list by name containing numbers, letters and caps`() {
+        // Given
+        val script2 = ScriptWithoutContent("Script2", "checksum")
+        val script1 = ScriptWithoutContent("scrIpt1", "checksum")
+        val script10 = ScriptWithoutContent("script10", "checksum")
+
+        // When
+        expectThat(sorter.sort(listOf(
+                script2,
+                script1,
+                script10))) {
+            // Then
+            first().isEqualTo(script1)
+            get(1).isEqualTo(script10)
+            last().isEqualTo(script2)
+        }
+    }
 }

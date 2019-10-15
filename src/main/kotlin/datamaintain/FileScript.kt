@@ -9,8 +9,9 @@ class FileScript(val path: Path) : ScriptWithContent {
     override val name: String
         get() = path.fileName.toString()
 
-    override val checksum: String
-        get() = content.hash()
+    override val checksum: String by lazy {
+        content.hash()
+    }
 
     override val content: String by lazy {
         path.toFile().readText()
