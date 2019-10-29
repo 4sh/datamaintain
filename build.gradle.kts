@@ -1,15 +1,22 @@
-import java.io.*
+import java.io.ByteArrayOutputStream
 
 object Versions {
     const val junit = "5.5.2"
     const val strikt = "0.21.1"
     const val mockk = "1.9.3"
+    const val kmongo = "3.11.1"
+    const val mongo = "4.0.13"
+}
+
+object Globals {
+    const val mongoPort = "27017"
 }
 
 plugins {
     id("org.jetbrains.kotlin.jvm") version "1.3.50"
     application
     maven
+    id("com.sourcemuse.mongo") version "1.0.7"
     id("com.palantir.graal") version "0.4.0"
 }
 
@@ -20,6 +27,7 @@ repositories {
 dependencies {
     implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation("org.litote.kmongo:kmongo:${Versions.kmongo}")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:${Versions.junit}")
     testImplementation("org.junit.jupiter:junit-jupiter-params:${Versions.junit}")
@@ -31,6 +39,11 @@ dependencies {
 
 application {
     mainClassName = "datamaintain.AppKt"
+}
+
+mongo {
+    setPort(Globals.mongoPort)
+    mongoVersion = Versions.mongo
 }
 
 graal {
@@ -62,4 +75,4 @@ tasks.getByPath("test").doFirst {
     with(this as Test) {
         useJUnitPlatform()
     }
-}
+}.dependsOn("startManagedMongoDb")

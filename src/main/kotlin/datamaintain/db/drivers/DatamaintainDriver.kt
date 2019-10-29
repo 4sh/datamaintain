@@ -1,10 +1,13 @@
-package datamaintain
+package datamaintain.db.drivers
+
+import datamaintain.Script
+import datamaintain.ScriptWithContent
 
 interface DatamaintainDriver {
 
     fun executeScript(script: ScriptWithContent): ScriptExecutionReport
 
-    fun listExecutedScripts(): List<Script>
+    fun listExecutedScripts(): Sequence<Script>
 
     fun markAsExecuted(script: Script)
 }

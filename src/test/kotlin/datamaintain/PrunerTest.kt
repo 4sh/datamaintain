@@ -1,5 +1,6 @@
 package datamaintain
 
+import datamaintain.db.drivers.DatamaintainDriver
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
@@ -23,7 +24,7 @@ internal class PrunerTest {
         )
 
         every { dbDriver.listExecutedScripts() }
-                .returns(listOf(ScriptWithoutContent("01_file1", "c4ca4238a0b923820dcc509a6f75849b")))
+                .returns(sequenceOf(ScriptWithoutContent("01_file1", "c4ca4238a0b923820dcc509a6f75849b")))
 
         // When
         val prunedScripts = pruner.prune(scripts)
@@ -45,7 +46,7 @@ internal class PrunerTest {
         )
 
         every { dbDriver.listExecutedScripts() }
-                .returns(listOf(ScriptWithoutContent("01_file1_renamed", "c4ca4238a0b923820dcc509a6f75849b")))
+                .returns(sequenceOf(ScriptWithoutContent("01_file1_renamed", "c4ca4238a0b923820dcc509a6f75849b")))
 
         // When
         val prunedScripts = pruner.prune(scripts)

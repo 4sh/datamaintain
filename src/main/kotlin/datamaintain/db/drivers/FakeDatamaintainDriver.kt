@@ -1,11 +1,14 @@
-package datamaintain
+package datamaintain.db.drivers
+
+import datamaintain.Script
+import datamaintain.ScriptWithContent
 
 class FakeDatamaintainDriver: DatamaintainDriver {
     override fun executeScript(script: ScriptWithContent): ScriptExecutionReport {
         throw NotImplementedError("FakeDatamaintainDriver executeScript method should not be used")
     }
 
-    override fun listExecutedScripts(): List<Script> {
+    override fun listExecutedScripts(): Sequence<Script> {
         throw NotImplementedError("FakeDatamaintainDriver listExecutedScripts method should not be used")
     }
 
