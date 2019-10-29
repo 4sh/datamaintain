@@ -3,10 +3,11 @@ package datamaintain.db.drivers
 import datamaintain.Script
 import datamaintain.ScriptWithContent
 
-import datamaintain.report.ScriptExecutionReport
+import datamaintain.report.ScriptLineReport
+
 
 class FakeDatamaintainDriver: DatamaintainDriver {
-    override fun executeScript(script: ScriptWithContent): ScriptExecutionReport {
+    override fun executeScript(script: ScriptWithContent): ScriptLineReport {
         throw NotImplementedError("FakeDatamaintainDriver executeScript method should not be used")
     }
 

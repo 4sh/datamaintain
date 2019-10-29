@@ -1,9 +1,6 @@
 package datamaintain
 
-import datamaintain.report.ExecutionReport
-import datamaintain.report.ExecutionStatus
-import datamaintain.report.ReportStatus
-import datamaintain.report.ScriptExecutionReport
+import datamaintain.report.*
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -24,10 +21,10 @@ internal class ExecutorTest {
     private val script3 = FileScript(Paths.get("3"))
 
     private val errorMessage = "Ko error"
-    private val errorScript = ScriptExecutionReport(Instant.now(), errorMessage, ExecutionStatus.KO)
+    private val errorScript = TestScriptLineReport(Instant.now(), errorMessage, ExecutionStatus.KO)
 
     private val okMessage = "OK"
-    private val okScript = ScriptExecutionReport(Instant.now(), okMessage, ExecutionStatus.OK)
+    private val okScript = TestScriptLineReport(Instant.now(), okMessage, ExecutionStatus.OK)
 
     @Test
     fun `should execute and build invalid report`() {
@@ -46,14 +43,17 @@ internal class ExecutorTest {
                 get(0).and {
                     get { executionStatus }.isEqualTo(ExecutionStatus.KO)
                     get { message }.isEqualTo(errorMessage)
+                    get { script }.isEqualTo(script1)
                 }
                 get(1).and {
                     get { executionStatus }.isEqualTo(ExecutionStatus.OK)
                     get { message }.isEqualTo(okMessage)
+                    get { script }.isEqualTo(script2)
                 }
                 get(2).and {
                     get { executionStatus }.isEqualTo(ExecutionStatus.OK)
                     get { message }.isEqualTo(okMessage)
+                    get { script }.isEqualTo(script3)
                 }
             }
         }

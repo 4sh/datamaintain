@@ -11,8 +11,8 @@ class Executor(val config: Config) {
                     ExecutionLineReport(
                             scriptExecutionReport.date,
                             scriptExecutionReport.message,
-                            script,
-                            scriptExecutionReport.executionStatus
+                            scriptExecutionReport.executionStatus,
+                            script
                     )
                 }
 
