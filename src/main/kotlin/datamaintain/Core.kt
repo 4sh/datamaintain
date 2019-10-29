@@ -1,5 +1,7 @@
 package datamaintain
 
+import datamaintain.report.ExecutionReport
+
 class Core {
 
     fun run(config: Config): ExecutionReport =

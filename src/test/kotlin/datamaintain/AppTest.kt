@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test
 import strikt.api.*
 import strikt.assertions.*
 
-
 class AppTest {
     @Test
     fun `should have a greeting`() {
