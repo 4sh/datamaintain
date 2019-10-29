@@ -3,6 +3,7 @@ package datamaintain
 import datamaintain.report.ExecutionReport
 import datamaintain.report.ExecutionStatus
 import datamaintain.report.ReportStatus
+import datamaintain.report.ScriptExecutionReport
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
