@@ -1,4 +1,3 @@
-
 import java.io.ByteArrayOutputStream
 
 object Versions {
@@ -6,7 +5,7 @@ object Versions {
     const val strikt = "0.21.1"
     const val mockk = "1.9.3"
     const val kmongo = "3.11.1"
-    const val mongo = "4.2"
+    const val mongo = "4.0.13"
 }
 
 object Globals {
@@ -76,4 +75,4 @@ tasks.getByPath("test").doFirst {
     with(this as Test) {
         useJUnitPlatform()
     }
-}
+}.dependsOn("startManagedMongoDb")
