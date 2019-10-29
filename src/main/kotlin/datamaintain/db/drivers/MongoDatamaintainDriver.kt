@@ -5,6 +5,7 @@ import com.mongodb.client.MongoDatabase
 import datamaintain.Script
 import datamaintain.ScriptWithContent
 import datamaintain.ScriptWithoutContent
+import datamaintain.report.ScriptLineReport
 import org.litote.kmongo.KMongo
 
 class MongoDatamaintainDriver(dbName: String) : DatamaintainDriver {
@@ -21,7 +22,7 @@ class MongoDatamaintainDriver(dbName: String) : DatamaintainDriver {
         executedScriptsCollection = database.getCollection(EXECUTED_SCRIPTS_COLLECTION, ScriptWithoutContent::class.java)
     }
 
-    override fun executeScript(script: ScriptWithContent): ScriptExecutionReport {
+    override fun executeScript(script: ScriptWithContent): ScriptLineReport {
         throw NotImplementedError("MongoDatamaintainDriver executeScript method should not be used")
     }
 
