@@ -1,7 +1,11 @@
 package datamaintain
 
 import datamaintain.db.drivers.DatamaintainDriver
-import datamaintain.report.*
+import datamaintain.report.ExecutionLineReport
+import datamaintain.report.ExecutionReport
+import datamaintain.report.ExecutionStatus
+import datamaintain.report.ReportStatus
+import io.mockk.MockKAnswerScope
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -22,16 +26,13 @@ internal class ExecutorTest {
     private val script3 = FileScript(Paths.get("3"))
 
     private val errorMessage = "Ko error"
-    private val errorScript = TestScriptLineReport(Instant.now(), errorMessage, ExecutionStatus.KO)
-
     private val okMessage = "OK"
-    private val okScript = TestScriptLineReport(Instant.now(), okMessage, ExecutionStatus.OK)
 
     @Test
     fun `should execute and build invalid report`() {
         // Given
-        every { dbDriverMock.executeScript(eq(script1)) }.returns(errorScript)
-        every { dbDriverMock.executeScript(neq(script1)) }.returns(okScript)
+        every { dbDriverMock.executeScript(eq(script1)) }.answers { generateKoReport() }
+        every { dbDriverMock.executeScript(neq(script1)) }.answers { generateOkReport() }
 
         // When
         val executionReport: ExecutionReport = executor.execute(listOf(script1, script2, script3))
@@ -63,7 +64,7 @@ internal class ExecutorTest {
     @Test
     fun `should execute and build valid report`() {
         // Given
-        every { dbDriverMock.executeScript(any()) }.returns(okScript)
+        every { dbDriverMock.executeScript(any()) }.answers { generateOkReport() }
 
         // When
         val executionReport: ExecutionReport = executor.execute(listOf(script1, script2, script3))
@@ -97,7 +98,7 @@ internal class ExecutorTest {
         val executionReport: ExecutionReport = executor.execute(listOf())
 
         // Then
-        verify (exactly = 0){ dbDriverMock.executeScript(any()) }
+        verify(exactly = 0) { dbDriverMock.executeScript(any()) }
         expectThat(executionReport) {
             get { status }.isEqualTo(ReportStatus.OK)
             get { lines }.and {
@@ -105,4 +106,10 @@ internal class ExecutorTest {
             }
         }
     }
+
+    private fun MockKAnswerScope<ExecutionLineReport, ExecutionLineReport>.generateOkReport() =
+            ExecutionLineReport(Instant.now(), okMessage, ExecutionStatus.OK, this.args[0] as Script)
+
+    private fun MockKAnswerScope<ExecutionLineReport, ExecutionLineReport>.generateKoReport() =
+            ExecutionLineReport(Instant.now(), errorMessage, ExecutionStatus.KO, this.args[0] as Script)
 }
