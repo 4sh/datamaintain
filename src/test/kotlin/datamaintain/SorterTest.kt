@@ -9,7 +9,7 @@ import strikt.assertions.last
 import java.nio.file.Paths
 
 internal class SorterTest {
-    private val sorter: Sorter = Sorter(Config(Paths.get(""), ""))
+    private val sorter: Sorter = Sorter(Config(Paths.get(""), "", ""))
 
     @Test
     fun `should sort scripts list by name`() {

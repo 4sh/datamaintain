@@ -3,11 +3,9 @@ package datamaintain.db.drivers
 import com.mongodb.client.model.Filters
 import datamaintain.FileScript
 import datamaintain.ScriptWithContent
+import datamaintain.AbstractDbTest
 import datamaintain.ScriptWithoutContent
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.litote.kmongo.KMongo
 import strikt.api.expectThat
 import strikt.assertions.*
 import java.math.BigInteger
@@ -15,25 +13,8 @@ import java.nio.file.Paths
 import java.security.MessageDigest
 
 
-internal class MongoDatamaintainDriverTest {
-    private val databaseName = "datamaintain-test"
-
-    private val client = KMongo.createClient()
-    private val database = client.getDatabase(databaseName)
-    private val collection = database.getCollection(
-            MongoDatamaintainDriver.EXECUTED_SCRIPTS_COLLECTION, ScriptWithoutContent::class.java)
-
-    private val mongoDatamaintainDriver = MongoDatamaintainDriver(databaseName)
-
-    @BeforeEach
-    fun init() {
-        cleanDb()
-    }
-
-    @AfterEach
-    fun cleanDb() {
-        collection.drop()
-    }
+internal class MongoDatamaintainDriverTest: AbstractDbTest() {
+    private val mongoDatamaintainDriver = MongoDatamaintainDriver(databaseName, mongoUri)
 
     @Test
     fun `should list scripts in db`() {
