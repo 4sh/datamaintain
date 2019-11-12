@@ -19,13 +19,13 @@ import java.time.Instant
 
 internal class ExecutorTest {
     private val dbDriverMock = mockk<DatamaintainDriver>()
-    val config = Config(Paths.get(""), "", "") withDriver dbDriverMock
+    val config = Config(Paths.get(""), Regex(""),"", "") withDriver dbDriverMock
 
     private val executor = Executor(config)
 
-    private val script1 = FileScript(Paths.get("1"))
-    private val script2 = FileScript(Paths.get("2"))
-    private val script3 = FileScript(Paths.get("3"))
+    private val script1 = FileScript(Paths.get("1"), Regex(""))
+    private val script2 = FileScript(Paths.get("2"), Regex(""))
+    private val script3 = FileScript(Paths.get("3"), Regex(""))
 
     private val errorMessage = "Ko error"
     private val okMessage = "OK"

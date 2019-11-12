@@ -13,11 +13,11 @@ class AppIT: AbstractDbTest() {
     @Test
     fun `should execute`() {
         // Given
-        val config = Config(Paths.get("src/test/resources/integration"), mongoUri, databaseName)
+        val config = Config(Paths.get("src/test/resources/integration"), Regex("(.*?)_.*"), mongoUri, databaseName)
 
         val classUnderTest = Core()
 
-        val scriptPlayed = ScriptWithoutContent("01_file.js", "3dd96b16c91757a3a8a9c2dd09282273")
+        val scriptPlayed = ScriptWithoutContent("01_file.js", "3dd96b16c91757a3a8a9c2dd09282273", "01")
         config.dbDriver.markAsExecuted(scriptPlayed)
 
         // When
