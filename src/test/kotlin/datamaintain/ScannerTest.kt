@@ -8,6 +8,7 @@ import java.nio.file.Paths
 
 internal class ScannerTest {
     private val scanner = Scanner(Config(Paths.get("src/test/resources/scanner_test_files"),
+            "",
             ""))
 
     @Test
