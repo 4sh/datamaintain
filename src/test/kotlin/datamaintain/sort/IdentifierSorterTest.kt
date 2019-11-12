@@ -9,7 +9,7 @@ import java.nio.file.Paths
 
 internal class IdentifierSorterTest {
     private val identifierSorter: IdentifierSorter = IdentifierSorter(Config(
-            Paths.get(""), Regex(""), "", ""
+            Paths.get(""), "", Regex("")
     ))
 
     @Test

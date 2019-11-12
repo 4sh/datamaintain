@@ -19,8 +19,7 @@ import java.time.Instant
 
 internal class ExecutorTest {
     private val dbDriverMock = mockk<DatamaintainDriver>()
-    private val executor = Executor(
-            Config(Paths.get(""), Regex(""), "", "") withDriver dbDriverMock)
+    private val executor = Executor(Config(Paths.get(""), "", Regex("") ,dbDriverMock))
 
     private val script1 = FileScript(Paths.get("1"), Regex(""))
     private val script2 = FileScript(Paths.get("2"), Regex(""))
