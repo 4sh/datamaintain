@@ -2,13 +2,20 @@ package datamaintain.db.drivers
 
 import com.mongodb.client.MongoCollection
 import com.mongodb.client.MongoDatabase
-import datamaintain.Script
-import datamaintain.ScriptWithContent
-import datamaintain.ScriptWithoutContent
+import datamaintain.*
+import datamaintain.report.ExecutionLineReport
+import datamaintain.report.ExecutionStatus
 import datamaintain.report.ScriptLineReport
 import org.litote.kmongo.KMongo
+import java.io.File
+import java.nio.file.Path
+import java.nio.file.Paths
+import java.time.Instant
 
-class MongoDatamaintainDriver(dbName: String) : DatamaintainDriver {
+class MongoDatamaintainDriver(
+        dbName: String,
+        private val tmpFilePath: Path = Paths.get("/tmp/datamaintain.tmp")
+) : DatamaintainDriver {
     private val database: MongoDatabase
     private val executedScriptsCollection: MongoCollection<ScriptWithoutContent>
 
@@ -22,8 +29,24 @@ class MongoDatamaintainDriver(dbName: String) : DatamaintainDriver {
         executedScriptsCollection = database.getCollection(EXECUTED_SCRIPTS_COLLECTION, ScriptWithoutContent::class.java)
     }
 
-    override fun executeScript(script: ScriptWithContent): ScriptLineReport {
-        throw NotImplementedError("MongoDatamaintainDriver executeScript method should not be used")
+    override fun executeScript(script: ScriptWithContent): ExecutionLineReport {
+        // $eval mongo command is not available after driver 4.0, so we execute script via an external process
+
+        val scriptPath = when (script) {
+            is FileScript -> script.path
+            else -> {
+                tmpFilePath.toFile().writeText(script.content)
+                tmpFilePath
+            }
+        }
+
+        val result = listOf("mongo", database.name, "--quiet", scriptPath.toString()).runProcess()
+        return ExecutionLineReport(
+                Instant.now(),
+                result.output,
+                if (result.exitCode == 0) ExecutionStatus.OK else ExecutionStatus.KO,
+                script
+        )
     }
 
     override fun listExecutedScripts(): Sequence<Script> {
