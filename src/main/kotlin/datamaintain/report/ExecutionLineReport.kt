@@ -3,7 +3,7 @@ package datamaintain.report
 import datamaintain.Script
 import java.time.Instant
 
-class ExecutionLineReport(
+open class ExecutionLineReport(
         override val date: Instant,
         override val message: String,
         override val executionStatus: ExecutionStatus,

@@ -12,7 +12,9 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.time.Instant
 
-open class MongoDatamaintainDriver(dbName: String, mongoUri: String, private val tmpFilePath: Path = Paths.get("/tmp/datamaintain.tmp")) : DatamaintainDriver {
+open class MongoDatamaintainDriver(dbName: String,
+                                   private val mongoUri: String,
+                                   private val tmpFilePath: Path = Paths.get("/tmp/datamaintain.tmp")) : DatamaintainDriver {
     val database: MongoDatabase
     val executedScriptsCollection: MongoCollection<ScriptWithoutContent>
 
@@ -37,7 +39,7 @@ open class MongoDatamaintainDriver(dbName: String, mongoUri: String, private val
             }
         }
 
-        val result = listOf("mongo", database.name, "--quiet", scriptPath.toString()).runProcess()
+        val result = listOf("mongo", "--host", mongoUri, database.name, "--quiet", scriptPath.toString()).runProcess()
         return ExecutionLineReport(
                 Instant.now(),
                 result.output,

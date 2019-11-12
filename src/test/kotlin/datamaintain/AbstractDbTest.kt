@@ -10,7 +10,7 @@ abstract class AbstractDbTest {
     val mongoUri = "localhost:27018"
 
     private val client = KMongo.createClient(mongoUri)
-    private val database = client.getDatabase(databaseName)
+    val database = client.getDatabase(databaseName)
 
     val collection = database.getCollection(
             MongoDatamaintainDriver.EXECUTED_SCRIPTS_COLLECTION, ScriptWithoutContent::class.java)
