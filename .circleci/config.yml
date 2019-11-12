@@ -8,6 +8,7 @@ jobs:
     docker:
       - image: oracle/graalvm-ce:latest
     steps:
+      - run: yum install -y mongodb-test # better solution should be create custom image and use mongo client only
       - checkout
       - restore_cache:
           key: v1-gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
