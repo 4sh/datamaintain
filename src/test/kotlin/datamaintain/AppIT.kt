@@ -9,15 +9,15 @@ import strikt.assertions.hasSize
 import strikt.assertions.isEqualTo
 import java.nio.file.Paths
 
-class AppIT: AbstractDbTest() {
+class AppIT : AbstractDbTest() {
     @Test
     fun `should execute`() {
         // Given
-        val config = Config(Paths.get("src/test/resources/integration"), mongoUri, databaseName)
+        val config = Config(Paths.get("src/test/resources/integration"), mongoUri, databaseName, Regex("(.*?)_.*"))
 
         val classUnderTest = Core()
 
-        val scriptPlayed = ScriptWithoutContent("01_file.js", "3dd96b16c91757a3a8a9c2dd09282273")
+        val scriptPlayed = ScriptWithoutContent("01_file.js", "3dd96b16c91757a3a8a9c2dd09282273", "")
         config.dbDriver.markAsExecuted(scriptPlayed)
 
         // When
@@ -33,6 +33,7 @@ class AppIT: AbstractDbTest() {
                     get { script }.and {
                         get { name }.isEqualTo("02_file.js")
                         get { checksum }.isEqualTo("acadaff7cff05e88fa98d40671040f84")
+                        get { identifier }.isEqualTo("02")
                     }
                 }
                 get(1).and {
@@ -40,6 +41,7 @@ class AppIT: AbstractDbTest() {
                     get { script }.and {
                         get { name }.isEqualTo("03_file.js")
                         get { checksum }.isEqualTo("55d3c9ec1e4e65bb2763b05201035d0a")
+                        get { identifier }.isEqualTo("03")
                     }
                 }
             }
