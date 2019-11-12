@@ -5,9 +5,7 @@ import com.mongodb.client.MongoDatabase
 import datamaintain.*
 import datamaintain.report.ExecutionLineReport
 import datamaintain.report.ExecutionStatus
-import datamaintain.report.ScriptLineReport
 import org.litote.kmongo.KMongo
-import java.io.File
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.time.Instant
@@ -54,6 +52,6 @@ class MongoDatamaintainDriver(
     }
 
     override fun markAsExecuted(script: Script) {
-        executedScriptsCollection.insertOne(ScriptWithoutContent(script.name, script.checksum))
+        executedScriptsCollection.insertOne(ScriptWithoutContent(script.name, script.checksum, script.identifier))
     }
 }

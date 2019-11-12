@@ -54,7 +54,7 @@ internal class MongoDatamaintainDriverTest {
     fun `should mark script as executed`() {
         // Given
         insertDataInDb()
-        val script3 = ScriptWithoutContent("script3.js", "d3d9446802a44259755d38e6d163e820")
+        val script3 = ScriptWithoutContent("script3.js", "d3d9446802a44259755d38e6d163e820", "")
 
         // When
         mongoDatamaintainDriver.markAsExecuted(script3)
@@ -71,7 +71,7 @@ internal class MongoDatamaintainDriverTest {
     fun `should execute correct file script`() {
         // Given
         database.getCollection("simple").drop()
-        val fileScript = FileScript(Paths.get("src/test/resources/executor_test_files/mongo/mongo_simple_insert.js"))
+        val fileScript = FileScript(Paths.get("src/test/resources/executor_test_files/mongo/mongo_simple_insert.js"), Regex(""))
 
         // When
         val report = mongoDatamaintainDriver.executeScript(fileScript)
@@ -96,7 +96,7 @@ internal class MongoDatamaintainDriverTest {
         // Given
         database.getCollection("simple").drop()
         val content = Paths.get("src/test/resources/executor_test_files/mongo/mongo_simple_insert.js").toFile().readText()
-        val inMemoryScript = InMemoryScript("test", content);
+        val inMemoryScript = InMemoryScript("test", content, "")
 
         // When
         val report = mongoDatamaintainDriver.executeScript(inMemoryScript)
@@ -120,7 +120,7 @@ internal class MongoDatamaintainDriverTest {
     fun `should execute incorrect file script`() {
         // Given
         database.getCollection("simple").drop()
-        val fileScript = FileScript(Paths.get("src/test/resources/executor_test_files/mongo/mongo_error_insert.js"))
+        val fileScript = FileScript(Paths.get("src/test/resources/executor_test_files/mongo/mongo_error_insert.js"), Regex(""))
 
         // When
         val report = mongoDatamaintainDriver.executeScript(fileScript)
@@ -142,13 +142,14 @@ internal class MongoDatamaintainDriverTest {
         ))
     }
 
-    private val script1 = ScriptWithoutContent("script1.js", "c4ca4238a0b923820dcc509a6f75849b")
-    private val script2 = ScriptWithoutContent("script2.js", "c81e728d9d4c2f636f067f89cc14862c")
+    private val script1 = ScriptWithoutContent("script1.js", "c4ca4238a0b923820dcc509a6f75849b", "")
+    private val script2 = ScriptWithoutContent("script2.js", "c81e728d9d4c2f636f067f89cc14862c", "")
 }
 
 class InMemoryScript(
         override val name: String,
-        override val content: String) : ScriptWithContent {
+        override val content: String,
+        override val identifier: String) : ScriptWithContent {
 
     override val checksum: String by lazy {
         content.hash()
