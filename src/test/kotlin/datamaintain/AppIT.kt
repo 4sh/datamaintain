@@ -13,7 +13,7 @@ class AppIT: AbstractDbTest() {
     @Test
     fun `should execute`() {
         // Given
-        val config = Config(Paths.get("src/test/resources/integration"), databaseName, mongoUri)
+        val config = Config(Paths.get("src/test/resources/integration"), mongoUri, databaseName)
 
         val classUnderTest = Core()
 

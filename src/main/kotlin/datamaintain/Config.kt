@@ -6,8 +6,8 @@ import datamaintain.db.drivers.MongoDatamaintainDriver
 import java.nio.file.Path
 
 class Config(val path: Path,
-             private val dbName: String,
-             private val mongoUri: String) {
+             private val mongoUri: String,
+             private val dbName: String) {
     private var customDbDriver: DatamaintainDriver? = null
 
     val dbDriver: DatamaintainDriver
