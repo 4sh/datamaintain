@@ -12,7 +12,7 @@ import java.nio.file.Paths
 
 internal class AlphabeticalSorterTest {
     private val alphabeticalSorter: AlphabeticalSorter = AlphabeticalSorter(Config(
-            Paths.get(""), "", Regex("")))
+            Paths.get(""), Regex(""), "", ""))
 
     @Test
     fun `should sort scripts list by name`() {
