@@ -12,8 +12,7 @@ import java.nio.file.Paths
 
 internal class PrunerTest {
     private val dbDriver = mockk<DatamaintainDriver>()
-    val config = Config(Paths.get(""), Regex(""), "", "") withDriver dbDriver
-
+    private val config = Config(Paths.get(""),  Regex(""), "" , "") withDriver dbDriver
     private val pruner = Pruner(config)
 
     @Test
@@ -25,7 +24,7 @@ internal class PrunerTest {
         )
 
         every { dbDriver.listExecutedScripts() }
-                .returns(sequenceOf(ScriptWithoutContent("01_file1", "c4ca4238a0b923820dcc509a6f75849b", "01")))
+                .returns(sequenceOf(ScriptWithoutContent("01_file1", "c4ca4238a0b923820dcc509a6f75849b", "")))
 
         // When
         val prunedScripts = pruner.prune(scripts)
@@ -47,7 +46,7 @@ internal class PrunerTest {
         )
 
         every { dbDriver.listExecutedScripts() }
-                .returns(sequenceOf(ScriptWithoutContent("01_file1_renamed", "c4ca4238a0b923820dcc509a6f75849b", "01")))
+                .returns(sequenceOf(ScriptWithoutContent("01_file1_renamed", "c4ca4238a0b923820dcc509a6f75849b", "")))
 
         // When
         val prunedScripts = pruner.prune(scripts)
