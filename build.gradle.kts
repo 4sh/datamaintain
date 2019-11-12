@@ -9,7 +9,7 @@ object Versions {
 }
 
 object Globals {
-    const val mongoPort = "27017"
+    const val mongoPort = "27018"
 }
 
 plugins {
