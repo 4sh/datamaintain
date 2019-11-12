@@ -12,7 +12,7 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.time.Instant
 
-open class MongoDatamaintainDriver(dbName: String,
+class MongoDatamaintainDriver(dbName: String,
                                    private val mongoUri: String,
                                    private val tmpFilePath: Path = Paths.get("/tmp/datamaintain.tmp")) : DatamaintainDriver {
     val database: MongoDatabase

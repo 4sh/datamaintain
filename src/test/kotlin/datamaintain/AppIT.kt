@@ -1,6 +1,5 @@
 package datamaintain
 
-import datamaintain.db.drivers.TestDatamaintainDriver
 import datamaintain.report.ExecutionStatus
 import datamaintain.report.ReportStatus
 import org.junit.jupiter.api.Test
@@ -14,7 +13,7 @@ class AppIT: AbstractDbTest() {
     @Test
     fun `should execute`() {
         // Given
-        val config = Config(Paths.get("src/test/resources/integration"), databaseName, mongoUri) withDriver TestDatamaintainDriver(databaseName, mongoUri)
+        val config = Config(Paths.get("src/test/resources/integration"), databaseName, mongoUri)
 
         val classUnderTest = Core()
 
