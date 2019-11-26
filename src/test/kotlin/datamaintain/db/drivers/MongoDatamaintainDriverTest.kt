@@ -1,10 +1,7 @@
 package datamaintain.db.drivers
 
 import com.mongodb.client.model.Filters
-import datamaintain.FileScript
-import datamaintain.ScriptWithContent
-import datamaintain.AbstractDbTest
-import datamaintain.ScriptWithoutContent
+import datamaintain.*
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.*
@@ -130,7 +127,8 @@ internal class MongoDatamaintainDriverTest: AbstractDbTest() {
 class InMemoryScript(
         override val name: String,
         override val content: String,
-        override val identifier: String) : ScriptWithContent {
+        override val identifier: String,
+        override val tags: Set<Tag> = setOf()) : ScriptWithContent {
 
     override val checksum: String by lazy {
         content.hash()

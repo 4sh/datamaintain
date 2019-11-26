@@ -11,7 +11,8 @@ import java.util.*
 class Config(val path: Path,
              val mongoUri: String,
              val dbName: String,
-             val identifierRegex: Regex) {
+             val identifierRegex: Regex,
+             val blacklistedTags: Set<Tag> = setOf()) {
     private var customDbDriver: DatamaintainDriver? = null
 
     val dbDriver: DatamaintainDriver
@@ -29,6 +30,10 @@ class Config(val path: Path,
     infix fun withDriver(other: DatamaintainDriver): Config {
         customDbDriver = other
         return this
+    }
+
+    infix fun isScriptBlacklisted(script: Script): Boolean {
+        return script.tags.any { blacklistedTags.contains(it) }
     }
 
     companion object {
