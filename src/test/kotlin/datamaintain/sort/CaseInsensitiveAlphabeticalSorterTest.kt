@@ -1,17 +1,15 @@
 package datamaintain.sort
 
 import datamaintain.Config
+import datamaintain.Script
 import datamaintain.ScriptWithoutContent
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
-import strikt.assertions.first
-import strikt.assertions.get
-import strikt.assertions.isEqualTo
-import strikt.assertions.last
+import strikt.assertions.*
 import java.nio.file.Paths
 
-internal class AlphabeticalSorterTest {
-    private val alphabeticalSorter: AlphabeticalSorter = AlphabeticalSorter(Config(
+internal class CaseInsensitiveAlphabeticalSorterTest {
+    private val caseInsensitiveAlphabeticalSorter: CaseInsensitiveAlphabeticalSorter = CaseInsensitiveAlphabeticalSorter(Config(
             Paths.get(""), "", "", Regex("")))
 
     @Test
@@ -21,9 +19,10 @@ internal class AlphabeticalSorterTest {
         val greatScript = ScriptWithoutContent("great script", "checksum", "")
 
         // When
-        expectThat(alphabeticalSorter.sort(listOf(
+        expectThat(caseInsensitiveAlphabeticalSorter.sort(listOf(
                 superScript,
-                greatScript))) {
+                greatScript),
+                Script::name)) {
             // Then
             first().isEqualTo(greatScript)
             last().isEqualTo(superScript)
@@ -38,10 +37,11 @@ internal class AlphabeticalSorterTest {
         val script10 = ScriptWithoutContent("10", "checksum", "")
 
         // When
-        expectThat(alphabeticalSorter.sort(listOf(
+        expectThat(caseInsensitiveAlphabeticalSorter.sort(listOf(
                 script2,
                 script1,
-                script10))) {
+                script10),
+                Script::name)) {
             // Then
             first().isEqualTo(script1)
             get(1).isEqualTo(script10)
@@ -57,14 +57,32 @@ internal class AlphabeticalSorterTest {
         val script10 = ScriptWithoutContent("script10", "checksum", "")
 
         // When
-        expectThat(alphabeticalSorter.sort(listOf(
+        expectThat(caseInsensitiveAlphabeticalSorter.sort(listOf(
                 script2,
                 script1,
-                script10))) {
+                script10),
+                Script::name)) {
             // Then
             first().isEqualTo(script1)
             get(1).isEqualTo(script10)
             last().isEqualTo(script2)
+        }
+    }
+
+    @Test
+    fun `should sort scripts list by identifier`() {
+        // Given
+        val superScript = ScriptWithoutContent("super script", "checksum1", "2")
+        val greatScript = ScriptWithoutContent("great script", "checksum2", "1")
+        val script = ScriptWithoutContent("script", "checksum3", "11")
+
+        // When
+        expectThat(caseInsensitiveAlphabeticalSorter.sort(listOf(superScript, greatScript, script), Script::identifier)) {
+            // Then
+            size.isEqualTo(3)
+            first().isEqualTo(greatScript)
+            get(1).isEqualTo(script)
+            last().isEqualTo(superScript)
         }
     }
 }
