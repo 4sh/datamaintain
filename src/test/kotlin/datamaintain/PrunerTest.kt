@@ -12,20 +12,20 @@ import java.nio.file.Paths
 
 internal class PrunerTest {
     private val dbDriver = mockk<DatamaintainDriver>()
-    val config = Config(Paths.get(""), "", "") withDriver dbDriver
+    val config = Config(Paths.get(""), "", "", Regex("")) withDriver dbDriver
 
     private val pruner = Pruner(config)
 
     @Test
     fun `should prune executed scripts`() {
         // Given
-        val scripts = listOf(FileScript(Paths.get("src/test/resources/scanner_test_files/01_file1")),
-                FileScript(Paths.get("src/test/resources/scanner_test_files/02_file2")),
-                FileScript(Paths.get("src/test/resources/scanner_test_files/10_file10"))
+        val scripts = listOf(FileScript(Paths.get("src/test/resources/scanner_test_files/01_file1"), Regex("")),
+                FileScript(Paths.get("src/test/resources/scanner_test_files/02_file2"), Regex("")),
+                FileScript(Paths.get("src/test/resources/scanner_test_files/10_file10"), Regex(""))
         )
 
         every { dbDriver.listExecutedScripts() }
-                .returns(sequenceOf(ScriptWithoutContent("01_file1", "c4ca4238a0b923820dcc509a6f75849b")))
+                .returns(sequenceOf(ScriptWithoutContent("01_file1", "c4ca4238a0b923820dcc509a6f75849b", "")))
 
         // When
         val prunedScripts = pruner.prune(scripts)
@@ -41,13 +41,13 @@ internal class PrunerTest {
     @Test
     fun `should prune executed scripts when script has been renamed`() {
         // Given
-        val scripts = listOf(FileScript(Paths.get("src/test/resources/scanner_test_files/01_file1")),
-                FileScript(Paths.get("src/test/resources/scanner_test_files/02_file2")),
-                FileScript(Paths.get("src/test/resources/scanner_test_files/10_file10"))
+        val scripts = listOf(FileScript(Paths.get("src/test/resources/scanner_test_files/01_file1"), Regex("")),
+                FileScript(Paths.get("src/test/resources/scanner_test_files/02_file2"), Regex("")),
+                FileScript(Paths.get("src/test/resources/scanner_test_files/10_file10"), Regex(""))
         )
 
         every { dbDriver.listExecutedScripts() }
-                .returns(sequenceOf(ScriptWithoutContent("01_file1_renamed", "c4ca4238a0b923820dcc509a6f75849b")))
+                .returns(sequenceOf(ScriptWithoutContent("01_file1_renamed", "c4ca4238a0b923820dcc509a6f75849b", "")))
 
         // When
         val prunedScripts = pruner.prune(scripts)
