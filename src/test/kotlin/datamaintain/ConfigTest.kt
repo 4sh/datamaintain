@@ -11,10 +11,11 @@ class ConfigTest {
         val expectedPath = Paths.get("/tmp/test")
 
         expectThat(Config.buildConfigFromResource("/config/default.properties")).and {
-           get { path }.isEqualTo(expectedPath)
-           get { mongoUri }.isEqualTo("mongo://localhost:27017")
-           get { dbName }.isEqualTo("test-datamaintain")
-           get { identifierRegex.pattern }.isEqualTo("(.*?)_.*")
+            get { path }.isEqualTo(expectedPath)
+            get { mongoUri }.isEqualTo("mongo://localhost:27017")
+            get { dbName }.isEqualTo("test-datamaintain")
+            get { identifierRegex.pattern }.isEqualTo("(.*?)_.*")
+            get { blacklistedTags }.isEqualTo(setOf(Tag("un"), Tag("deux")))
         }
     }
 

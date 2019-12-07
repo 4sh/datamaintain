@@ -57,6 +57,7 @@ enum class ConfigKey(val key: String) {
     // DB
     DB_MONGO_URI("db.mongo.uri"),
     DB_MONGO_DBNAME("db.mongo.dbname"),
+    TAGS_BLACKLISTED("tags.blacklisted"),
 
     // SCAN
     SCAN_PATH("scan.path"),
@@ -69,12 +70,20 @@ private fun Properties.toConfig(): Config {
     val config = Config(Paths.get(path),
             this.getProperty(ConfigKey.DB_MONGO_URI),
             this.getProperty(ConfigKey.DB_MONGO_DBNAME),
-            Regex(this.getProperty(ConfigKey.SCAN_IDENTIFIER_REGEX, Config.DEFAULT_IDENTIFIER_REGEX)))
+            Regex(this.getProperty(ConfigKey.SCAN_IDENTIFIER_REGEX, Config.DEFAULT_IDENTIFIER_REGEX)),
+            this.getNullableProperty(ConfigKey.TAGS_BLACKLISTED)?.split(",")
+                    ?.map { Tag(it) }
+                    ?.toSet()
+                    ?: setOf())
 
     return config
 }
 
 private fun Properties.getProperty(configKey: ConfigKey): String {
+    return getNullableProperty(configKey) ?: throw IllegalArgumentException("$configKey is mandatory")
+}
+
+private fun Properties.getNullableProperty(configKey: ConfigKey): String? {
     return this.getProperty(configKey.key)
 }
 
