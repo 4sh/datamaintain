@@ -1,7 +1,7 @@
 package datamaintain
 
 class Filter(private val config: Config) {
-    fun <T : Script> filter(scripts: List<T>): List<T> {
-        return scripts.filterNot {script -> config isScriptBlacklisted script }
+    fun filter(scripts: List<ScriptWithContent>): List<ScriptWithContent> {
+        return scripts.filterNot { script -> config.blacklistedTags.any { it matchedBy script } }
     }
 }

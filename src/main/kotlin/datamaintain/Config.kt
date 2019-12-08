@@ -32,10 +32,6 @@ class Config(val path: Path,
         return this
     }
 
-    infix fun isScriptBlacklisted(script: Script): Boolean {
-        return script.tags.any { blacklistedTags.contains(it) }
-    }
-
     companion object {
         const val DEFAULT_IDENTIFIER_REGEX = ".*"
 
