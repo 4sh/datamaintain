@@ -4,7 +4,11 @@ import java.math.BigInteger
 import java.nio.file.Path
 import java.security.MessageDigest
 
-class FileScript constructor(val path: Path, identifierRegex: Regex) : ScriptWithContent {
+class FileScript(
+        val path: Path,
+        identifierRegex: Regex,
+        override val tags: Set<Tag> = setOf()
+) : ScriptWithContent {
 
     override val name: String
         get() = path.fileName.toString()

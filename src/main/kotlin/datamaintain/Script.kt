@@ -15,6 +15,7 @@ data class ScriptWithoutContent(
 
 interface ScriptWithContent : Script {
     val content: String
+    val tags: Set<Tag>
 }
 
 
