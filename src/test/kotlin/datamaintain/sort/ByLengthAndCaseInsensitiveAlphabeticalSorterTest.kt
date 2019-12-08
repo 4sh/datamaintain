@@ -8,8 +8,8 @@ import strikt.api.expectThat
 import strikt.assertions.*
 import java.nio.file.Paths
 
-internal class CaseInsensitiveAlphabeticalSorterTest {
-    private val caseInsensitiveAlphabeticalSorter: CaseInsensitiveAlphabeticalSorter = CaseInsensitiveAlphabeticalSorter(Config(
+internal class ByLengthAndCaseInsensitiveAlphabeticalSorterTest {
+    private val caseInsensitiveAlphabeticalSorter: ByLengthAndCaseInsensitiveAlphabeticalSorter = ByLengthAndCaseInsensitiveAlphabeticalSorter(Config(
             Paths.get(""), "", "", Regex("")))
 
     @Test
@@ -44,8 +44,8 @@ internal class CaseInsensitiveAlphabeticalSorterTest {
                 Script::name)) {
             // Then
             first().isEqualTo(script1)
-            get(1).isEqualTo(script10)
-            last().isEqualTo(script2)
+            get(1).isEqualTo(script2)
+            last().isEqualTo(script10)
         }
     }
 
@@ -64,8 +64,8 @@ internal class CaseInsensitiveAlphabeticalSorterTest {
                 Script::name)) {
             // Then
             first().isEqualTo(script1)
-            get(1).isEqualTo(script10)
-            last().isEqualTo(script2)
+            get(1).isEqualTo(script2)
+            last().isEqualTo(script10)
         }
     }
 
@@ -81,8 +81,8 @@ internal class CaseInsensitiveAlphabeticalSorterTest {
             // Then
             size.isEqualTo(3)
             first().isEqualTo(greatScript)
-            get(1).isEqualTo(script)
-            last().isEqualTo(superScript)
+            get(1).isEqualTo(superScript)
+            last().isEqualTo(script)
         }
     }
 }
