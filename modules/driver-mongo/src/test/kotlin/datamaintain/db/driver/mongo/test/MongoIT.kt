@@ -1,11 +1,10 @@
-package datamaintain.test.it
+package datamaintain.db.driver.mongo.test
 
-import datamaintain.test.AbstractDbTest
 import datamaintain.core.Config
 import datamaintain.core.Core
-import datamaintain.core.script.ScriptWithoutContent
 import datamaintain.core.report.ExecutionStatus
 import datamaintain.core.report.ReportStatus
+import datamaintain.core.script.ScriptWithoutContent
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.get
@@ -13,7 +12,7 @@ import strikt.assertions.hasSize
 import strikt.assertions.isEqualTo
 import java.nio.file.Paths
 
-class AppIT : AbstractDbTest() {
+class MongoIT : AbstractMongoDbTest() {
     @Test
     fun `should execute`() {
         // Given

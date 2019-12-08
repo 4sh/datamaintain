@@ -3,12 +3,12 @@ package datamaintain.db.driver.mongo
 import com.mongodb.client.MongoCollection
 import com.mongodb.client.MongoDatabase
 import datamaintain.core.db.driver.DatamaintainDriver
+import datamaintain.core.report.ExecutionLineReport
+import datamaintain.core.report.ExecutionStatus
 import datamaintain.core.script.FileScript
 import datamaintain.core.script.Script
 import datamaintain.core.script.ScriptWithContent
 import datamaintain.core.script.ScriptWithoutContent
-import datamaintain.core.report.ExecutionLineReport
-import datamaintain.core.report.ExecutionStatus
 import datamaintain.core.util.runProcess
 import org.litote.kmongo.KMongo
 import java.nio.file.Path
@@ -16,8 +16,8 @@ import java.nio.file.Paths
 import java.time.Instant
 
 class MongoDatamaintainDriver(dbName: String,
-                                   private val mongoUri: String,
-                                   private val tmpFilePath: Path = Paths.get("/tmp/datamaintain.tmp")) : DatamaintainDriver {
+                              private val mongoUri: String,
+                              private val tmpFilePath: Path = Paths.get("/tmp/datamaintain.tmp")) : DatamaintainDriver {
     val database: MongoDatabase
     val executedScriptsCollection: MongoCollection<ScriptWithoutContent>
 

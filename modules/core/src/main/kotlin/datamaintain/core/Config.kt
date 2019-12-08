@@ -3,7 +3,6 @@ package datamaintain.core
 import datamaintain.core.db.driver.DatamaintainDriver
 import datamaintain.core.db.driver.FakeDatamaintainDriver
 import datamaintain.core.script.Tag
-import datamaintain.db.driver.mongo.MongoDatamaintainDriver
 import java.io.InputStream
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -20,8 +19,6 @@ class Config(val path: Path,
         get() {
             if (customDbDriver == null) {
                 if (dbName.isNotEmpty() and mongoUri.isNotEmpty()) {
-                    customDbDriver = MongoDatamaintainDriver(dbName, mongoUri)
-                } else {
                     customDbDriver = FakeDatamaintainDriver()
                 }
             }

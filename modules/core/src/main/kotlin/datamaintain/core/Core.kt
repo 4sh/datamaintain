@@ -6,7 +6,7 @@ import datamaintain.core.step.Executor
 import datamaintain.core.step.Filter
 import datamaintain.core.step.Pruner
 import datamaintain.core.step.Scanner
-import datamaintain.sort.ByLengthAndCaseInsensitiveAlphabeticalSorter
+import datamaintain.core.step.sort.ByLengthAndCaseInsensitiveAlphabeticalSorter
 
 class Core {
 

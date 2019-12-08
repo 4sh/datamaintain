@@ -1,4 +1,6 @@
 rootProject.name = "datamaintain"
 include(
-        "modules:core"
+        "modules:core",
+        "modules:cli",
+        "modules:driver-mongo"
 )

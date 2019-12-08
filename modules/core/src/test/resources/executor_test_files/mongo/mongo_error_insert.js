@@ -1,1 +1,0 @@
-db.simple.insert({ find: "me", data: 'inserted');

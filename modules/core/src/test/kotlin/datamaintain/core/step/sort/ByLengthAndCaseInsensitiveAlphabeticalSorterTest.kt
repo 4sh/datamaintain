@@ -1,4 +1,4 @@
-package datamaintain.sort
+package datamaintain.core.step.sort
 
 import datamaintain.core.Config
 import datamaintain.core.script.Script

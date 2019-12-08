@@ -1,12 +1,11 @@
-package datamaintain.core.db.driver
+package datamaintain.db.driver.mongo
 
 import com.mongodb.client.model.Filters
 import datamaintain.core.script.FileScript
 import datamaintain.core.script.ScriptWithContent
-import datamaintain.test.AbstractDbTest
 import datamaintain.core.script.ScriptWithoutContent
 import datamaintain.core.script.Tag
-import datamaintain.db.driver.mongo.MongoDatamaintainDriver
+import datamaintain.db.driver.mongo.test.AbstractMongoDbTest
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.*
@@ -15,7 +14,7 @@ import java.nio.file.Paths
 import java.security.MessageDigest
 
 
-internal class MongoDatamaintainDriverTest: AbstractDbTest() {
+internal class MongoDatamaintainDriverTest : AbstractMongoDbTest() {
     private val mongoDatamaintainDriver = MongoDatamaintainDriver(databaseName, mongoUri)
 
     @Test
