@@ -1,7 +1,5 @@
 package datamaintain.core
 
-import datamaintain.core.db.driver.DatamaintainDriver
-import datamaintain.core.db.driver.FakeDatamaintainDriver
 import datamaintain.core.script.Tag
 import java.io.InputStream
 import java.nio.file.Path
@@ -11,19 +9,18 @@ import java.util.*
 class Config(val path: Path,
              val identifierRegex: Regex,
              val blacklistedTags: Set<Tag> = setOf(),
-             val dbDriver: DatamaintainDriver) {
+             val dbDriverName: String? = null) {
 
     companion object {
         const val DEFAULT_IDENTIFIER_REGEX = ".*"
 
-        fun buildConfigFromResource(resource: String): Config {
-            return buildConfig(Config::class.java.getResourceAsStream(resource))
+        fun buildConfig(configInputStream: InputStream): Config {
+            val props = Properties()
+            props.load(configInputStream)
+            return buildConfig(props)
         }
 
-        fun buildConfig(configInputstream: InputStream): Config {
-            val props = Properties()
-
-            props.load(configInputstream)
+        fun buildConfig(props: Properties): Config {
 
             val path = props.getProperty(CoreConfigKey.SCAN_PATH)
 
@@ -33,7 +30,7 @@ class Config(val path: Path,
                             ?.map { Tag(it) }
                             ?.toSet()
                             ?: setOf(),
-                    driverLoader?.invoke(props) ?: FakeDatamaintainDriver())
+                    props.getNullableProperty(CoreConfigKey.DB_DRIVER))
 
         }
     }
@@ -45,6 +42,9 @@ interface ConfigKey {
 
 enum class CoreConfigKey(override val key: String) : ConfigKey {
     TAGS_BLACKLISTED("tags.blacklisted"),
+
+    // DRIVER
+    DB_DRIVER("db.driver"),
 
     // SCAN
     SCAN_PATH("scan.path"),
@@ -61,11 +61,4 @@ fun Properties.getNullableProperty(configKey: ConfigKey): String? {
 
 fun Properties.getProperty(configKey: ConfigKey, defaultValue: String): String {
     return this.getProperty(configKey.key, defaultValue)
-}
-
-
-private var driverLoader: ((Properties) -> DatamaintainDriver)? = null
-
-fun loadDriver(_driverLoader: (Properties) -> DatamaintainDriver) {
-    driverLoader = _driverLoader
 }

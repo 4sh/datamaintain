@@ -1,14 +1,14 @@
 package datamaintain.core.step
 
-import datamaintain.core.Config
+import datamaintain.core.Context
 import datamaintain.core.script.FileScript
 import datamaintain.core.script.ScriptWithContent
 
-class Scanner(private val config: Config) {
-    fun scan(): List<ScriptWithContent> = config.path.toFile().walk()
-                .filter { it.isFile }
-                .map {
-                    FileScript(it.toPath(), config.identifierRegex)
-                }
-                .sortedBy { it.name }.toList()
+class Scanner(private val context: Context) {
+    fun scan(): List<ScriptWithContent> = context.config.path.toFile().walk()
+            .filter { it.isFile }
+            .map {
+                FileScript(it.toPath(), context.config.identifierRegex)
+            }
+            .sortedBy { it.name }.toList()
 }

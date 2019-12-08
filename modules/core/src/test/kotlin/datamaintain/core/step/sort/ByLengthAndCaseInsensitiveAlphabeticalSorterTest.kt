@@ -1,7 +1,6 @@
 package datamaintain.core.step.sort
 
 import datamaintain.core.Config
-import datamaintain.core.db.driver.FakeDatamaintainDriver
 import datamaintain.core.script.Script
 import datamaintain.core.script.ScriptWithoutContent
 import org.junit.jupiter.api.Test
@@ -11,7 +10,7 @@ import java.nio.file.Paths
 
 internal class ByLengthAndCaseInsensitiveAlphabeticalSorterTest {
     private val caseInsensitiveAlphabeticalSorter: ByLengthAndCaseInsensitiveAlphabeticalSorter = ByLengthAndCaseInsensitiveAlphabeticalSorter(Config(
-            Paths.get(""),  Regex(""), dbDriver = FakeDatamaintainDriver()))
+            Paths.get(""), Regex("")))
 
     @Test
     fun `should sort scripts list by name`() {

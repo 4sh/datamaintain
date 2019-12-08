@@ -1,10 +1,10 @@
 package datamaintain.core.step
 
 import datamaintain.core.Config
+import datamaintain.core.Context
+import datamaintain.core.db.driver.DatamaintainDriver
 import datamaintain.core.script.FileScript
 import datamaintain.core.script.ScriptWithoutContent
-import datamaintain.core.step.Pruner
-import datamaintain.core.db.driver.DatamaintainDriver
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
@@ -16,9 +16,9 @@ import java.nio.file.Paths
 
 internal class PrunerTest {
     private val dbDriver = mockk<DatamaintainDriver>()
-    val config = Config(Paths.get(""), Regex(""), dbDriver = dbDriver)
+    private val context = Context(Config(Paths.get(""), Regex("")), dbDriver = dbDriver)
 
-    private val pruner = Pruner(config)
+    private val pruner = Pruner(context)
 
     @Test
     fun `should prune executed scripts`() {

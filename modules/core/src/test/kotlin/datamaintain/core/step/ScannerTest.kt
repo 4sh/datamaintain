@@ -1,6 +1,7 @@
 package datamaintain.core.step
 
 import datamaintain.core.Config
+import datamaintain.core.Context
 import datamaintain.core.db.driver.FakeDatamaintainDriver
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
@@ -10,8 +11,9 @@ import strikt.assertions.size
 import java.nio.file.Paths
 
 internal class ScannerTest {
-    private val scanner = Scanner(Config(Paths.get("src/test/resources/scanner_test_files"),
-            Regex("(.*?)_.*"),
+    private val scanner = Scanner(Context(
+            Config(Paths.get("src/test/resources/scanner_test_files"),
+                    Regex("(.*?)_.*")),
             dbDriver = FakeDatamaintainDriver()))
 
     @Test

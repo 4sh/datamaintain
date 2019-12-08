@@ -1,6 +1,7 @@
 package datamaintain
 
 import datamaintain.core.Config
+import datamaintain.core.Context
 import datamaintain.core.db.driver.DatamaintainDriver
 import datamaintain.core.script.FileScript
 import datamaintain.core.script.Tag
@@ -16,13 +17,14 @@ import java.nio.file.Paths
 internal class FilterTest {
     private val dbDriver = mockk<DatamaintainDriver>()
     private val blacklistedTag = Tag("blacklistedTag")
-    private val config = Config(
-            Paths.get(""),
-            Regex(""),
-            setOf(blacklistedTag),
+    private val context = Context(
+            Config(
+                    Paths.get(""),
+                    Regex(""),
+                    setOf(blacklistedTag)),
             dbDriver = dbDriver)
 
-    private val filter = Filter(config)
+    private val filter = Filter(context)
 
     @Test
     fun `should filter blacklisted scripts`() {

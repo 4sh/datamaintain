@@ -10,12 +10,15 @@ import datamaintain.core.step.sort.ByLengthAndCaseInsensitiveAlphabeticalSorter
 
 class Core {
 
-    fun run(config: Config): ExecutionReport =
-            Scanner(config).scan()
-                    .let { scripts -> Filter(config).filter(scripts) }
-                    .let { scripts -> ByLengthAndCaseInsensitiveAlphabeticalSorter(config).sort(scripts, Script::identifier) }
-                    .let { scripts -> Pruner(config).prune(scripts) }
-                    .let { scripts -> Executor(config).execute(scripts) }
+    fun run(context: Context): ExecutionReport =
+            Scanner(context).scan()
+                    .let { scripts -> Filter(context).filter(scripts) }
+                    .let { scripts ->
+                        ByLengthAndCaseInsensitiveAlphabeticalSorter(context.config)
+                                .sort(scripts, Script::identifier)
+                    }
+                    .let { scripts -> Pruner(context).prune(scripts) }
+                    .let { scripts -> Executor(context).execute(scripts) }
 
 }
 

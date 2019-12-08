@@ -11,16 +11,17 @@ class ConfigTest {
     fun `should build config from resource`() {
         val expectedPath = Paths.get("/tmp/test")
 
-        expectThat(Config.buildConfigFromResource("/config/default.properties")).and {
+        expectThat(Config.buildConfig(ConfigTest::class.java.getResourceAsStream("/config/default.properties"))).and {
             get { path }.isEqualTo(expectedPath)
             get { identifierRegex.pattern }.isEqualTo("(.*?)_.*")
             get { blacklistedTags }.isEqualTo(setOf(Tag("un"), Tag("deux")))
+            get { dbDriverName }.isEqualTo("mongo")
         }
     }
 
     @Test
     fun `should contain default values`() {
-        expectThat(Config.buildConfigFromResource("/config/minimal.properties")).and {
+        expectThat(Config.buildConfig(ConfigTest::class.java.getResourceAsStream("/config/minimal.properties"))) and {
             get { identifierRegex.pattern }.isEqualTo(Config.DEFAULT_IDENTIFIER_REGEX)
         }
     }
