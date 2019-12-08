@@ -1,8 +1,8 @@
 package datamaintain.sort
 
-import datamaintain.Config
-import datamaintain.Script
-import datamaintain.ScriptWithoutContent
+import datamaintain.core.Config
+import datamaintain.core.script.Script
+import datamaintain.core.script.ScriptWithoutContent
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.*

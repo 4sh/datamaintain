@@ -1,9 +1,0 @@
-package datamaintain.report
-
-import java.time.Instant
-
-interface Report {
-    val date: Instant
-    val status: ReportStatus
-    val lines: List<LineReport>
-}

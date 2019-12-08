@@ -1,7 +1,8 @@
 package datamaintain.sort
 
-import datamaintain.Config
-import datamaintain.Script
+import datamaintain.core.Config
+import datamaintain.core.script.Script
+import datamaintain.core.step.sort.Sorter
 
 class ByLengthAndCaseInsensitiveAlphabeticalSorter(config: Config) : Sorter<String>(config) {
     override fun <T : Script> sort(scripts: List<T>, getter: (T) -> String): List<T> {

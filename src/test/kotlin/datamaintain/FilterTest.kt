@@ -1,6 +1,10 @@
 package datamaintain
 
-import datamaintain.db.drivers.DatamaintainDriver
+import datamaintain.core.Config
+import datamaintain.core.db.driver.DatamaintainDriver
+import datamaintain.core.script.FileScript
+import datamaintain.core.script.Tag
+import datamaintain.core.step.Filter
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
