@@ -9,26 +9,9 @@ import java.nio.file.Paths
 import java.util.*
 
 class Config(val path: Path,
-             val mongoUri: String,
-             val dbName: String,
              val identifierRegex: Regex,
-             val blacklistedTags: Set<Tag> = setOf()) {
-    private var customDbDriver: DatamaintainDriver? = null
-
-    val dbDriver: DatamaintainDriver
-        get() {
-            if (customDbDriver == null) {
-                if (dbName.isNotEmpty() and mongoUri.isNotEmpty()) {
-                    customDbDriver = FakeDatamaintainDriver()
-                }
-            }
-            return customDbDriver!!
-        }
-
-    infix fun withDriver(other: DatamaintainDriver): Config {
-        customDbDriver = other
-        return this
-    }
+             val blacklistedTags: Set<Tag> = setOf(),
+             val dbDriver: DatamaintainDriver) {
 
     companion object {
         const val DEFAULT_IDENTIFIER_REGEX = ".*"
@@ -38,19 +21,29 @@ class Config(val path: Path,
         }
 
         fun buildConfig(configInputstream: InputStream): Config {
-            val properties = Properties()
+            val props = Properties()
 
-            properties.load(configInputstream)
+            props.load(configInputstream)
 
-            return properties.toConfig()
+            val path = props.getProperty(CoreConfigKey.SCAN_PATH)
+
+            return Config(Paths.get(path),
+                    Regex(props.getProperty(CoreConfigKey.SCAN_IDENTIFIER_REGEX, Config.DEFAULT_IDENTIFIER_REGEX)),
+                    props.getNullableProperty(CoreConfigKey.TAGS_BLACKLISTED)?.split(",")
+                            ?.map { Tag(it) }
+                            ?.toSet()
+                            ?: setOf(),
+                    driverLoader?.invoke(props) ?: FakeDatamaintainDriver())
+
         }
     }
 }
 
-enum class ConfigKey(val key: String) {
-    // DB
-    DB_MONGO_URI("db.mongo.uri"),
-    DB_MONGO_DBNAME("db.mongo.dbname"),
+interface ConfigKey {
+    val key: String
+}
+
+enum class CoreConfigKey(override val key: String) : ConfigKey {
     TAGS_BLACKLISTED("tags.blacklisted"),
 
     // SCAN
@@ -58,29 +51,21 @@ enum class ConfigKey(val key: String) {
     SCAN_IDENTIFIER_REGEX("scan.identifier.regex")
 }
 
-private fun Properties.toConfig(): Config {
-    val path = this.getProperty(ConfigKey.SCAN_PATH)
-
-    val config = Config(Paths.get(path),
-            this.getProperty(ConfigKey.DB_MONGO_URI),
-            this.getProperty(ConfigKey.DB_MONGO_DBNAME),
-            Regex(this.getProperty(ConfigKey.SCAN_IDENTIFIER_REGEX, Config.DEFAULT_IDENTIFIER_REGEX)),
-            this.getNullableProperty(ConfigKey.TAGS_BLACKLISTED)?.split(",")
-                    ?.map { Tag(it) }
-                    ?.toSet()
-                    ?: setOf())
-
-    return config
-}
-
-private fun Properties.getProperty(configKey: ConfigKey): String {
+fun Properties.getProperty(configKey: ConfigKey): String {
     return getNullableProperty(configKey) ?: throw IllegalArgumentException("$configKey is mandatory")
 }
 
-private fun Properties.getNullableProperty(configKey: ConfigKey): String? {
+fun Properties.getNullableProperty(configKey: ConfigKey): String? {
     return this.getProperty(configKey.key)
 }
 
-private fun Properties.getProperty(configKey: ConfigKey, defaultValue: String): String {
+fun Properties.getProperty(configKey: ConfigKey, defaultValue: String): String {
     return this.getProperty(configKey.key, defaultValue)
+}
+
+
+private var driverLoader: ((Properties) -> DatamaintainDriver)? = null
+
+fun loadDriver(_driverLoader: (Properties) -> DatamaintainDriver) {
+    driverLoader = _driverLoader
 }

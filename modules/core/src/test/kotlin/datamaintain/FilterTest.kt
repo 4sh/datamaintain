@@ -18,11 +18,9 @@ internal class FilterTest {
     private val blacklistedTag = Tag("blacklistedTag")
     private val config = Config(
             Paths.get(""),
-            "",
-            "",
             Regex(""),
-            setOf(blacklistedTag)
-    ) withDriver dbDriver
+            setOf(blacklistedTag),
+            dbDriver = dbDriver)
 
     private val filter = Filter(config)
 

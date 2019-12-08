@@ -16,7 +16,7 @@ import java.nio.file.Paths
 
 internal class PrunerTest {
     private val dbDriver = mockk<DatamaintainDriver>()
-    val config = Config(Paths.get(""), "", "", Regex("")) withDriver dbDriver
+    val config = Config(Paths.get(""), Regex(""), dbDriver = dbDriver)
 
     private val pruner = Pruner(config)
 

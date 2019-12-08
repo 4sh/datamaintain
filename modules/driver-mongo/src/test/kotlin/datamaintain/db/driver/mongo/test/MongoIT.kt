@@ -5,6 +5,7 @@ import datamaintain.core.Core
 import datamaintain.core.report.ExecutionStatus
 import datamaintain.core.report.ReportStatus
 import datamaintain.core.script.ScriptWithoutContent
+import datamaintain.db.driver.mongo.MongoDatamaintainDriver
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.get
@@ -16,7 +17,11 @@ class MongoIT : AbstractMongoDbTest() {
     @Test
     fun `should execute`() {
         // Given
-        val config = Config(Paths.get("src/test/resources/integration"), mongoUri, databaseName, Regex("(.*?)_.*"))
+        val config = Config(
+                Paths.get("src/test/resources/integration"),
+                Regex("(.*?)_.*"),
+                dbDriver = MongoDatamaintainDriver(databaseName, mongoUri)
+        )
 
         val classUnderTest = Core()
 

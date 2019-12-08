@@ -1,14 +1,13 @@
 package datamaintain.core.step
 
 import datamaintain.core.Config
-import datamaintain.core.script.FileScript
-import datamaintain.core.script.Script
-import datamaintain.core.step.Executor
 import datamaintain.core.db.driver.DatamaintainDriver
 import datamaintain.core.report.ExecutionLineReport
 import datamaintain.core.report.ExecutionReport
 import datamaintain.core.report.ExecutionStatus
 import datamaintain.core.report.ReportStatus
+import datamaintain.core.script.FileScript
+import datamaintain.core.script.Script
 import io.mockk.MockKAnswerScope
 import io.mockk.every
 import io.mockk.mockk
@@ -23,7 +22,7 @@ import java.time.Instant
 
 internal class ExecutorTest {
     private val dbDriverMock = mockk<DatamaintainDriver>()
-    val config = Config(Paths.get(""), "", "", Regex("")) withDriver dbDriverMock
+    val config = Config(Paths.get(""), Regex(""), dbDriver = dbDriverMock)
 
     private val executor = Executor(config)
 
