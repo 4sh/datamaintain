@@ -22,7 +22,7 @@ class ConfigTest {
     @Test
     fun `should contain default values`() {
         expectThat(Config.buildConfig(ConfigTest::class.java.getResourceAsStream("/config/minimal.properties"))) and {
-            get { identifierRegex.pattern }.isEqualTo(Config.DEFAULT_IDENTIFIER_REGEX)
+            get { identifierRegex.pattern }.isEqualTo(CoreConfigKey.SCAN_IDENTIFIER_REGEX.default)
         }
     }
 }

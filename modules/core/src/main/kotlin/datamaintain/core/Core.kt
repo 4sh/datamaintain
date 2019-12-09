@@ -1,5 +1,6 @@
 package datamaintain.core
 
+import datamaintain.core.db.driver.DatamaintainDriver
 import datamaintain.core.report.ExecutionReport
 import datamaintain.core.script.Script
 import datamaintain.core.step.Executor
@@ -7,6 +8,9 @@ import datamaintain.core.step.Filter
 import datamaintain.core.step.Pruner
 import datamaintain.core.step.Scanner
 import datamaintain.core.step.sort.ByLengthAndCaseInsensitiveAlphabeticalSorter
+
+fun runDatamaintain(config: Config, driver: DatamaintainDriver) =
+        Core().run(Context(config, driver))
 
 class Core {
 

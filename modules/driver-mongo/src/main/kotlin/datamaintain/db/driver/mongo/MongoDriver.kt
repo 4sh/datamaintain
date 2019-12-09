@@ -16,9 +16,10 @@ import java.nio.file.Paths
 import java.time.Instant
 
 
-class MongoDatamaintainDriver(dbName: String,
-                              private val mongoUri: String,
-                              private val tmpFilePath: Path = Paths.get("/tmp/datamaintain.tmp")) : DatamaintainDriver {
+class MongoDriver(dbName: String,
+                  private val mongoUri: String,
+                  private val tmpFilePath: Path = Paths.get(MongoConfigKey.DB_MONGO_TMP_PATH.default!!)
+) : DatamaintainDriver {
     private val database: MongoDatabase
     private val executedScriptsCollection: MongoCollection<ScriptWithoutContent>
 
@@ -30,8 +31,6 @@ class MongoDatamaintainDriver(dbName: String,
         val client = KMongo.createClient(mongoUri)
         database = client.getDatabase(dbName)
         executedScriptsCollection = database.getCollection(EXECUTED_SCRIPTS_COLLECTION, ScriptWithoutContent::class.java)
-
-
     }
 
     override fun executeScript(script: ScriptWithContent): ExecutionLineReport {

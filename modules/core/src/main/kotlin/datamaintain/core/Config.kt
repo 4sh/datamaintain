@@ -6,13 +6,12 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.*
 
-class Config(val path: Path,
-             val identifierRegex: Regex,
-             val blacklistedTags: Set<Tag> = setOf(),
-             val dbDriverName: String? = null) {
+data class Config(val path: Path,
+                  val identifierRegex: Regex = Regex(CoreConfigKey.SCAN_IDENTIFIER_REGEX.default!!),
+                  val blacklistedTags: Set<Tag> = setOf(),
+                  val dbDriverName: String? = null) {
 
     companion object {
-        const val DEFAULT_IDENTIFIER_REGEX = ".*"
 
         fun buildConfig(configInputStream: InputStream): Config {
             val props = Properties()
@@ -25,7 +24,7 @@ class Config(val path: Path,
             val path = props.getProperty(CoreConfigKey.SCAN_PATH)
 
             return Config(Paths.get(path),
-                    Regex(props.getProperty(CoreConfigKey.SCAN_IDENTIFIER_REGEX, Config.DEFAULT_IDENTIFIER_REGEX)),
+                    Regex(props.getProperty(CoreConfigKey.SCAN_IDENTIFIER_REGEX)),
                     props.getNullableProperty(CoreConfigKey.TAGS_BLACKLISTED)?.split(",")
                             ?.map { Tag(it) }
                             ?.toSet()
@@ -33,14 +32,17 @@ class Config(val path: Path,
                     props.getNullableProperty(CoreConfigKey.DB_DRIVER))
 
         }
+
     }
 }
 
 interface ConfigKey {
     val key: String
+    val default: String?
 }
 
-enum class CoreConfigKey(override val key: String) : ConfigKey {
+enum class CoreConfigKey(override val key: String,
+                         override val default: String? = null) : ConfigKey {
     TAGS_BLACKLISTED("tags.blacklisted"),
 
     // DRIVER
@@ -48,17 +50,19 @@ enum class CoreConfigKey(override val key: String) : ConfigKey {
 
     // SCAN
     SCAN_PATH("scan.path"),
-    SCAN_IDENTIFIER_REGEX("scan.identifier.regex")
+    SCAN_IDENTIFIER_REGEX("scan.identifier.regex", ".*")
 }
 
-fun Properties.getProperty(configKey: ConfigKey): String {
-    return getNullableProperty(configKey) ?: throw IllegalArgumentException("$configKey is mandatory")
-}
+fun Properties.getProperty(configKey: ConfigKey): String =
+        if (configKey.default != null) {
+            getProperty(configKey, configKey.default!!)
+        } else {
+            getNullableProperty(configKey) ?: throw IllegalArgumentException("$configKey is mandatory")
+        }
 
-fun Properties.getNullableProperty(configKey: ConfigKey): String? {
-    return this.getProperty(configKey.key)
-}
+fun Properties.getNullableProperty(configKey: ConfigKey): String? = this.getProperty(configKey.key)
 
-fun Properties.getProperty(configKey: ConfigKey, defaultValue: String): String {
-    return this.getProperty(configKey.key, defaultValue)
-}
+fun Properties.getProperty(configKey: ConfigKey, defaultValue: String): String =
+        this.getProperty(configKey.key, defaultValue)
+
+

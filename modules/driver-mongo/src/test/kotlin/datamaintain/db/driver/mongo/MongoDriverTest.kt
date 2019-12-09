@@ -14,8 +14,8 @@ import java.nio.file.Paths
 import java.security.MessageDigest
 
 
-internal class MongoDatamaintainDriverTest : AbstractMongoDbTest() {
-    private val mongoDatamaintainDriver = MongoDatamaintainDriver(databaseName, mongoUri)
+internal class MongoDriverTest : AbstractMongoDbTest() {
+    private val mongoDatamaintainDriver = MongoDriver(databaseName, mongoUri)
 
     @Test
     fun `should list scripts in db`() {
