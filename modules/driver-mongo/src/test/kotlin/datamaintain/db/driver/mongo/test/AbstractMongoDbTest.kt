@@ -2,15 +2,15 @@ package datamaintain.db.driver.mongo.test
 
 import datamaintain.core.script.ScriptWithoutContent
 import datamaintain.db.driver.mongo.MongoDriver
+import com.mongodb.client.MongoClients
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
-import org.litote.kmongo.KMongo
 
 abstract class AbstractMongoDbTest {
     val databaseName = "datamaintain-test"
-    val mongoUri = "localhost:27017"
+    val mongoUri = "localhost:27018"
 
-    private val client = KMongo.createClient(mongoUri)
+    private val client = MongoClients.create("mongodb://$mongoUri")
     val database = client.getDatabase(databaseName)
 
     val collection = database.getCollection(
