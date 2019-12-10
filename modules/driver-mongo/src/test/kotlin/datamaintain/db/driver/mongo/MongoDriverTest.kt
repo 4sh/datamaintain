@@ -15,7 +15,11 @@ import java.security.MessageDigest
 
 
 internal class MongoDriverTest : AbstractMongoDbTest() {
-    private val mongoDatamaintainDriver = MongoDriver(databaseName, mongoUri)
+    private val mongoDatamaintainDriver = MongoDriver(
+            databaseName,
+            mongoUri,
+            Paths.get(MongoConfigKey.DB_MONGO_TMP_PATH.default!!)
+    )
 
     @Test
     fun `should list scripts in db`() {

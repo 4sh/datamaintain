@@ -1,8 +1,9 @@
 package datamaintain.core.step
 
-import datamaintain.core.Config
+import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.Context
 import datamaintain.core.db.driver.DatamaintainDriver
+import datamaintain.core.db.driver.FakeDriverConfig
 import datamaintain.core.report.ExecutionLineReport
 import datamaintain.core.report.ExecutionReport
 import datamaintain.core.report.ExecutionStatus
@@ -23,7 +24,7 @@ import java.time.Instant
 
 internal class ExecutorTest {
     private val dbDriverMock = mockk<DatamaintainDriver>()
-    private val context = Context(Config(Paths.get(""), Regex("")), dbDriver = dbDriverMock)
+    private val context = Context(DatamaintainConfig(Paths.get(""), Regex(""), driverConfig = FakeDriverConfig()), dbDriver = dbDriverMock)
 
     private val executor = Executor(context)
 

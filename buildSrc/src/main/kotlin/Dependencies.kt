@@ -13,6 +13,8 @@ fun Project.baseProject() {
     kotlinProject()
 
     dependencies {
+        "implementation"("io.github.microutils:kotlin-logging:${Versions.kotlinLogging}")
+
         "testImplementation"("org.junit.jupiter:junit-jupiter-api:${Versions.junit}")
         "testImplementation"("org.junit.jupiter:junit-jupiter-params:${ Versions.junit }")
         "testImplementation"("io.strikt:strikt-core:${ Versions.strikt }")

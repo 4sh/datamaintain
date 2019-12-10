@@ -1,8 +1,9 @@
 package datamaintain
 
-import datamaintain.core.Config
+import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.Context
 import datamaintain.core.db.driver.DatamaintainDriver
+import datamaintain.core.db.driver.FakeDriverConfig
 import datamaintain.core.script.FileScript
 import datamaintain.core.script.Tag
 import datamaintain.core.step.Filter
@@ -18,10 +19,11 @@ internal class FilterTest {
     private val dbDriver = mockk<DatamaintainDriver>()
     private val blacklistedTag = Tag("blacklistedTag")
     private val context = Context(
-            Config(
+            DatamaintainConfig(
                     Paths.get(""),
                     Regex(""),
-                    setOf(blacklistedTag)),
+                    setOf(blacklistedTag),
+                    FakeDriverConfig()),
             dbDriver = dbDriver)
 
     private val filter = Filter(context)
