@@ -1,13 +1,10 @@
 package datamaintain.db.driver.mongo.test
 
 import datamaintain.core.Config
-import datamaintain.core.Context
-import datamaintain.core.Core
 import datamaintain.core.report.ExecutionStatus
 import datamaintain.core.report.ReportStatus
 import datamaintain.core.runDatamaintain
-import datamaintain.core.script.ScriptWithoutContent
-import datamaintain.db.driver.mongo.MongoDriver
+import datamaintain.db.driver.mongo.MongoDriverConfig
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.get
@@ -19,30 +16,30 @@ class MongoIT : AbstractMongoDbTest() {
     @Test
     fun `should execute`() {
         // Given
-        val context = Context(
-                Config(
-                        Paths.get("src/test/resources/integration"),
-                        Regex("(.*?)_.*")
-                ),
-                MongoDriver(databaseName, mongoUri)
+        val config = Config(
+                Paths.get("src/test/resources/integration"),
+                Regex("(.*?)_.*")
         )
 
-        val classUnderTest = Core()
-
-        runDatamaintain(context.config, context.dbDriver)
-
-        val scriptPlayed = ScriptWithoutContent("01_file.js", "3dd96b16c91757a3a8a9c2dd09282273", "")
-        context.dbDriver.markAsExecuted(scriptPlayed)
+        val driverConfig = MongoDriverConfig(databaseName, mongoUri)
 
         // When
-        val executionReport = classUnderTest.run(context)
+        val executionReport = runDatamaintain(config, driverConfig)
 
         // Then
         expectThat(executionReport) {
             get { status }.isEqualTo(ReportStatus.OK)
             get { lines }.and {
-                hasSize(2)
+                hasSize(3)
                 get(0).and {
+                    get { executionStatus }.isEqualTo(ExecutionStatus.OK)
+                    get { script }.and {
+                        get { name }.isEqualTo("01_file.js")
+                        get { checksum }.isEqualTo("3dd96b16c91757a3a8a9c2dd09282273")
+                        get { identifier }.isEqualTo("01")
+                    }
+                }
+                get(1).and {
                     get { executionStatus }.isEqualTo(ExecutionStatus.OK)
                     get { script }.and {
                         get { name }.isEqualTo("02_file.js")
@@ -50,7 +47,7 @@ class MongoIT : AbstractMongoDbTest() {
                         get { identifier }.isEqualTo("02")
                     }
                 }
-                get(1).and {
+                get(2).and {
                     get { executionStatus }.isEqualTo(ExecutionStatus.OK)
                     get { script }.and {
                         get { name }.isEqualTo("03_file.js")

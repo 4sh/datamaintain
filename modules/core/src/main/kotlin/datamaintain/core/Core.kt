@@ -1,6 +1,6 @@
 package datamaintain.core
 
-import datamaintain.core.db.driver.DatamaintainDriver
+import datamaintain.core.db.driver.DatamaintainDriverConfig
 import datamaintain.core.report.ExecutionReport
 import datamaintain.core.script.Script
 import datamaintain.core.step.Executor
@@ -8,13 +8,24 @@ import datamaintain.core.step.Filter
 import datamaintain.core.step.Pruner
 import datamaintain.core.step.Scanner
 import datamaintain.core.step.sort.ByLengthAndCaseInsensitiveAlphabeticalSorter
+import mu.KotlinLogging
 
-fun runDatamaintain(config: Config, driver: DatamaintainDriver) =
-        Core().run(Context(config, driver))
+private val logger = KotlinLogging.logger {}
 
-class Core {
+fun runDatamaintain(config: Config, driverConfig: DatamaintainDriverConfig): ExecutionReport {
+    return Core(config, driverConfig).run()
+}
 
-    fun run(context: Context): ExecutionReport =
+class Core(config: Config, driverConfig: DatamaintainDriverConfig) {
+
+    init {
+        logger.info { "config loaded: $config" }
+        logger.info { "mongo driver config loaded: $driverConfig" }
+    }
+
+    val context = Context(config, driverConfig.toDriver())
+
+    fun run(): ExecutionReport =
             Scanner(context).scan()
                     .let { scripts -> Filter(context).filter(scripts) }
                     .let { scripts ->

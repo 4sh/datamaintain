@@ -6,7 +6,7 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.*
 
-data class Config(val path: Path,
+data class Config(val path: Path = Paths.get(CoreConfigKey.SCAN_PATH.default),
                   val identifierRegex: Regex = Regex(CoreConfigKey.SCAN_IDENTIFIER_REGEX.default!!),
                   val blacklistedTags: Set<Tag> = setOf(),
                   val dbDriverName: String? = null) {
@@ -20,17 +20,14 @@ data class Config(val path: Path,
         }
 
         fun buildConfig(props: Properties): Config {
-
-            val path = props.getProperty(CoreConfigKey.SCAN_PATH)
-
-            return Config(Paths.get(path),
+            return Config(
+                    Paths.get(props.getProperty(CoreConfigKey.SCAN_PATH)),
                     Regex(props.getProperty(CoreConfigKey.SCAN_IDENTIFIER_REGEX)),
                     props.getNullableProperty(CoreConfigKey.TAGS_BLACKLISTED)?.split(",")
                             ?.map { Tag(it) }
                             ?.toSet()
                             ?: setOf(),
                     props.getNullableProperty(CoreConfigKey.DB_DRIVER))
-
         }
 
     }
@@ -49,7 +46,7 @@ enum class CoreConfigKey(override val key: String,
     DB_DRIVER("db.driver"),
 
     // SCAN
-    SCAN_PATH("scan.path"),
+    SCAN_PATH("scan.path", "./scripts/"),
     SCAN_IDENTIFIER_REGEX("scan.identifier.regex", ".*")
 }
 

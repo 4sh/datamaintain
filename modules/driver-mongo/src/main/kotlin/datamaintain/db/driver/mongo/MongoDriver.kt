@@ -15,7 +15,6 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.time.Instant
 
-
 class MongoDriver(dbName: String,
                   private val mongoUri: String,
                   private val tmpFilePath: Path = Paths.get(MongoConfigKey.DB_MONGO_TMP_PATH.default!!)

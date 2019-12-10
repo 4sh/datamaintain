@@ -8,7 +8,7 @@ import org.litote.kmongo.KMongo
 
 abstract class AbstractMongoDbTest {
     val databaseName = "datamaintain-test"
-    val mongoUri = "localhost:27018"
+    val mongoUri = "localhost:27017"
 
     private val client = KMongo.createClient(mongoUri)
     val database = client.getDatabase(databaseName)

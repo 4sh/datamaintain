@@ -8,30 +8,17 @@ plugins {
     id("com.palantir.graal")
 }
 
-repositories {
-    jcenter() 
-}
+baseProject()
 
 dependencies {
-    implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation("org.litote.kmongo:kmongo:${Versions.kmongo}")
+    implementation(project(":modules:core"))
+    implementation(project(":modules:driver-mongo"))
+    implementation("com.github.ajalt:clikt:${Versions.clikt}")
 
-    testImplementation("org.junit.jupiter:junit-jupiter-api:${Versions.junit}")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:${Versions.junit}")
-    testImplementation("io.strikt:strikt-core:${Versions.strikt}")
-    testImplementation("io.mockk:mockk:${Versions.mockk}")
-
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${Versions.junit}")
 }
 
 application {
     mainClassName = "datamaintain.AppKt"
-}
-
-mongo {
-    setPort(Globals.mongoPort)
-    mongoVersion = Versions.mongo
 }
 
 graal {
@@ -59,8 +46,3 @@ tasks.register<Exec>("graalCheckNative") {
     }
 }
 
-tasks.getByPath("test").doFirst {
-    with(this as Test) {
-        useJUnitPlatform()
-    }
-}.dependsOn("startManagedMongoDb")
