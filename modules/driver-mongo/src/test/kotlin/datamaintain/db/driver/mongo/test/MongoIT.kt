@@ -1,6 +1,6 @@
 package datamaintain.db.driver.mongo.test
 
-import datamaintain.core.Config
+import datamaintain.core.config.Config
 import datamaintain.core.report.ExecutionStatus
 import datamaintain.core.report.ReportStatus
 import datamaintain.core.runDatamaintain

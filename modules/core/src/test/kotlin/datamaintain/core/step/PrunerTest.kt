@@ -1,6 +1,6 @@
 package datamaintain.core.step
 
-import datamaintain.core.Config
+import datamaintain.core.config.Config
 import datamaintain.core.Context
 import datamaintain.core.db.driver.DatamaintainDriver
 import datamaintain.core.script.FileScript

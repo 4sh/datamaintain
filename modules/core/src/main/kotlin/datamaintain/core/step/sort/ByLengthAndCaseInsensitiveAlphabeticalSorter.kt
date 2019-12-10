@@ -1,6 +1,6 @@
 package datamaintain.core.step.sort
 
-import datamaintain.core.Config
+import datamaintain.core.config.Config
 import datamaintain.core.script.Script
 
 class ByLengthAndCaseInsensitiveAlphabeticalSorter(config: Config) : Sorter<String>(config) {

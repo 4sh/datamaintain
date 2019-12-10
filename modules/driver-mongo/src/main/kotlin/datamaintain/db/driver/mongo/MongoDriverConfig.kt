@@ -1,17 +1,16 @@
 package datamaintain.db.driver.mongo
 
-import datamaintain.core.ConfigKey
+import datamaintain.core.config.ConfigKey
 import datamaintain.core.db.driver.DatamaintainDriverConfig
-import datamaintain.core.getNullableProperty
-import datamaintain.core.getProperty
-import mu.KotlinLogging
+import datamaintain.core.config.getNullableProperty
+import datamaintain.core.config.getProperty
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.*
 
-data class MongoDriverConfig(val dbName: String?,
-                             val mongoUri: String = MongoConfigKey.DB_MONGO_URI.default!!,
-                             val tmpFilePath: Path = Paths.get(MongoConfigKey.DB_MONGO_TMP_PATH.default!!)
+data class MongoDriverConfig(val dbName: String? = null,
+                             val mongoUri: String? = null,
+                             val tmpFilePath: Path? = null
 ) : DatamaintainDriverConfig {
     companion object {
         fun buildConfig(props: Properties): MongoDriverConfig {
@@ -24,8 +23,8 @@ data class MongoDriverConfig(val dbName: String?,
 
     override fun toDriver() = MongoDriver(
             dbName ?: throw IllegalArgumentException("mongo db name is missing"),
-            mongoUri,
-            tmpFilePath)
+            mongoUri ?: MongoConfigKey.DB_MONGO_URI.default!!,
+            tmpFilePath ?: Paths.get(MongoConfigKey.DB_MONGO_TMP_PATH.default!!))
 }
 
 enum class MongoConfigKey(

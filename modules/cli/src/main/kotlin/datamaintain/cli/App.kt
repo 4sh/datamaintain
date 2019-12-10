@@ -5,9 +5,8 @@ import com.github.ajalt.clikt.parameters.options.convert
 import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.validate
-import datamaintain.core.Config
+import datamaintain.core.config.Config
 import datamaintain.core.runDatamaintain
-import datamaintain.db.driver.mongo.MongoDriver
 import datamaintain.db.driver.mongo.MongoDriverConfig
 import java.io.File
 import java.util.*
@@ -26,7 +25,7 @@ class App : CliktCommand() {
     private val path: String? by option(help = "path to directory containing scripts")
             .default("./scripts")
 
-    private val dbType: String? by option(help = "db type : ${dbValues.joinToString(",")}")
+    private val dbType: String by option(help = "db type : ${dbValues.joinToString(",")}")
             .default("mongo")
             .validate {
                 dbValues.contains(it)
@@ -67,7 +66,7 @@ class App : CliktCommand() {
     private fun loadConfig(props: Properties): Config {
         return Config.buildConfig(props)
                 .run {
-                    copy(dbDriverName = dbType ?: dbDriverName)
+                    copy(path = path)
                 }
     }
 }

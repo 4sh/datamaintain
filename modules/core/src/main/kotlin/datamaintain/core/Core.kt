@@ -1,5 +1,6 @@
 package datamaintain.core
 
+import datamaintain.core.config.Config
 import datamaintain.core.db.driver.DatamaintainDriverConfig
 import datamaintain.core.report.ExecutionReport
 import datamaintain.core.script.Script

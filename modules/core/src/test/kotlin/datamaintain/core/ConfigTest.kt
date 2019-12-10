@@ -1,5 +1,7 @@
 package datamaintain.core
 
+import datamaintain.core.config.Config
+import datamaintain.core.config.CoreConfigKey
 import datamaintain.core.script.Tag
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
@@ -15,7 +17,6 @@ class ConfigTest {
             get { path }.isEqualTo(expectedPath)
             get { identifierRegex.pattern }.isEqualTo("(.*?)_.*")
             get { blacklistedTags }.isEqualTo(setOf(Tag("un"), Tag("deux")))
-            get { dbDriverName }.isEqualTo("mongo")
         }
     }
 
