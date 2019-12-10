@@ -2,10 +2,13 @@ package datamaintain.core.config
 
 import datamaintain.core.db.driver.DatamaintainDriverConfig
 import datamaintain.core.script.Tag
+import mu.KotlinLogging
 import java.io.InputStream
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.*
+
+private val logger = KotlinLogging.logger {}
 
 data class DatamaintainConfig(val path: Path = Paths.get(CoreConfigKey.SCAN_PATH.default),
                               val identifierRegex: Regex = Regex(CoreConfigKey.SCAN_IDENTIFIER_REGEX.default!!),
@@ -32,6 +35,15 @@ data class DatamaintainConfig(val path: Path = Paths.get(CoreConfigKey.SCAN_PATH
         }
 
     }
+
+    fun log() {
+        logger.info { "configuration: " }
+        path.let { logger.info { "- path -> $path" } }
+        identifierRegex.let { logger.info { "- identifier regex -> ${identifierRegex.pattern}" } }
+        blacklistedTags.let { logger.info { "- blacklisted tags -> $blacklistedTags" } }
+        logger.info { "" }
+    }
+
 }
 
 interface ConfigKey {

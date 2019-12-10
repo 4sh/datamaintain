@@ -7,8 +7,11 @@ import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.validate
 import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.runDatamaintain
+import datamaintain.core.script.Tag
 import datamaintain.db.driver.mongo.MongoDriverConfig
 import java.io.File
+import java.nio.file.Path
+import java.nio.file.Paths
 import java.util.*
 import kotlin.system.exitProcess
 
@@ -18,20 +21,29 @@ class App : CliktCommand() {
 
     private val configFilePath: File? by option(help = "path to config file")
             .convert { File(it) }
-            .validate {
-                it.exists()
-            }
+            .validate { it.exists() }
 
-    private val path: String? by option(help = "path to directory containing scripts")
-            .default("./scripts")
+    private val path: Path? by option(help = "path to directory containing scripts")
+            .convert { Paths.get(it) }
+            .default(Paths.get("./scripts"))
+            .validate { it.toFile().exists() }
 
     private val dbType: String by option(help = "db type : ${dbValues.joinToString(",")}")
             .default("mongo")
-            .validate {
-                dbValues.contains(it)
-            }
+            .validate { dbValues.contains(it) }
+
+    private val identifierRegex: Regex? by option(help = "regex to extract identifier part from scripts")
+            .convert { Regex(it) }
+
+    private val blacklistedTags: Set<Tag>? by option(help = "tags to blacklist")
+            .convert { it.split(",").map { tag -> Tag(tag) }.toSet() }
 
     private val mongoDbName: String? by option(help = "mongo db name")
+
+    private val mongoUri: String? by option(help = "mongo uri")
+
+    private val mongoTmpPath: Path? by option(help = "mongo tmp file path")
+            .convert { Paths.get(it) }
 
     override fun run() {
         try {
@@ -42,8 +54,8 @@ class App : CliktCommand() {
 
             val config = loadConfig(props)
 
-
             runDatamaintain(config)
+
         } catch (e: Exception) {
             echo(e.message ?: "unexpected error")
             exitProcess(0)
@@ -57,16 +69,24 @@ class App : CliktCommand() {
                 echo("dbType $dbType is unknown")
                 exitProcess(0)
             }
-        }.run {
-            this.copy(dbName = mongoDbName ?: this.dbName)
+        }.let {
+            it.copy(
+                    dbName = this.mongoDbName ?: it.dbName,
+                    mongoUri = this.mongoUri ?: it.mongoUri,
+                    tmpFilePath = this.mongoTmpPath ?: it.tmpFilePath
+            )
         }
     }
 
     private fun loadConfig(props: Properties): DatamaintainConfig {
         val driverConfig = loadDriverConfig(props)
         return DatamaintainConfig.buildConfig(props, driverConfig)
-                .run {
-                    copy(path = path)
+                .let {
+                    it.copy(
+                            path = this.path ?: it.path,
+                            identifierRegex = this.identifierRegex ?: it.identifierRegex,
+                            blacklistedTags = this.blacklistedTags ?: it.blacklistedTags
+                    )
                 }
     }
 }
