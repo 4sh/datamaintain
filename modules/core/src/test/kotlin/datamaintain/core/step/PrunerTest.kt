@@ -1,8 +1,9 @@
 package datamaintain.core.step
 
-import datamaintain.core.config.Config
+import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.Context
 import datamaintain.core.db.driver.DatamaintainDriver
+import datamaintain.core.db.driver.FakeDriverConfig
 import datamaintain.core.script.FileScript
 import datamaintain.core.script.ScriptWithoutContent
 import io.mockk.every
@@ -16,7 +17,7 @@ import java.nio.file.Paths
 
 internal class PrunerTest {
     private val dbDriver = mockk<DatamaintainDriver>()
-    private val context = Context(Config(Paths.get(""), Regex("")), dbDriver = dbDriver)
+    private val context = Context(DatamaintainConfig(Paths.get(""), Regex(""), driverConfig = FakeDriverConfig()), dbDriver = dbDriver)
 
     private val pruner = Pruner(context)
 

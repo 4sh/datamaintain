@@ -1,7 +1,6 @@
 package datamaintain.core
 
-import datamaintain.core.config.Config
-import datamaintain.core.db.driver.DatamaintainDriverConfig
+import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.report.ExecutionReport
 import datamaintain.core.script.Script
 import datamaintain.core.step.Executor
@@ -13,18 +12,18 @@ import mu.KotlinLogging
 
 private val logger = KotlinLogging.logger {}
 
-fun runDatamaintain(config: Config, driverConfig: DatamaintainDriverConfig): ExecutionReport {
-    return Core(config, driverConfig).run()
+fun runDatamaintain(config: DatamaintainConfig): ExecutionReport {
+    return Core(config).run()
 }
 
-class Core(config: Config, driverConfig: DatamaintainDriverConfig) {
+class Core(config: DatamaintainConfig) {
 
     init {
         logger.info { "config loaded: $config" }
-        logger.info { "mongo driver config loaded: $driverConfig" }
+        logger.info { "mongo driver config loaded: ${config.driverConfig}" }
     }
 
-    val context = Context(config, driverConfig.toDriver())
+    val context = Context(config, config.driverConfig.toDriver())
 
     fun run(): ExecutionReport =
             Scanner(context).scan()

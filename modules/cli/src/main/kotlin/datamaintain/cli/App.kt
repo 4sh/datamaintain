@@ -5,7 +5,7 @@ import com.github.ajalt.clikt.parameters.options.convert
 import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.validate
-import datamaintain.core.config.Config
+import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.runDatamaintain
 import datamaintain.db.driver.mongo.MongoDriverConfig
 import java.io.File
@@ -42,9 +42,8 @@ class App : CliktCommand() {
 
             val config = loadConfig(props)
 
-            val driverConfig = loadDriverConfig(props)
 
-            runDatamaintain(config, driverConfig)
+            runDatamaintain(config)
         } catch (e: Exception) {
             echo(e.message ?: "unexpected error")
             exitProcess(0)
@@ -63,8 +62,9 @@ class App : CliktCommand() {
         }
     }
 
-    private fun loadConfig(props: Properties): Config {
-        return Config.buildConfig(props)
+    private fun loadConfig(props: Properties): DatamaintainConfig {
+        val driverConfig = loadDriverConfig(props)
+        return DatamaintainConfig.buildConfig(props, driverConfig)
                 .run {
                     copy(path = path)
                 }

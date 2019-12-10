@@ -1,6 +1,6 @@
 package datamaintain.db.driver.mongo.test
 
-import datamaintain.core.config.Config
+import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.report.ExecutionStatus
 import datamaintain.core.report.ReportStatus
 import datamaintain.core.runDatamaintain
@@ -16,15 +16,14 @@ class MongoIT : AbstractMongoDbTest() {
     @Test
     fun `should execute`() {
         // Given
-        val config = Config(
+        val config = DatamaintainConfig(
                 Paths.get("src/test/resources/integration"),
-                Regex("(.*?)_.*")
+                Regex("(.*?)_.*"),
+                driverConfig = MongoDriverConfig(databaseName, mongoUri)
         )
 
-        val driverConfig = MongoDriverConfig(databaseName, mongoUri)
-
         // When
-        val executionReport = runDatamaintain(config, driverConfig)
+        val executionReport = runDatamaintain(config)
 
         // Then
         expectThat(executionReport) {

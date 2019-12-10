@@ -1,31 +1,34 @@
 package datamaintain.core.config
 
+import datamaintain.core.db.driver.DatamaintainDriverConfig
 import datamaintain.core.script.Tag
 import java.io.InputStream
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.*
 
-data class Config(val path: Path = Paths.get(CoreConfigKey.SCAN_PATH.default),
-                  val identifierRegex: Regex = Regex(CoreConfigKey.SCAN_IDENTIFIER_REGEX.default!!),
-                  val blacklistedTags: Set<Tag> = setOf()) {
+data class DatamaintainConfig(val path: Path = Paths.get(CoreConfigKey.SCAN_PATH.default),
+                              val identifierRegex: Regex = Regex(CoreConfigKey.SCAN_IDENTIFIER_REGEX.default!!),
+                              val blacklistedTags: Set<Tag> = setOf(),
+                              val driverConfig: DatamaintainDriverConfig) {
 
     companion object {
 
-        fun buildConfig(configInputStream: InputStream): Config {
+        fun buildConfig(configInputStream: InputStream, driverConfig: DatamaintainDriverConfig): DatamaintainConfig {
             val props = Properties()
             props.load(configInputStream)
-            return buildConfig(props)
+            return buildConfig(props, driverConfig)
         }
 
-        fun buildConfig(props: Properties): Config {
-            return Config(
+        fun buildConfig(props: Properties, driverConfig: DatamaintainDriverConfig): DatamaintainConfig {
+            return DatamaintainConfig(
                     Paths.get(props.getProperty(CoreConfigKey.SCAN_PATH)),
                     Regex(props.getProperty(CoreConfigKey.SCAN_IDENTIFIER_REGEX)),
                     props.getNullableProperty(CoreConfigKey.TAGS_BLACKLISTED)?.split(",")
                             ?.map { Tag(it) }
                             ?.toSet()
-                            ?: setOf())
+                            ?: setOf(),
+                    driverConfig)
         }
 
     }

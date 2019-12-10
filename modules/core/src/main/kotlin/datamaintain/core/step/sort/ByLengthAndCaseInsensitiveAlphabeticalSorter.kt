@@ -1,9 +1,9 @@
 package datamaintain.core.step.sort
 
-import datamaintain.core.config.Config
+import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.script.Script
 
-class ByLengthAndCaseInsensitiveAlphabeticalSorter(config: Config) : Sorter<String>(config) {
+class ByLengthAndCaseInsensitiveAlphabeticalSorter(config: DatamaintainConfig) : Sorter<String>(config) {
     override fun <T : Script> sort(scripts: List<T>, getter: (T) -> String): List<T> {
         return scripts.sortedWith(Comparator { script1, script2 ->
             val value1 = getter(script1)
