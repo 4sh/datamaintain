@@ -12,9 +12,7 @@ repositories {
 
 dependencies {
     implementation(project(":modules:core"))
-
-    implementation("org.litote.kmongo:kmongo:${Versions.kmongo}")
-
+    implementation("org.mongodb:mongodb-driver-sync:${Versions.mongoDriver}")
 }
 
 mongo {

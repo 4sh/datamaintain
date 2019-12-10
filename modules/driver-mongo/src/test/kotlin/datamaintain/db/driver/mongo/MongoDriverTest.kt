@@ -46,7 +46,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
         mongoDatamaintainDriver.markAsExecuted(script3)
 
         // Then
-        val executedScripts = collection.find().toList()
+        val executedScripts = collection.find().toList().map { mongoDatamaintainDriver.documentToScriptWithoutContent(it) }
         expectThat(executedScripts.toList()) {
             size.isEqualTo(3)
             contains(script1, script2, script3)
@@ -123,10 +123,11 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
 
     private fun insertDataInDb() {
         collection.insertMany(listOf(
-                script1,
-                script2
+                mongoDatamaintainDriver.scriptWithoutContentToDocument(script1),
+                mongoDatamaintainDriver.scriptWithoutContentToDocument(script2)
         ))
     }
+
 
     private val script1 = ScriptWithoutContent("script1.js", "c4ca4238a0b923820dcc509a6f75849b", "")
     private val script2 = ScriptWithoutContent("script2.js", "c81e728d9d4c2f636f067f89cc14862c", "")
