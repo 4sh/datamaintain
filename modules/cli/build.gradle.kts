@@ -14,7 +14,7 @@ dependencies {
     implementation(project(":modules:core"))
     implementation(project(":modules:driver-mongo"))
     implementation("com.github.ajalt:clikt:${Versions.clikt}")
-
+    implementation("ch.qos.logback:logback-classic:${Versions.logbackClassic}")
 }
 
 application {

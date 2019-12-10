@@ -14,8 +14,6 @@ fun Project.baseProject() {
 
     dependencies {
         "implementation"("io.github.microutils:kotlin-logging:${Versions.kotlinLogging}")
-       // TODO MRU a déplacer dans cli
-        "implementation"("ch.qos.logback:logback-classic:${Versions.logbackClassic}")
 
         "testImplementation"("org.junit.jupiter:junit-jupiter-api:${Versions.junit}")
         "testImplementation"("org.junit.jupiter:junit-jupiter-params:${ Versions.junit }")
