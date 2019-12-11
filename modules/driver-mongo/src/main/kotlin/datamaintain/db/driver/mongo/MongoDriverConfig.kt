@@ -16,6 +16,7 @@ data class MongoDriverConfig(val dbName: String,
 ) : DatamaintainDriverConfig {
     companion object {
         fun buildConfig(props: Properties): MongoDriverConfig {
+            ConfigKey.overrideBySystemProperties(props, MongoConfigKey.values().asList())
             return MongoDriverConfig(
                     props.getProperty(MongoConfigKey.DB_MONGO_DBNAME),
                     props.getProperty(MongoConfigKey.DB_MONGO_URI),

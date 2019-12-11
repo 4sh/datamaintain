@@ -10,6 +10,7 @@ import strikt.assertions.containsExactly
 import strikt.assertions.isEqualTo
 import strikt.assertions.map
 import java.nio.file.Paths
+import java.util.*
 
 class DatamaintainConfigTest {
     @Test
@@ -39,6 +40,19 @@ class DatamaintainConfigTest {
                 FakeDriverConfig())
         expectThat(config) and {
             get { identifierRegex.pattern }.isEqualTo(CoreConfigKey.SCAN_IDENTIFIER_REGEX.default)
+        }
+    }
+
+    @Test
+    fun `should be overridden by jvm`() {
+        System.setProperty("scan.path", "/new")
+
+        val config = DatamaintainConfig.buildConfig(DatamaintainConfigTest::class.java.getResourceAsStream("/config/default.properties"),
+                FakeDriverConfig())
+        expectThat(config).and {
+            get { path }.isEqualTo(Paths.get("/new"))
+            get { identifierRegex.pattern }.isEqualTo("(.*?)_.*")
+            get { blacklistedTags }.isEqualTo(setOf(Tag("un"), Tag("deux")))
         }
     }
 }
