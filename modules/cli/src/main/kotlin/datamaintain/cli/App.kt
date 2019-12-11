@@ -76,7 +76,7 @@ class App : CliktCommand() {
 
     private fun loadConfig(props: Properties): DatamaintainConfig {
         val driverConfig = loadDriverConfig(props)
-        return DatamaintainConfig.buildConfig(props, driverConfig)
+        return DatamaintainConfig.buildConfig(driverConfig, props)
     }
 
     enum class DbType(val value: String) {

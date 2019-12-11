@@ -1,5 +1,6 @@
 package datamaintain.core.config
 
+import datamaintain.core.config.ConfigKey.Companion.overrideBySystemProperties
 import datamaintain.core.db.driver.DatamaintainDriverConfig
 import datamaintain.core.script.Tag
 import mu.KotlinLogging
@@ -20,10 +21,11 @@ data class DatamaintainConfig(val path: Path = Paths.get(CoreConfigKey.SCAN_PATH
         fun buildConfig(configInputStream: InputStream, driverConfig: DatamaintainDriverConfig): DatamaintainConfig {
             val props = Properties()
             props.load(configInputStream)
-            return buildConfig(props, driverConfig)
+            return buildConfig(driverConfig, props)
         }
 
-        fun buildConfig(props: Properties, driverConfig: DatamaintainDriverConfig): DatamaintainConfig {
+        fun buildConfig(driverConfig: DatamaintainDriverConfig, props: Properties = Properties()): DatamaintainConfig {
+            overrideBySystemProperties(props, CoreConfigKey.values().asList())
             return DatamaintainConfig(
                     Paths.get(props.getProperty(CoreConfigKey.SCAN_PATH)),
                     Regex(props.getProperty(CoreConfigKey.SCAN_IDENTIFIER_REGEX)),
@@ -33,7 +35,6 @@ data class DatamaintainConfig(val path: Path = Paths.get(CoreConfigKey.SCAN_PATH
                             ?: setOf(),
                     driverConfig)
         }
-
     }
 
     fun log() {
@@ -49,7 +50,17 @@ data class DatamaintainConfig(val path: Path = Paths.get(CoreConfigKey.SCAN_PATH
 interface ConfigKey {
     val key: String
     val default: String?
+
+    companion object {
+        fun overrideBySystemProperties(props: Properties, configKeys: List<ConfigKey>) {
+            configKeys.forEach { configKey ->
+                val property: String? = System.getProperty(configKey.key)
+                property?.let { props.put(configKey.key, it) }
+            }
+        }
+    }
 }
+
 
 enum class CoreConfigKey(override val key: String,
                          override val default: String? = null) : ConfigKey {
