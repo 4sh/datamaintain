@@ -24,6 +24,9 @@ class MongoDriver(dbName: String,
 
     companion object {
         const val EXECUTED_SCRIPTS_COLLECTION = "executed-scripts"
+        private const val SCRIPT_DOCUMENT_NAME = "name"
+        private const val SCRIPT_DOCUMENT_CHECKSUM = "checksum"
+        private const val SCRIPT_DOCUMENT_IDENTIFIER = "identifier"
     }
 
     init {
@@ -64,15 +67,15 @@ class MongoDriver(dbName: String,
 
     fun scriptWithoutContentToDocument(script: ScriptWithoutContent): Document {
         return Document()
-                .append("name", script.name)
-                .append("checksum", script.checksum)
-                .append("identifier", script.identifier)
+                .append(SCRIPT_DOCUMENT_NAME, script.name)
+                .append(SCRIPT_DOCUMENT_CHECKSUM, script.checksum)
+                .append(SCRIPT_DOCUMENT_IDENTIFIER, script.identifier)
     }
 
     fun documentToScriptWithoutContent(document: Document): ScriptWithoutContent {
-        val name: String = document.getString("name")
-        val checksum: String = document.getString("checksum")
-        val identifier: String = document.getString("identifier")
+        val name: String = document.getString(SCRIPT_DOCUMENT_NAME)
+        val checksum: String = document.getString(SCRIPT_DOCUMENT_CHECKSUM)
+        val identifier: String = document.getString(SCRIPT_DOCUMENT_IDENTIFIER)
         return ScriptWithoutContent(name, checksum, identifier)
     }
 }
