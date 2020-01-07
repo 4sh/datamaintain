@@ -64,9 +64,6 @@ interface ConfigKey {
 
 enum class CoreConfigKey(override val key: String,
                          override val default: String? = null) : ConfigKey {
-    // DRIVER
-    DB_DRIVER("db.driver"),
-
     // SCAN
     SCAN_PATH("scan.path", "./scripts/"),
     SCAN_IDENTIFIER_REGEX("scan.identifier.regex", ".*"),
