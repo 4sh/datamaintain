@@ -16,7 +16,8 @@ import java.time.Instant
 
 class MongoDriver(dbName: String,
                   private val mongoUri: String,
-                  private val tmpFilePath: Path
+                  private val tmpFilePath: Path,
+                  private val clientPath: Path
 ) : DatamaintainDriver {
     private val database: MongoDatabase
     private val executedScriptsCollection: MongoCollection<ScriptWithoutContent>
@@ -42,7 +43,7 @@ class MongoDriver(dbName: String,
             }
         }
 
-        val result = listOf("mongo", "--host", mongoUri, database.name, "--quiet", scriptPath.toString()).runProcess()
+        val result = listOf(clientPath.toString(), "--host", mongoUri, database.name, "--quiet", scriptPath.toString()).runProcess()
         return ExecutionLineReport(
                 Instant.now(),
                 result.output,

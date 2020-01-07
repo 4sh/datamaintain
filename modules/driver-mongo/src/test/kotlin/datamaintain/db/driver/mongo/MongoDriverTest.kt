@@ -18,7 +18,8 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
     private val mongoDatamaintainDriver = MongoDriver(
             databaseName,
             mongoUri,
-            Paths.get(MongoConfigKey.DB_MONGO_TMP_PATH.default!!)
+            Paths.get(MongoConfigKey.DB_MONGO_TMP_PATH.default!!),
+            Paths.get("mongo")
     )
 
     @Test
