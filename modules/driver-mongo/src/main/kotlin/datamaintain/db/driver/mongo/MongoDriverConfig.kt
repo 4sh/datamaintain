@@ -15,6 +15,7 @@ data class MongoDriverConfig(val dbName: String,
                              val tmpFilePath: Path = Paths.get(MongoConfigKey.DB_MONGO_TMP_PATH.default!!)
 ) : DatamaintainDriverConfig {
     companion object {
+        @JvmStatic
         fun buildConfig(props: Properties): MongoDriverConfig {
             ConfigKey.overrideBySystemProperties(props, MongoConfigKey.values().asList())
             return MongoDriverConfig(

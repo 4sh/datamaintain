@@ -22,12 +22,14 @@ data class DatamaintainConfig(val path: Path = Paths.get(CoreConfigKey.SCAN_PATH
     companion object {
         private val defaultExecutionMode = ExecutionMode.NORMAL;
 
+        @JvmStatic
         fun buildConfig(configInputStream: InputStream, driverConfig: DatamaintainDriverConfig): DatamaintainConfig {
             val props = Properties()
             props.load(configInputStream)
             return buildConfig(driverConfig, props)
         }
 
+        @JvmStatic
         fun buildConfig(driverConfig: DatamaintainDriverConfig, props: Properties = Properties()): DatamaintainConfig {
             overrideBySystemProperties(props, CoreConfigKey.values().asList())
             return DatamaintainConfig(
