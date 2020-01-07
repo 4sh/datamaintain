@@ -1,5 +1,6 @@
 package datamaintain.db.driver.mongo
 
+import com.mongodb.ConnectionString
 import com.mongodb.client.MongoClients
 import com.mongodb.client.MongoCollection
 import com.mongodb.client.MongoDatabase
@@ -14,6 +15,7 @@ import datamaintain.core.util.runProcess
 import org.bson.Document
 import java.nio.file.Path
 import java.time.Instant
+import kotlin.IllegalArgumentException
 
 class MongoDriver(dbName: String,
                   private val mongoUri: String,
@@ -30,7 +32,21 @@ class MongoDriver(dbName: String,
     }
 
     init {
-        val client = MongoClients.create("mongodb://$mongoUri")
+        // Parse and check mongoUri String
+        val mongoUriConnection = ConnectionString(mongoUri)
+
+        // mongoUri can come with a database but currently driver's dbName is mandatory
+        if (mongoUriConnection.database != null && !mongoUriConnection.database.equals(dbName)) {
+            throw IllegalArgumentException("MongoUri contains a database name, " +
+                    "please remove it and use 'dbName' property instead")
+        }
+
+        // mongoUri can come with a collection. It has no sense in DataMaintain's logic
+        if (mongoUriConnection.collection != null) {
+            throw IllegalArgumentException("MongoUri contains a collection name, please remove it")
+        }
+
+        val client = MongoClients.create(mongoUriConnection)
         database = client.getDatabase(dbName)
         executedScriptsCollection = database.getCollection(EXECUTED_SCRIPTS_COLLECTION, Document::class.java)
     }
@@ -46,7 +62,7 @@ class MongoDriver(dbName: String,
             }
         }
 
-        val result = listOf("mongo", "mongodb://$mongoUri/${database.name}", "--quiet", scriptPath.toString()).runProcess()
+        val result = listOf("mongo", "$mongoUri/${database.name}", "--quiet", scriptPath.toString()).runProcess()
         return ExecutionLineReport(
                 Instant.now(),
                 result.output,

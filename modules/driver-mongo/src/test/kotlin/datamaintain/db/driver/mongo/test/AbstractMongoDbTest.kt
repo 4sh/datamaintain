@@ -9,9 +9,10 @@ import org.junit.jupiter.api.BeforeEach
 
 abstract class AbstractMongoDbTest {
     val databaseName = "datamaintain-test"
-    val mongoUri = "localhost:27018"
+    val mongoHost = "localhost:27018"
+    val mongoUri = "mongodb://${mongoHost}"
 
-    private val client = MongoClients.create("mongodb://$mongoUri")
+    private val client = MongoClients.create(mongoUri)
     val database = client.getDatabase(databaseName)
 
     val collection = database.getCollection(

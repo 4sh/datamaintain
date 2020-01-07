@@ -42,7 +42,7 @@ enum class MongoConfigKey(
         override val key: String,
         override val default: String? = null
 ) : ConfigKey {
-    DB_MONGO_URI("db.mongo.uri", "localhost:27017"),
+    DB_MONGO_URI("db.mongo.uri", "mongodb://localhost:27017"),
     DB_MONGO_DBNAME("db.mongo.dbname"),
     DB_MONGO_TMP_PATH("db.mongo.tmp.path", "/tmp/datamaintain.tmp"),
 }
