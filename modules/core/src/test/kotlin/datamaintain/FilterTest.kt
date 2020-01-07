@@ -1,7 +1,7 @@
 package datamaintain
 
-import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.Context
+import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.db.driver.DatamaintainDriver
 import datamaintain.core.db.driver.FakeDriverConfig
 import datamaintain.core.script.FileScript
@@ -23,7 +23,7 @@ internal class FilterTest {
                     Paths.get(""),
                     Regex(""),
                     setOf(blacklistedTag),
-                    FakeDriverConfig()),
+                    driverConfig = FakeDriverConfig()),
             dbDriver = dbDriver)
 
     private val filter = Filter(context)

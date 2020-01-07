@@ -10,6 +10,7 @@ import datamaintain.core.runDatamaintain
 import datamaintain.core.script.Tag
 import datamaintain.db.driver.mongo.MongoDriverConfig
 import java.io.File
+import java.nio.file.FileSystems
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.*
@@ -44,6 +45,19 @@ class App : CliktCommand() {
 
     private val mongoTmpPath: Path? by option(help = "mongo tmp file path")
             .convert { Paths.get(it) }
+
+    private val tags: Set<Tag>? by option(help = "list of your tags defined using glob path matchers, like this: " +
+            "MYTAG1=[pathMatcher1; pathMatcher2],MYTAG2=[pathMatcher3]...")
+            .convert {
+                it.split(",")
+                        .map { tagDeclaration -> tagDeclaration.split("=") }
+                        .map { splitTagDeclaration ->
+                            Tag(splitTagDeclaration[0],
+                                    pathMatchers = splitTagDeclaration[1].split(";")
+                                            .map { pathMatcher -> FileSystems.getDefault().getPathMatcher("glob:" + pathMatcher) }
+                                            .toSet())
+                        }.toSet()
+            }
 
     override fun run() {
         try {
@@ -85,7 +99,8 @@ class App : CliktCommand() {
                     it.copy(
                             path = this.path ?: it.path,
                             identifierRegex = this.identifierRegex ?: it.identifierRegex,
-                            blacklistedTags = this.blacklistedTags ?: it.blacklistedTags
+                            blacklistedTags = this.blacklistedTags ?: it.blacklistedTags,
+                            tags = this.tags?: it.tags
                     )
                 }
     }

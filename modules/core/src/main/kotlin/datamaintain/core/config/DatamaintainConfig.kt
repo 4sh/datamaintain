@@ -4,6 +4,7 @@ import datamaintain.core.db.driver.DatamaintainDriverConfig
 import datamaintain.core.script.Tag
 import mu.KotlinLogging
 import java.io.InputStream
+import java.nio.file.FileSystems
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.*
@@ -13,6 +14,7 @@ private val logger = KotlinLogging.logger {}
 data class DatamaintainConfig(val path: Path = Paths.get(CoreConfigKey.SCAN_PATH.default),
                               val identifierRegex: Regex = Regex(CoreConfigKey.SCAN_IDENTIFIER_REGEX.default!!),
                               val blacklistedTags: Set<Tag> = setOf(),
+                              val tags: Set<Tag> = setOf(),
                               val driverConfig: DatamaintainDriverConfig) {
 
     companion object {
@@ -31,6 +33,15 @@ data class DatamaintainConfig(val path: Path = Paths.get(CoreConfigKey.SCAN_PATH
                             ?.map { Tag(it) }
                             ?.toSet()
                             ?: setOf(),
+                    props.getProperty(CoreConfigKey.TAGS).split(",")
+                            .map { tagDeclaration -> tagDeclaration.split("=") }
+                            .filter { it.size > 1 }
+                            .map { splitTagDeclaration ->
+                                Tag(splitTagDeclaration[0],
+                                        pathMatchers = splitTagDeclaration[1].split(";")
+                                                .map{ pathMatcher -> pathMatcher.trim('[', ']', ' ')}
+                                                .map{pathMatcher -> FileSystems.getDefault().getPathMatcher("glob:$pathMatcher")}.toSet())
+                            }.toSet(),
                     driverConfig)
         }
 
@@ -41,6 +52,7 @@ data class DatamaintainConfig(val path: Path = Paths.get(CoreConfigKey.SCAN_PATH
         path.let { logger.info { "- path -> $path" } }
         identifierRegex.let { logger.info { "- identifier regex -> ${identifierRegex.pattern}" } }
         blacklistedTags.let { logger.info { "- blacklisted tags -> $blacklistedTags" } }
+        tags.let { logger.info { "- tags -> $tags" } }
         logger.info { "" }
     }
 
@@ -59,6 +71,7 @@ enum class CoreConfigKey(override val key: String,
     // SCAN
     SCAN_PATH("scan.path", "./scripts/"),
     SCAN_IDENTIFIER_REGEX("scan.identifier.regex", ".*"),
+    TAGS("tags", ""),
 
     // FILTER
     TAGS_BLACKLISTED("filter.tags.blacklisted")

@@ -1,12 +1,14 @@
 package datamaintain.core
 
-import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.config.CoreConfigKey
+import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.db.driver.FakeDriverConfig
 import datamaintain.core.script.Tag
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
+import strikt.assertions.containsExactly
 import strikt.assertions.isEqualTo
+import strikt.assertions.map
 import java.nio.file.Paths
 
 class DatamaintainConfigTest {
@@ -20,6 +22,14 @@ class DatamaintainConfigTest {
             get { path }.isEqualTo(expectedPath)
             get { identifierRegex.pattern }.isEqualTo("(.*?)_.*")
             get { blacklistedTags }.isEqualTo(setOf(Tag("un"), Tag("deux")))
+            get { tags }.map { it.name }.containsExactly("TOTO", "potato")
+//                    setOf(Tag("TOTO", setOf(
+//                            FileSystems.getDefault().getPathMatcher("glob:src/test/resources/scanner_test_files/01_file1"),
+//                            FileSystems.getDefault().getPathMatcher("glob:src/test/resources/scanner_test_files/subfolder/*")
+//                    )), Tag("potato", setOf(
+//                            FileSystems.getDefault().getPathMatcher("glob:src/test/resources/scanner_test_files/*"),
+//                            FileSystems.getDefault().getPathMatcher("glob:src/test/resources/scanner_test_files/subfolder/03_file3")
+//                    ))))
         }
     }
 
