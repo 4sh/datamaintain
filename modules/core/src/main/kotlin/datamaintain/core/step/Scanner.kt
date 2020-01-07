@@ -7,8 +7,10 @@ import datamaintain.core.script.ScriptWithContent
 class Scanner(private val context: Context) {
     fun scan(): List<ScriptWithContent> = context.config.path.toFile().walk()
             .filter { it.isFile }
+            .map {it.toPath()}
             .map {
-                FileScript(it.toPath(), context.config.identifierRegex)
+                FileScript(it, context.config.identifierRegex,
+                        context.config.tags.filter { tag -> tag.matchesPath(it) }.toSet())
             }
             .sortedBy { it.name }.toList()
 }
