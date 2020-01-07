@@ -1,12 +1,14 @@
 package datamaintain.core.step
 
-import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.Context
+import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.db.driver.FakeDatamaintainDriver
 import datamaintain.core.db.driver.FakeDriverConfig
 import datamaintain.core.script.Tag
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
+import strikt.assertions.*
+import java.nio.file.FileSystems
 import strikt.assertions.get
 import strikt.assertions.isEmpty
 import strikt.assertions.isEqualTo
@@ -16,7 +18,14 @@ import java.nio.file.Paths
 internal class ScannerTest {
     private val scanner = Scanner(Context(
             DatamaintainConfig(Paths.get("src/test/resources/scanner_test_files"),
-                    Regex("(.*?)_.*"), driverConfig = FakeDriverConfig()),
+                    Regex("(.*?)_.*"), driverConfig = FakeDriverConfig(),
+                    tags = setOf(Tag("TOTO", setOf(
+                            FileSystems.getDefault().getPathMatcher("glob:src/test/resources/scanner_test_files/01_file1"),
+                            FileSystems.getDefault().getPathMatcher("glob:src/test/resources/scanner_test_files/subfolder/*")
+                    )), Tag("potato", setOf(
+                            FileSystems.getDefault().getPathMatcher("glob:src/test/resources/scanner_test_files/*"),
+                            FileSystems.getDefault().getPathMatcher("glob:src/test/resources/scanner_test_files/subfolder/03_file3")
+                    )))),
             dbDriver = FakeDatamaintainDriver()))
 
     @Test
@@ -92,6 +101,31 @@ internal class ScannerTest {
             get(3).get { this.identifier }.isEqualTo("04")
             get(4).get { this.identifier }.isEqualTo("10")
             get(5).get { this.identifier }.isEqualTo("11")
+        }
+    }
+
+    @Test
+    fun `should give tags to scripts`() {
+        // Given
+
+        // When
+        val scripts = scanner.scan()
+
+        // Then
+        expectThat(scripts) {
+            size.isEqualTo(6)
+
+            get(0).get{ this.tags }.map { it.name }.containsExactly("TOTO", "potato")
+
+            get(1).get { this.tags }.map { it.name }.containsExactly("potato")
+
+            get(2).get{ this.tags }.map { it.name }.containsExactly("TOTO", "potato")
+
+            get(3).get{ this.tags }.map { it.name }.containsExactly("TOTO")
+
+            get(4).get{ this.tags }.map { it.name }.containsExactly("potato")
+
+            get(5).get{ this.tags }.map { it.name }.containsExactly("TOTO")
         }
     }
 

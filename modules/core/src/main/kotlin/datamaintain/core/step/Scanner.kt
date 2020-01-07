@@ -1,6 +1,7 @@
 package datamaintain.core.step
 
 import datamaintain.core.Context
+import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.script.FileScript
 import datamaintain.core.script.ScriptWithContent
 import datamaintain.core.script.Tag
@@ -13,16 +14,20 @@ class Scanner(private val context: Context) {
 
         return rootFolder.walk()
                 .filter { it.isFile }
-                .map {
-                    val tags = mutableSetOf<Tag>()
-
-                    if (context.config.doesCreateTagsFromFolder) {
-                        tags.addAll(buildTagsFromFolder(rootFolder, it));
-                    }
-
-                    FileScript(it.toPath(), context.config.identifierRegex, tags.toSet())
-                }
+                .map { FileScript(it.toPath(), context.config.identifierRegex,
+                        buildTags(context.config, rootFolder, it).toSet()) }
                 .sortedBy { it.name }.toList()
+    }
+
+    private fun buildTags(config: DatamaintainConfig, rootFolder: File, it: File): Set<Tag> {
+        val tags = mutableSetOf<Tag>()
+
+        if(config.doesCreateTagsFromFolder)
+            tags.addAll(buildTagsFromFolder(rootFolder, it))
+
+        tags.addAll(config.tags.filter { tag -> tag.matchesPath(it) })
+
+        return tags
     }
 
     private fun buildTagsFromFolder(rootFolder: File, it: File): Set<Tag> {
