@@ -8,7 +8,15 @@ jobs:
     docker:
       - image: oracle/graalvm-ce:latest
     steps:
-      - run: yum install -y mongodb-test # better solution should be create custom image and use mongo client only
+      - run: echo '[mongodb-org-4.0]' > /etc/yum.repos.d/mongodb-org-4.0.repo
+      - run: echo 'name=MongoDB Repository' >> /etc/yum.repos.d/mongodb-org-4.0.repo
+      - run: echo 'baseurl=https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/4.0/x86_64/' >> /etc/yum.repos.d/mongodb-org-4.0.repo
+      - run: echo 'gpgcheck=1' >> /etc/yum.repos.d/mongodb-org-4.0.repo
+      - run: echo 'enabled=1' >> /etc/yum.repos.d/mongodb-org-4.0.repo
+      - run: echo 'gpgkey=https://www.mongodb.org/static/pgp/server-4.0.asc' >> /etc/yum.repos.d/mongodb-org-4.0.repo
+      - run: cat /etc/yum.repos.d/mongodb-org-4.0.repo
+      - run: rpm --import https://www.mongodb.org/static/pgp/server-4.0.asc
+      - run: yum install -y mongodb-org-shell # better solution should be create custom image and use mongo client only
       - checkout
       - restore_cache:
           key: v1-gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
