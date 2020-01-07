@@ -31,7 +31,7 @@ class App : CliktCommand() {
 
     private val identifierRegex: String? by option(help = "regex to extract identifier part from scripts")
 
-    private val blacklistedTags: String? by option(help = "tags to blacklist")
+    private val blacklistedTags: String? by option(help = "tags to blacklist (separated by ','")
 
     private val mongoDbName: String? by option(help = "mongo db name")
 
