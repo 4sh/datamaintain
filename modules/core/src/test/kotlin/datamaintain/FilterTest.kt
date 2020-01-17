@@ -7,6 +7,7 @@ import datamaintain.core.db.driver.FakeDriverConfig
 import datamaintain.core.script.FileScript
 import datamaintain.core.script.Tag
 import datamaintain.core.step.Filter
+import datamaintain.core.step.executor.ExecutionMode
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
@@ -23,6 +24,7 @@ internal class FilterTest {
                     Paths.get(""),
                     Regex(""),
                     setOf(blacklistedTag),
+                    ExecutionMode.NORMAL,
                     FakeDriverConfig()),
             dbDriver = dbDriver)
 

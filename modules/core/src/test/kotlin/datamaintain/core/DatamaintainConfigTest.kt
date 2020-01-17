@@ -4,6 +4,7 @@ import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.config.CoreConfigKey
 import datamaintain.core.db.driver.FakeDriverConfig
 import datamaintain.core.script.Tag
+import datamaintain.core.step.executor.ExecutionMode
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
@@ -30,6 +31,7 @@ class DatamaintainConfigTest {
                 FakeDriverConfig())
         expectThat(config) and {
             get { identifierRegex.pattern }.isEqualTo(CoreConfigKey.SCAN_IDENTIFIER_REGEX.default)
+            get { executionMode }.isEqualTo(ExecutionMode.NORMAL)
         }
     }
 
