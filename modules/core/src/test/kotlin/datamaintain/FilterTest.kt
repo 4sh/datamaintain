@@ -23,6 +23,7 @@ internal class FilterTest {
             DatamaintainConfig(
                     Paths.get(""),
                     Regex(""),
+                    false,
                     setOf(blacklistedTag),
                     ExecutionMode.NORMAL,
                     FakeDriverConfig()),

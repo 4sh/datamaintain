@@ -14,6 +14,7 @@ private val logger = KotlinLogging.logger {}
 
 data class DatamaintainConfig(val path: Path = Paths.get(CoreConfigKey.SCAN_PATH.default),
                               val identifierRegex: Regex = Regex(CoreConfigKey.SCAN_IDENTIFIER_REGEX.default!!),
+                              val doesCreateTagsFromFolder: Boolean = CoreConfigKey.CREATE_TAGS_FROM_FOLDER.default!!.toBoolean(),
                               val blacklistedTags: Set<Tag> = setOf(),
                               val executionMode: ExecutionMode = defaultExecutionMode,
                               val driverConfig: DatamaintainDriverConfig) {
@@ -32,6 +33,7 @@ data class DatamaintainConfig(val path: Path = Paths.get(CoreConfigKey.SCAN_PATH
             return DatamaintainConfig(
                     Paths.get(props.getProperty(CoreConfigKey.SCAN_PATH)),
                     Regex(props.getProperty(CoreConfigKey.SCAN_IDENTIFIER_REGEX)),
+                    props.getProperty(CoreConfigKey.CREATE_TAGS_FROM_FOLDER).toBoolean(),
                     props.getNullableProperty(CoreConfigKey.TAGS_BLACKLISTED)?.split(",")
                             ?.map { Tag(it) }
                             ?.toSet()
@@ -71,6 +73,7 @@ enum class CoreConfigKey(override val key: String,
     // SCAN
     SCAN_PATH("scan.path", "./scripts/"),
     SCAN_IDENTIFIER_REGEX("scan.identifier.regex", ".*"),
+    CREATE_TAGS_FROM_FOLDER("scan.tags.createFromFolder", "false"),
 
     // FILTER
     TAGS_BLACKLISTED("filter.tags.blacklisted"),
