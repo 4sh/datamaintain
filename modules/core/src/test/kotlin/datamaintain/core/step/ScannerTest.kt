@@ -1,27 +1,22 @@
 package datamaintain.core.step
 
-import datamaintain.core.Context
 import datamaintain.core.config.DatamaintainConfig
+import datamaintain.core.Context
 import datamaintain.core.db.driver.FakeDatamaintainDriver
 import datamaintain.core.db.driver.FakeDriverConfig
 import datamaintain.core.script.Tag
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
-import strikt.assertions.*
-import java.nio.file.FileSystems
+import strikt.assertions.get
+import strikt.assertions.isEmpty
+import strikt.assertions.isEqualTo
+import strikt.assertions.size
 import java.nio.file.Paths
 
 internal class ScannerTest {
     private val scanner = Scanner(Context(
             DatamaintainConfig(Paths.get("src/test/resources/scanner_test_files"),
-                    Regex("(.*?)_.*"), driverConfig = FakeDriverConfig(),
-                    tags = setOf(Tag("TOTO", setOf(
-                            FileSystems.getDefault().getPathMatcher("glob:src/test/resources/scanner_test_files/01_file1"),
-                            FileSystems.getDefault().getPathMatcher("glob:src/test/resources/scanner_test_files/subfolder/*")
-                    )), Tag("potato", setOf(
-                            FileSystems.getDefault().getPathMatcher("glob:src/test/resources/scanner_test_files/*"),
-                            FileSystems.getDefault().getPathMatcher("glob:src/test/resources/scanner_test_files/subfolder/03_file3")
-                    )))),
+                    Regex("(.*?)_.*"), driverConfig = FakeDriverConfig()),
             dbDriver = FakeDatamaintainDriver()))
 
     @Test
@@ -101,7 +96,7 @@ internal class ScannerTest {
     }
 
     @Test
-    fun `should give tags to scripts`() {
+    fun `should not build tags from parents`() {
         // Given
 
         // When
@@ -110,18 +105,44 @@ internal class ScannerTest {
         // Then
         expectThat(scripts) {
             size.isEqualTo(6)
+            get(0).get { this.tags }.isEmpty()
+            get(1).get { this.tags }.isEmpty()
+            get(2).get { this.tags }.isEmpty()
+            get(3).get { this.tags }.isEmpty()
+            get(4).get { this.tags }.isEmpty()
+            get(5).get { this.tags }.isEmpty()
+        }
+    }
 
-            get(0).get{ this.tags }.map { it.name }.containsExactly("TOTO", "potato")
+    @Test
+    fun `should create tags from parent`() {
+        // Given
+        val scanner = Scanner(Context(
+                DatamaintainConfig(
+                        Paths.get("src/test/resources/scanner_test_files"),
+                        Regex("(.*?)_.*"),
+                        driverConfig = FakeDriverConfig(),
+                        doesCreateTagsFromFolder = true),
+                dbDriver = FakeDatamaintainDriver()))
 
-            get(1).get { this.tags }.map { it.name }.containsExactly("potato")
+        // When
+        val scripts = scanner.scan()
 
-            get(2).get{ this.tags }.map { it.name }.containsExactly("TOTO", "potato")
-
-            get(3).get{ this.tags }.map { it.name }.containsExactly("TOTO")
-
-            get(4).get{ this.tags }.map { it.name }.containsExactly("potato")
-
-            get(5).get{ this.tags }.map { it.name }.containsExactly("TOTO")
+        // Then
+        expectThat(scripts) {
+            size.isEqualTo(6)
+            get(0).get { this.name }.isEqualTo("01_file1")
+            get(0).get { this.tags }.isEmpty()
+            get(1).get { this.name }.isEqualTo("02_file2")
+            get(1).get { this.tags }.isEmpty()
+            get(2).get { this.name }.isEqualTo("03_file3")
+            get(2).get { this.tags }.isEqualTo(setOf(Tag("subfolder")))
+            get(3).get { this.name }.isEqualTo("04_file4")
+            get(3).get { this.tags }.isEqualTo(setOf(Tag("subfolder")))
+            get(4).get { this.name }.isEqualTo("10_file10")
+            get(4).get { this.tags }.isEmpty()
+            get(5).get { this.name }.isEqualTo("11_file11")
+            get(5).get { this.tags }.isEqualTo(setOf(Tag("subfolder"), Tag("old")))
         }
     }
 }

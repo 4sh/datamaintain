@@ -8,6 +8,8 @@ import datamaintain.core.step.executor.ExecutionMode
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
+import strikt.assertions.isFalse
+import strikt.assertions.isTrue
 import java.nio.file.Paths
 import java.util.*
 
@@ -22,6 +24,7 @@ class DatamaintainConfigTest {
             get { path }.isEqualTo(expectedPath)
             get { identifierRegex.pattern }.isEqualTo("(.*?)_.*")
             get { blacklistedTags }.isEqualTo(setOf(Tag("un"), Tag("deux")))
+            get { doesCreateTagsFromFolder }.isTrue()
             get { executionMode }.isEqualTo(ExecutionMode.DRY)
         }
     }
@@ -32,6 +35,7 @@ class DatamaintainConfigTest {
                 FakeDriverConfig())
         expectThat(config) and {
             get { identifierRegex.pattern }.isEqualTo(CoreConfigKey.SCAN_IDENTIFIER_REGEX.default)
+            get { doesCreateTagsFromFolder }.isEqualTo(CoreConfigKey.CREATE_TAGS_FROM_FOLDER.default!!.toBoolean())
             get { executionMode }.isEqualTo(ExecutionMode.NORMAL)
         }
     }
@@ -39,6 +43,7 @@ class DatamaintainConfigTest {
     @Test
     fun `should be overridden by jvm`() {
         System.setProperty("scan.path", "/new")
+        System.setProperty(CoreConfigKey.CREATE_TAGS_FROM_FOLDER.key, "false")
         System.setProperty(CoreConfigKey.EXECUTION_MODE.key, "NORMAL")
 
         val config = DatamaintainConfig.buildConfig(DatamaintainConfigTest::class.java.getResourceAsStream("/config/default.properties"),
@@ -46,6 +51,7 @@ class DatamaintainConfigTest {
         expectThat(config).and {
             get { path }.isEqualTo(Paths.get("/new"))
             get { identifierRegex.pattern }.isEqualTo("(.*?)_.*")
+            get { doesCreateTagsFromFolder }.isFalse()
             get { blacklistedTags }.isEqualTo(setOf(Tag("un"), Tag("deux")))
             get { executionMode }.isEqualTo(ExecutionMode.NORMAL)
         }
