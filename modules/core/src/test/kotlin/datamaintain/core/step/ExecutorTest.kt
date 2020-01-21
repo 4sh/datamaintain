@@ -10,6 +10,8 @@ import datamaintain.core.report.ExecutionStatus
 import datamaintain.core.report.ReportStatus
 import datamaintain.core.script.FileScript
 import datamaintain.core.script.Script
+import datamaintain.core.step.executor.ExecutionMode
+import datamaintain.core.step.executor.Executor
 import io.mockk.MockKAnswerScope
 import io.mockk.every
 import io.mockk.mockk
@@ -18,6 +20,7 @@ import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.get
 import strikt.assertions.hasSize
+import strikt.assertions.isEmpty
 import strikt.assertions.isEqualTo
 import java.nio.file.Paths
 import java.time.Instant
@@ -110,6 +113,41 @@ internal class ExecutorTest {
             get { status }.isEqualTo(ReportStatus.OK)
             get { lines }.and {
                 hasSize(0)
+            }
+        }
+    }
+
+    @Test
+    fun `should not call executeScript when execution mode is dry`() {
+        // Given
+        val context = Context(
+                DatamaintainConfig(Paths.get(""), Regex(""),
+                        driverConfig = FakeDriverConfig(),
+                        executionMode = ExecutionMode.DRY),
+                dbDriver = dbDriverMock)
+        val executor = Executor(context)
+
+        // When
+        val executionReport: ExecutionReport = executor.execute(listOf(script1, script2, script3))
+
+        // Then
+        verify(exactly = 0) { dbDriverMock.executeScript(any()) }
+        expectThat(executionReport) {
+            get { status }.isEqualTo(ReportStatus.OK)
+            get { lines }.and {
+                hasSize(3)
+                get(0).and {
+                    get { executionStatus }.isEqualTo(ExecutionStatus.OK)
+                    get { message }.isEmpty()
+                }
+                get(1).and {
+                    get { executionStatus }.isEqualTo(ExecutionStatus.OK)
+                    get { message }.isEmpty()
+                }
+                get(2).and {
+                    get { executionStatus }.isEqualTo(ExecutionStatus.OK)
+                    get { message }.isEmpty()
+                }
             }
         }
     }
