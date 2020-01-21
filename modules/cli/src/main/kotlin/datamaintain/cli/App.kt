@@ -30,6 +30,8 @@ class App : CliktCommand() {
 
     private val blacklistedTags: String? by option(help = "tags to blacklist (separated by ','")
 
+    private val executionMode: String? by option(help = "execution mode (NORMAL or DRY)")
+
     private val mongoDbName: String? by option(help = "mongo db name")
 
     private val mongoUri: String? by option(help = "mongo uri")
@@ -59,6 +61,7 @@ class App : CliktCommand() {
         path?.let { props.put(CoreConfigKey.SCAN_PATH.key, it) }
         identifierRegex?.let { props.put(CoreConfigKey.SCAN_IDENTIFIER_REGEX.key, it) }
         blacklistedTags?.let { props.put(CoreConfigKey.TAGS_BLACKLISTED.key, it) }
+        executionMode?.let { props.put(CoreConfigKey.EXECUTION_MODE.key, it) }
         mongoDbName?.let { props.put(MongoConfigKey.DB_MONGO_DBNAME.key, it) }
         mongoUri?.let { props.put(MongoConfigKey.DB_MONGO_URI.key, it) }
         mongoTmpPath?.let { props.put(MongoConfigKey.DB_MONGO_TMP_PATH.key, it) }

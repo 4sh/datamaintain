@@ -3,7 +3,7 @@ package datamaintain.core
 import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.report.ExecutionReport
 import datamaintain.core.script.Script
-import datamaintain.core.step.Executor
+import datamaintain.core.step.executor.Executor
 import datamaintain.core.step.Filter
 import datamaintain.core.step.Pruner
 import datamaintain.core.step.Scanner

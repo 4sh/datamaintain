@@ -3,6 +3,7 @@ package datamaintain.core.config
 import datamaintain.core.config.ConfigKey.Companion.overrideBySystemProperties
 import datamaintain.core.db.driver.DatamaintainDriverConfig
 import datamaintain.core.script.Tag
+import datamaintain.core.step.executor.ExecutionMode
 import mu.KotlinLogging
 import java.io.InputStream
 import java.nio.file.Path
@@ -14,9 +15,11 @@ private val logger = KotlinLogging.logger {}
 data class DatamaintainConfig(val path: Path = Paths.get(CoreConfigKey.SCAN_PATH.default),
                               val identifierRegex: Regex = Regex(CoreConfigKey.SCAN_IDENTIFIER_REGEX.default!!),
                               val blacklistedTags: Set<Tag> = setOf(),
+                              val executionMode: ExecutionMode = defaultExecutionMode,
                               val driverConfig: DatamaintainDriverConfig) {
 
     companion object {
+        private val defaultExecutionMode = ExecutionMode.NORMAL;
 
         fun buildConfig(configInputStream: InputStream, driverConfig: DatamaintainDriverConfig): DatamaintainConfig {
             val props = Properties()
@@ -33,6 +36,7 @@ data class DatamaintainConfig(val path: Path = Paths.get(CoreConfigKey.SCAN_PATH
                             ?.map { Tag(it) }
                             ?.toSet()
                             ?: setOf(),
+                    ExecutionMode.fromNullable(props.getNullableProperty(CoreConfigKey.EXECUTION_MODE), defaultExecutionMode),
                     driverConfig)
         }
     }
@@ -69,7 +73,11 @@ enum class CoreConfigKey(override val key: String,
     SCAN_IDENTIFIER_REGEX("scan.identifier.regex", ".*"),
 
     // FILTER
-    TAGS_BLACKLISTED("filter.tags.blacklisted")
+    TAGS_BLACKLISTED("filter.tags.blacklisted"),
+
+
+    // EXECUTE
+    EXECUTION_MODE("execute.mode", "NORMAL"),
 }
 
 fun Properties.getProperty(configKey: ConfigKey): String =
