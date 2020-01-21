@@ -30,6 +30,8 @@ class App : CliktCommand() {
 
     private val blacklistedTags: String? by option(help = "tags to blacklist (separated by ','")
 
+    private val createTagsFromFolder: String? by option(help = "boolean to create automatically tags from parent folders (true or false)")
+
     private val executionMode: String? by option(help = "execution mode (NORMAL or DRY)")
 
     private val mongoDbName: String? by option(help = "mongo db name")
@@ -61,6 +63,7 @@ class App : CliktCommand() {
         path?.let { props.put(CoreConfigKey.SCAN_PATH.key, it) }
         identifierRegex?.let { props.put(CoreConfigKey.SCAN_IDENTIFIER_REGEX.key, it) }
         blacklistedTags?.let { props.put(CoreConfigKey.TAGS_BLACKLISTED.key, it) }
+        createTagsFromFolder?.let { props.put(CoreConfigKey.CREATE_TAGS_FROM_FOLDER.key, it) }
         executionMode?.let { props.put(CoreConfigKey.EXECUTION_MODE.key, it) }
         mongoDbName?.let { props.put(MongoConfigKey.DB_MONGO_DBNAME.key, it) }
         mongoUri?.let { props.put(MongoConfigKey.DB_MONGO_URI.key, it) }

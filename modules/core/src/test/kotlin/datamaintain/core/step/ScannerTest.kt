@@ -4,9 +4,11 @@ import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.Context
 import datamaintain.core.db.driver.FakeDatamaintainDriver
 import datamaintain.core.db.driver.FakeDriverConfig
+import datamaintain.core.script.Tag
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.get
+import strikt.assertions.isEmpty
 import strikt.assertions.isEqualTo
 import strikt.assertions.size
 import java.nio.file.Paths
@@ -90,6 +92,57 @@ internal class ScannerTest {
             get(3).get { this.identifier }.isEqualTo("04")
             get(4).get { this.identifier }.isEqualTo("10")
             get(5).get { this.identifier }.isEqualTo("11")
+        }
+    }
+
+    @Test
+    fun `should not build tags from parents`() {
+        // Given
+
+        // When
+        val scripts = scanner.scan()
+
+        // Then
+        expectThat(scripts) {
+            size.isEqualTo(6)
+            get(0).get { this.tags }.isEmpty()
+            get(1).get { this.tags }.isEmpty()
+            get(2).get { this.tags }.isEmpty()
+            get(3).get { this.tags }.isEmpty()
+            get(4).get { this.tags }.isEmpty()
+            get(5).get { this.tags }.isEmpty()
+        }
+    }
+
+    @Test
+    fun `should create tags from parent`() {
+        // Given
+        val scanner = Scanner(Context(
+                DatamaintainConfig(
+                        Paths.get("src/test/resources/scanner_test_files"),
+                        Regex("(.*?)_.*"),
+                        driverConfig = FakeDriverConfig(),
+                        doesCreateTagsFromFolder = true),
+                dbDriver = FakeDatamaintainDriver()))
+
+        // When
+        val scripts = scanner.scan()
+
+        // Then
+        expectThat(scripts) {
+            size.isEqualTo(6)
+            get(0).get { this.name }.isEqualTo("01_file1")
+            get(0).get { this.tags }.isEmpty()
+            get(1).get { this.name }.isEqualTo("02_file2")
+            get(1).get { this.tags }.isEmpty()
+            get(2).get { this.name }.isEqualTo("03_file3")
+            get(2).get { this.tags }.isEqualTo(setOf(Tag("subfolder")))
+            get(3).get { this.name }.isEqualTo("04_file4")
+            get(3).get { this.tags }.isEqualTo(setOf(Tag("subfolder")))
+            get(4).get { this.name }.isEqualTo("10_file10")
+            get(4).get { this.tags }.isEmpty()
+            get(5).get { this.name }.isEqualTo("11_file11")
+            get(5).get { this.tags }.isEqualTo(setOf(Tag("subfolder"), Tag("old")))
         }
     }
 }
