@@ -12,18 +12,26 @@ import mu.KotlinLogging
 
 private val logger = KotlinLogging.logger {}
 
-fun runDatamaintain(config: DatamaintainConfig): ExecutionReport {
-    return Datamaintain(config).run()
+fun runDatamaintain(
+        config: DatamaintainConfig,
+        onlyMarkAsExecuted: Boolean = false
+): ExecutionReport {
+    return Datamaintain(config, onlyMarkAsExecuted).run()
 }
 
-class Datamaintain(config: DatamaintainConfig) {
+class Datamaintain(config: DatamaintainConfig,
+                   onlyMarkAsExecuted: Boolean = false) {
 
     init {
         config.log()
         config.driverConfig.log()
     }
 
-    val context = Context(config, config.driverConfig.toDriver())
+    val context = Context(
+            config,
+            config.driverConfig.toDriver(),
+            onlyMarkAsExecuted
+    )
 
     fun run(): ExecutionReport {
         val executionReport = Scanner(context).scan()

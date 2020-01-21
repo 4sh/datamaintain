@@ -11,9 +11,9 @@ import strikt.assertions.isEqualTo
 import strikt.assertions.isFalse
 import strikt.assertions.isTrue
 import java.nio.file.Paths
-import java.util.*
 
 class DatamaintainConfigTest {
+
     @Test
     fun `should build config from resource`() {
         val expectedPath = Paths.get("/tmp/test")
@@ -37,6 +37,7 @@ class DatamaintainConfigTest {
             get { identifierRegex.pattern }.isEqualTo(CoreConfigKey.SCAN_IDENTIFIER_REGEX.default)
             get { doesCreateTagsFromFolder }.isEqualTo(CoreConfigKey.CREATE_TAGS_FROM_FOLDER.default!!.toBoolean())
             get { executionMode }.isEqualTo(ExecutionMode.NORMAL)
+            get { forceMarkAsExecuted }.isEqualTo(CoreConfigKey.FORCE_MARK_AS_EXECUTED.default!!.toBoolean())
         }
     }
 

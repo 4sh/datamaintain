@@ -1,5 +1,7 @@
 package datamaintain.core.report
 
+import datamaintain.core.script.ExecutionStatus
+
 interface ScriptLineReport: LineReport {
     val executionStatus: ExecutionStatus
 

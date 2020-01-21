@@ -1,1 +1,1 @@
-print('01');
+db.simple.insert({ find: "1", data: 'inserted'});

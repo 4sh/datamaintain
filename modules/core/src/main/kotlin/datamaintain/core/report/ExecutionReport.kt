@@ -1,5 +1,6 @@
 package datamaintain.core.report
 
+import datamaintain.core.script.ExecutionStatus
 import java.time.Instant
 
 class ExecutionReport(override val lines: List<ExecutionLineReport>, override val date: Instant) : Report {

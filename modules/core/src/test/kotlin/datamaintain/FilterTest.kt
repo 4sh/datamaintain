@@ -26,6 +26,7 @@ internal class FilterTest {
                     false,
                     setOf(blacklistedTag),
                     ExecutionMode.NORMAL,
+                    false,
                     FakeDriverConfig()),
             dbDriver = dbDriver)
 

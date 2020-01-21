@@ -7,11 +7,25 @@ interface Script {
     val identifier: String
 }
 
-data class ScriptWithoutContent(
+data class ExecutedScript(
         override val name: String,
         override val checksum: String,
-        override val identifier: String
-) : Script
+        override val identifier: String,
+        val executionStatus: ExecutionStatus,
+        val markAsExecutedForced: Boolean = false,
+        val executionOutput: String? = null
+) : Script {
+    companion object {
+        fun forceMarkAsExecuted(script: ScriptWithContent) =
+                ExecutedScript(
+                        script.name,
+                        script.checksum,
+                        script.identifier,
+                        ExecutionStatus.OK,
+                        true
+                )
+    }
+}
 
 interface ScriptWithContent : Script {
     val content: String

@@ -1,15 +1,13 @@
 package datamaintain.db.driver.mongo.test
 
 import datamaintain.core.config.DatamaintainConfig
-import datamaintain.core.report.ExecutionStatus
+import datamaintain.core.script.ExecutionStatus
 import datamaintain.core.report.ReportStatus
 import datamaintain.core.runDatamaintain
 import datamaintain.db.driver.mongo.MongoDriverConfig
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
-import strikt.assertions.get
-import strikt.assertions.hasSize
-import strikt.assertions.isEqualTo
+import strikt.assertions.*
 import java.nio.file.Paths
 
 class MongoIT : AbstractMongoDbTest() {
@@ -34,27 +32,85 @@ class MongoIT : AbstractMongoDbTest() {
                     get { executionStatus }.isEqualTo(ExecutionStatus.OK)
                     get { script }.and {
                         get { name }.isEqualTo("01_file.js")
-                        get { checksum }.isEqualTo("3dd96b16c91757a3a8a9c2dd09282273")
+                        get { checksum }.isEqualTo("09a6bb850c3b5c3469af66f0c252d1af")
                         get { identifier }.isEqualTo("01")
+                        get { markAsExecutedForced }.isFalse()
                     }
                 }
                 get(1).and {
                     get { executionStatus }.isEqualTo(ExecutionStatus.OK)
                     get { script }.and {
                         get { name }.isEqualTo("02_file.js")
-                        get { checksum }.isEqualTo("acadaff7cff05e88fa98d40671040f84")
+                        get { checksum }.isEqualTo("96d9736617e0a68fc071534b6538b92e")
                         get { identifier }.isEqualTo("02")
+                        get { markAsExecutedForced }.isFalse()
                     }
                 }
                 get(2).and {
                     get { executionStatus }.isEqualTo(ExecutionStatus.OK)
                     get { script }.and {
                         get { name }.isEqualTo("03_file.js")
-                        get { checksum }.isEqualTo("55d3c9ec1e4e65bb2763b05201035d0a")
+                        get { checksum }.isEqualTo("9d637bdd8c23f494f4603480c059ebba")
                         get { identifier }.isEqualTo("03")
+                        get { markAsExecutedForced }.isFalse()
                     }
                 }
             }
         }
+
+        val coll = database.getCollection("simple")
+        expectThat(coll.countDocuments()).isEqualTo(3)
+    }
+
+    @Test
+    fun `should force mark as executed`() {
+        // Given
+        val config = DatamaintainConfig(
+                Paths.get("src/test/resources/integration"),
+                Regex("(.*?)_.*"),
+                driverConfig = MongoDriverConfig(databaseName, mongoUri)
+        )
+
+        // When
+        val executionReport = runDatamaintain(config,
+                true)
+
+        // Then
+        expectThat(executionReport) {
+            get { status }.isEqualTo(ReportStatus.OK)
+            get { lines }.and {
+                hasSize(3)
+                get(0).and {
+                    get { executionStatus }.isEqualTo(ExecutionStatus.OK)
+                    get { script }.and {
+                        get { name }.isEqualTo("01_file.js")
+                        get { checksum }.isEqualTo("09a6bb850c3b5c3469af66f0c252d1af")
+                        get { identifier }.isEqualTo("01")
+                        get { markAsExecutedForced }.isTrue()
+                    }
+                }
+                get(1).and {
+                    get { executionStatus }.isEqualTo(ExecutionStatus.OK)
+                    get { script }.and {
+                        get { name }.isEqualTo("02_file.js")
+                        get { checksum }.isEqualTo("96d9736617e0a68fc071534b6538b92e")
+                        get { identifier }.isEqualTo("02")
+                        get { markAsExecutedForced }.isTrue()
+                    }
+                }
+                get(2).and {
+                    get { executionStatus }.isEqualTo(ExecutionStatus.OK)
+                    get { script }.and {
+                        get { name }.isEqualTo("03_file.js")
+                        get { checksum }.isEqualTo("9d637bdd8c23f494f4603480c059ebba")
+                        get { identifier }.isEqualTo("03")
+                        get { markAsExecutedForced }.isTrue()
+                    }
+                }
+            }
+        }
+
+        val coll = database.getCollection("simple")
+        expectThat(coll.countDocuments()).isEqualTo(0)
     }
 }

@@ -1,4 +1,4 @@
-package datamaintain.core.report
+package datamaintain.core.script
 
 enum class ExecutionStatus {
     OK, KO

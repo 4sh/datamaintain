@@ -2,8 +2,9 @@ package datamaintain.core.step.sort
 
 import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.db.driver.FakeDriverConfig
+import datamaintain.core.script.ExecutedScript
+import datamaintain.core.script.ExecutionStatus
 import datamaintain.core.script.Script
-import datamaintain.core.script.ScriptWithoutContent
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.*
@@ -16,8 +17,8 @@ internal class ByLengthAndCaseInsensitiveAlphabeticalSorterTest {
     @Test
     fun `should sort scripts list by name`() {
         // Given
-        val superScript = ScriptWithoutContent("super script", "checksum", "")
-        val greatScript = ScriptWithoutContent("great script", "checksum", "")
+        val superScript = ExecutedScript("super script", "checksum", "", ExecutionStatus.OK)
+        val greatScript = ExecutedScript("great script", "checksum", "", ExecutionStatus.OK)
 
         // When
         expectThat(caseInsensitiveAlphabeticalSorter.sort(listOf(
@@ -33,9 +34,9 @@ internal class ByLengthAndCaseInsensitiveAlphabeticalSorterTest {
     @Test
     fun `should sort scripts list by name containing numbers`() {
         // Given
-        val script2 = ScriptWithoutContent("2", "checksum", "")
-        val script1 = ScriptWithoutContent("1", "checksum", "")
-        val script10 = ScriptWithoutContent("10", "checksum", "")
+        val script2 = ExecutedScript("2", "checksum", "", ExecutionStatus.OK)
+        val script1 = ExecutedScript("1", "checksum", "", ExecutionStatus.OK)
+        val script10 = ExecutedScript("10", "checksum", "", ExecutionStatus.OK)
 
         // When
         expectThat(caseInsensitiveAlphabeticalSorter.sort(listOf(
@@ -53,9 +54,9 @@ internal class ByLengthAndCaseInsensitiveAlphabeticalSorterTest {
     @Test
     fun `should sort scripts list by name containing numbers, letters and caps`() {
         // Given
-        val script2 = ScriptWithoutContent("Script2", "checksum", "")
-        val script1 = ScriptWithoutContent("scrIpt1", "checksum", "")
-        val script10 = ScriptWithoutContent("script10", "checksum", "")
+        val script2 = ExecutedScript("Script2", "checksum", "", ExecutionStatus.OK)
+        val script1 = ExecutedScript("scrIpt1", "checksum", "", ExecutionStatus.OK)
+        val script10 = ExecutedScript("script10", "checksum", "", ExecutionStatus.OK)
 
         // When
         expectThat(caseInsensitiveAlphabeticalSorter.sort(listOf(
@@ -73,9 +74,9 @@ internal class ByLengthAndCaseInsensitiveAlphabeticalSorterTest {
     @Test
     fun `should sort scripts list by identifier`() {
         // Given
-        val superScript = ScriptWithoutContent("super script", "checksum1", "2")
-        val greatScript = ScriptWithoutContent("great script", "checksum2", "1")
-        val script = ScriptWithoutContent("script", "checksum3", "11")
+        val superScript = ExecutedScript("super script", "checksum1", "2", ExecutionStatus.OK)
+        val greatScript = ExecutedScript("great script", "checksum2", "1", ExecutionStatus.OK)
+        val script = ExecutedScript("script", "checksum3", "11", ExecutionStatus.OK)
 
         // When
         expectThat(caseInsensitiveAlphabeticalSorter.sort(listOf(superScript, greatScript, script), Script::identifier)) {
