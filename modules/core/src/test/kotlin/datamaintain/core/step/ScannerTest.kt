@@ -96,6 +96,25 @@ internal class ScannerTest {
     }
 
     @Test
+    fun `should not build tags from parents`() {
+        // Given
+
+        // When
+        val scripts = scanner.scan()
+
+        // Then
+        expectThat(scripts) {
+            size.isEqualTo(6)
+            get(0).get { this.tags }.isEmpty()
+            get(1).get { this.tags }.isEmpty()
+            get(2).get { this.tags }.isEmpty()
+            get(3).get { this.tags }.isEmpty()
+            get(4).get { this.tags }.isEmpty()
+            get(5).get { this.tags }.isEmpty()
+        }
+    }
+
+    @Test
     fun `should create tags from parent`() {
         // Given
         val scanner = Scanner(Context(
