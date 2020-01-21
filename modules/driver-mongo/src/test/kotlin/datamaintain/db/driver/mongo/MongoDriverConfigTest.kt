@@ -14,8 +14,7 @@ internal class MongoDriverConfigTest {
         props.load(MongoDriverConfigTest::class.java.getResourceAsStream("/config/default.properties"))
 
         expectThat(MongoDriverConfig.buildConfig(props)).and {
-            get { dbName }.isEqualTo("test-datamaintain")
-            get { mongoUri }.isEqualTo("mongodb://localhost:27017")
+            get { mongoUri }.isEqualTo("mongodb://localhost:27017/test-datamaintain")
             get { tmpFilePath }.isEqualTo(Paths.get("/tmp/test"))
         }
     }
@@ -25,11 +24,11 @@ internal class MongoDriverConfigTest {
         val props = Properties()
         props.load(MongoDriverConfigTest::class.java.getResourceAsStream("/config/default.properties"))
 
-        System.setProperty("db.mongo.dbname", "newName")
+        val updatedURI = "mongodb://localhost:27017/newName"
+        System.setProperty("db.mongo.uri", updatedURI)
 
         expectThat(MongoDriverConfig.buildConfig(props)).and {
-            get { dbName }.isEqualTo("newName")
-            get { mongoUri }.isEqualTo("mongodb://localhost:27017")
+            get { mongoUri }.isEqualTo(updatedURI)
             get { tmpFilePath }.isEqualTo(Paths.get("/tmp/test"))
         }
     }

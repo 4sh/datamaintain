@@ -17,12 +17,11 @@ import java.nio.file.Path
 import java.time.Instant
 import kotlin.IllegalArgumentException
 
-class MongoDriver(dbName: String,
-                  private val mongoUri: String,
+class MongoDriver(mongoUri: String,
                   private val tmpFilePath: Path,
                   private val clientPath: Path
 ) : DatamaintainDriver {
-    private val database: MongoDatabase
+    private val mongoUri: ConnectionString = ConnectionString(mongoUri)
     private val executedScriptsCollection: MongoCollection<Document>
 
     companion object {
@@ -33,22 +32,18 @@ class MongoDriver(dbName: String,
     }
 
     init {
-        // Parse and check mongoUri String
-        val mongoUriConnection = ConnectionString(mongoUri)
-
         // mongoUri can come with a database but currently driver's dbName is mandatory
-        if (mongoUriConnection.database != null && !mongoUriConnection.database.equals(dbName)) {
-            throw IllegalArgumentException("MongoUri contains a database name, " +
-                    "please remove it and use 'dbName' property instead")
+        if (this.mongoUri.database == null) {
+            throw IllegalArgumentException("MongoUri does not contains a database name")
         }
 
         // mongoUri can come with a collection. It has no sense in DataMaintain's logic
-        if (mongoUriConnection.collection != null) {
+        if (this.mongoUri.collection != null) {
             throw IllegalArgumentException("MongoUri contains a collection name, please remove it")
         }
 
-        val client = MongoClients.create(mongoUriConnection)
-        database = client.getDatabase(dbName)
+        val client = MongoClients.create(this.mongoUri)
+        val database: MongoDatabase = client.getDatabase(this.mongoUri.database!!)
         executedScriptsCollection = database.getCollection(EXECUTED_SCRIPTS_COLLECTION, Document::class.java)
     }
 
@@ -63,7 +58,7 @@ class MongoDriver(dbName: String,
             }
         }
 
-        val result = listOf(clientPath.toString(), "$mongoUri/${database.name}", "--quiet", scriptPath.toString()).runProcess()
+        val result = listOf(clientPath.toString(), "$mongoUri", "--quiet", scriptPath.toString()).runProcess()
         return ExecutionLineReport(
                 Instant.now(),
                 result.output,
