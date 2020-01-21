@@ -21,6 +21,8 @@ subprojects {
     })
 
     tasks.withType<Jar>().all {
+        archiveBaseName.set("${rootProject.name}-${project.name}")
+
         manifest {
             attributes(mapOf(
                     "Implementation-Version" to project.version
