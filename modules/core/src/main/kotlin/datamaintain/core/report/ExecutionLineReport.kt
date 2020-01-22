@@ -3,6 +3,7 @@ package datamaintain.core.report
 import datamaintain.core.report.ExecutionLineReport.Companion.correctExecutionMessage
 import datamaintain.core.report.ExecutionLineReport.Companion.errorExecutionMessage
 import datamaintain.core.report.ExecutionLineReport.Companion.forceMarkMessage
+import datamaintain.core.report.ExecutionLineReport.Companion.shouldBeExecutedMessage
 import datamaintain.core.script.ExecutedScript
 import datamaintain.core.script.ExecutionStatus
 import java.time.Instant
@@ -18,6 +19,7 @@ open class ExecutionLineReport(
         fun correctExecutionMessage(name: String) = "script $name has been executed"
         fun errorExecutionMessage(name: String) = "error during exececution of $name"
         fun forceMarkMessage(name: String) = "script $name has been marked as executed without has been executed"
+        fun shouldBeExecutedMessage(name: String) = "script $name should be executed"
     }
 }
 
@@ -29,11 +31,11 @@ fun ExecutedScript.toExecutionLineReport() =
                 this
         )
 
-private fun ExecutedScript.buildMessageReport(): String = when {
-    executionStatus == ExecutionStatus.OK && !markAsExecutedForced -> correctExecutionMessage(name)
-    executionStatus == ExecutionStatus.KO && !markAsExecutedForced -> errorExecutionMessage(name)
-    markAsExecutedForced -> forceMarkMessage(name)
-    else -> throw IllegalStateException("cannot build execution message report for script $name")
+private fun ExecutedScript.buildMessageReport(): String = when (executionStatus) {
+    ExecutionStatus.OK -> correctExecutionMessage(name)
+    ExecutionStatus.KO -> errorExecutionMessage(name)
+    ExecutionStatus.FORCE_MARKED_AS_EXECUTED -> forceMarkMessage(name)
+    ExecutionStatus.SHOULD_BE_EXECUTED -> shouldBeExecutedMessage(name)
 }
 
 

@@ -82,7 +82,6 @@ class MongoDriver(private val connectionString: ConnectionString,
                 script.checksum,
                 script.identifier,
                 if (exitCode == 0) ExecutionStatus.OK else ExecutionStatus.KO,
-                false,
                 executionOutput
         )
     }

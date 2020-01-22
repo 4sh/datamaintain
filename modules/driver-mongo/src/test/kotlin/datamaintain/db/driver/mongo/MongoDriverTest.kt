@@ -55,7 +55,6 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
                         get { checksum }.isEqualTo("c4ca4238a0b923820dcc509a6f75849b")
                         get { identifier }.isEqualTo("")
                         get { executionStatus }.isEqualTo(ExecutionStatus.OK)
-                        get { markAsExecutedForced }.isEqualTo(false)
                         get { executionOutput }.isNull()
                     }
                     get(1).and {
@@ -63,7 +62,6 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
                         get { checksum }.isEqualTo("c81e728d9d4c2f636f067f89cc14862c")
                         get { identifier }.isEqualTo("")
                         get { executionStatus }.isEqualTo(ExecutionStatus.OK)
-                        get { markAsExecutedForced }.isEqualTo(false)
                         get { executionOutput }.isNull()
                     }
                     get(2).and {
@@ -71,7 +69,6 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
                         get { checksum }.isEqualTo("d3d9446802a44259755d38e6d163e820")
                         get { identifier }.isEqualTo("")
                         get { executionStatus }.isEqualTo(ExecutionStatus.OK)
-                        get { markAsExecutedForced }.isEqualTo(false)
                         get { executionOutput }.isNull()
                     }
                 }
@@ -102,7 +99,6 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
         expectThat(executedScript) {
             get { name }.isEqualTo("mongo_simple_insert.js")
             get { executionStatus }.isEqualTo(ExecutionStatus.OK)
-            get { markAsExecutedForced }.isFalse()
             get { executionOutput }.isNull()
         }
     }
@@ -130,7 +126,6 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
         expectThat(executedScript) {
             get { name }.isEqualTo("test")
             get { executionStatus }.isEqualTo(ExecutionStatus.OK)
-            get { markAsExecutedForced }.isFalse()
             get { executionOutput }.isNull()
         }
     }
@@ -152,7 +147,6 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
         expectThat(executedScript) {
             get { name }.isEqualTo("mongo_error_insert.js")
             get { executionStatus }.isEqualTo(ExecutionStatus.KO)
-            get { markAsExecutedForced }.isFalse()
             get { executionOutput }.isNull()
         }
     }

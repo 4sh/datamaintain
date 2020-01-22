@@ -1,7 +1,7 @@
 package datamaintain
 
-import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.Context
+import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.db.driver.DatamaintainDriver
 import datamaintain.core.db.driver.FakeDriverConfig
 import datamaintain.core.script.FileScript
@@ -26,7 +26,6 @@ internal class FilterTest {
                     false,
                     setOf(blacklistedTag),
                     ExecutionMode.NORMAL,
-                    false,
                     FakeDriverConfig()),
             dbDriver = dbDriver)
 

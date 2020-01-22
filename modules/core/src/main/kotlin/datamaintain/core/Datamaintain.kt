@@ -16,11 +16,10 @@ fun runDatamaintain(
         config: DatamaintainConfig,
         onlyMarkAsExecuted: Boolean = false
 ): ExecutionReport {
-    return Datamaintain(config, onlyMarkAsExecuted).run()
+    return Datamaintain(config).run()
 }
 
-class Datamaintain(config: DatamaintainConfig,
-                   onlyMarkAsExecuted: Boolean = false) {
+class Datamaintain(config: DatamaintainConfig) {
 
     init {
         config.log()
@@ -29,8 +28,7 @@ class Datamaintain(config: DatamaintainConfig,
 
     val context = Context(
             config,
-            config.driverConfig.toDriver(),
-            onlyMarkAsExecuted
+            config.driverConfig.toDriver()
     )
 
     fun run(): ExecutionReport {

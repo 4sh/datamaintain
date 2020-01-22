@@ -12,7 +12,6 @@ data class ExecutedScript(
         override val checksum: String,
         override val identifier: String,
         val executionStatus: ExecutionStatus,
-        val markAsExecutedForced: Boolean = false,
         val executionOutput: String? = null
 ) : Script {
     companion object {
@@ -21,8 +20,15 @@ data class ExecutedScript(
                         script.name,
                         script.checksum,
                         script.identifier,
-                        ExecutionStatus.OK,
-                        true
+                        ExecutionStatus.FORCE_MARKED_AS_EXECUTED
+                )
+
+        fun shouldBeExecuted(script: ScriptWithContent) =
+                ExecutedScript(
+                        script.name,
+                        script.checksum,
+                        script.identifier,
+                        ExecutionStatus.SHOULD_BE_EXECUTED
                 )
     }
 }

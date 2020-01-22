@@ -37,7 +37,6 @@ class DatamaintainConfigTest {
             get { identifierRegex.pattern }.isEqualTo(CoreConfigKey.SCAN_IDENTIFIER_REGEX.default)
             get { doesCreateTagsFromFolder }.isEqualTo(CoreConfigKey.CREATE_TAGS_FROM_FOLDER.default!!.toBoolean())
             get { executionMode }.isEqualTo(ExecutionMode.NORMAL)
-            get { forceMarkAsExecuted }.isEqualTo(CoreConfigKey.FORCE_MARK_AS_EXECUTED.default!!.toBoolean())
         }
     }
 

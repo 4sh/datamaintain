@@ -18,7 +18,6 @@ data class DatamaintainConfig(val path: Path = Paths.get(SCAN_PATH.default!!),
                               val doesCreateTagsFromFolder: Boolean = CoreConfigKey.CREATE_TAGS_FROM_FOLDER.default!!.toBoolean(),
                               val blacklistedTags: Set<Tag> = setOf(),
                               val executionMode: ExecutionMode = defaultExecutionMode,
-                              val forceMarkAsExecuted: Boolean = FORCE_MARK_AS_EXECUTED.default!!.toBoolean(),
                               val driverConfig: DatamaintainDriverConfig) {
 
     companion object {
@@ -43,7 +42,6 @@ data class DatamaintainConfig(val path: Path = Paths.get(SCAN_PATH.default!!),
                             ?.toSet()
                             ?: setOf(),
                     ExecutionMode.fromNullable(props.getNullableProperty(CoreConfigKey.EXECUTION_MODE), defaultExecutionMode),
-                    props.getProperty(FORCE_MARK_AS_EXECUTED).toBoolean(),
                     driverConfig)
         }
     }
@@ -53,7 +51,7 @@ data class DatamaintainConfig(val path: Path = Paths.get(SCAN_PATH.default!!),
         path.let { logger.info { "- path -> $path" } }
         identifierRegex.let { logger.info { "- identifier regex -> ${identifierRegex.pattern}" } }
         blacklistedTags.let { logger.info { "- blacklisted tags -> $blacklistedTags" } }
-        forceMarkAsExecuted.let { logger.info { "- force mark as executed -> $forceMarkAsExecuted" } }
+        executionMode.let { logger.info { "- execution mode -> $executionMode" } }
         logger.info { "" }
     }
 

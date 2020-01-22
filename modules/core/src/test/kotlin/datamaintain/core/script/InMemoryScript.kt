@@ -3,7 +3,7 @@ package datamaintain.core.script
 import java.math.BigInteger
 import java.security.MessageDigest
 
-class InMemoryScript(
+data class InMemoryScript(
         override val name: String,
         override val content: String,
         override val identifier: String,

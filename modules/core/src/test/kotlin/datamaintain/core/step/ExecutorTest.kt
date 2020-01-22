@@ -7,13 +7,11 @@ import datamaintain.core.db.driver.FakeDriverConfig
 import datamaintain.core.report.ExecutionLineReport.Companion.correctExecutionMessage
 import datamaintain.core.report.ExecutionLineReport.Companion.errorExecutionMessage
 import datamaintain.core.report.ExecutionLineReport.Companion.forceMarkMessage
+import datamaintain.core.report.ExecutionLineReport.Companion.shouldBeExecutedMessage
 import datamaintain.core.report.ExecutionReport
 import datamaintain.core.report.ReportStatus
-import datamaintain.core.script.FileScript
-import datamaintain.core.script.Script
 import datamaintain.core.step.executor.ExecutionMode
 import datamaintain.core.step.executor.Executor
-import io.mockk.MockKAnswerScope
 import datamaintain.core.script.*
 import io.mockk.every
 import io.mockk.mockk
@@ -117,11 +115,12 @@ internal class ExecutorTest {
         // Given
         every { dbDriverMock.markAsExecuted(any()) }.answers { it.invocation.args.first() as ExecutedScript }
 
-        val context = Context(
-                DatamaintainConfig(Paths.get(""), Regex(""), driverConfig = FakeDriverConfig()),
-                dbDriver = dbDriverMock,
-                onlyMarkAsExecuted = true
-        )
+        val context = Context(DatamaintainConfig(
+                Paths.get(""),
+                Regex(""),
+                driverConfig = FakeDriverConfig(),
+                executionMode = ExecutionMode.FORCE_MARK_AS_EXECUTED
+        ), dbDriver = dbDriverMock)
         val executor = Executor(context)
 
         // When
@@ -133,36 +132,33 @@ internal class ExecutorTest {
             get { lines }.and {
                 hasSize(3)
                 get(0).and {
-                    get { executionStatus }.isEqualTo(ExecutionStatus.OK)
+                    get { executionStatus }.isEqualTo(ExecutionStatus.FORCE_MARKED_AS_EXECUTED)
                     get { message }.isEqualTo(forceMarkMessage(script1.name))
                     get { script }.isEqualTo(ExecutedScript(
                             script1.name,
                             script1.checksum,
                             script1.identifier,
-                            ExecutionStatus.OK,
-                            markAsExecutedForced = true
+                            ExecutionStatus.FORCE_MARKED_AS_EXECUTED
                     ))
                 }
                 get(1).and {
-                    get { executionStatus }.isEqualTo(ExecutionStatus.OK)
+                    get { executionStatus }.isEqualTo(ExecutionStatus.FORCE_MARKED_AS_EXECUTED)
                     get { message }.isEqualTo(forceMarkMessage(script2.name))
                     get { script }.isEqualTo(ExecutedScript(
                             script2.name,
                             script2.checksum,
                             script2.identifier,
-                            ExecutionStatus.OK,
-                            markAsExecutedForced = true
+                            ExecutionStatus.FORCE_MARKED_AS_EXECUTED
                     ))
                 }
                 get(2).and {
-                    get { executionStatus }.isEqualTo(ExecutionStatus.OK)
+                    get { executionStatus }.isEqualTo(ExecutionStatus.FORCE_MARKED_AS_EXECUTED)
                     get { message }.isEqualTo(forceMarkMessage(script3.name))
                     get { script }.isEqualTo(ExecutedScript(
                             script3.name,
                             script3.checksum,
                             script3.identifier,
-                            ExecutionStatus.OK,
-                            markAsExecutedForced = true
+                            ExecutionStatus.FORCE_MARKED_AS_EXECUTED
                     ))
                 }
             }
@@ -206,16 +202,16 @@ internal class ExecutorTest {
             get { lines }.and {
                 hasSize(3)
                 get(0).and {
-                    get { executionStatus }.isEqualTo(ExecutionStatus.OK)
-                    get { message }.isEmpty()
+                    get { executionStatus }.isEqualTo(ExecutionStatus.SHOULD_BE_EXECUTED)
+                    get { message }.isEqualTo(shouldBeExecutedMessage(script1.name))
                 }
                 get(1).and {
-                    get { executionStatus }.isEqualTo(ExecutionStatus.OK)
-                    get { message }.isEmpty()
+                    get { executionStatus }.isEqualTo(ExecutionStatus.SHOULD_BE_EXECUTED)
+                    get { message }.isEqualTo(shouldBeExecutedMessage(script2.name))
                 }
                 get(2).and {
-                    get { executionStatus }.isEqualTo(ExecutionStatus.OK)
-                    get { message }.isEmpty()
+                    get { executionStatus }.isEqualTo(ExecutionStatus.SHOULD_BE_EXECUTED)
+                    get { message }.isEqualTo(shouldBeExecutedMessage(script3.name))
                 }
             }
         }
