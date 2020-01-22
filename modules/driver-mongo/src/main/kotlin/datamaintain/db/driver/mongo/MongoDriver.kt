@@ -26,15 +26,13 @@ class MongoDriver(private val connectionString: ConnectionString,
         private const val SCRIPT_DOCUMENT_CHECKSUM = "checksum"
         private const val SCRIPT_DOCUMENT_IDENTIFIER = "identifier"
         private const val SCRIPT_DOCUMENT_EXECUTION_STATUS = "executionStatus"
-        private const val SCRIPT_DOCUMENT_MARK_AS_EXECUTED_FORCED = "markAsExecutedForced"
         private const val SCRIPT_DOCUMENT_EXECUTION_OUTPUT = "executionOutput"
 
         fun executedScriptToDocument(executedScript: ExecutedScript): Document =
                 Document().append(MongoDriver.SCRIPT_DOCUMENT_NAME, executedScript.name)
                         .append(MongoDriver.SCRIPT_DOCUMENT_CHECKSUM, executedScript.checksum)
                         .append(MongoDriver.SCRIPT_DOCUMENT_IDENTIFIER, executedScript.identifier)
-                        .append(MongoDriver.SCRIPT_DOCUMENT_EXECUTION_STATUS, executedScript.executionStatus)
-                        .append(MongoDriver.SCRIPT_DOCUMENT_MARK_AS_EXECUTED_FORCED, executedScript.markAsExecutedForced)
+                        .append(MongoDriver.SCRIPT_DOCUMENT_EXECUTION_STATUS, executedScript.executionStatus.name)
                         .append(MongoDriver.SCRIPT_DOCUMENT_EXECUTION_OUTPUT, executedScript.executionOutput)
 
 
@@ -44,10 +42,8 @@ class MongoDriver(private val connectionString: ConnectionString,
                         document.getString(MongoDriver.SCRIPT_DOCUMENT_CHECKSUM),
                         document.getString(MongoDriver.SCRIPT_DOCUMENT_IDENTIFIER),
                         ExecutionStatus.valueOf(document.getString(MongoDriver.SCRIPT_DOCUMENT_EXECUTION_STATUS)),
-                        document.getBoolean(MongoDriver.SCRIPT_DOCUMENT_MARK_AS_EXECUTED_FORCED),
                         document.getString(MongoDriver.SCRIPT_DOCUMENT_EXECUTION_OUTPUT)
                 )
-
     }
 
     init {
