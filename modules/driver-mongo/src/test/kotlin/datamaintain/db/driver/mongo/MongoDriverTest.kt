@@ -128,7 +128,8 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
         // mongo host has form host:port and miss mongodb protocol
         expectCatching { MongoDriver(
                 mongoHost,
-                Paths.get(MongoConfigKey.DB_MONGO_TMP_PATH.default!!)
+                Paths.get(MongoConfigKey.DB_MONGO_TMP_PATH.default!!),
+                Paths.get(MongoConfigKey.DB_MONGO_CLIENT_PATH.default!!)
         ) }
                 .failed()
                 .isA<java.lang.IllegalArgumentException>()
@@ -140,7 +141,8 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
         // mongo host has form host:port and miss mongodb protocol
         expectCatching { MongoDriver(
                 "${mongoUri}.aCollection",
-                Paths.get(MongoConfigKey.DB_MONGO_TMP_PATH.default!!)
+                Paths.get(MongoConfigKey.DB_MONGO_TMP_PATH.default!!),
+                Paths.get(MongoConfigKey.DB_MONGO_CLIENT_PATH.default!!)
         ) }
                 .failed()
                 .isA<java.lang.IllegalArgumentException>()
@@ -152,7 +154,8 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
         // mongo host has form host:port and miss mongodb protocol
         val mongoDriver = MongoDriver(
                 "${mongoUri}?connectTimeoutMS=500000",
-                Paths.get(MongoConfigKey.DB_MONGO_TMP_PATH.default!!)
+                Paths.get(MongoConfigKey.DB_MONGO_TMP_PATH.default!!),
+                Paths.get(MongoConfigKey.DB_MONGO_CLIENT_PATH.default!!)
         )
 
         val fileScript = FileScript(Paths.get("src/test/resources/executor_test_files/mongo/mongo_simple_insert.js"), Regex(""))
