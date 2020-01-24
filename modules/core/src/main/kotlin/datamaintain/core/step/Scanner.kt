@@ -19,13 +19,13 @@ class Scanner(private val context: Context) {
                 .sortedBy { it.name }.toList()
     }
 
-    private fun buildTags(config: DatamaintainConfig, rootFolder: File, it: File): Set<Tag> {
+    private fun buildTags(config: DatamaintainConfig, rootFolder: File, file: File): Set<Tag> {
         val tags = mutableSetOf<Tag>()
 
         if(config.doesCreateTagsFromFolder)
-            tags.addAll(buildTagsFromFolder(rootFolder, it))
+            tags.addAll(buildTagsFromFolder(rootFolder, file))
 
-        tags.addAll(config.tags.filter { tag -> tag.matchesPath(it) })
+        tags.addAll(config.tags.filter { tag -> tag.matchesPath(file.toPath()) })
 
         return tags
     }

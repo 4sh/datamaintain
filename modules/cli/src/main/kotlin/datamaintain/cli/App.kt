@@ -8,12 +8,11 @@ import com.github.ajalt.clikt.parameters.options.validate
 import datamaintain.core.config.CoreConfigKey
 import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.runDatamaintain
+import datamaintain.core.script.Tag
 import datamaintain.db.driver.mongo.MongoConfigKey
 import datamaintain.db.driver.mongo.MongoDriverConfig
 import java.io.File
 import java.nio.file.FileSystems
-import java.nio.file.Path
-import java.nio.file.Paths
 import java.util.*
 import kotlin.system.exitProcess
 
@@ -51,7 +50,7 @@ class App : CliktCommand() {
                         .map { splitTagDeclaration ->
                             Tag(splitTagDeclaration[0],
                                     pathMatchers = splitTagDeclaration[1].split(";")
-                                            .map { pathMatcher -> FileSystems.getDefault().getPathMatcher("glob:" + pathMatcher) }
+                                            .map { pathMatcher -> FileSystems.getDefault().getPathMatcher("glob:$pathMatcher") }
                                             .toSet())
                         }.toSet()
             }
@@ -81,6 +80,7 @@ class App : CliktCommand() {
         blacklistedTags?.let { props.put(CoreConfigKey.TAGS_BLACKLISTED.key, it) }
         createTagsFromFolder?.let { props.put(CoreConfigKey.CREATE_TAGS_FROM_FOLDER.key, it) }
         executionMode?.let { props.put(CoreConfigKey.EXECUTION_MODE.key, it) }
+        tags?.let { props.put(CoreConfigKey.TAGS, it) }
         mongoDbName?.let { props.put(MongoConfigKey.DB_MONGO_DBNAME.key, it) }
         mongoUri?.let { props.put(MongoConfigKey.DB_MONGO_URI.key, it) }
         mongoTmpPath?.let { props.put(MongoConfigKey.DB_MONGO_TMP_PATH.key, it) }
