@@ -10,20 +10,18 @@ import strikt.assertions.isEqualTo
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
 
-
-
-
 class MongoIT : AbstractMongoDbTest() {
 
     @Test
     fun `should execute`() {
         // Given
         val args = arrayOf(
-                "--path", "src/test/resources/integration/ok",
-                "--identifier-regex", "(.*?)_.*",
                 "--db-type", "mongo",
                 "--mongo-uri", mongoUri,
+                "update-db",
                 "--verbose", "true",
+                "--path", "src/test/resources/integration/ok",
+                "--identifier-regex", "(.*?)_.*",
                 "--mongo-print-output", "true",
                 "--mongo-save-output", "true"
         )
@@ -47,22 +45,25 @@ class MongoIT : AbstractMongoDbTest() {
     fun `should partial execute`() {
         // Given
         main(arrayOf(
-                "--path", "src/test/resources/integration/partial",
-                "--identifier-regex", "(.*?)_.*",
                 "--db-type", "mongo",
                 "--mongo-uri", mongoUri,
-                "--verbose", "true"
+                "--verbose", "true",
+                "update-db",
+                "--path", "src/test/resources/integration/partial",
+                "--identifier-regex", "(.*?)_.*"
+
         ))
 
         expectThat(database.getCollection("simple").countDocuments()).isEqualTo(2)
         expectThat(collection.countDocuments()).isEqualTo(2)
 
         val args = arrayOf(
-                "--path", "src/test/resources/integration/ok",
-                "--identifier-regex", "(.*?)_.*",
                 "--db-type", "mongo",
                 "--mongo-uri", mongoUri,
-                "--verbose", "true"
+                "--verbose", "true",
+                "update-db",
+                "--path", "src/test/resources/integration/ok",
+                "--identifier-regex", "(.*?)_.*"
         )
 
         // When
@@ -83,11 +84,12 @@ class MongoIT : AbstractMongoDbTest() {
     fun `should dry run`() {
         // Given
         val args = arrayOf(
+                "--db-type", "mongo",
+                "--mongo-uri", mongoUri,
+                "update-db",
                 "--path", "src/test/resources/integration/ok",
                 "--identifier-regex", "(.*?)_.*",
-                "--db-type", "mongo",
-                "--execution-mode", "DRY",
-                "--mongo-uri", mongoUri
+                "--execution-mode", "DRY"
         )
 
         // When
@@ -103,12 +105,13 @@ class MongoIT : AbstractMongoDbTest() {
     fun `should force mark as executed`() {
         // Given
         val args = arrayOf(
+                "--db-type", "mongo",
+                "--mongo-uri", mongoUri,
+                "--verbose", "true",
+                "update-db",
                 "--path", "src/test/resources/integration/ok",
                 "--identifier-regex", "(.*?)_.*",
-                "--db-type", "mongo",
-                "--execution-mode", "FORCE_MARK_AS_EXECUTED",
-                "--mongo-uri", mongoUri,
-                "--verbose", "true"
+                "--execution-mode", "FORCE_MARK_AS_EXECUTED"
         )
 
         // When
@@ -130,11 +133,12 @@ class MongoIT : AbstractMongoDbTest() {
     fun `should fail with invalid script`() {
         // Given
         val args = arrayOf(
-                "--path", "src/test/resources/integration/ko",
-                "--identifier-regex", "(.*?)_.*",
                 "--db-type", "mongo",
                 "--mongo-uri", mongoUri,
-                "--verbose", "true"
+                "--verbose", "true",
+                "update-db",
+                "--path", "src/test/resources/integration/ko",
+                "--identifier-regex", "(.*?)_.*"
         )
 
         // When
@@ -156,9 +160,9 @@ class MongoIT : AbstractMongoDbTest() {
         System.setOut(ps)
 
         main(arrayOf(
-                "--list",
                 "--db-type", "mongo",
-                "--mongo-uri", mongoUri
+                "--mongo-uri", mongoUri,
+                "list"
         ))
 
         System.setOut(out)
