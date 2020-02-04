@@ -46,12 +46,15 @@ internal class ExecutorTest {
         every { dbDriverMock.executeScript(neq(script1)) }.answers {
             generateOkExecutedScript(it.invocation.args.first() as ScriptWithContent)
         }
-        every { dbDriverMock.markAsExecuted(any()) }.answers { it.invocation.args.first() as ExecutedScript }
+        every { dbDriverMock.markAsExecuted(any()) }.returnsArgument(0)
 
         // When
         val executionReport: ExecutionReport = executor.execute(listOf(script1, script2, script3))
 
         // Then
+        verify(exactly = 3) { dbDriverMock.executeScript(any()) }
+        verify(exactly = 2) { dbDriverMock.markAsExecuted(any()) }
+
         expectThat(executionReport) {
             get { status }.isEqualTo(ReportStatus.KO)
             get { lines }.and {
@@ -87,6 +90,9 @@ internal class ExecutorTest {
         val executionReport: ExecutionReport = executor.execute(listOf(script1, script2, script3))
 
         // Then
+        verify(exactly = 3) { dbDriverMock.executeScript(any()) }
+        verify(exactly = 3) { dbDriverMock.markAsExecuted(any()) }
+
         expectThat(executionReport) {
             get { status }.isEqualTo(ReportStatus.OK)
             get { lines }.and {
@@ -113,7 +119,7 @@ internal class ExecutorTest {
     @Test
     fun `should execute forcing mark as executed`() {
         // Given
-        every { dbDriverMock.markAsExecuted(any()) }.answers { it.invocation.args.first() as ExecutedScript }
+        every { dbDriverMock.markAsExecuted(any()) }.returnsArgument(0)
 
         val context = Context(DatamaintainConfig(
                 Paths.get(""),
@@ -127,6 +133,9 @@ internal class ExecutorTest {
         val executionReport: ExecutionReport = executor.execute(listOf(script1, script2, script3))
 
         // Then
+        verify(exactly = 0) { dbDriverMock.executeScript(any()) }
+        verify(exactly = 3) { dbDriverMock.markAsExecuted(any()) }
+
         expectThat(executionReport) {
             get { status }.isEqualTo(ReportStatus.OK)
             get { lines }.and {
@@ -174,6 +183,8 @@ internal class ExecutorTest {
 
         // Then
         verify(exactly = 0) { dbDriverMock.executeScript(any()) }
+        verify(exactly = 0) { dbDriverMock.markAsExecuted(any()) }
+
         expectThat(executionReport) {
             get { status }.isEqualTo(ReportStatus.OK)
             get { lines }.and {
@@ -197,6 +208,8 @@ internal class ExecutorTest {
 
         // Then
         verify(exactly = 0) { dbDriverMock.executeScript(any()) }
+        verify(exactly = 0) { dbDriverMock.markAsExecuted(any()) }
+
         expectThat(executionReport) {
             get { status }.isEqualTo(ReportStatus.OK)
             get { lines }.and {

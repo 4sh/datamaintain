@@ -1,6 +1,7 @@
 package datamaintain.test
 
 import datamaintain.cli.main
+import datamaintain.db.driver.mongo.MongoDriver
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
@@ -27,6 +28,7 @@ class MongoIT : AbstractMongoDbTest() {
         // TODO check report displayed ?
 
         // TODO use list executed option to check
+        expectThat(collection.countDocuments()).isEqualTo(3)
     }
 
     @Test
@@ -51,5 +53,7 @@ class MongoIT : AbstractMongoDbTest() {
         // TODO check report displayed ?
 
         // TODO use list executed option to check
+        expectThat(collection.countDocuments()).isEqualTo(3)
+
     }
 }

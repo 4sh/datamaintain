@@ -24,7 +24,8 @@ class Executor(private val context: Context) {
                     }
                 }
                 .map {
-                    if (it.executionStatus == ExecutionStatus.OK) {
+                    if (it.executionStatus == ExecutionStatus.OK
+                            || it.executionStatus == ExecutionStatus.FORCE_MARKED_AS_EXECUTED) {
                         markAsExecuted(it)
                     } else {
                         it.toExecutionLineReport()
