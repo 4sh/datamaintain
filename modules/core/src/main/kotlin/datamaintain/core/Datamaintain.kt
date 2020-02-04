@@ -1,7 +1,7 @@
 package datamaintain.core
 
 import datamaintain.core.config.DatamaintainConfig
-import datamaintain.core.report.ExecutionReport
+import datamaintain.core.report.Report
 import datamaintain.core.script.Script
 import datamaintain.core.step.Filter
 import datamaintain.core.step.Pruner
@@ -12,7 +12,7 @@ import mu.KotlinLogging
 
 private val logger = KotlinLogging.logger {}
 
-fun runDatamaintain(config: DatamaintainConfig): ExecutionReport {
+fun runDatamaintain(config: DatamaintainConfig): Report {
     return Datamaintain(config).run()
 }
 
@@ -28,8 +28,8 @@ class Datamaintain(config: DatamaintainConfig) {
             config.driverConfig.toDriver()
     )
 
-    fun run(): ExecutionReport {
-        val executionReport = Scanner(context).scan()
+    fun run(): Report {
+        val report = Scanner(context).scan()
                 .let { scripts -> Filter(context).filter(scripts) }
                 .let { scripts ->
                     ByLengthAndCaseInsensitiveAlphabeticalSorter(context.config)
@@ -38,11 +38,9 @@ class Datamaintain(config: DatamaintainConfig) {
                 .let { scripts -> Pruner(context).prune(scripts) }
                 .let { scripts -> Executor(context).execute(scripts) }
 
-        executionReport.lines.forEach {
-            logger.info { it.message }
-        }
+        report.print()
 
-        return executionReport
+        return report
     }
 
 }

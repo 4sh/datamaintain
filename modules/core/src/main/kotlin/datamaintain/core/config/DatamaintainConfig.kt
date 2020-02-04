@@ -15,13 +15,13 @@ private val logger = KotlinLogging.logger {}
 
 data class DatamaintainConfig(val path: Path = Paths.get(SCAN_PATH.default!!),
                               val identifierRegex: Regex = Regex(SCAN_IDENTIFIER_REGEX.default!!),
-                              val doesCreateTagsFromFolder: Boolean = CoreConfigKey.CREATE_TAGS_FROM_FOLDER.default!!.toBoolean(),
+                              val doesCreateTagsFromFolder: Boolean = CREATE_TAGS_FROM_FOLDER.default!!.toBoolean(),
                               val blacklistedTags: Set<Tag> = setOf(),
                               val executionMode: ExecutionMode = defaultExecutionMode,
                               val driverConfig: DatamaintainDriverConfig) {
 
     companion object {
-        private val defaultExecutionMode = ExecutionMode.NORMAL;
+        private val defaultExecutionMode = ExecutionMode.NORMAL
 
         @JvmStatic
         fun buildConfig(configInputStream: InputStream, driverConfig: DatamaintainDriverConfig): DatamaintainConfig {
@@ -36,18 +36,18 @@ data class DatamaintainConfig(val path: Path = Paths.get(SCAN_PATH.default!!),
             return DatamaintainConfig(
                     Paths.get(props.getProperty(SCAN_PATH)),
                     Regex(props.getProperty(SCAN_IDENTIFIER_REGEX)),
-                    props.getProperty(CoreConfigKey.CREATE_TAGS_FROM_FOLDER).toBoolean(),
+                    props.getProperty(CREATE_TAGS_FROM_FOLDER).toBoolean(),
                     props.getNullableProperty(TAGS_BLACKLISTED)?.split(",")
                             ?.map { Tag(it) }
                             ?.toSet()
                             ?: setOf(),
-                    ExecutionMode.fromNullable(props.getNullableProperty(CoreConfigKey.EXECUTION_MODE), defaultExecutionMode),
+                    ExecutionMode.fromNullable(props.getNullableProperty(EXECUTION_MODE), defaultExecutionMode),
                     driverConfig)
         }
     }
 
     fun log() {
-        logger.info { "configuration: " }
+        logger.info { "Configuration: " }
         path.let { logger.info { "- path -> $path" } }
         identifierRegex.let { logger.info { "- identifier regex -> ${identifierRegex.pattern}" } }
         blacklistedTags.let { logger.info { "- blacklisted tags -> $blacklistedTags" } }

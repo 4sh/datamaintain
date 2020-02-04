@@ -46,7 +46,7 @@ data class MongoDriverConfig(val mongoUri: String,
     }
 
     override fun log() {
-        logger.info { "mongo driver configuration: " }
+        logger.info { "Mongo driver configuration: " }
         logger.info { "- mongo uri -> $mongoUri" }
         logger.info { "- mongo tmp file -> $tmpFilePath" }
         logger.info { "- mongo client -> $clientPath" }

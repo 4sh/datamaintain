@@ -15,8 +15,11 @@ import java.nio.file.Paths
 
 internal class ScannerTest {
     private val scanner = Scanner(Context(
-            DatamaintainConfig(Paths.get("src/test/resources/scanner_test_files"),
-                    Regex("(.*?)_.*"), driverConfig = FakeDriverConfig()),
+            DatamaintainConfig(
+                    Paths.get("src/test/resources/scanner_test_files"),
+                    Regex("(.*?)_.*"),
+                    driverConfig = FakeDriverConfig()
+            ),
             dbDriver = FakeDatamaintainDriver()))
 
     @Test
