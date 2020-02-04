@@ -11,6 +11,7 @@ import datamaintain.core.runDatamaintain
 import datamaintain.db.driver.mongo.MongoConfigKey
 import datamaintain.db.driver.mongo.MongoDriverConfig
 import java.io.File
+import java.lang.IllegalArgumentException
 import java.util.*
 import kotlin.system.exitProcess
 
@@ -34,9 +35,7 @@ class App : CliktCommand() {
 
     private val executionMode: String? by option(help = "execution mode (NORMAL or DRY)")
 
-    private val mongoDbName: String? by option(help = "mongo db name")
-
-    private val mongoUri: String? by option(help = "mongo uri")
+    private val mongoUri: String? by option(help = "mongo uri with at least database name")
 
     private val mongoTmpPath: String? by option(help = "mongo tmp file path")
 
@@ -53,9 +52,12 @@ class App : CliktCommand() {
 
             runDatamaintain(config)
 
+        } catch (e: IllegalArgumentException) {
+            echo(e.message)
+            exitProcess(1)
         } catch (e: Exception) {
             echo(e.message ?: "unexpected error")
-            exitProcess(0)
+            exitProcess(1)
         }
     }
 
@@ -65,7 +67,6 @@ class App : CliktCommand() {
         blacklistedTags?.let { props.put(CoreConfigKey.TAGS_BLACKLISTED.key, it) }
         createTagsFromFolder?.let { props.put(CoreConfigKey.CREATE_TAGS_FROM_FOLDER.key, it) }
         executionMode?.let { props.put(CoreConfigKey.EXECUTION_MODE.key, it) }
-        mongoDbName?.let { props.put(MongoConfigKey.DB_MONGO_DBNAME.key, it) }
         mongoUri?.let { props.put(MongoConfigKey.DB_MONGO_URI.key, it) }
         mongoTmpPath?.let { props.put(MongoConfigKey.DB_MONGO_TMP_PATH.key, it) }
     }
@@ -75,7 +76,7 @@ class App : CliktCommand() {
             DbType.MONGO.value -> MongoDriverConfig.buildConfig(props)
             else -> {
                 echo("dbType $dbType is unknown")
-                exitProcess(0)
+                exitProcess(1)
             }
         }
     }

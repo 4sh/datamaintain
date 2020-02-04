@@ -19,7 +19,7 @@ class MongoIT : AbstractMongoDbTest() {
         val config = DatamaintainConfig(
                 Paths.get("src/test/resources/integration"),
                 Regex("(.*?)_.*"),
-                driverConfig = MongoDriverConfig(databaseName, mongoUri)
+                driverConfig = MongoDriverConfig(mongoUri)
         )
 
         // When
