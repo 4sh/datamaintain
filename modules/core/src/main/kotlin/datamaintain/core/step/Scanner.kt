@@ -22,8 +22,9 @@ class Scanner(private val context: Context) {
     private fun buildTags(config: DatamaintainConfig, rootFolder: File, file: File): Set<Tag> {
         val tags = mutableSetOf<Tag>()
 
-        if(config.doesCreateTagsFromFolder)
+        if (config.doesCreateTagsFromFolder) {
             tags.addAll(buildTagsFromFolder(rootFolder, file))
+        }
 
         tags.addAll(config.tags.filter { tag -> tag.matchesPath(file.toPath()) })
 
