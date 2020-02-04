@@ -3,10 +3,10 @@ package datamaintain.core
 import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.report.ExecutionReport
 import datamaintain.core.script.Script
-import datamaintain.core.step.executor.Executor
 import datamaintain.core.step.Filter
 import datamaintain.core.step.Pruner
 import datamaintain.core.step.Scanner
+import datamaintain.core.step.executor.Executor
 import datamaintain.core.step.sort.ByLengthAndCaseInsensitiveAlphabeticalSorter
 import mu.KotlinLogging
 
@@ -23,7 +23,10 @@ class Datamaintain(config: DatamaintainConfig) {
         config.driverConfig.log()
     }
 
-    val context = Context(config, config.driverConfig.toDriver())
+    val context = Context(
+            config,
+            config.driverConfig.toDriver()
+    )
 
     fun run(): ExecutionReport {
         val executionReport = Scanner(context).scan()

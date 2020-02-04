@@ -1,4 +1,4 @@
-package datamaintain.db.driver.mongo.test
+package datamaintain.test
 
 import com.mongodb.ConnectionString
 import com.mongodb.client.MongoClients

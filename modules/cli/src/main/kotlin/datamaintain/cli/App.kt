@@ -33,7 +33,7 @@ class App : CliktCommand() {
 
     private val createTagsFromFolder: String? by option(help = "boolean to create automatically tags from parent folders (true or false)")
 
-    private val executionMode: String? by option(help = "execution mode (NORMAL or DRY)")
+    private val executionMode: String? by option(help = "execution mode (NORMAL or DRY or FORCE_MARK_AS_EXECUTED)")
 
     private val mongoUri: String? by option(help = "mongo uri with at least database name")
 

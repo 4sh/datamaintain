@@ -2,13 +2,13 @@ package datamaintain.core.db.driver
 
 import datamaintain.core.script.Script
 import datamaintain.core.script.ScriptWithContent
-import datamaintain.core.report.ExecutionLineReport
+import datamaintain.core.script.ExecutedScript
 
 interface DatamaintainDriver {
 
-    fun executeScript(script: ScriptWithContent): ExecutionLineReport
-
     fun listExecutedScripts(): Sequence<Script>
 
-    fun markAsExecuted(script: Script)
+    fun executeScript(script: ScriptWithContent): ExecutedScript
+
+    fun markAsExecuted(executedScript: ExecutedScript): ExecutedScript
 }

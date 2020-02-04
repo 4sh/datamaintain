@@ -1,6 +1,7 @@
 package datamaintain.core.config
 
 import datamaintain.core.config.ConfigKey.Companion.overrideBySystemProperties
+import datamaintain.core.config.CoreConfigKey.*
 import datamaintain.core.db.driver.DatamaintainDriverConfig
 import datamaintain.core.script.Tag
 import datamaintain.core.step.executor.ExecutionMode
@@ -12,8 +13,8 @@ import java.util.*
 
 private val logger = KotlinLogging.logger {}
 
-data class DatamaintainConfig(val path: Path = Paths.get(CoreConfigKey.SCAN_PATH.default),
-                              val identifierRegex: Regex = Regex(CoreConfigKey.SCAN_IDENTIFIER_REGEX.default!!),
+data class DatamaintainConfig(val path: Path = Paths.get(SCAN_PATH.default!!),
+                              val identifierRegex: Regex = Regex(SCAN_IDENTIFIER_REGEX.default!!),
                               val doesCreateTagsFromFolder: Boolean = CoreConfigKey.CREATE_TAGS_FROM_FOLDER.default!!.toBoolean(),
                               val blacklistedTags: Set<Tag> = setOf(),
                               val executionMode: ExecutionMode = defaultExecutionMode,
@@ -31,12 +32,12 @@ data class DatamaintainConfig(val path: Path = Paths.get(CoreConfigKey.SCAN_PATH
 
         @JvmStatic
         fun buildConfig(driverConfig: DatamaintainDriverConfig, props: Properties = Properties()): DatamaintainConfig {
-            overrideBySystemProperties(props, CoreConfigKey.values().asList())
+            overrideBySystemProperties(props, values().asList())
             return DatamaintainConfig(
-                    Paths.get(props.getProperty(CoreConfigKey.SCAN_PATH)),
-                    Regex(props.getProperty(CoreConfigKey.SCAN_IDENTIFIER_REGEX)),
+                    Paths.get(props.getProperty(SCAN_PATH)),
+                    Regex(props.getProperty(SCAN_IDENTIFIER_REGEX)),
                     props.getProperty(CoreConfigKey.CREATE_TAGS_FROM_FOLDER).toBoolean(),
-                    props.getNullableProperty(CoreConfigKey.TAGS_BLACKLISTED)?.split(",")
+                    props.getNullableProperty(TAGS_BLACKLISTED)?.split(",")
                             ?.map { Tag(it) }
                             ?.toSet()
                             ?: setOf(),
@@ -50,6 +51,7 @@ data class DatamaintainConfig(val path: Path = Paths.get(CoreConfigKey.SCAN_PATH
         path.let { logger.info { "- path -> $path" } }
         identifierRegex.let { logger.info { "- identifier regex -> ${identifierRegex.pattern}" } }
         blacklistedTags.let { logger.info { "- blacklisted tags -> $blacklistedTags" } }
+        executionMode.let { logger.info { "- execution mode -> $executionMode" } }
         logger.info { "" }
     }
 
@@ -83,6 +85,7 @@ enum class CoreConfigKey(override val key: String,
 
     // EXECUTE
     EXECUTION_MODE("execute.mode", "NORMAL"),
+    FORCE_MARK_AS_EXECUTED("mark.as.executed", "false")
 }
 
 fun Properties.getProperty(configKey: ConfigKey): String =

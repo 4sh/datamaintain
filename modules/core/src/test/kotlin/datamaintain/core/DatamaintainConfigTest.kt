@@ -11,9 +11,9 @@ import strikt.assertions.isEqualTo
 import strikt.assertions.isFalse
 import strikt.assertions.isTrue
 import java.nio.file.Paths
-import java.util.*
 
 class DatamaintainConfigTest {
+
     @Test
     fun `should build config from resource`() {
         val expectedPath = Paths.get("/tmp/test")

@@ -1,0 +1,1 @@
+db.simple.insert({ find: "1", data: 'inserted'});

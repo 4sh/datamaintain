@@ -2,7 +2,8 @@ package datamaintain.core.step.executor
 
 enum class ExecutionMode {
     NORMAL,
-    DRY;
+    DRY,
+    FORCE_MARK_AS_EXECUTED;
 
     companion object {
         fun fromNullable(name: String?, defaultMode: ExecutionMode): ExecutionMode {
