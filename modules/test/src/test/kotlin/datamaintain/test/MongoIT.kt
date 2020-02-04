@@ -15,7 +15,9 @@ class MongoIT : AbstractMongoDbTest() {
                 "--identifier-regex", "(.*?)_.*",
                 "--db-type", "mongo",
                 "--mongo-uri", mongoUri,
-                "--verbose", "true"
+                "--verbose", "true",
+                "--mongo-print-output", "true",
+                "--mongo-save-output", "true"
         )
 
         // When

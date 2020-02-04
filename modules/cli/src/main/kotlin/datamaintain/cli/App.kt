@@ -35,11 +35,15 @@ class App : CliktCommand() {
 
     private val executionMode: String? by option(help = "execution mode (NORMAL or DRY or FORCE_MARK_AS_EXECUTED)")
 
+    private val verbose: String? by option(help = "verbose")
+
     private val mongoUri: String? by option(help = "mongo uri with at least database name")
 
     private val mongoTmpPath: String? by option(help = "mongo tmp file path")
 
-    private val verbose: String? by option(help = "verbose")
+    private val mongoSaveOutput: String? by option(help = "save mongo output")
+
+    private val mongoPrintOutput: String? by option(help = "print mongo output")
 
     override fun run() {
         try {
@@ -70,6 +74,8 @@ class App : CliktCommand() {
         createTagsFromFolder?.let { props.put(CoreConfigKey.CREATE_TAGS_FROM_FOLDER.key, it) }
         executionMode?.let { props.put(CoreConfigKey.EXECUTION_MODE.key, it) }
         verbose?.let { props.put(CoreConfigKey.VERBOSE.key, it) }
+        mongoSaveOutput?.let { props.put(MongoConfigKey.DB_MONGO_SAVE_OUTPUT.key, it) }
+        mongoPrintOutput?.let { props.put(MongoConfigKey.DB_MONGO_PRINT_OUTPUT.key, it) }
         mongoUri?.let { props.put(MongoConfigKey.DB_MONGO_URI.key, it) }
         mongoTmpPath?.let { props.put(MongoConfigKey.DB_MONGO_TMP_PATH.key, it) }
     }

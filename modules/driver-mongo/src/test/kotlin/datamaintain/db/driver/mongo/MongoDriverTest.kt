@@ -5,6 +5,7 @@ import datamaintain.core.script.*
 import datamaintain.db.driver.mongo.MongoDriver.Companion.documentToExecutedScript
 import datamaintain.db.driver.mongo.MongoDriver.Companion.executedScriptToDocument
 import datamaintain.db.driver.mongo.test.AbstractMongoDbTest
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.*
@@ -15,7 +16,9 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
     private val mongoDatamaintainDriver = MongoDriver(
             connectionString,
             Paths.get(MongoConfigKey.DB_MONGO_TMP_PATH.default!!),
-            Paths.get("mongo")
+            Paths.get("mongo"),
+            printOutput = false,
+            saveOutput = false
     )
 
     @Test
@@ -101,6 +104,65 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
             get { executionStatus }.isEqualTo(ExecutionStatus.OK)
             get { executionOutput }.isNull()
         }
+    }
+
+    @Test
+    fun `should print output`() {
+        // Given
+        database.getCollection("simple").drop()
+        val fileScript = FileScript(
+                Paths.get("src/test/resources/executor_test_files/mongo/mongo_simple_insert.js"),
+                Regex("")
+        )
+        val mongoDatamaintainDriver = MongoDriver(
+                connectionString,
+                Paths.get(MongoConfigKey.DB_MONGO_TMP_PATH.default!!),
+                Paths.get("mongo"),
+                printOutput = true,
+                saveOutput = true
+        )
+
+        // When
+        val executedScript = mongoDatamaintainDriver.executeScript(fileScript)
+
+        // Then
+        expectThat(executedScript) {
+            get { executionOutput }.isNotNull()
+        }
+    }
+
+    @Test
+    fun `should save output`() {
+        // Given
+        val mongoDatamaintainDriver = MongoDriver(
+                connectionString,
+                Paths.get(MongoConfigKey.DB_MONGO_TMP_PATH.default!!),
+                Paths.get("mongo"),
+                printOutput = false,
+                saveOutput = true
+        )
+        val script3 = ExecutedScript(
+                "script3.js",
+                "d3d9446802a44259755d38e6d163e820",
+                "",
+                ExecutionStatus.OK,
+                executionOutput = "test"
+        )
+
+        // When
+        val executedScript = mongoDatamaintainDriver.markAsExecuted(script3)
+
+        // Then
+        expectThat(executedScript) {
+            get { executionOutput }.isEqualTo("test")
+        }
+
+        expectThat(collection.find().toList().map { documentToExecutedScript(it) })
+                .hasSize(1).and {
+                    get(0).and {
+                        get { executionOutput }.isEqualTo("test")
+                    }
+                }
     }
 
     @Test
