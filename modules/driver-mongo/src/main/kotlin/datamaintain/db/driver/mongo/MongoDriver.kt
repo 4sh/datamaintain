@@ -100,13 +100,13 @@ class MongoDriver(private val connectionString: ConnectionString,
         return null
     }
 
-    override fun listExecutedScripts(): Sequence<Script> {
+    override fun listExecutedScripts(): Sequence<ExecutedScript> {
         return executedScriptsCollection.find().asSequence().map { documentToExecutedScript(it) }
     }
 
     override fun markAsExecuted(executedScript: ExecutedScript): ExecutedScript {
         val executedScriptDocument = executedScriptToDocument(executedScript)
         executedScriptsCollection.insertOne(executedScriptDocument)
-        return executedScript;
+        return executedScript
     }
 }

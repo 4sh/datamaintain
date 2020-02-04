@@ -1,19 +1,18 @@
 package datamaintain.cli
 
 import com.github.ajalt.clikt.core.CliktCommand
-import com.github.ajalt.clikt.parameters.options.convert
-import com.github.ajalt.clikt.parameters.options.default
-import com.github.ajalt.clikt.parameters.options.option
-import com.github.ajalt.clikt.parameters.options.validate
+import com.github.ajalt.clikt.parameters.options.*
+import datamaintain.core.Datamaintain
 import datamaintain.core.config.CoreConfigKey
 import datamaintain.core.config.DatamaintainConfig
-import datamaintain.core.runDatamaintain
 import datamaintain.db.driver.mongo.MongoConfigKey
 import datamaintain.db.driver.mongo.MongoDriverConfig
+import mu.KotlinLogging
 import java.io.File
-import java.lang.IllegalArgumentException
 import java.util.*
 import kotlin.system.exitProcess
+
+private val logger = KotlinLogging.logger {}
 
 class App : CliktCommand() {
 
@@ -34,6 +33,8 @@ class App : CliktCommand() {
     private val createTagsFromFolder: String? by option(help = "boolean to create automatically tags from parent folders (true or false)")
 
     private val executionMode: String? by option(help = "execution mode (NORMAL or DRY or FORCE_MARK_AS_EXECUTED)")
+
+    private val list by option(help = "list executed scripts").flag("-l")
 
     private val verbose: String? by option(help = "verbose")
 
@@ -56,7 +57,15 @@ class App : CliktCommand() {
 
             val config = loadConfig(props)
 
-            runDatamaintain(config)
+            val datamaintain = Datamaintain(config)
+
+            if (list) {
+                datamaintain.listExecutedScripts().forEach {
+                    logger.info { "${it.name} (${it.checksum})" }
+                }
+            } else {
+                datamaintain.updateDatabase().print(config.verbose)
+            }
 
         } catch (e: IllegalArgumentException) {
             echo(e.message)

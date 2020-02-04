@@ -3,7 +3,15 @@ package datamaintain.test
 import datamaintain.cli.main
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
+import strikt.assertions.containsExactly
+import strikt.assertions.hasSize
+import strikt.assertions.isEmpty
 import strikt.assertions.isEqualTo
+import java.io.ByteArrayOutputStream
+import java.io.PrintStream
+
+
+
 
 class MongoIT : AbstractMongoDbTest() {
 
@@ -27,10 +35,12 @@ class MongoIT : AbstractMongoDbTest() {
         val coll = database.getCollection("simple")
         expectThat(coll.countDocuments()).isEqualTo(3)
 
-        // TODO check report displayed ?
-
-        // TODO use list executed option to check
-        expectThat(collection.countDocuments()).isEqualTo(3)
+        expectThat(listExecutedFiles())
+                .hasSize(3)
+                .containsExactly(
+                        "01_file.js",
+                        "02_file.js",
+                        "03_file.js")
     }
 
     @Test
@@ -59,13 +69,14 @@ class MongoIT : AbstractMongoDbTest() {
         main(args)
 
         // Then
-        val coll = database.getCollection("simple")
-        expectThat(coll.countDocuments()).isEqualTo(3)
+        expectThat(database.getCollection("simple").countDocuments()).isEqualTo(3)
 
-        // TODO check report displayed ?
-
-        // TODO use list executed option to check
-        expectThat(collection.countDocuments()).isEqualTo(3)
+        expectThat(listExecutedFiles())
+                .hasSize(3)
+                .containsExactly(
+                        "01_file.js",
+                        "02_file.js",
+                        "03_file.js")
     }
 
     @Test
@@ -76,21 +87,16 @@ class MongoIT : AbstractMongoDbTest() {
                 "--identifier-regex", "(.*?)_.*",
                 "--db-type", "mongo",
                 "--execution-mode", "DRY",
-                "--mongo-uri", mongoUri,
-                "--verbose", "true"
+                "--mongo-uri", mongoUri
         )
 
         // When
         main(args)
 
         // Then
-        val coll = database.getCollection("simple")
-        expectThat(coll.countDocuments()).isEqualTo(0)
+        expectThat(database.getCollection("simple").countDocuments()).isEqualTo(0)
 
-        // TODO check report displayed ?
-
-        // TODO use list executed option to check
-        expectThat(collection.countDocuments()).isEqualTo(0)
+        expectThat(listExecutedFiles()).isEmpty()
     }
 
     @Test
@@ -109,13 +115,14 @@ class MongoIT : AbstractMongoDbTest() {
         main(args)
 
         // Then
-        val coll = database.getCollection("simple")
-        expectThat(coll.countDocuments()).isEqualTo(0)
+        expectThat(database.getCollection("simple").countDocuments()).isEqualTo(0)
 
-        // TODO check report displayed ?
-
-        // TODO use list executed option to check
-        expectThat(collection.countDocuments()).isEqualTo(3)
+        expectThat(listExecutedFiles())
+                .hasSize(3)
+                .containsExactly(
+                        "01_file.js",
+                        "02_file.js",
+                        "03_file.js")
 
     }
 
@@ -134,12 +141,31 @@ class MongoIT : AbstractMongoDbTest() {
         main(args)
 
         // Then
-        val coll = database.getCollection("simple")
-        expectThat(coll.countDocuments()).isEqualTo(1)
+        expectThat(database.getCollection("simple").countDocuments()).isEqualTo(1)
 
-        // TODO check report displayed ?
+        expectThat(listExecutedFiles())
+                .hasSize(1)
+                .containsExactly(
+                        "01_file.js")
+    }
 
-        // TODO use list executed option to check
-        expectThat(collection.countDocuments()).isEqualTo(1)
+    private fun listExecutedFiles(): List<String> {
+        val out = System.out
+        val baos = ByteArrayOutputStream()
+        val ps = PrintStream(baos)
+        System.setOut(ps)
+
+        main(arrayOf(
+                "--list",
+                "--db-type", "mongo",
+                "--mongo-uri", mongoUri
+        ))
+
+        System.setOut(out)
+
+        return String(baos.toByteArray())
+                .split("\n")
+                .map { it.split(" ").first() }
+                .dropLast(1)
     }
 }
