@@ -3,19 +3,16 @@ package datamaintain.core
 import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.report.ExecutionReport
 import datamaintain.core.script.Script
-import datamaintain.core.step.executor.Executor
 import datamaintain.core.step.Filter
 import datamaintain.core.step.Pruner
 import datamaintain.core.step.Scanner
+import datamaintain.core.step.executor.Executor
 import datamaintain.core.step.sort.ByLengthAndCaseInsensitiveAlphabeticalSorter
 import mu.KotlinLogging
 
 private val logger = KotlinLogging.logger {}
 
-fun runDatamaintain(
-        config: DatamaintainConfig,
-        onlyMarkAsExecuted: Boolean = false
-): ExecutionReport {
+fun runDatamaintain(config: DatamaintainConfig): ExecutionReport {
     return Datamaintain(config).run()
 }
 
