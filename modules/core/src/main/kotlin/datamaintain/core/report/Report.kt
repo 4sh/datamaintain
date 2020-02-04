@@ -13,11 +13,20 @@ class Report(
         val executedScripts: List<ExecutedScript> = listOf(),
         private val scriptInError: ExecutedScript? = null
 ) {
-    fun print() {
+    fun print(verbose: Boolean) {
         logger.info { "Summary => " }
         logger.info { "- ${scannedScripts.size} files scanned" }
+        if (verbose) {
+            scannedScripts.forEach {logger.info { " -> ${it.name}" }}
+        }
         logger.info { "- ${filteredScripts.size} files filtered" }
+        if (verbose) {
+            filteredScripts.forEach {logger.info { " -> ${it.name}" }}
+        }
         logger.info { "- ${prunedScripts.size} files pruned" }
+        if (verbose) {
+            prunedScripts.forEach {logger.info { " -> ${it.name}" }}
+        }
         logger.info { "- ${executedScripts.size} files executed" }
         executedScripts.forEach {logger.info { " -> ${it.name}" }}
         if (scriptInError != null) {

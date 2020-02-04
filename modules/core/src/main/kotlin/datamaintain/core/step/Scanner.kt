@@ -27,7 +27,11 @@ class Scanner(private val context: Context) {
                 }
                 .sortedBy { it.name }
                 .onEach { context.reportBuilder.addScannedScript(it) }
-                .onEach { }
+                .onEach {
+                    if (context.config.verbose) {
+                        logger.info { "${it.name} is scanned" }
+                    }
+                }
                 .toList()
         logger.info { "${scannedFiles.size} files scanned" }
         logger.info { "" }

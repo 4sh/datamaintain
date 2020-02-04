@@ -14,7 +14,8 @@ class MongoIT : AbstractMongoDbTest() {
                 "--path", "src/test/resources/integration/ok",
                 "--identifier-regex", "(.*?)_.*",
                 "--db-type", "mongo",
-                "--mongo-uri", mongoUri
+                "--mongo-uri", mongoUri,
+                "--verbose", "true"
         )
 
         // When
@@ -37,7 +38,8 @@ class MongoIT : AbstractMongoDbTest() {
                 "--path", "src/test/resources/integration/partial",
                 "--identifier-regex", "(.*?)_.*",
                 "--db-type", "mongo",
-                "--mongo-uri", mongoUri
+                "--mongo-uri", mongoUri,
+                "--verbose", "true"
         ))
 
         expectThat(database.getCollection("simple").countDocuments()).isEqualTo(2)
@@ -47,7 +49,8 @@ class MongoIT : AbstractMongoDbTest() {
                 "--path", "src/test/resources/integration/ok",
                 "--identifier-regex", "(.*?)_.*",
                 "--db-type", "mongo",
-                "--mongo-uri", mongoUri
+                "--mongo-uri", mongoUri,
+                "--verbose", "true"
         )
 
         // When
@@ -71,7 +74,8 @@ class MongoIT : AbstractMongoDbTest() {
                 "--identifier-regex", "(.*?)_.*",
                 "--db-type", "mongo",
                 "--execution-mode", "DRY",
-                "--mongo-uri", mongoUri
+                "--mongo-uri", mongoUri,
+                "--verbose", "true"
         )
 
         // When
@@ -95,7 +99,8 @@ class MongoIT : AbstractMongoDbTest() {
                 "--identifier-regex", "(.*?)_.*",
                 "--db-type", "mongo",
                 "--execution-mode", "FORCE_MARK_AS_EXECUTED",
-                "--mongo-uri", mongoUri
+                "--mongo-uri", mongoUri,
+                "--verbose", "true"
         )
 
         // When
@@ -119,7 +124,8 @@ class MongoIT : AbstractMongoDbTest() {
                 "--path", "src/test/resources/integration/ko",
                 "--identifier-regex", "(.*?)_.*",
                 "--db-type", "mongo",
-                "--mongo-uri", mongoUri
+                "--mongo-uri", mongoUri,
+                "--verbose", "true"
         )
 
         // When

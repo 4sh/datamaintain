@@ -1,7 +1,6 @@
 package datamaintain.core.step
 
 import datamaintain.core.Context
-import datamaintain.core.script.Script
 import datamaintain.core.script.ScriptWithContent
 import mu.KotlinLogging
 
@@ -15,7 +14,13 @@ class Pruner(private val context: Context) {
                 .toList()
         val prunedScripts = scripts
                 .onEach { context.reportBuilder.addPrunedScript(it) }
-                .filterNot { executedChecksums.contains(it.checksum) }
+                .filterNot { script ->
+                    val skipped = executedChecksums.contains(script.checksum)
+                    if (context.config.verbose && skipped) {
+                        logger.info { "${script.name} is skipped" }
+                    }
+                    skipped
+                }
         logger.info { "${prunedScripts.size} scripts pruned (${executedChecksums.size} skipped)" }
         logger.info { "" }
         return prunedScripts

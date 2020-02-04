@@ -9,7 +9,6 @@ import org.junit.jupiter.api.BeforeEach
 
 abstract class AbstractMongoDbTest {
     val databaseName = "datamaintain-test"
-    val mongoHost = "localhost:27018"
     val mongoUri = "mongodb://localhost:27018/datamaintain-test"
     val connectionString = ConnectionString(mongoUri)
 

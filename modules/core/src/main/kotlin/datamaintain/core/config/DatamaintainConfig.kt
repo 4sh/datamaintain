@@ -18,7 +18,8 @@ data class DatamaintainConfig(val path: Path = Paths.get(SCAN_PATH.default!!),
                               val doesCreateTagsFromFolder: Boolean = CREATE_TAGS_FROM_FOLDER.default!!.toBoolean(),
                               val blacklistedTags: Set<Tag> = setOf(),
                               val executionMode: ExecutionMode = defaultExecutionMode,
-                              val driverConfig: DatamaintainDriverConfig) {
+                              val driverConfig: DatamaintainDriverConfig,
+                              val verbose: Boolean = VERBOSE.default!!.toBoolean()) {
 
     companion object {
         private val defaultExecutionMode = ExecutionMode.NORMAL
@@ -42,16 +43,18 @@ data class DatamaintainConfig(val path: Path = Paths.get(SCAN_PATH.default!!),
                             ?.toSet()
                             ?: setOf(),
                     ExecutionMode.fromNullable(props.getNullableProperty(EXECUTION_MODE), defaultExecutionMode),
-                    driverConfig)
+                    driverConfig,
+                    props.getProperty(VERBOSE).toBoolean())
         }
     }
 
     fun log() {
         logger.info { "Configuration: " }
-        path.let { logger.info { "- path -> $path" } }
-        identifierRegex.let { logger.info { "- identifier regex -> ${identifierRegex.pattern}" } }
-        blacklistedTags.let { logger.info { "- blacklisted tags -> $blacklistedTags" } }
-        executionMode.let { logger.info { "- execution mode -> $executionMode" } }
+        path.let { logger.info { "- path -> $it" } }
+        identifierRegex.let { logger.info { "- identifier regex -> ${it.pattern}" } }
+        blacklistedTags.let { logger.info { "- blacklisted tags -> $it" } }
+        executionMode.let { logger.info { "- execution mode -> $it" } }
+        verbose.let { logger.info { "- verbose -> $it" } }
         logger.info { "" }
     }
 
@@ -74,6 +77,9 @@ interface ConfigKey {
 
 enum class CoreConfigKey(override val key: String,
                          override val default: String? = null) : ConfigKey {
+    // GLOBAL
+    VERBOSE("verbose", "false"),
+
     // SCAN
     SCAN_PATH("scan.path", "./scripts/"),
     SCAN_IDENTIFIER_REGEX("scan.identifier.regex", ".*"),
@@ -81,7 +87,6 @@ enum class CoreConfigKey(override val key: String,
 
     // FILTER
     TAGS_BLACKLISTED("filter.tags.blacklisted"),
-
 
     // EXECUTE
     EXECUTION_MODE("execute.mode", "NORMAL"),

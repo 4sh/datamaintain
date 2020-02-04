@@ -38,7 +38,7 @@ class Datamaintain(config: DatamaintainConfig) {
                 .let { scripts -> Pruner(context).prune(scripts) }
                 .let { scripts -> Executor(context).execute(scripts) }
 
-        report.print()
+        report.print(context.config.verbose)
 
         return report
     }
