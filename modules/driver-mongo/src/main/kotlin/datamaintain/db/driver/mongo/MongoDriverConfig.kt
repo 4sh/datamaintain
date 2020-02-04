@@ -1,5 +1,6 @@
 package datamaintain.db.driver.mongo
 
+import com.mongodb.ConnectionString
 import datamaintain.core.config.ConfigKey
 import datamaintain.core.config.getProperty
 import datamaintain.core.db.driver.DatamaintainDriverConfig
@@ -10,7 +11,7 @@ import java.util.*
 
 private val logger = KotlinLogging.logger {}
 
-data class MongoDriverConfig(val mongoUri: String = MongoConfigKey.DB_MONGO_URI.default!!,
+data class MongoDriverConfig(val mongoUri: String,
                              val tmpFilePath: Path = Paths.get(MongoConfigKey.DB_MONGO_TMP_PATH.default!!),
                              val clientPath: Path = Paths.get(MongoConfigKey.DB_MONGO_CLIENT_PATH.default!!)
 ) : DatamaintainDriverConfig {
@@ -26,9 +27,23 @@ data class MongoDriverConfig(val mongoUri: String = MongoConfigKey.DB_MONGO_URI.
     }
 
     override fun toDriver() = MongoDriver(
-            mongoUri,
+            buildConnectionString(mongoUri),
             tmpFilePath,
             clientPath)
+
+    private fun buildConnectionString(mongoUri: String): ConnectionString {
+        val connectionString = ConnectionString(mongoUri)
+        // mongoUri can come with a database but currently driver's dbName is mandatory
+        if (connectionString.database == null) {
+            throw IllegalArgumentException("MongoUri does not contains a database name")
+        }
+
+        // mongoUri can come with a collection. It has no sense in DataMaintain's logic
+        if (connectionString.collection != null) {
+            throw IllegalArgumentException("MongoUri contains a collection name, please remove it")
+        }
+        return connectionString
+    }
 
     override fun log() {
         logger.info { "mongo driver configuration: " }

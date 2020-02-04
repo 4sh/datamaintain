@@ -11,6 +11,7 @@ import datamaintain.core.runDatamaintain
 import datamaintain.db.driver.mongo.MongoConfigKey
 import datamaintain.db.driver.mongo.MongoDriverConfig
 import java.io.File
+import java.lang.IllegalArgumentException
 import java.util.*
 import kotlin.system.exitProcess
 
@@ -51,9 +52,12 @@ class App : CliktCommand() {
 
             runDatamaintain(config)
 
+        } catch (e: IllegalArgumentException) {
+            echo(e.message)
+            exitProcess(1)
         } catch (e: Exception) {
             echo(e.message ?: "unexpected error")
-            exitProcess(0)
+            exitProcess(1)
         }
     }
 
@@ -72,7 +76,7 @@ class App : CliktCommand() {
             DbType.MONGO.value -> MongoDriverConfig.buildConfig(props)
             else -> {
                 echo("dbType $dbType is unknown")
-                exitProcess(0)
+                exitProcess(1)
             }
         }
     }

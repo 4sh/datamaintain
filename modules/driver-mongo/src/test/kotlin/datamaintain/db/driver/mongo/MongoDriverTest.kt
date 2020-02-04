@@ -1,14 +1,12 @@
 package datamaintain.db.driver.mongo
 
 import com.mongodb.client.model.Filters
-import datamaintain.core.report.ExecutionStatus
 import datamaintain.core.script.FileScript
 import datamaintain.core.script.ScriptWithContent
 import datamaintain.core.script.ScriptWithoutContent
 import datamaintain.core.script.Tag
 import datamaintain.db.driver.mongo.test.AbstractMongoDbTest
 import org.junit.jupiter.api.Test
-import strikt.api.expectCatching
 import strikt.api.expectThat
 import strikt.assertions.*
 import java.math.BigInteger
@@ -18,7 +16,7 @@ import java.security.MessageDigest
 
 internal class MongoDriverTest : AbstractMongoDbTest() {
     private val mongoDatamaintainDriver = MongoDriver(
-            mongoUri,
+            connectionString,
             Paths.get(MongoConfigKey.DB_MONGO_TMP_PATH.default!!),
             Paths.get("mongo")
     )
@@ -120,51 +118,6 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
 
         expectThat(report) {
             get { message }.contains("failed to load: src/test/resources/executor_test_files/mongo/mongo_error_insert.js")
-        }
-    }
-
-    @Test
-    fun `should throw a mongoUri protocol missing`() {
-        // mongo host has form host:port and miss mongodb protocol
-        expectCatching { MongoDriver(
-                mongoHost,
-                Paths.get(MongoConfigKey.DB_MONGO_TMP_PATH.default!!),
-                Paths.get(MongoConfigKey.DB_MONGO_CLIENT_PATH.default!!)
-        ) }
-                .failed()
-                .isA<java.lang.IllegalArgumentException>()
-                .get { localizedMessage }.contains("Connection strings must start with either 'mongodb://' or 'mongodb+srv://")
-    }
-
-    @Test
-    fun `should throw a collection error in mongoURI`() {
-        // mongo host has form host:port and miss mongodb protocol
-        expectCatching { MongoDriver(
-                "${mongoUri}.aCollection",
-                Paths.get(MongoConfigKey.DB_MONGO_TMP_PATH.default!!),
-                Paths.get(MongoConfigKey.DB_MONGO_CLIENT_PATH.default!!)
-        ) }
-                .failed()
-                .isA<java.lang.IllegalArgumentException>()
-                .get { localizedMessage }.contains("MongoUri contains a collection name, please remove it")
-    }
-
-    @Test
-    fun `should work with parameterized mongoURI`() {
-        // mongo host has form host:port and miss mongodb protocol
-        val mongoDriver = MongoDriver(
-                "${mongoUri}?connectTimeoutMS=500000",
-                Paths.get(MongoConfigKey.DB_MONGO_TMP_PATH.default!!),
-                Paths.get(MongoConfigKey.DB_MONGO_CLIENT_PATH.default!!)
-        )
-
-        val fileScript = FileScript(Paths.get("src/test/resources/executor_test_files/mongo/mongo_simple_insert.js"), Regex(""))
-
-        // When
-        val report = mongoDriver.executeScript(fileScript)
-
-        expectThat(report) {
-            get { executionStatus }.isEqualTo(ExecutionStatus.OK)
         }
     }
 
