@@ -1,10 +1,7 @@
 package datamaintain.cli
 
 import com.github.ajalt.clikt.core.CliktCommand
-import com.github.ajalt.clikt.parameters.options.convert
-import com.github.ajalt.clikt.parameters.options.default
-import com.github.ajalt.clikt.parameters.options.option
-import com.github.ajalt.clikt.parameters.options.validate
+import com.github.ajalt.clikt.parameters.options.*
 import datamaintain.core.config.CoreConfigKey
 import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.runDatamaintain
@@ -12,7 +9,6 @@ import datamaintain.core.script.Tag
 import datamaintain.db.driver.mongo.MongoConfigKey
 import datamaintain.db.driver.mongo.MongoDriverConfig
 import java.io.File
-import java.nio.file.FileSystems
 import java.util.*
 import kotlin.system.exitProcess
 
@@ -42,18 +38,14 @@ class App : CliktCommand() {
 
     private val mongoTmpPath: String? by option(help = "mongo tmp file path")
 
-    private val tags: Set<Tag>? by option(help = "list of your tags defined using glob path matchers, like this: " +
-            "MYTAG1=[pathMatcher1; pathMatcher2],MYTAG2=[pathMatcher3]...")
+    private val tags: List<Tag>? by option("--tag", help = "Tag defined using glob path matchers. " +
+            "To define multiple tags, use option multiple times. " +
+            "Syntax example: MYTAG1=[pathMatcher1; pathMatcher2]")
             .convert {
-                it.split(",")
-                        .map { tagDeclaration -> tagDeclaration.split("=") }
-                        .map { splitTagDeclaration ->
-                            Tag(splitTagDeclaration[0],
-                                    pathMatchers = splitTagDeclaration[1].split(";")
-                                            .map { pathMatcher -> FileSystems.getDefault().getPathMatcher("glob:$pathMatcher") }
-                                            .toSet())
-                        }.toSet()
+                val split = it.split("=")
+                Tag.parse(split[0], split[1])
             }
+            .multiple()
 
     override fun run() {
         try {
@@ -80,7 +72,7 @@ class App : CliktCommand() {
         blacklistedTags?.let { props.put(CoreConfigKey.TAGS_BLACKLISTED.key, it) }
         createTagsFromFolder?.let { props.put(CoreConfigKey.CREATE_TAGS_FROM_FOLDER.key, it) }
         executionMode?.let { props.put(CoreConfigKey.EXECUTION_MODE.key, it) }
-        tags?.let { props.put(CoreConfigKey.TAGS, it) }
+        tags?.let { props.put(CoreConfigKey.TAGS, it.toSet()) }
         mongoDbName?.let { props.put(MongoConfigKey.DB_MONGO_DBNAME.key, it) }
         mongoUri?.let { props.put(MongoConfigKey.DB_MONGO_URI.key, it) }
         mongoTmpPath?.let { props.put(MongoConfigKey.DB_MONGO_TMP_PATH.key, it) }

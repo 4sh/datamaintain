@@ -7,13 +7,8 @@ import datamaintain.core.script.Tag
 import datamaintain.core.step.executor.ExecutionMode
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
-import strikt.assertions.containsExactly
-import strikt.assertions.isEqualTo
-import strikt.assertions.map
-import strikt.assertions.isFalse
-import strikt.assertions.isTrue
+import strikt.assertions.*
 import java.nio.file.Paths
-import java.util.*
 
 class DatamaintainConfigTest {
     @Test

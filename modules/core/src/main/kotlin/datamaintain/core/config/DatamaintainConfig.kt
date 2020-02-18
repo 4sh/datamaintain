@@ -6,12 +6,16 @@ import datamaintain.core.script.Tag
 import datamaintain.core.step.executor.ExecutionMode
 import mu.KotlinLogging
 import java.io.InputStream
-import java.nio.file.FileSystems
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.*
 
 private val logger = KotlinLogging.logger {}
+
+fun Properties.getPropertiesByPrefix(prefix: String): List<Map.Entry<String, String>> {
+    return (this.entries as List<Map.Entry<String, String>>)
+            .filter { it.key.startsWith(prefix) }
+}
 
 data class DatamaintainConfig(val path: Path = Paths.get(CoreConfigKey.SCAN_PATH.default),
                               val identifierRegex: Regex = Regex(CoreConfigKey.SCAN_IDENTIFIER_REGEX.default!!),
@@ -42,15 +46,9 @@ data class DatamaintainConfig(val path: Path = Paths.get(CoreConfigKey.SCAN_PATH
                             ?.map { Tag(it) }
                             ?.toSet()
                             ?: setOf(),
-                    props.getProperty(CoreConfigKey.TAGS).split(",")
-                            .map { tagDeclaration -> tagDeclaration.split("=") }
-                            .filter { it.size > 1 }
-                            .map { splitTagDeclaration ->
-                                Tag(splitTagDeclaration[0],
-                                        pathMatchers = splitTagDeclaration[1].split(";")
-                                                .map{ pathMatcher -> pathMatcher.trim('[', ']', ' ')}
-                                                .map{pathMatcher -> FileSystems.getDefault().getPathMatcher("glob:$pathMatcher")}.toSet())
-                            }.toSet(),
+                    props.getPropertiesByPrefix(CoreConfigKey.TAGS.toString())
+                            .map { Tag.parse(it.key.replace(CoreConfigKey.TAGS.toString(), ""), it.value) }
+                            .toSet(),
                     ExecutionMode.fromNullable(props.getNullableProperty(CoreConfigKey.EXECUTION_MODE), defaultExecutionMode),
                     driverConfig)
         }
