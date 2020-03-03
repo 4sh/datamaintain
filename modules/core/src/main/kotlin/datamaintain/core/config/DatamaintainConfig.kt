@@ -15,13 +15,14 @@ private val logger = KotlinLogging.logger {}
 
 data class DatamaintainConfig(val path: Path = Paths.get(SCAN_PATH.default!!),
                               val identifierRegex: Regex = Regex(SCAN_IDENTIFIER_REGEX.default!!),
-                              val doesCreateTagsFromFolder: Boolean = CoreConfigKey.CREATE_TAGS_FROM_FOLDER.default!!.toBoolean(),
+                              val doesCreateTagsFromFolder: Boolean = CREATE_TAGS_FROM_FOLDER.default!!.toBoolean(),
                               val blacklistedTags: Set<Tag> = setOf(),
                               val executionMode: ExecutionMode = defaultExecutionMode,
-                              val driverConfig: DatamaintainDriverConfig) {
+                              val driverConfig: DatamaintainDriverConfig,
+                              val verbose: Boolean = VERBOSE.default!!.toBoolean()) {
 
     companion object {
-        private val defaultExecutionMode = ExecutionMode.NORMAL;
+        private val defaultExecutionMode = ExecutionMode.NORMAL
 
         @JvmStatic
         fun buildConfig(configInputStream: InputStream, driverConfig: DatamaintainDriverConfig): DatamaintainConfig {
@@ -36,22 +37,24 @@ data class DatamaintainConfig(val path: Path = Paths.get(SCAN_PATH.default!!),
             return DatamaintainConfig(
                     Paths.get(props.getProperty(SCAN_PATH)),
                     Regex(props.getProperty(SCAN_IDENTIFIER_REGEX)),
-                    props.getProperty(CoreConfigKey.CREATE_TAGS_FROM_FOLDER).toBoolean(),
+                    props.getProperty(CREATE_TAGS_FROM_FOLDER).toBoolean(),
                     props.getNullableProperty(TAGS_BLACKLISTED)?.split(",")
                             ?.map { Tag(it) }
                             ?.toSet()
                             ?: setOf(),
-                    ExecutionMode.fromNullable(props.getNullableProperty(CoreConfigKey.EXECUTION_MODE), defaultExecutionMode),
-                    driverConfig)
+                    ExecutionMode.fromNullable(props.getNullableProperty(EXECUTION_MODE), defaultExecutionMode),
+                    driverConfig,
+                    props.getProperty(VERBOSE).toBoolean())
         }
     }
 
     fun log() {
-        logger.info { "configuration: " }
-        path.let { logger.info { "- path -> $path" } }
-        identifierRegex.let { logger.info { "- identifier regex -> ${identifierRegex.pattern}" } }
-        blacklistedTags.let { logger.info { "- blacklisted tags -> $blacklistedTags" } }
-        executionMode.let { logger.info { "- execution mode -> $executionMode" } }
+        logger.info { "Configuration: " }
+        path.let { logger.info { "- path -> $it" } }
+        identifierRegex.let { logger.info { "- identifier regex -> ${it.pattern}" } }
+        blacklistedTags.let { logger.info { "- blacklisted tags -> $it" } }
+        executionMode.let { logger.info { "- execution mode -> $it" } }
+        verbose.let { logger.info { "- verbose -> $it" } }
         logger.info { "" }
     }
 
@@ -74,6 +77,9 @@ interface ConfigKey {
 
 enum class CoreConfigKey(override val key: String,
                          override val default: String? = null) : ConfigKey {
+    // GLOBAL
+    VERBOSE("verbose", "false"),
+
     // SCAN
     SCAN_PATH("scan.path", "./scripts/"),
     SCAN_IDENTIFIER_REGEX("scan.identifier.regex", ".*"),
@@ -81,7 +87,6 @@ enum class CoreConfigKey(override val key: String,
 
     // FILTER
     TAGS_BLACKLISTED("filter.tags.blacklisted"),
-
 
     // EXECUTE
     EXECUTION_MODE("execute.mode", "NORMAL"),

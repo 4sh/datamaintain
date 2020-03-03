@@ -39,6 +39,8 @@ class App : CliktCommand() {
 
     private val mongoTmpPath: String? by option(help = "mongo tmp file path")
 
+    private val verbose: String? by option(help = "verbose")
+
     override fun run() {
         try {
             val props = Properties()
@@ -67,6 +69,7 @@ class App : CliktCommand() {
         blacklistedTags?.let { props.put(CoreConfigKey.TAGS_BLACKLISTED.key, it) }
         createTagsFromFolder?.let { props.put(CoreConfigKey.CREATE_TAGS_FROM_FOLDER.key, it) }
         executionMode?.let { props.put(CoreConfigKey.EXECUTION_MODE.key, it) }
+        verbose?.let { props.put(CoreConfigKey.VERBOSE.key, it) }
         mongoUri?.let { props.put(MongoConfigKey.DB_MONGO_URI.key, it) }
         mongoTmpPath?.let { props.put(MongoConfigKey.DB_MONGO_TMP_PATH.key, it) }
     }

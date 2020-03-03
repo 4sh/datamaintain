@@ -26,6 +26,7 @@ class DatamaintainConfigTest {
             get { blacklistedTags }.isEqualTo(setOf(Tag("un"), Tag("deux")))
             get { doesCreateTagsFromFolder }.isTrue()
             get { executionMode }.isEqualTo(ExecutionMode.DRY)
+            get { verbose }.isTrue()
         }
     }
 
@@ -37,6 +38,7 @@ class DatamaintainConfigTest {
             get { identifierRegex.pattern }.isEqualTo(CoreConfigKey.SCAN_IDENTIFIER_REGEX.default)
             get { doesCreateTagsFromFolder }.isEqualTo(CoreConfigKey.CREATE_TAGS_FROM_FOLDER.default!!.toBoolean())
             get { executionMode }.isEqualTo(ExecutionMode.NORMAL)
+            get { verbose }.isFalse()
         }
     }
 
@@ -45,6 +47,7 @@ class DatamaintainConfigTest {
         System.setProperty("scan.path", "/new")
         System.setProperty(CoreConfigKey.CREATE_TAGS_FROM_FOLDER.key, "false")
         System.setProperty(CoreConfigKey.EXECUTION_MODE.key, "NORMAL")
+        System.setProperty(CoreConfigKey.VERBOSE.key, "FALSE")
 
         val config = DatamaintainConfig.buildConfig(DatamaintainConfigTest::class.java.getResourceAsStream("/config/default.properties"),
                 FakeDriverConfig())
@@ -54,6 +57,7 @@ class DatamaintainConfigTest {
             get { doesCreateTagsFromFolder }.isFalse()
             get { blacklistedTags }.isEqualTo(setOf(Tag("un"), Tag("deux")))
             get { executionMode }.isEqualTo(ExecutionMode.NORMAL)
+            get { verbose }.isFalse()
         }
     }
 }
