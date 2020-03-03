@@ -3,6 +3,7 @@ package datamaintain.core.config
 import datamaintain.core.config.ConfigKey.Companion.overrideBySystemProperties
 import datamaintain.core.db.driver.DatamaintainDriverConfig
 import datamaintain.core.script.Tag
+import datamaintain.core.script.TagMatcher
 import datamaintain.core.step.executor.ExecutionMode
 import mu.KotlinLogging
 import java.io.InputStream
@@ -12,16 +13,11 @@ import java.util.*
 
 private val logger = KotlinLogging.logger {}
 
-fun Properties.getPropertiesByPrefix(prefix: String): List<Map.Entry<String, String>> {
-    return (this.entries as List<Map.Entry<String, String>>)
-            .filter { it.key.startsWith(prefix) }
-}
-
 data class DatamaintainConfig(val path: Path = Paths.get(CoreConfigKey.SCAN_PATH.default),
                               val identifierRegex: Regex = Regex(CoreConfigKey.SCAN_IDENTIFIER_REGEX.default!!),
                               val doesCreateTagsFromFolder: Boolean = CoreConfigKey.CREATE_TAGS_FROM_FOLDER.default!!.toBoolean(),
                               val blacklistedTags: Set<Tag> = setOf(),
-                              val tags: Set<Tag> = setOf(),
+                              val tagsMatchers: Set<TagMatcher> = setOf(),
                               val executionMode: ExecutionMode = defaultExecutionMode,
                               val driverConfig: DatamaintainDriverConfig) {
 
@@ -46,8 +42,8 @@ data class DatamaintainConfig(val path: Path = Paths.get(CoreConfigKey.SCAN_PATH
                             ?.map { Tag(it) }
                             ?.toSet()
                             ?: setOf(),
-                    props.getPropertiesByPrefix(CoreConfigKey.TAGS.toString())
-                            .map { Tag.parse(it.key.replace(CoreConfigKey.TAGS.toString(), ""), it.value) }
+                    props.getPropertiesByPrefix(CoreConfigKey.TAG.key)
+                            .map { TagMatcher.parse(it.first.replace("${CoreConfigKey.TAG.key}.", ""), it.second) }
                             .toSet(),
                     ExecutionMode.fromNullable(props.getNullableProperty(CoreConfigKey.EXECUTION_MODE), defaultExecutionMode),
                     driverConfig)
@@ -59,7 +55,7 @@ data class DatamaintainConfig(val path: Path = Paths.get(CoreConfigKey.SCAN_PATH
         path.let { logger.info { "- path -> $path" } }
         identifierRegex.let { logger.info { "- identifier regex -> ${identifierRegex.pattern}" } }
         blacklistedTags.let { logger.info { "- blacklisted tags -> $blacklistedTags" } }
-        tags.let { logger.info { "- tags -> $tags" } }
+        tagsMatchers.let { logger.info { "- tags -> $tagsMatchers" } }
         logger.info { "" }
     }
 
@@ -86,7 +82,7 @@ enum class CoreConfigKey(override val key: String,
     SCAN_PATH("scan.path", "./scripts/"),
     SCAN_IDENTIFIER_REGEX("scan.identifier.regex", ".*"),
     CREATE_TAGS_FROM_FOLDER("scan.tags.createFromFolder", "false"),
-    TAGS("tags", ""),
+    TAG("tag", ""),
 
     // FILTER
     TAGS_BLACKLISTED("filter.tags.blacklisted"),
@@ -104,6 +100,13 @@ fun Properties.getProperty(configKey: ConfigKey): String =
         }
 
 fun Properties.getNullableProperty(configKey: ConfigKey): String? = this.getProperty(configKey.key)
+
+fun Properties.getPropertiesByPrefix(prefix: String): Set<Pair<String, String>> {
+    return this.entries
+            .map { Pair(it.key as String, it.value as String) }
+            .filter { it.first.startsWith(prefix) }
+            .toSet()
+}
 
 fun Properties.getProperty(configKey: ConfigKey, defaultValue: String): String =
         this.getProperty(configKey.key, defaultValue)

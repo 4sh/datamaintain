@@ -5,22 +5,22 @@ import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.db.driver.FakeDatamaintainDriver
 import datamaintain.core.db.driver.FakeDriverConfig
 import datamaintain.core.script.Tag
+import datamaintain.core.script.TagMatcher
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.*
-import java.nio.file.FileSystems
 import java.nio.file.Paths
 
 internal class ScannerTest {
     private val scanner = prepareScanner()
 
-    fun prepareScanner(tags: Set<Tag> = emptySet(), doesCreateTagsFromFolder: Boolean = false): Scanner {
+    fun prepareScanner(tagsMatchers: Set<TagMatcher> = emptySet(), doesCreateTagsFromFolder: Boolean = false): Scanner {
         return Scanner(Context(
                 DatamaintainConfig(Paths.get("src/test/resources/scanner_test_files"),
                         Regex("(.*?)_.*"),
                         driverConfig = FakeDriverConfig(),
-                        tags = tags,
+                        tagsMatchers = tagsMatchers,
                         doesCreateTagsFromFolder = doesCreateTagsFromFolder
                 ),
                 dbDriver = FakeDatamaintainDriver()))
@@ -110,12 +110,12 @@ internal class ScannerTest {
         // Given
 
         // When
-        val scripts = prepareScanner(tags = setOf(Tag("TOTO", setOf(
-                FileSystems.getDefault().getPathMatcher("glob:src/test/resources/scanner_test_files/01_file1"),
-                FileSystems.getDefault().getPathMatcher("glob:src/test/resources/scanner_test_files/subfolder/*")
-        )), Tag("potato", setOf(
-                FileSystems.getDefault().getPathMatcher("glob:src/test/resources/scanner_test_files/*"),
-                FileSystems.getDefault().getPathMatcher("glob:src/test/resources/scanner_test_files/subfolder/03_file3")
+        val scripts = prepareScanner(tagsMatchers = setOf(TagMatcher(Tag("TOTO"), setOf(
+                "src/test/resources/scanner_test_files/01_file1",
+                "src/test/resources/scanner_test_files/subfolder/*"
+        )), TagMatcher(Tag("potato"), setOf(
+                "src/test/resources/scanner_test_files/*",
+                "src/test/resources/scanner_test_files/subfolder/03_file3"
         )))).scan()
 
         // Then
@@ -159,15 +159,6 @@ internal class ScannerTest {
 
         @Test
         fun `should create tags from parent`() {
-            // Given
-            val scanner = Scanner(Context(
-                    DatamaintainConfig(
-                            Paths.get("src/test/resources/scanner_test_files"),
-                            Regex("(.*?)_.*"),
-                            driverConfig = FakeDriverConfig(),
-                            doesCreateTagsFromFolder = true),
-                    dbDriver = FakeDatamaintainDriver()))
-
             // When
             val scripts = prepareScanner(doesCreateTagsFromFolder = true).scan()
 

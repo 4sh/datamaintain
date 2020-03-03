@@ -26,7 +26,7 @@ class Scanner(private val context: Context) {
             tags.addAll(buildTagsFromFolder(rootFolder, file))
         }
 
-        tags.addAll(config.tags.filter { tag -> tag.matchesPath(file.toPath()) })
+        tags.addAll(config.tagsMatchers.filter { it.matches(file.toPath()) }.map { it.tag })
 
         return tags
     }

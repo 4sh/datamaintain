@@ -4,10 +4,14 @@ import datamaintain.core.config.CoreConfigKey
 import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.db.driver.FakeDriverConfig
 import datamaintain.core.script.Tag
+import datamaintain.core.script.TagMatcher
 import datamaintain.core.step.executor.ExecutionMode
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
-import strikt.assertions.*
+import strikt.assertions.containsExactly
+import strikt.assertions.isEqualTo
+import strikt.assertions.isFalse
+import strikt.assertions.isTrue
 import java.nio.file.Paths
 
 class DatamaintainConfigTest {
@@ -23,14 +27,16 @@ class DatamaintainConfigTest {
             get { blacklistedTags }.isEqualTo(setOf(Tag("un"), Tag("deux")))
             get { doesCreateTagsFromFolder }.isTrue()
             get { executionMode }.isEqualTo(ExecutionMode.DRY)
-            get { tags }.map { it.name }.containsExactly("TOTO", "potato")
-//                    setOf(Tag("TOTO", setOf(
-//                            FileSystems.getDefault().getPathMatcher("glob:src/test/resources/scanner_test_files/01_file1"),
-//                            FileSystems.getDefault().getPathMatcher("glob:src/test/resources/scanner_test_files/subfolder/*")
-//                    )), Tag("potato", setOf(
-//                            FileSystems.getDefault().getPathMatcher("glob:src/test/resources/scanner_test_files/*"),
-//                            FileSystems.getDefault().getPathMatcher("glob:src/test/resources/scanner_test_files/subfolder/03_file3")
-//                    ))))
+            get { tagsMatchers }.containsExactly(
+                    TagMatcher( Tag("TOTO"), setOf(
+                            "src/test/resources/scanner_test_files/01_file1",
+                            "src/test/resources/scanner_test_files/subfolder/*"
+                    )),
+                    TagMatcher(Tag("potato"), setOf(
+                            "src/test/resources/scanner_test_files/*",
+                            "src/test/resources/scanner_test_files/subfolder/03_file3"
+                    ))
+            )
         }
     }
 
