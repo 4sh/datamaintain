@@ -12,7 +12,6 @@ import com.github.ajalt.clikt.parameters.options.validate
 import datamaintain.core.Datamaintain
 import datamaintain.core.config.CoreConfigKey
 import datamaintain.core.config.DatamaintainConfig
-import datamaintain.core.runDatamaintain
 import datamaintain.core.script.TagMatcher
 import datamaintain.db.driver.mongo.MongoConfigKey
 import datamaintain.db.driver.mongo.MongoDriverConfig
