@@ -4,6 +4,7 @@ import datamaintain.core.config.ConfigKey.Companion.overrideBySystemProperties
 import datamaintain.core.config.CoreConfigKey.*
 import datamaintain.core.db.driver.DatamaintainDriverConfig
 import datamaintain.core.script.Tag
+import datamaintain.core.script.TagMatcher
 import datamaintain.core.step.executor.ExecutionMode
 import mu.KotlinLogging
 import java.io.InputStream
@@ -17,6 +18,7 @@ data class DatamaintainConfig(val path: Path = Paths.get(SCAN_PATH.default!!),
                               val identifierRegex: Regex = Regex(SCAN_IDENTIFIER_REGEX.default!!),
                               val doesCreateTagsFromFolder: Boolean = CREATE_TAGS_FROM_FOLDER.default!!.toBoolean(),
                               val blacklistedTags: Set<Tag> = setOf(),
+                              val tagsMatchers: Set<TagMatcher> = setOf(),
                               val executionMode: ExecutionMode = defaultExecutionMode,
                               val driverConfig: DatamaintainDriverConfig,
                               val verbose: Boolean = VERBOSE.default!!.toBoolean()) {
@@ -42,6 +44,9 @@ data class DatamaintainConfig(val path: Path = Paths.get(SCAN_PATH.default!!),
                             ?.map { Tag(it) }
                             ?.toSet()
                             ?: setOf(),
+                    props.getPropertiesByPrefix(CoreConfigKey.TAG.key)
+                            .map { TagMatcher.parse(it.first.replace("${CoreConfigKey.TAG.key}.", ""), it.second) }
+                            .toSet(),
                     ExecutionMode.fromNullable(props.getNullableProperty(EXECUTION_MODE), defaultExecutionMode),
                     driverConfig,
                     props.getProperty(VERBOSE).toBoolean())
@@ -53,6 +58,7 @@ data class DatamaintainConfig(val path: Path = Paths.get(SCAN_PATH.default!!),
         path.let { logger.info { "- path -> $it" } }
         identifierRegex.let { logger.info { "- identifier regex -> ${it.pattern}" } }
         blacklistedTags.let { logger.info { "- blacklisted tags -> $it" } }
+        tagsMatchers.let { logger.info { "- tags -> $tagsMatchers" } }
         executionMode.let { logger.info { "- execution mode -> $it" } }
         verbose.let { logger.info { "- verbose -> $it" } }
         logger.info { "" }
@@ -84,6 +90,7 @@ enum class CoreConfigKey(override val key: String,
     SCAN_PATH("scan.path", "./scripts/"),
     SCAN_IDENTIFIER_REGEX("scan.identifier.regex", ".*"),
     CREATE_TAGS_FROM_FOLDER("scan.tags.createFromFolder", "false"),
+    TAG("tag", ""),
 
     // FILTER
     TAGS_BLACKLISTED("filter.tags.blacklisted"),
@@ -100,6 +107,13 @@ fun Properties.getProperty(configKey: ConfigKey): String =
         }
 
 fun Properties.getNullableProperty(configKey: ConfigKey): String? = this.getProperty(configKey.key)
+
+fun Properties.getPropertiesByPrefix(prefix: String): Set<Pair<String, String>> {
+    return this.entries
+            .map { Pair(it.key as String, it.value as String) }
+            .filter { it.first.startsWith(prefix) }
+            .toSet()
+}
 
 fun Properties.getProperty(configKey: ConfigKey, defaultValue: String): String =
         this.getProperty(configKey.key, defaultValue)

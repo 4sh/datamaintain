@@ -1,6 +1,7 @@
 package datamaintain.core.step
 
 import datamaintain.core.Context
+import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.script.FileScript
 import datamaintain.core.script.ScriptWithContent
 import datamaintain.core.script.Tag
@@ -16,15 +17,8 @@ class Scanner(private val context: Context) {
         logger.info { "Scan ${rootFolder.absolutePath}..." }
         val scannedFiles = rootFolder.walk()
                 .filter { it.isFile }
-                .map {
-                    val tags = mutableSetOf<Tag>()
-
-                    if (context.config.doesCreateTagsFromFolder) {
-                        tags.addAll(buildTagsFromFolder(rootFolder, it))
-                    }
-
-                    FileScript(it.toPath(), context.config.identifierRegex, tags.toSet())
-                }
+                .map { FileScript(it.toPath(), context.config.identifierRegex,
+                        buildTags(context.config, rootFolder, it).toSet()) }
                 .sortedBy { it.name }
                 .onEach { context.reportBuilder.addScannedScript(it) }
                 .onEach {
@@ -36,6 +30,18 @@ class Scanner(private val context: Context) {
         logger.info { "${scannedFiles.size} files scanned" }
         logger.info { "" }
         return scannedFiles
+    }
+
+    private fun buildTags(config: DatamaintainConfig, rootFolder: File, file: File): Set<Tag> {
+        val tags = mutableSetOf<Tag>()
+
+        if (config.doesCreateTagsFromFolder) {
+            tags.addAll(buildTagsFromFolder(rootFolder, file))
+        }
+
+        tags.addAll(config.tagsMatchers.filter { it.matches(file.toPath()) }.map { it.tag })
+
+        return tags
     }
 
     private fun buildTagsFromFolder(rootFolder: File, it: File): Set<Tag> {

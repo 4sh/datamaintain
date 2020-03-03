@@ -4,10 +4,7 @@ import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.findObject
 import com.github.ajalt.clikt.core.requireObject
 import com.github.ajalt.clikt.core.subcommands
-import com.github.ajalt.clikt.parameters.options.convert
-import com.github.ajalt.clikt.parameters.options.default
-import com.github.ajalt.clikt.parameters.options.option
-import com.github.ajalt.clikt.parameters.options.validate
+import com.github.ajalt.clikt.parameters.options.*
 import datamaintain.core.Datamaintain
 import datamaintain.core.config.CoreConfigKey
 import datamaintain.core.config.DatamaintainConfig
@@ -71,6 +68,15 @@ class UpdateDb : CliktCommand(name = "update-db") {
 
     private val props by requireObject<Properties>()
 
+    private val tagsMatchers: List<Pair<String, String>>? by option("--tag", help = "Tag defined using glob path matchers. " +
+            "To define multiple tags, use option multiple times. " +
+            "Syntax example: MYTAG1=[pathMatcher1; pathMatcher2]")
+            .convert {
+                val split = it.split("=")
+                Pair(split[0], split[1])
+            }
+            .multiple()
+
     override fun run() {
         try {
             overloadPropsFromArgs(props)
@@ -97,6 +103,9 @@ class UpdateDb : CliktCommand(name = "update-db") {
         mongoSaveOutput?.let { props.put(MongoConfigKey.DB_MONGO_SAVE_OUTPUT.key, it) }
         mongoPrintOutput?.let { props.put(MongoConfigKey.DB_MONGO_PRINT_OUTPUT.key, it) }
         executionMode?.let { props.put(CoreConfigKey.EXECUTION_MODE.key, it) }
+        tagsMatchers?.forEach {
+            props.put("${CoreConfigKey.TAG.key}.${it.first}", it.second)
+        }
     }
 }
 

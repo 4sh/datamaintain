@@ -11,7 +11,7 @@ class Filter(private val context: Context) {
         logger.info { "Filter scripts..." }
         val filteredScripts = scripts
                 .filterNot { script ->
-                    val skipped = context.config.blacklistedTags.any { it matchedBy script }
+                    val skipped = context.config.blacklistedTags.any { it isIncluded script }
                     if (context.config.verbose && skipped) {
                         logger.info { "${script.name} is skipped" }
                     }

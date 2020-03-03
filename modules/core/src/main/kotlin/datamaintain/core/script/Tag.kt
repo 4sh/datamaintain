@@ -1,11 +1,24 @@
 package datamaintain.core.script
 
-data class Tag(val name: String) {
-    infix fun matchedBy(script: ScriptWithContent): Boolean {
-        return script.tags.any { it matches this }
+data class Tag(
+        val name: String
+) {
+    infix fun isIncluded(script: ScriptWithContent): Boolean {
+        return script.tags.any { it == this }
     }
 
-    infix fun matches(tag: Tag): Boolean {
-        return name == tag.name
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Tag
+
+        if (name != other.name) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return name.hashCode()
     }
 }

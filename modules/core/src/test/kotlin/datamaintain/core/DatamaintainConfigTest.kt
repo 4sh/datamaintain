@@ -1,12 +1,14 @@
 package datamaintain.core
 
-import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.config.CoreConfigKey
+import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.db.driver.FakeDriverConfig
 import datamaintain.core.script.Tag
+import datamaintain.core.script.TagMatcher
 import datamaintain.core.step.executor.ExecutionMode
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
+import strikt.assertions.containsExactlyInAnyOrder
 import strikt.assertions.isEqualTo
 import strikt.assertions.isFalse
 import strikt.assertions.isTrue
@@ -26,6 +28,16 @@ class DatamaintainConfigTest {
             get { blacklistedTags }.isEqualTo(setOf(Tag("un"), Tag("deux")))
             get { doesCreateTagsFromFolder }.isTrue()
             get { executionMode }.isEqualTo(ExecutionMode.DRY)
+            get { tagsMatchers }.containsExactlyInAnyOrder(
+                    TagMatcher( Tag("TOTO"), setOf(
+                            "src/test/resources/scanner_test_files/01_file1",
+                            "src/test/resources/scanner_test_files/subfolder/*"
+                    )),
+                    TagMatcher(Tag("potato"), setOf(
+                            "src/test/resources/scanner_test_files/*",
+                            "src/test/resources/scanner_test_files/subfolder/03_file3"
+                    ))
+            )
             get { verbose }.isTrue()
         }
     }
