@@ -7,13 +7,19 @@ import com.mongodb.client.MongoDatabase
 import datamaintain.core.db.driver.DatamaintainDriver
 import datamaintain.core.script.*
 import datamaintain.core.util.runProcess
+import mu.KotlinLogging
 import org.bson.Document
+import java.io.InputStream
 import java.nio.file.Path
-import kotlin.streams.toList
+import kotlin.streams.asSequence
+
+private val logger = KotlinLogging.logger {}
 
 class MongoDriver(private val connectionString: ConnectionString,
                   private val tmpFilePath: Path,
-                  private val clientPath: Path
+                  private val clientPath: Path,
+                  private val printOutput: Boolean,
+                  private val saveOutput: Boolean
 ) : DatamaintainDriver {
 
     private val executedScriptsCollection: MongoCollection<Document>
@@ -29,20 +35,20 @@ class MongoDriver(private val connectionString: ConnectionString,
         private const val SCRIPT_DOCUMENT_EXECUTION_OUTPUT = "executionOutput"
 
         fun executedScriptToDocument(executedScript: ExecutedScript): Document =
-                Document().append(MongoDriver.SCRIPT_DOCUMENT_NAME, executedScript.name)
-                        .append(MongoDriver.SCRIPT_DOCUMENT_CHECKSUM, executedScript.checksum)
-                        .append(MongoDriver.SCRIPT_DOCUMENT_IDENTIFIER, executedScript.identifier)
-                        .append(MongoDriver.SCRIPT_DOCUMENT_EXECUTION_STATUS, executedScript.executionStatus.name)
-                        .append(MongoDriver.SCRIPT_DOCUMENT_EXECUTION_OUTPUT, executedScript.executionOutput)
+                Document().append(SCRIPT_DOCUMENT_NAME, executedScript.name)
+                        .append(SCRIPT_DOCUMENT_CHECKSUM, executedScript.checksum)
+                        .append(SCRIPT_DOCUMENT_IDENTIFIER, executedScript.identifier)
+                        .append(SCRIPT_DOCUMENT_EXECUTION_STATUS, executedScript.executionStatus.name)
+                        .append(SCRIPT_DOCUMENT_EXECUTION_OUTPUT, executedScript.executionOutput)
 
 
         fun documentToExecutedScript(document: Document) =
                 ExecutedScript(
-                        document.getString(MongoDriver.SCRIPT_DOCUMENT_NAME),
-                        document.getString(MongoDriver.SCRIPT_DOCUMENT_CHECKSUM),
-                        document.getString(MongoDriver.SCRIPT_DOCUMENT_IDENTIFIER),
-                        ExecutionStatus.valueOf(document.getString(MongoDriver.SCRIPT_DOCUMENT_EXECUTION_STATUS)),
-                        document.getString(MongoDriver.SCRIPT_DOCUMENT_EXECUTION_OUTPUT)
+                        document.getString(SCRIPT_DOCUMENT_NAME),
+                        document.getString(SCRIPT_DOCUMENT_CHECKSUM),
+                        document.getString(SCRIPT_DOCUMENT_IDENTIFIER),
+                        ExecutionStatus.valueOf(document.getString(SCRIPT_DOCUMENT_EXECUTION_STATUS)),
+                        document.getString(SCRIPT_DOCUMENT_EXECUTION_OUTPUT)
                 )
     }
 
@@ -63,14 +69,10 @@ class MongoDriver(private val connectionString: ConnectionString,
             }
         }
 
-        // TODO handle output option
-        val saveOutput = false
         var executionOutput: String? = null
 
         val exitCode = listOf(clientPath.toString(), "$connectionString", "--quiet", scriptPath.toString()).runProcess() { inputStream ->
-            if (saveOutput) {
-                executionOutput = inputStream.bufferedReader().lines().toList().joinToString("\n")
-            }
+            executionOutput = processDriverOutput(inputStream)
         }
 
         return ExecutedScript(
@@ -80,6 +82,22 @@ class MongoDriver(private val connectionString: ConnectionString,
                 if (exitCode == 0) ExecutionStatus.OK else ExecutionStatus.KO,
                 executionOutput
         )
+    }
+
+    private fun processDriverOutput(inputStream: InputStream): String? {
+        if (saveOutput || printOutput) {
+            val lines = inputStream.bufferedReader().lines().asSequence()
+                    .onEach {
+                        if (printOutput) {
+                            logger.info { it }
+                        }
+                    }
+                    .toList()
+            if (saveOutput) {
+                return lines.joinToString("\n")
+            }
+        }
+        return null
     }
 
     override fun listExecutedScripts(): Sequence<Script> {

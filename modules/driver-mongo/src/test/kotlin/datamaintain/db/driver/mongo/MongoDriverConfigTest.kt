@@ -20,6 +20,8 @@ internal class MongoDriverConfigTest {
         expectThat(MongoDriverConfig.buildConfig(props)).and {
             get { mongoUri }.isEqualTo("mongodb://localhost:27017/test-datamaintain")
             get { tmpFilePath }.isEqualTo(Paths.get("/tmp/test"))
+            get { printOutput }.isEqualTo(true)
+            get { saveOutput }.isEqualTo(true)
         }
     }
 

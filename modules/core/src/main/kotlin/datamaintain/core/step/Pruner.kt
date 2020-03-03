@@ -13,7 +13,6 @@ class Pruner(private val context: Context) {
                 .map { executedScript -> executedScript.checksum }
                 .toList()
         val prunedScripts = scripts
-                .onEach { context.reportBuilder.addPrunedScript(it) }
                 .filterNot { script ->
                     val skipped = executedChecksums.contains(script.checksum)
                     if (context.config.verbose && skipped) {
@@ -21,6 +20,8 @@ class Pruner(private val context: Context) {
                     }
                     skipped
                 }
+                .onEach { context.reportBuilder.addPrunedScript(it) }
+
         logger.info { "${prunedScripts.size} scripts pruned (${executedChecksums.size} skipped)" }
         logger.info { "" }
         return prunedScripts
