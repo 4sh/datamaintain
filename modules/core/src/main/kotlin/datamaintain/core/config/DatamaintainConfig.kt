@@ -89,8 +89,7 @@ enum class CoreConfigKey(override val key: String,
     TAGS_BLACKLISTED("filter.tags.blacklisted"),
 
     // EXECUTE
-    EXECUTION_MODE("execute.mode", "NORMAL"),
-    FORCE_MARK_AS_EXECUTED("mark.as.executed", "false")
+    EXECUTION_MODE("execute.mode", "NORMAL")
 }
 
 fun Properties.getProperty(configKey: ConfigKey): String =
