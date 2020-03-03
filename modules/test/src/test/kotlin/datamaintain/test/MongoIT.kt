@@ -47,8 +47,8 @@ class MongoIT : AbstractMongoDbTest() {
         main(arrayOf(
                 "--db-type", "mongo",
                 "--mongo-uri", mongoUri,
-                "--verbose", "true",
                 "update-db",
+                "--verbose", "true",
                 "--path", "src/test/resources/integration/partial",
                 "--identifier-regex", "(.*?)_.*"
 
@@ -60,8 +60,8 @@ class MongoIT : AbstractMongoDbTest() {
         val args = arrayOf(
                 "--db-type", "mongo",
                 "--mongo-uri", mongoUri,
-                "--verbose", "true",
                 "update-db",
+                "--verbose", "true",
                 "--path", "src/test/resources/integration/ok",
                 "--identifier-regex", "(.*?)_.*"
         )
@@ -107,8 +107,8 @@ class MongoIT : AbstractMongoDbTest() {
         val args = arrayOf(
                 "--db-type", "mongo",
                 "--mongo-uri", mongoUri,
-                "--verbose", "true",
                 "update-db",
+                "--verbose", "true",
                 "--path", "src/test/resources/integration/ok",
                 "--identifier-regex", "(.*?)_.*",
                 "--execution-mode", "FORCE_MARK_AS_EXECUTED"
@@ -135,8 +135,8 @@ class MongoIT : AbstractMongoDbTest() {
         val args = arrayOf(
                 "--db-type", "mongo",
                 "--mongo-uri", mongoUri,
-                "--verbose", "true",
                 "update-db",
+                "--verbose", "true",
                 "--path", "src/test/resources/integration/ko",
                 "--identifier-regex", "(.*?)_.*"
         )
