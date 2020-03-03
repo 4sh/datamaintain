@@ -1,5 +1,6 @@
 package datamaintain.db.driver.mongo
 
+import com.mongodb.ConnectionString
 import datamaintain.core.config.ConfigKey
 import datamaintain.core.config.getProperty
 import datamaintain.core.db.driver.DatamaintainDriverConfig
@@ -10,36 +11,52 @@ import java.util.*
 
 private val logger = KotlinLogging.logger {}
 
-data class MongoDriverConfig(val dbName: String,
-                             val mongoUri: String = MongoConfigKey.DB_MONGO_URI.default!!,
+data class MongoDriverConfig(val mongoUri: String,
                              val tmpFilePath: Path = Paths.get(MongoConfigKey.DB_MONGO_TMP_PATH.default!!),
-                             val clientPath: Path = Paths.get(MongoConfigKey.DB_MONGO_CLIENT_PATH.default!!)
+                             val clientPath: Path = Paths.get(MongoConfigKey.DB_MONGO_CLIENT_PATH.default!!),
+                             val printOutput: Boolean = MongoConfigKey.DB_MONGO_PRINT_OUTPUT.default!!.toBoolean(),
+                             val saveOutput: Boolean = MongoConfigKey.DB_MONGO_SAVE_OUTPUT.default!!.toBoolean()
 ) : DatamaintainDriverConfig {
     companion object {
         @JvmStatic
         fun buildConfig(props: Properties): MongoDriverConfig {
             ConfigKey.overrideBySystemProperties(props, MongoConfigKey.values().asList())
             return MongoDriverConfig(
-                    props.getProperty(MongoConfigKey.DB_MONGO_DBNAME),
                     props.getProperty(MongoConfigKey.DB_MONGO_URI),
                     props.getProperty(MongoConfigKey.DB_MONGO_TMP_PATH).let { Paths.get(it) },
-                    props.getProperty(MongoConfigKey.DB_MONGO_CLIENT_PATH).let { Paths.get(it) })
-
+                    props.getProperty(MongoConfigKey.DB_MONGO_CLIENT_PATH).let { Paths.get(it) },
+                    props.getProperty(MongoConfigKey.DB_MONGO_PRINT_OUTPUT).toBoolean(),
+                    props.getProperty(MongoConfigKey.DB_MONGO_SAVE_OUTPUT).toBoolean())
         }
     }
 
     override fun toDriver() = MongoDriver(
-            dbName,
-            mongoUri,
+            buildConnectionString(mongoUri),
             tmpFilePath,
-            clientPath)
+            clientPath,
+            printOutput,
+            saveOutput)
+
+    private fun buildConnectionString(mongoUri: String): ConnectionString {
+        val connectionString = ConnectionString(mongoUri)
+        // mongoUri can come with a database but currently driver's dbName is mandatory
+        if (connectionString.database == null) {
+            throw IllegalArgumentException("MongoUri does not contains a database name")
+        }
+        // mongoUri can come with a collection. It has no sense in DataMaintain's logic
+        if (connectionString.collection != null) {
+            throw IllegalArgumentException("MongoUri contains a collection name, please remove it")
+        }
+        return connectionString
+    }
 
     override fun log() {
-        logger.info { "mongo driver configuration: " }
-        logger.info { "- mongo database name -> $dbName" }
+        logger.info { "Mongo driver configuration: " }
         logger.info { "- mongo uri -> $mongoUri" }
         logger.info { "- mongo tmp file -> $tmpFilePath" }
         logger.info { "- mongo client -> $clientPath" }
+        logger.info { "- mongo print output -> $printOutput" }
+        logger.info { "- mongo save output -> $saveOutput" }
         logger.info { "" }
     }
 }
@@ -48,8 +65,9 @@ enum class MongoConfigKey(
         override val key: String,
         override val default: String? = null
 ) : ConfigKey {
-    DB_MONGO_URI("db.mongo.uri", "localhost:27017"),
-    DB_MONGO_DBNAME("db.mongo.dbname"),
+    DB_MONGO_URI("db.mongo.uri"),
     DB_MONGO_TMP_PATH("db.mongo.tmp.path", "/tmp/datamaintain.tmp"),
-    DB_MONGO_CLIENT_PATH("db.mongo.client.path", "mongo")
+    DB_MONGO_CLIENT_PATH("db.mongo.client.path", "mongo"),
+    DB_MONGO_PRINT_OUTPUT("db.mongo.print.output", "false"),
+    DB_MONGO_SAVE_OUTPUT("db.mongo.save.output", "false"),
 }

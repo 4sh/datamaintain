@@ -1,32 +1,33 @@
 package datamaintain.core
 
 import datamaintain.core.config.DatamaintainConfig
-import datamaintain.core.report.ExecutionReport
+import datamaintain.core.report.Report
 import datamaintain.core.script.Script
-import datamaintain.core.step.executor.Executor
 import datamaintain.core.step.Filter
 import datamaintain.core.step.Pruner
 import datamaintain.core.step.Scanner
+import datamaintain.core.step.executor.Executor
 import datamaintain.core.step.sort.ByLengthAndCaseInsensitiveAlphabeticalSorter
 import mu.KotlinLogging
 
 private val logger = KotlinLogging.logger {}
 
-fun runDatamaintain(config: DatamaintainConfig): ExecutionReport {
-    return Datamaintain(config).run()
-}
-
 class Datamaintain(config: DatamaintainConfig) {
 
     init {
-        config.log()
-        config.driverConfig.log()
+        if (config.verbose) {
+            config.log()
+            config.driverConfig.log()
+        }
     }
 
-    val context = Context(config, config.driverConfig.toDriver())
+    val context = Context(
+            config,
+            config.driverConfig.toDriver()
+    )
 
-    fun run(): ExecutionReport {
-        val executionReport = Scanner(context).scan()
+    fun updateDatabase(): Report {
+        return Scanner(context).scan()
                 .let { scripts -> Filter(context).filter(scripts) }
                 .let { scripts ->
                     ByLengthAndCaseInsensitiveAlphabeticalSorter(context.config)
@@ -34,13 +35,9 @@ class Datamaintain(config: DatamaintainConfig) {
                 }
                 .let { scripts -> Pruner(context).prune(scripts) }
                 .let { scripts -> Executor(context).execute(scripts) }
-
-        executionReport.lines.forEach {
-            logger.info { it.message }
-        }
-
-        return executionReport
     }
+
+    fun listExecutedScripts() = context.dbDriver.listExecutedScripts()
 
 }
 

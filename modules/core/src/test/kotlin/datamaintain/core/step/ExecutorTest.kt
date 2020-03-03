@@ -1,29 +1,26 @@
 package datamaintain.core.step
 
-import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.Context
+import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.db.driver.DatamaintainDriver
 import datamaintain.core.db.driver.FakeDriverConfig
-import datamaintain.core.report.ExecutionLineReport
-import datamaintain.core.report.ExecutionReport
-import datamaintain.core.report.ExecutionStatus
-import datamaintain.core.report.ReportStatus
-import datamaintain.core.script.FileScript
-import datamaintain.core.script.Script
+import datamaintain.core.report.Report
+import datamaintain.core.script.ExecutedScript
+import datamaintain.core.script.ExecutionStatus
+import datamaintain.core.script.ExecutionStatus.*
+import datamaintain.core.script.InMemoryScript
+import datamaintain.core.script.ScriptWithContent
 import datamaintain.core.step.executor.ExecutionMode
 import datamaintain.core.step.executor.Executor
-import io.mockk.MockKAnswerScope
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
-import strikt.assertions.get
+import strikt.assertions.containsExactly
 import strikt.assertions.hasSize
-import strikt.assertions.isEmpty
-import strikt.assertions.isEqualTo
+import strikt.assertions.map
 import java.nio.file.Paths
-import java.time.Instant
 
 internal class ExecutorTest {
     private val dbDriverMock = mockk<DatamaintainDriver>()
@@ -31,72 +28,102 @@ internal class ExecutorTest {
 
     private val executor = Executor(context)
 
-    private val script1 = FileScript(Paths.get("1"), Regex(""))
-    private val script2 = FileScript(Paths.get("2"), Regex(""))
-    private val script3 = FileScript(Paths.get("3"), Regex(""))
-
-    private val errorMessage = "Ko error"
-    private val okMessage = "OK"
+    private val script1 = InMemoryScript("1", "1", "1")
+    private val script2 = InMemoryScript("2", "2", "2")
+    private val script3 = InMemoryScript("3", "3", "3")
 
     @Test
     fun `should execute and build invalid report`() {
         // Given
-        every { dbDriverMock.executeScript(eq(script1)) }.answers { generateKoReport() }
-        every { dbDriverMock.executeScript(neq(script1)) }.answers { generateOkReport() }
+        every { dbDriverMock.executeScript(eq(script2)) }.answers {
+            generateKoExecutedScript(it.invocation.args.first() as ScriptWithContent)
+        }
+        every { dbDriverMock.executeScript(neq(script2)) }.answers {
+            generateOkExecutedScript(it.invocation.args.first() as ScriptWithContent)
+        }
+        every { dbDriverMock.markAsExecuted(any()) }.returnsArgument(0)
 
         // When
-        val executionReport: ExecutionReport = executor.execute(listOf(script1, script2, script3))
+        val report = executor.execute(listOf(script1, script2, script3))
 
         // Then
-        expectThat(executionReport) {
-            get { status }.isEqualTo(ReportStatus.KO)
-            get { lines }.and {
-                hasSize(3)
-                get(0).and {
-                    get { executionStatus }.isEqualTo(ExecutionStatus.KO)
-                    get { message }.isEqualTo(errorMessage)
-                    get { script }.isEqualTo(script1)
-                }
-                get(1).and {
-                    get { executionStatus }.isEqualTo(ExecutionStatus.OK)
-                    get { message }.isEqualTo(okMessage)
-                    get { script }.isEqualTo(script2)
-                }
-                get(2).and {
-                    get { executionStatus }.isEqualTo(ExecutionStatus.OK)
-                    get { message }.isEqualTo(okMessage)
-                    get { script }.isEqualTo(script3)
-                }
-            }
+        verify(exactly = 2) { dbDriverMock.executeScript(any()) }
+        verify(exactly = 1) { dbDriverMock.markAsExecuted(any()) }
+
+        expectThat(report) {
+            get { executedScripts }
+                    .hasSize(2)
+                    .and {
+                        map { it.name }
+                                .containsExactly(script1.name, script2.name)
+                    }
+                    .and {
+                        map { it.executionStatus }
+                                .containsExactly(OK, KO)
+                    }
         }
     }
 
     @Test
     fun `should execute and build valid report`() {
         // Given
-        every { dbDriverMock.executeScript(any()) }.answers { generateOkReport() }
+        every { dbDriverMock.executeScript(any()) }.answers {
+            generateOkExecutedScript(it.invocation.args.first() as ScriptWithContent)
+        }
+        every { dbDriverMock.markAsExecuted(any()) }.answers { it.invocation.args.first() as ExecutedScript }
 
         // When
-        val executionReport: ExecutionReport = executor.execute(listOf(script1, script2, script3))
+        val report = executor.execute(listOf(script1, script2, script3))
 
         // Then
-        expectThat(executionReport) {
-            get { status }.isEqualTo(ReportStatus.OK)
-            get { lines }.and {
-                hasSize(3)
-                get(0).and {
-                    get { executionStatus }.isEqualTo(ExecutionStatus.OK)
-                    get { message }.isEqualTo(okMessage)
-                }
-                get(1).and {
-                    get { executionStatus }.isEqualTo(ExecutionStatus.OK)
-                    get { message }.isEqualTo(okMessage)
-                }
-                get(2).and {
-                    get { executionStatus }.isEqualTo(ExecutionStatus.OK)
-                    get { message }.isEqualTo(okMessage)
-                }
-            }
+        verify(exactly = 3) { dbDriverMock.executeScript(any()) }
+        verify(exactly = 3) { dbDriverMock.markAsExecuted(any()) }
+
+        expectThat(report) {
+            get { executedScripts }
+                    .hasSize(3)
+                    .and {
+                        map { it.name }
+                                .containsExactly(script1.name, script2.name, script3.name)
+                    }
+                    .and {
+                        map { it.executionStatus }
+                                .containsExactly(OK, OK, OK)
+                    }
+        }
+    }
+
+    @Test
+    fun `should execute forcing mark as executed`() {
+        // Given
+        every { dbDriverMock.markAsExecuted(any()) }.returnsArgument(0)
+
+        val context = Context(DatamaintainConfig(
+                Paths.get(""),
+                Regex(""),
+                driverConfig = FakeDriverConfig(),
+                executionMode = ExecutionMode.FORCE_MARK_AS_EXECUTED
+        ), dbDriver = dbDriverMock)
+        val executor = Executor(context)
+
+        // When
+        val report: Report = executor.execute(listOf(script1, script2, script3))
+
+        // Then
+        verify(exactly = 0) { dbDriverMock.executeScript(any()) }
+        verify(exactly = 3) { dbDriverMock.markAsExecuted(any()) }
+
+        expectThat(report) {
+            get { executedScripts }
+                    .hasSize(3)
+                    .and {
+                        map { it.name }
+                                .containsExactly(script1.name, script2.name, script3.name)
+                    }
+                    .and {
+                        map { it.executionStatus }
+                                .containsExactly(FORCE_MARKED_AS_EXECUTED, FORCE_MARKED_AS_EXECUTED, FORCE_MARKED_AS_EXECUTED)
+                    }
         }
     }
 
@@ -105,15 +132,15 @@ internal class ExecutorTest {
         // Given
 
         // When
-        val executionReport: ExecutionReport = executor.execute(listOf())
+        val report = executor.execute(listOf())
 
         // Then
         verify(exactly = 0) { dbDriverMock.executeScript(any()) }
-        expectThat(executionReport) {
-            get { status }.isEqualTo(ReportStatus.OK)
-            get { lines }.and {
-                hasSize(0)
-            }
+        verify(exactly = 0) { dbDriverMock.markAsExecuted(any()) }
+
+        expectThat(report) {
+            get { executedScripts }
+                    .hasSize(0)
         }
     }
 
@@ -128,33 +155,29 @@ internal class ExecutorTest {
         val executor = Executor(context)
 
         // When
-        val executionReport: ExecutionReport = executor.execute(listOf(script1, script2, script3))
+        val report = executor.execute(listOf(script1, script2, script3))
 
         // Then
         verify(exactly = 0) { dbDriverMock.executeScript(any()) }
-        expectThat(executionReport) {
-            get { status }.isEqualTo(ReportStatus.OK)
-            get { lines }.and {
-                hasSize(3)
-                get(0).and {
-                    get { executionStatus }.isEqualTo(ExecutionStatus.OK)
-                    get { message }.isEmpty()
-                }
-                get(1).and {
-                    get { executionStatus }.isEqualTo(ExecutionStatus.OK)
-                    get { message }.isEmpty()
-                }
-                get(2).and {
-                    get { executionStatus }.isEqualTo(ExecutionStatus.OK)
-                    get { message }.isEmpty()
-                }
-            }
+        verify(exactly = 0) { dbDriverMock.markAsExecuted(any()) }
+
+        expectThat(report) {
+            get { executedScripts }
+                    .hasSize(3)
+                    .and {
+                        map { it.name }
+                                .containsExactly(script1.name, script2.name, script3.name)
+                    }
+                    .and {
+                        map { it.executionStatus }
+                                .containsExactly(SHOULD_BE_EXECUTED, SHOULD_BE_EXECUTED, SHOULD_BE_EXECUTED)
+                    }
         }
     }
 
-    private fun MockKAnswerScope<ExecutionLineReport, ExecutionLineReport>.generateOkReport() =
-            ExecutionLineReport(Instant.now(), okMessage, ExecutionStatus.OK, this.args[0] as Script)
+    private fun generateOkExecutedScript(script: ScriptWithContent) =
+            ExecutedScript(script.name, "", script.identifier, OK)
 
-    private fun MockKAnswerScope<ExecutionLineReport, ExecutionLineReport>.generateKoReport() =
-            ExecutionLineReport(Instant.now(), errorMessage, ExecutionStatus.KO, this.args[0] as Script)
+    private fun generateKoExecutedScript(script: ScriptWithContent) =
+            ExecutedScript(script.name, "", script.identifier, KO)
 }

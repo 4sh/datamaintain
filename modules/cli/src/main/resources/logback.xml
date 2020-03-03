@@ -6,8 +6,11 @@
         </encoder>
     </appender>
 
-    <root level="INFO">
+    <logger name="datamaintain" level="INFO">
         <appender-ref ref="STDOUT"/>
+    </logger>
+
+    <root level="INFO">
     </root>
 
 </configuration>

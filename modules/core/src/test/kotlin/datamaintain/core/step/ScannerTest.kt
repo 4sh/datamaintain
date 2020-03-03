@@ -17,7 +17,8 @@ internal class ScannerTest {
 
     fun prepareScanner(tagsMatchers: Set<TagMatcher> = emptySet(), doesCreateTagsFromFolder: Boolean = false): Scanner {
         return Scanner(Context(
-                DatamaintainConfig(Paths.get("src/test/resources/scanner_test_files"),
+                DatamaintainConfig(
+                        Paths.get("src/test/resources/scanner_test_files"),
                         Regex("(.*?)_.*"),
                         driverConfig = FakeDriverConfig(),
                         tagsMatchers = tagsMatchers,
