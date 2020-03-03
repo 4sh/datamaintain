@@ -1,7 +1,6 @@
 package datamaintain.core.db.driver
 
 import datamaintain.core.script.ExecutedScript
-import datamaintain.core.script.Script
 import datamaintain.core.script.ScriptWithContent
 
 
@@ -10,7 +9,7 @@ class FakeDatamaintainDriver : DatamaintainDriver {
         throw NotImplementedError("FakeDatamaintainDriver executeScript method should not be used")
     }
 
-    override fun listExecutedScripts(): Sequence<Script> {
+    override fun listExecutedScripts(): Sequence<ExecutedScript> {
         throw NotImplementedError("FakeDatamaintainDriver listExecutedScripts method should not be used")
     }
 

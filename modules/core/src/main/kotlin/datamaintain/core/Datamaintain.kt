@@ -12,15 +12,13 @@ import mu.KotlinLogging
 
 private val logger = KotlinLogging.logger {}
 
-fun runDatamaintain(config: DatamaintainConfig): Report {
-    return Datamaintain(config).run()
-}
-
 class Datamaintain(config: DatamaintainConfig) {
 
     init {
-        config.log()
-        config.driverConfig.log()
+        if (config.verbose) {
+            config.log()
+            config.driverConfig.log()
+        }
     }
 
     val context = Context(
@@ -28,8 +26,8 @@ class Datamaintain(config: DatamaintainConfig) {
             config.driverConfig.toDriver()
     )
 
-    fun run(): Report {
-        val report = Scanner(context).scan()
+    fun updateDatabase(): Report {
+        return Scanner(context).scan()
                 .let { scripts -> Filter(context).filter(scripts) }
                 .let { scripts ->
                     ByLengthAndCaseInsensitiveAlphabeticalSorter(context.config)
@@ -37,11 +35,9 @@ class Datamaintain(config: DatamaintainConfig) {
                 }
                 .let { scripts -> Pruner(context).prune(scripts) }
                 .let { scripts -> Executor(context).execute(scripts) }
-
-        report.print(context.config.verbose)
-
-        return report
     }
+
+    fun listExecutedScripts() = context.dbDriver.listExecutedScripts()
 
 }
 
