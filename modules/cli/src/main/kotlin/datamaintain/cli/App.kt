@@ -94,7 +94,7 @@ class UpdateDb : CliktCommand(name = "update-db") {
     }
 }
 
-class List : CliktCommand() {
+class ListExecutedScripts : CliktCommand(name = "list") {
 
     private val props by requireObject<Properties>()
 
@@ -135,7 +135,7 @@ private enum class DbType(val value: String) {
 }
 
 fun main(args: Array<String>) {
-    App().subcommands(UpdateDb(), List()).main(args)
+    App().subcommands(UpdateDb(), ListExecutedScripts()).main(args)
 }
 
 class DbTypeNotFoundException(val dbType: String) : RuntimeException()
