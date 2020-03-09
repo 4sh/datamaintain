@@ -6,7 +6,7 @@ import mu.KotlinLogging
 
 private val logger = KotlinLogging.logger {}
 
-class Report(
+class Report @JvmOverloads constructor(
         private val scannedScripts: List<ScriptWithContent> = listOf(),
         private val filteredScripts: List<ScriptWithContent> = listOf(),
         private val prunedScripts: List<ScriptWithContent> = listOf(),
@@ -36,7 +36,7 @@ class Report(
 }
 
 
-class ReportBuilder(
+class ReportBuilder @JvmOverloads constructor(
         private val scannedScripts: MutableList<ScriptWithContent> = mutableListOf(),
         private val filteredScripts: MutableList<ScriptWithContent> = mutableListOf(),
         private val prunedScripts: MutableList<ScriptWithContent> = mutableListOf(),

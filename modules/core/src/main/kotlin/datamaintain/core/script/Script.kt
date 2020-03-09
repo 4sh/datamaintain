@@ -7,7 +7,7 @@ interface Script {
     val identifier: String
 }
 
-data class ExecutedScript(
+data class ExecutedScript @JvmOverloads constructor(
         override val name: String,
         override val checksum: String,
         override val identifier: String,
