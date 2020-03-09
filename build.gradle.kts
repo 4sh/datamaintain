@@ -8,7 +8,7 @@ plugins {
 
 allprojects {
     group = "datamaintain"
-    version = "v1.0.0-rc4"
+    version = "v1.0.0-rc3"
 
     repositories {
         jcenter()
