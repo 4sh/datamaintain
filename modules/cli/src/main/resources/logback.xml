@@ -1,0 +1,16 @@
+<configuration>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="datamaintain" level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
+    <root level="INFO">
+    </root>
+
+</configuration>

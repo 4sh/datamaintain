@@ -6,8 +6,17 @@ jobs:
       _JAVA_OPTIONS: "-Xmx3g"
       GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2"
     docker:
-      - image: circleci/openjdk:11.0.3-jdk-stretch
+      - image: oracle/graalvm-ce:latest
     steps:
+      - run: echo '[mongodb-org-4.0]' > /etc/yum.repos.d/mongodb-org-4.0.repo
+      - run: echo 'name=MongoDB Repository' >> /etc/yum.repos.d/mongodb-org-4.0.repo
+      - run: echo 'baseurl=https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/4.0/x86_64/' >> /etc/yum.repos.d/mongodb-org-4.0.repo
+      - run: echo 'gpgcheck=1' >> /etc/yum.repos.d/mongodb-org-4.0.repo
+      - run: echo 'enabled=1' >> /etc/yum.repos.d/mongodb-org-4.0.repo
+      - run: echo 'gpgkey=https://www.mongodb.org/static/pgp/server-4.0.asc' >> /etc/yum.repos.d/mongodb-org-4.0.repo
+      - run: cat /etc/yum.repos.d/mongodb-org-4.0.repo
+      - run: rpm --import https://www.mongodb.org/static/pgp/server-4.0.asc
+      - run: yum install -y mongodb-org-shell # better solution should be create custom image and use mongo client only
       - checkout
       - restore_cache:
           key: v1-gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
@@ -21,15 +30,20 @@ jobs:
           paths:
             - ~/.gradle/wrapper
           key: v1-gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
-      - save_cache:
-          paths:
-            - ~/.gradle/caches
-          key: v1-gradle-cache-{{ checksum "build.gradle.kts" }}
       - store_test_results:
           path: build/test-results/test
       - store_artifacts:
           path: build/test-results/test
           when: always
+      - run:
+          name: Assemble & Graal Check Native
+          command: |
+            # Skip this for other nodes
+            if [ "$CIRCLE_NODE_INDEX" == 0 ]; then
+              ./gradlew graalCheckNative
+            fi
+      - store_artifacts:
+          path: build/graal
       - run:
           name: Assemble
           command: |
@@ -39,6 +53,11 @@ jobs:
             fi
       - store_artifacts:
           path: build/libs
+      - save_cache:
+          paths:
+            - ~/.gradle/caches
+          key: v1-gradle-cache-{{ checksum "build.gradle.kts" }}
+
 workflows:
   version: 2
   workflow:
