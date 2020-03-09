@@ -4,7 +4,7 @@ import java.math.BigInteger
 import java.nio.file.Path
 import java.security.MessageDigest
 
-class FileScript(
+class FileScript @JvmOverloads constructor(
         val path: Path,
         identifierRegex: Regex,
         override val tags: Set<Tag> = setOf()

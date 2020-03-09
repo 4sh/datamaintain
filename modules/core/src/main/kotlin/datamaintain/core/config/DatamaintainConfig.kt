@@ -14,14 +14,14 @@ import java.util.*
 
 private val logger = KotlinLogging.logger {}
 
-data class DatamaintainConfig(val path: Path = Paths.get(SCAN_PATH.default!!),
-                              val identifierRegex: Regex = Regex(SCAN_IDENTIFIER_REGEX.default!!),
-                              val doesCreateTagsFromFolder: Boolean = CREATE_TAGS_FROM_FOLDER.default!!.toBoolean(),
-                              val blacklistedTags: Set<Tag> = setOf(),
-                              val tagsMatchers: Set<TagMatcher> = setOf(),
-                              val executionMode: ExecutionMode = defaultExecutionMode,
-                              val driverConfig: DatamaintainDriverConfig,
-                              val verbose: Boolean = VERBOSE.default!!.toBoolean()) {
+data class DatamaintainConfig @JvmOverloads constructor(val path: Path = Paths.get(SCAN_PATH.default!!),
+                                                        val identifierRegex: Regex = Regex(SCAN_IDENTIFIER_REGEX.default!!),
+                                                        val doesCreateTagsFromFolder: Boolean = CREATE_TAGS_FROM_FOLDER.default!!.toBoolean(),
+                                                        val blacklistedTags: Set<Tag> = setOf(),
+                                                        val tagsMatchers: Set<TagMatcher> = setOf(),
+                                                        val executionMode: ExecutionMode = defaultExecutionMode,
+                                                        val driverConfig: DatamaintainDriverConfig,
+                                                        val verbose: Boolean = VERBOSE.default!!.toBoolean()) {
 
     companion object {
         private val defaultExecutionMode = ExecutionMode.NORMAL
@@ -34,6 +34,7 @@ data class DatamaintainConfig(val path: Path = Paths.get(SCAN_PATH.default!!),
         }
 
         @JvmStatic
+        @JvmOverloads
         fun buildConfig(driverConfig: DatamaintainDriverConfig, props: Properties = Properties()): DatamaintainConfig {
             overrideBySystemProperties(props, values().asList())
             return DatamaintainConfig(
