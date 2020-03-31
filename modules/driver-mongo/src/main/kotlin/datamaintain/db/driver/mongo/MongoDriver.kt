@@ -5,7 +5,10 @@ import com.mongodb.client.MongoClients
 import com.mongodb.client.MongoCollection
 import com.mongodb.client.MongoDatabase
 import datamaintain.core.db.driver.DatamaintainDriver
-import datamaintain.core.script.*
+import datamaintain.core.script.ExecutedScript
+import datamaintain.core.script.ExecutionStatus
+import datamaintain.core.script.FileScript
+import datamaintain.core.script.ScriptWithContent
 import datamaintain.core.util.runProcess
 import mu.KotlinLogging
 import org.bson.Document
@@ -26,7 +29,7 @@ class MongoDriver(private val connectionString: ConnectionString,
 
     companion object {
 
-        const val EXECUTED_SCRIPTS_COLLECTION = "executed-scripts"
+        const val EXECUTED_SCRIPTS_COLLECTION = "executedScripts"
 
         private const val SCRIPT_DOCUMENT_NAME = "name"
         private const val SCRIPT_DOCUMENT_CHECKSUM = "checksum"
