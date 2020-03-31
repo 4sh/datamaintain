@@ -89,7 +89,7 @@ enum class CoreConfigKey(override val key: String,
 
     // SCAN
     SCAN_PATH("scan.path", "./scripts/"),
-    SCAN_IDENTIFIER_REGEX("scan.identifier.regex", ".*"),
+    SCAN_IDENTIFIER_REGEX("scan.identifier.regex", "(.*)"),
     CREATE_TAGS_FROM_FOLDER("scan.tags.createFromFolder", "false"),
     TAG("tag", ""),
 
