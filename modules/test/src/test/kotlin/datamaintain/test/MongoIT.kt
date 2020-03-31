@@ -19,11 +19,11 @@ class MongoIT : AbstractMongoDbTest() {
                 "--db-type", "mongo",
                 "--mongo-uri", mongoUri,
                 "update-db",
-                "--verbose", "true",
+                "--verbose",
                 "--path", "src/test/resources/integration/ok",
                 "--identifier-regex", "(.*?)_.*",
-                "--mongo-print-output", "true",
-                "--mongo-save-output", "true"
+                "--mongo-print-output",
+                "--mongo-save-output"
         )
 
         // When
@@ -48,7 +48,7 @@ class MongoIT : AbstractMongoDbTest() {
                 "--db-type", "mongo",
                 "--mongo-uri", mongoUri,
                 "update-db",
-                "--verbose", "true",
+                "--verbose",
                 "--path", "src/test/resources/integration/partial",
                 "--identifier-regex", "(.*?)_.*"
 
@@ -61,7 +61,7 @@ class MongoIT : AbstractMongoDbTest() {
                 "--db-type", "mongo",
                 "--mongo-uri", mongoUri,
                 "update-db",
-                "--verbose", "true",
+                "--verbose",
                 "--path", "src/test/resources/integration/ok",
                 "--identifier-regex", "(.*?)_.*"
         )
@@ -108,7 +108,7 @@ class MongoIT : AbstractMongoDbTest() {
                 "--db-type", "mongo",
                 "--mongo-uri", mongoUri,
                 "update-db",
-                "--verbose", "true",
+                "--verbose",
                 "--path", "src/test/resources/integration/ok",
                 "--identifier-regex", "(.*?)_.*",
                 "--execution-mode", "FORCE_MARK_AS_EXECUTED"
@@ -136,7 +136,7 @@ class MongoIT : AbstractMongoDbTest() {
                 "--db-type", "mongo",
                 "--mongo-uri", mongoUri,
                 "update-db",
-                "--verbose", "true",
+                "--verbose",
                 "--path", "src/test/resources/integration/ko",
                 "--identifier-regex", "(.*?)_.*"
         )
