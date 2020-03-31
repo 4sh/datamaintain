@@ -5,9 +5,11 @@ import com.github.ajalt.clikt.core.findObject
 import com.github.ajalt.clikt.core.requireObject
 import com.github.ajalt.clikt.core.subcommands
 import com.github.ajalt.clikt.parameters.options.*
+import com.github.ajalt.clikt.parameters.types.choice
 import datamaintain.core.Datamaintain
 import datamaintain.core.config.CoreConfigKey
 import datamaintain.core.config.DatamaintainConfig
+import datamaintain.core.step.executor.ExecutionMode
 import datamaintain.db.driver.mongo.MongoConfigKey
 import datamaintain.db.driver.mongo.MongoDriverConfig
 import mu.KotlinLogging
@@ -27,7 +29,7 @@ class App : CliktCommand() {
             .default("mongo")
             .validate { DbType.values().map { v -> v.value }.contains(it) }
 
-    private val mongoUri: String? by option(help = "mongo uri with at least database name")
+    private val mongoUri: String? by option(help = "mongo uri with at least database name. Ex: mongodb://localhost:27017/newName")
 
     private val mongoTmpPath: String? by option(help = "mongo tmp file path")
 
@@ -56,15 +58,15 @@ class UpdateDb : CliktCommand(name = "update-db") {
 
     private val blacklistedTags: String? by option(help = "tags to blacklist (separated by ','")
 
-    private val createTagsFromFolder: String? by option(help = "boolean to create automatically tags from parent folders (true or false)")
+    private val createTagsFromFolder: Boolean? by option(help = "create automatically tags from parent folders").flag()
 
-    private val executionMode: String? by option(help = "execution mode (NORMAL or DRY or FORCE_MARK_AS_EXECUTED)")
+    private val executionMode by option(help = "execution mode").choice(ExecutionMode.values().map { it.name }.map { it to it }.toMap())
 
-    private val verbose: String? by option(help = "verbose")
+    private val verbose: Boolean? by option(help = "verbose").flag()
 
-    private val mongoSaveOutput: String? by option(help = "save mongo output")
+    private val mongoSaveOutput: Boolean? by option(help = "save mongo output").flag()
 
-    private val mongoPrintOutput: String? by option(help = "print mongo output")
+    private val mongoPrintOutput: Boolean? by option(help = "print mongo output").flag()
 
     private val props by requireObject<Properties>()
 

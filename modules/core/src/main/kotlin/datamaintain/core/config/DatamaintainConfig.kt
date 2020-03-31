@@ -45,8 +45,8 @@ data class DatamaintainConfig @JvmOverloads constructor(val path: Path = Paths.g
                             ?.map { Tag(it) }
                             ?.toSet()
                             ?: setOf(),
-                    props.getPropertiesByPrefix(CoreConfigKey.TAG.key)
-                            .map { TagMatcher.parse(it.first.replace("${CoreConfigKey.TAG.key}.", ""), it.second) }
+                    props.getStringPropertiesByPrefix(TAG.key)
+                            .map { TagMatcher.parse(it.first.replace("${TAG.key}.", ""), it.second) }
                             .toSet(),
                     ExecutionMode.fromNullable(props.getNullableProperty(EXECUTION_MODE), defaultExecutionMode),
                     driverConfig,
@@ -89,7 +89,7 @@ enum class CoreConfigKey(override val key: String,
 
     // SCAN
     SCAN_PATH("scan.path", "./scripts/"),
-    SCAN_IDENTIFIER_REGEX("scan.identifier.regex", ".*"),
+    SCAN_IDENTIFIER_REGEX("scan.identifier.regex", "(.*)"),
     CREATE_TAGS_FROM_FOLDER("scan.tags.createFromFolder", "false"),
     TAG("tag", ""),
 
@@ -109,10 +109,10 @@ fun Properties.getProperty(configKey: ConfigKey): String =
 
 fun Properties.getNullableProperty(configKey: ConfigKey): String? = this.getProperty(configKey.key)
 
-fun Properties.getPropertiesByPrefix(prefix: String): Set<Pair<String, String>> {
+fun Properties.getStringPropertiesByPrefix(prefix: String): Set<Pair<String, String>> {
     return this.entries
+            .filter { (it.key as String).startsWith(prefix) }
             .map { Pair(it.key as String, it.value as String) }
-            .filter { it.first.startsWith(prefix) }
             .toSet()
 }
 
