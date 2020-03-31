@@ -27,7 +27,7 @@ class App : CliktCommand() {
             .default("mongo")
             .validate { DbType.values().map { v -> v.value }.contains(it) }
 
-    private val mongoUri: String? by option(help = "mongo uri with at least database name")
+    private val mongoUri: String? by option(help = "mongo uri with at least database name. Ex: mongodb://localhost:27017/newName")
 
     private val mongoTmpPath: String? by option(help = "mongo tmp file path")
 
