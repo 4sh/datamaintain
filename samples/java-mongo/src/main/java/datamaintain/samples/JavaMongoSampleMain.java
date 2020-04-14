@@ -13,35 +13,31 @@ import java.io.InputStream;
 public class JavaMongoSampleMain {
     private static final String DATABASE_NAME = "datamaintain-sample-java-mongo";
 
-    public static void main (String[] args) throws Exception {
-        try {
-            // Retrieve datamaintain properties
-            final InputStream propertiesInputStream = JavaMongoSampleMain.class.getResourceAsStream("/config/datamaintain.properties");
+    public static void main(String[] args) {
+        // Retrieve datamaintain properties
+        final InputStream propertiesInputStream = JavaMongoSampleMain.class.getResourceAsStream("/config/datamaintain.properties");
 
-            String mongoUri = "mongodb://localhost:27017/" + DATABASE_NAME;
+        String mongoUri = "mongodb://localhost:27017/" + DATABASE_NAME;
 
-            // Instanciation du driver Datamaintain.
-            final DatamaintainDriverConfig datamaintainDriverConfig = new MongoDriverConfig(mongoUri);
+        // Instanciation du driver Datamaintain.
+        final DatamaintainDriverConfig datamaintainDriverConfig = new MongoDriverConfig(mongoUri);
 
-            // Création de la configuration. À la place de l'inputStream il est possible de passer directement un objet Properties.
-            final DatamaintainConfig config = DatamaintainConfig.buildConfig(propertiesInputStream, datamaintainDriverConfig);
+        // Création de la configuration. À la place de l'inputStream il est possible de passer directement un objet Properties.
+        final DatamaintainConfig config = DatamaintainConfig.buildConfig(propertiesInputStream, datamaintainDriverConfig);
 
-            // Launch database update
-            new Datamaintain(config).updateDatabase();
+        // Launch database update
+        new Datamaintain(config).updateDatabase();
 
-            // Print Charmander
-            System.out.println(loadCharmander());
-        } catch (Exception e) {
-            System.out.println(e.toString());
-        }
+        // Print Charmander
+        System.out.println(loadCharmander());
     }
 
-    private static datamaintain.samples.Starter loadCharmander() throws Exception {
+    private static datamaintain.samples.Starter loadCharmander() {
         return getStartersCollection().findOne().as(Starter.class);
     }
 
     @Deprecated
-    public static MongoCollection getStartersCollection() throws Exception {
+    public static MongoCollection getStartersCollection() {
         return new Jongo(new MongoClient().getDB(DATABASE_NAME)).getCollection("starters");
     }
 
