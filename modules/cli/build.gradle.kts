@@ -18,7 +18,7 @@ dependencies {
 }
 
 application {
-    mainClassName = "datamaintain.AppKt"
+    mainClassName = "datamaintain.cli.AppKt"
 }
 
 graal {
