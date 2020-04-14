@@ -8,22 +8,22 @@ import datamaintain.db.driver.mongo.MongoDriverConfig;
 import org.jongo.Jongo;
 import org.jongo.MongoCollection;
 
-import java.io.InputStream;
+import java.io.IOException;
+import java.util.Properties;
 
 public class JavaMongoSampleMain {
     private static final String DATABASE_NAME = "datamaintain-sample-java-mongo";
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         // Retrieve datamaintain properties
-        final InputStream propertiesInputStream = JavaMongoSampleMain.class.getResourceAsStream("/config/datamaintain.properties");
+        final Properties properties = new Properties();
+        properties.load(JavaMongoSampleMain.class.getResourceAsStream("/config/datamaintain.properties"));
 
-        String mongoUri = "mongodb://localhost:27017/" + DATABASE_NAME;
+        // Instantiate mongo driver config
+        final DatamaintainDriverConfig datamaintainDriverConfig = MongoDriverConfig.buildConfig(properties);
 
-        // Instanciation du driver Datamaintain.
-        final DatamaintainDriverConfig datamaintainDriverConfig = new MongoDriverConfig(mongoUri);
-
-        // Création de la configuration. À la place de l'inputStream il est possible de passer directement un objet Properties.
-        final DatamaintainConfig config = DatamaintainConfig.buildConfig(propertiesInputStream, datamaintainDriverConfig);
+        // Instantiate datamaintain config
+        final DatamaintainConfig config = DatamaintainConfig.buildConfig(datamaintainDriverConfig, properties);
 
         // Launch database update
         new Datamaintain(config).updateDatabase();
@@ -36,7 +36,6 @@ public class JavaMongoSampleMain {
         return getStartersCollection().findOne().as(Starter.class);
     }
 
-    @Deprecated
     public static MongoCollection getStartersCollection() {
         return new Jongo(new MongoClient().getDB(DATABASE_NAME)).getCollection("starters");
     }
