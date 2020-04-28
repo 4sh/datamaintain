@@ -7,7 +7,7 @@ class ConnectionString {
         @JvmStatic
         fun buildConnectionString(mongoUri: String): String {
             val matchResult = MONGO_URI_REGEX.matchEntire(mongoUri)
-                    ?: throw IllegalArgumentException("MongoUri does not contains a database name")
+                    ?: throw IllegalArgumentException("MongoUri is not correct. The expected format is: mongodb://[username:password@]host[:port]/databasename[?options]")
 
 
             val (_, _, host, port, username, password, database) = matchResult.destructured
