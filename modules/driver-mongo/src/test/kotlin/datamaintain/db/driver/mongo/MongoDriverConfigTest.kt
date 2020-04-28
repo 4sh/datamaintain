@@ -38,34 +38,4 @@ internal class MongoDriverConfigTest {
             get { tmpFilePath }.isEqualTo(Paths.get("/tmp/test"))
         }
     }
-
-    @Test
-    fun `should throw a mongoUri protocol missing`() {
-//        // mongo host has form host:port and miss mongodb protocol
-//        expectCatching {
-//            MongoDriverConfig(
-//                    "localhost:27018/database",
-//                    Paths.get(MongoConfigKey.DB_MONGO_TMP_PATH.default!!),
-//                    Paths.get(MongoConfigKey.DB_MONGO_CLIENT_PATH.default!!)
-//            ).toDriver()
-//        }
-//                .failed()
-//                .isA<java.lang.IllegalArgumentException>()
-//                .get { localizedMessage }.contains("Connection strings must start with either 'mongodb://' or 'mongodb+srv://")
-    }
-
-    @Test
-    fun `should throw a collection error in mongoURI`() {
-        // mongo host has form host:port and miss mongodb protocol
-//        expectCatching {
-//            MongoDriverConfig(
-//                    "mongodb://localhost:27018/database.pouet",
-//                    Paths.get(MongoConfigKey.DB_MONGO_TMP_PATH.default!!),
-//                    Paths.get(MongoConfigKey.DB_MONGO_CLIENT_PATH.default!!)
-//            ).toDriver()
-//        }
-//                .failed()
-//                .isA<java.lang.IllegalArgumentException>()
-//                .get { localizedMessage }.contains("MongoUri contains a collection name, please remove it")
-    }
 }
