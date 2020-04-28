@@ -83,7 +83,9 @@ class MongoDriver(private val mongoUri: String,
     private fun executeMongoQuery(query: String): String {
         var executionOutput: String? = null
         val exitCode = listOf(clientPath.toString(), mongoUri, "--quiet", "--eval", query).runProcess { inputStream ->
-            val lines = inputStream.bufferedReader().lines().toList()
+            // Dropwhile is a workaround to fix this issue: https://jira.mongodb.org/browse/SERVER-27159
+            val lines = inputStream.bufferedReader().lines().toList().dropWhile { !(it.startsWith("[").or(it.startsWith("{"))) }
+
             executionOutput = lines.joinToString("\n")
         }
 
