@@ -11,6 +11,7 @@ import java.io.InputStream
 import java.lang.IllegalStateException
 import java.nio.file.Path
 import kotlin.streams.asSequence
+import kotlin.streams.toList
 
 private val logger = KotlinLogging.logger {}
 
@@ -20,14 +21,10 @@ class MongoDriver(private val mongoUri: String,
                   private val printOutput: Boolean,
                   private val saveOutput: Boolean
 ) : DatamaintainDriver {
-    val jsonParser = JsonParser();
+    private val bsonParser = KBsonParser()
 
     companion object {
         const val EXECUTED_SCRIPTS_COLLECTION = "executedScripts"
-    }
-
-    init {
-        // TODO check URI ?
     }
 
     override fun executeScript(script: ScriptWithContent): ExecutedScript {
@@ -72,29 +69,28 @@ class MongoDriver(private val mongoUri: String,
         return null
     }
 
-    override fun listExecutedScripts(): List<ExecutedScript> {
-        var executionOutput: String? = null
-        val exitCode = listOf(clientPath.toString(), mongoUri, "--quiet", "--eval", "db.$EXECUTED_SCRIPTS_COLLECTION.findOne()").runProcess() { inputStream ->
-            val lines = inputStream.bufferedReader().lines().asSequence()
-                    .toList();
+    override fun listExecutedScripts(): Sequence<ExecutedScript> {
+        val executionOutput: String = executeMongoQuery("db.$EXECUTED_SCRIPTS_COLLECTION.find().toArray()")
+        return if (executionOutput.isNotBlank()) bsonParser.parseArrayOfExecutedScripts(executionOutput) else emptySequence()
+    }
 
+    override fun markAsExecuted(executedScript: ExecutedScript): ExecutedScript {
+        val executedScriptBson = bsonParser.serializeExecutedScript(executedScript)
+        executeMongoQuery("db.$EXECUTED_SCRIPTS_COLLECTION.insert($executedScriptBson)")
+        return executedScript
+    }
+
+    private fun executeMongoQuery(query: String): String {
+        var executionOutput: String? = null
+        val exitCode = listOf(clientPath.toString(), mongoUri, "--quiet", "--eval", query).runProcess { inputStream ->
+            val lines = inputStream.bufferedReader().lines().toList()
             executionOutput = lines.joinToString("\n")
         }
 
         if (exitCode != 0 || executionOutput == null) {
-            throw IllegalStateException();
+            throw IllegalStateException("Query $query fail with exit code $exitCode an output : $executionOutput")
         }
 
-        if (executionOutput!!.isNotBlank()) {
-            return jsonParser.parseExecutedScripts(executionOutput!!)
-        }
-
-        return listOf();
-    }
-
-    override fun markAsExecuted(executedScript: ExecutedScript): ExecutedScript {
-//        val executedScriptDocument = executedScriptToDocument(executedScript)
-//        executedScriptsCollection.insertOne(executedScriptDocument)
-        return executedScript
+        return executionOutput as String
     }
 }

@@ -6,7 +6,7 @@ import datamaintain.core.script.ScriptWithContent
 
 interface DatamaintainDriver {
 
-    fun listExecutedScripts(): List<ExecutedScript>
+    fun listExecutedScripts(): Sequence<ExecutedScript>
 
     fun executeScript(script: ScriptWithContent): ExecutedScript
 
