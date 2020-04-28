@@ -2,7 +2,7 @@ package datamaintain.db.driver.mongo
 
 class ConnectionString {
     companion object {
-        private val MONGO_URI_REGEX = Regex("^mongodb(?:\\+srv)?://(?:([-._\\w]+):(.+)@)?([-\\w]+)(?::([0-9]+))?(?:/([\\w-_.]+)?(?:\\?([\\w_.]+=[\\w_]+))?)?")
+        private val MONGO_URI_REGEX = Regex("^mongodb(?:\\+srv)?://(?:([-._\\w]+):(.+)@)?([-\\w]+)(?::([0-9]+))?(?:/([\\w-_]+)(?:\\?([\\w_.]+=[\\w_]+))?)")
 
         @JvmStatic
         fun buildConnectionString(mongoUri: String): String {
