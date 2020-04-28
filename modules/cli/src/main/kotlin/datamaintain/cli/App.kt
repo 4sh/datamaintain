@@ -152,7 +152,12 @@ private enum class DbType(val value: String) {
 }
 
 fun main(args: Array<String>) {
-    App().subcommands(UpdateDb(), ListExecutedScripts()).main(args)
+    val toto = listOf<String>("--db-type", "mongo", "--mongo-uri",
+            "mongodb://localhost:27017/cartoborne", "update-db", "--path",
+            "/Users/nroulon/dev/wkspace/izivia/cartoborne/srv/data/releaseUpdates",
+            "--identifier-regex", "^(v1)([0-33])(.*)(.js)$", "--mongo-print-output", "--execution-mode",
+            "FORCE_MARK_AS_EXECUTED")
+    App().subcommands(UpdateDb(), ListExecutedScripts()).main(toto)
 }
 
 class DbTypeNotFoundException(val dbType: String) : RuntimeException()

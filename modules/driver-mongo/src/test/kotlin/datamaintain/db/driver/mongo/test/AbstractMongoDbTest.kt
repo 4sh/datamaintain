@@ -26,7 +26,7 @@ abstract class AbstractMongoDbTest {
 
     @AfterEach
     fun cleanDb() {
-        collection.drop()
-        database.getCollection("simple").drop()
+//        collection.drop()
+//        database.getCollection("simple").drop()
     }
 }

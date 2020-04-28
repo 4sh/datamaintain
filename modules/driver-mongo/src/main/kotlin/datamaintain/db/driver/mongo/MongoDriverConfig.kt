@@ -1,6 +1,5 @@
 package datamaintain.db.driver.mongo
 
-import com.mongodb.ConnectionString
 import datamaintain.core.config.ConfigKey
 import datamaintain.core.config.getProperty
 import datamaintain.core.db.driver.DatamaintainDriverConfig
@@ -18,6 +17,8 @@ data class MongoDriverConfig @JvmOverloads constructor(val mongoUri: String,
                                                        val saveOutput: Boolean = MongoConfigKey.DB_MONGO_SAVE_OUTPUT.default!!.toBoolean()
 ) : DatamaintainDriverConfig {
     companion object {
+        private val MONGO_URI_REGEX = Regex("^(mongodb)(\\+srv)?://([-_.\\w]+)?(:[\\w]+)?(@([.\\w]+):(\\d+))?/([-_\\w]+)\$")
+
         @JvmStatic
         fun buildConfig(props: Properties): MongoDriverConfig {
             ConfigKey.overrideBySystemProperties(props, MongoConfigKey.values().asList())
@@ -37,17 +38,22 @@ data class MongoDriverConfig @JvmOverloads constructor(val mongoUri: String,
             printOutput,
             saveOutput)
 
-    private fun buildConnectionString(mongoUri: String): ConnectionString {
-        val connectionString = ConnectionString(mongoUri)
-        // mongoUri can come with a database but currently driver's dbName is mandatory
-        if (connectionString.database == null) {
-            throw IllegalArgumentException("MongoUri does not contains a database name")
-        }
-        // mongoUri can come with a collection. It has no sense in DataMaintain's logic
-        if (connectionString.collection != null) {
-            throw IllegalArgumentException("MongoUri contains a collection name, please remove it")
-        }
-        return connectionString
+    private fun buildConnectionString(mongoUri: String): String {
+        val matchResult = MONGO_URI_REGEX.matchEntire(mongoUri)
+                ?: throw IllegalArgumentException("MongoUri does not contains a database name")
+
+
+        val (_, _, host, port, username, password, database) = matchResult.destructured
+//        val connectionString = ConnectionString(mongoUri)
+//        // mongoUri can come with a database but currently driver's dbName is mandatory
+//        if (connectionString.database == null) {
+//            throw IllegalArgumentException("MongoUri does not contains a database name")
+//        }
+//        // mongoUri can come with a collection. It has no sense in DataMaintain's logic
+//        if (connectionString.collection != null) {
+//            throw IllegalArgumentException("MongoUri contains a collection name, please remove it")
+//        }
+        return mongoUri
     }
 
     override fun log() {
