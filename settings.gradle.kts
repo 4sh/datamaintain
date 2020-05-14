@@ -3,5 +3,6 @@ include(
         "modules:core",
         "modules:cli",
         "modules:driver-mongo",
-        "modules:test"
+        "modules:test",
+        "samples:java-mongo"
 )

@@ -1,0 +1,1 @@
+db.starters.update({"name": "Charmander"}, {$set: {specialAttack: 60}});
