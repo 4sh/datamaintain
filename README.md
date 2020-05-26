@@ -4,14 +4,38 @@
 Datamaintain is a Kotlin library that runs your scripts on your database and tracks the scripts runned. You may integrate it directly in your Java or Kotlin server or you may use the CLI.
 
 ## Table of contents
-1. [Getting started](README.md#getting-started)
+1. [Introduction](README.md#introduction)
 
-## Getting started
+## Introduction
 
-### Add Datamaintain as a dependency
+During a project lifetime, you will often have to run scripts to update your database scheme or even add some data in it. The hard part comes when you have to ensure that all your scripts were executed and in the right order, which is exactly what Datamaintain is for! 
 
-To install Datamaintain in your project, you will have to add it as a dependency. Here are the ways to do it, depending on your dependency management software:
-- gradle
+Each time your launch your server, Datamaintain will check if you added new scripts and if you did, play them in an order based on their identifier, which you may define. Every script execution will be remembered to prevent scripts from being run twice.
+
+## Datamaintain modules
+
+| Module name | Description | 
+|---|---|
+| cli |   |
+| core |  |
+| driver-mongo | |
+| test | |
+
+## Add Datamaintain as a dependency
+
+To install Datamaintain in your project, you will have to add it as a dependency. Since the releases are available on [jitpack](https://jitpack.io/), you will first have to add the jitpack repository in your project.
+ 
+Then, you may add the dependencies to ```datamaintain-core``` and the driver module you need. A list of all the available modules is available [here](README.md#datamaintain-modules). Here is an example of the dependencies declaration for a project using mongo:
+
+- gradle using kotlin DSL:
+    - add the following
+```kotlin
+
+```
+- gradle using groovy DSL: 
+```groovy
+
+```
 - maven:
 
 ```xml
@@ -37,11 +61,37 @@ To install Datamaintain in your project, you will have to add it as a dependency
 
 ```
 
-### Use the CLI
+## Datamaintain configuration
+
+### Core configuration
+
+| Key | Description | Default value | Mandatory? | Values examples |
+|---|---|---|---|---|
+| scan.path | des | def | yes | exa |
+| scan.path | des | def | yes | exa |
+| scan.path | des | def | yes | exa |
+| scan.path | des | def | yes | exa |
+| scan.path | des | def | yes | exa |
+| scan.path | des | def | yes | exa |
+| scan.path | des | def | yes | exa |
+
+### Mongo driver configuration
+
+| Key | Description | Default value | Mandatory? | Values examples |
+|---|---|---|---|---|
+| scan.path | des | def | yes | exa |
+| scan.path | des | def | yes | exa |
+| scan.path | des | def | yes | exa |
+| scan.path | des | def | yes | exa |
+| scan.path | des | def | yes | exa |
+
+## Use the CLI
 
 You will find the 
 
-### Installation in a project with already executed scripts
+![](docs/img/release-page-cli.png)
+
+## Installation in a project with already executed scripts
 
 When you already have executed scripts on your project and you want to start using Datamaintain, please follow those steps:
 - Add Datamaintain as a dependency to your project, as described [here](README.md#installation). 
@@ -52,13 +102,7 @@ When you already have executed scripts on your project and you want to start usi
 ./datamaintain-cli --db-type $DB_TYPE --mongo-uri $MONGO_URI update-db --path $PATH --identifier-regex $REGEX --execution-mode FORCE_MARK_AS_EXECUTED
 ```
 
-### As a dependency
-#### gradle kotlin
-```kotlin
+## Help to develop Datamaintain
 
-```
+## Contributors
 
-#### gradle groovy
-```groovy```
-
-### Using the CLI
