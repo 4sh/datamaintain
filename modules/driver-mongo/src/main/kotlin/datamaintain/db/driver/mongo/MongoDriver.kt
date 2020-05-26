@@ -1,9 +1,5 @@
 package datamaintain.db.driver.mongo
 
-import com.mongodb.ConnectionString
-import com.mongodb.client.MongoClients
-import com.mongodb.client.MongoCollection
-import com.mongodb.client.MongoDatabase
 import datamaintain.core.db.driver.DatamaintainDriver
 import datamaintain.core.script.ExecutedScript
 import datamaintain.core.script.ExecutionStatus
@@ -11,54 +7,24 @@ import datamaintain.core.script.FileScript
 import datamaintain.core.script.ScriptWithContent
 import datamaintain.core.util.runProcess
 import mu.KotlinLogging
-import org.bson.Document
 import java.io.InputStream
+import java.lang.IllegalStateException
 import java.nio.file.Path
 import kotlin.streams.asSequence
+import kotlin.streams.toList
 
 private val logger = KotlinLogging.logger {}
 
-class MongoDriver(private val connectionString: ConnectionString,
+class MongoDriver(private val mongoUri: String,
                   private val tmpFilePath: Path,
                   private val clientPath: Path,
                   private val printOutput: Boolean,
                   private val saveOutput: Boolean
 ) : DatamaintainDriver {
-
-    private val executedScriptsCollection: MongoCollection<Document>
+    private val bsonParser = KBsonParser()
 
     companion object {
-
         const val EXECUTED_SCRIPTS_COLLECTION = "executedScripts"
-
-        private const val SCRIPT_DOCUMENT_NAME = "name"
-        private const val SCRIPT_DOCUMENT_CHECKSUM = "checksum"
-        private const val SCRIPT_DOCUMENT_IDENTIFIER = "identifier"
-        private const val SCRIPT_DOCUMENT_EXECUTION_STATUS = "executionStatus"
-        private const val SCRIPT_DOCUMENT_EXECUTION_OUTPUT = "executionOutput"
-
-        fun executedScriptToDocument(executedScript: ExecutedScript): Document =
-                Document().append(SCRIPT_DOCUMENT_NAME, executedScript.name)
-                        .append(SCRIPT_DOCUMENT_CHECKSUM, executedScript.checksum)
-                        .append(SCRIPT_DOCUMENT_IDENTIFIER, executedScript.identifier)
-                        .append(SCRIPT_DOCUMENT_EXECUTION_STATUS, executedScript.executionStatus.name)
-                        .append(SCRIPT_DOCUMENT_EXECUTION_OUTPUT, executedScript.executionOutput)
-
-
-        fun documentToExecutedScript(document: Document) =
-                ExecutedScript(
-                        document.getString(SCRIPT_DOCUMENT_NAME),
-                        document.getString(SCRIPT_DOCUMENT_CHECKSUM),
-                        document.getString(SCRIPT_DOCUMENT_IDENTIFIER),
-                        ExecutionStatus.valueOf(document.getString(SCRIPT_DOCUMENT_EXECUTION_STATUS)),
-                        document.getString(SCRIPT_DOCUMENT_EXECUTION_OUTPUT)
-                )
-    }
-
-    init {
-        val client = MongoClients.create(this.connectionString)
-        val database: MongoDatabase = client.getDatabase(this.connectionString.database!!)
-        executedScriptsCollection = database.getCollection(EXECUTED_SCRIPTS_COLLECTION, Document::class.java)
     }
 
     override fun executeScript(script: ScriptWithContent): ExecutedScript {
@@ -74,7 +40,7 @@ class MongoDriver(private val connectionString: ConnectionString,
 
         var executionOutput: String? = null
 
-        val exitCode = listOf(clientPath.toString(), "$connectionString", "--quiet", scriptPath.toString()).runProcess() { inputStream ->
+        val exitCode = listOf(clientPath.toString(), mongoUri, "--quiet", scriptPath.toString()).runProcess() { inputStream ->
             executionOutput = processDriverOutput(inputStream)
         }
 
@@ -104,12 +70,29 @@ class MongoDriver(private val connectionString: ConnectionString,
     }
 
     override fun listExecutedScripts(): Sequence<ExecutedScript> {
-        return executedScriptsCollection.find().asSequence().map { documentToExecutedScript(it) }
+        val executionOutput: String = executeMongoQuery("db.$EXECUTED_SCRIPTS_COLLECTION.find().toArray()")
+        return if (executionOutput.isNotBlank()) bsonParser.parseArrayOfExecutedScripts(executionOutput) else emptySequence()
     }
 
     override fun markAsExecuted(executedScript: ExecutedScript): ExecutedScript {
-        val executedScriptDocument = executedScriptToDocument(executedScript)
-        executedScriptsCollection.insertOne(executedScriptDocument)
+        val executedScriptBson = bsonParser.serializeExecutedScript(executedScript)
+        executeMongoQuery("db.$EXECUTED_SCRIPTS_COLLECTION.insert($executedScriptBson)")
         return executedScript
+    }
+
+    private fun executeMongoQuery(query: String): String {
+        var executionOutput: String? = null
+        val exitCode = listOf(clientPath.toString(), mongoUri, "--quiet", "--eval", query).runProcess { inputStream ->
+            // Dropwhile is a workaround to fix this issue: https://jira.mongodb.org/browse/SERVER-27159
+            val lines = inputStream.bufferedReader().lines().toList().dropWhile { !(it.startsWith("[").or(it.startsWith("{"))) }
+
+            executionOutput = lines.joinToString("\n")
+        }
+
+        if (exitCode != 0 || executionOutput == null) {
+            throw IllegalStateException("Query $query fail with exit code $exitCode an output : $executionOutput")
+        }
+
+        return executionOutput as String
     }
 }

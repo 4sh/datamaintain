@@ -2,9 +2,8 @@ package datamaintain.db.driver.mongo
 
 import com.mongodb.client.model.Filters
 import datamaintain.core.script.*
-import datamaintain.db.driver.mongo.MongoDriver.Companion.documentToExecutedScript
-import datamaintain.db.driver.mongo.MongoDriver.Companion.executedScriptToDocument
 import datamaintain.db.driver.mongo.test.AbstractMongoDbTest
+import org.bson.Document
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
@@ -14,7 +13,7 @@ import java.nio.file.Paths
 
 internal class MongoDriverTest : AbstractMongoDbTest() {
     private val mongoDatamaintainDriver = MongoDriver(
-            connectionString,
+            mongoUri,
             Paths.get(MongoConfigKey.DB_MONGO_TMP_PATH.default!!),
             Paths.get("mongo"),
             printOutput = false,
@@ -115,7 +114,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
                 Regex("")
         )
         val mongoDatamaintainDriver = MongoDriver(
-                connectionString,
+                mongoUri,
                 Paths.get(MongoConfigKey.DB_MONGO_TMP_PATH.default!!),
                 Paths.get("mongo"),
                 printOutput = true,
@@ -135,7 +134,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
     fun `should save output`() {
         // Given
         val mongoDatamaintainDriver = MongoDriver(
-                connectionString,
+                mongoUri,
                 Paths.get(MongoConfigKey.DB_MONGO_TMP_PATH.default!!),
                 Paths.get("mongo"),
                 printOutput = false,
@@ -220,6 +219,27 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
         ))
     }
 
+    private val SCRIPT_DOCUMENT_NAME = "name"
+    private val SCRIPT_DOCUMENT_CHECKSUM = "checksum"
+    private val SCRIPT_DOCUMENT_IDENTIFIER = "identifier"
+    private val SCRIPT_DOCUMENT_EXECUTION_STATUS = "executionStatus"
+    private val SCRIPT_DOCUMENT_EXECUTION_OUTPUT = "executionOutput"
+
+    private fun executedScriptToDocument(executedScript: ExecutedScript): Document =
+            Document().append(SCRIPT_DOCUMENT_NAME, executedScript.name)
+                    .append(SCRIPT_DOCUMENT_CHECKSUM, executedScript.checksum)
+                    .append(SCRIPT_DOCUMENT_IDENTIFIER, executedScript.identifier)
+                    .append(SCRIPT_DOCUMENT_EXECUTION_STATUS, executedScript.executionStatus.name)
+                    .append(SCRIPT_DOCUMENT_EXECUTION_OUTPUT, executedScript.executionOutput)
+
+    private fun documentToExecutedScript(document: Document) =
+            ExecutedScript(
+                    document.getString(SCRIPT_DOCUMENT_NAME),
+                    document.getString(SCRIPT_DOCUMENT_CHECKSUM),
+                    document.getString(SCRIPT_DOCUMENT_IDENTIFIER),
+                    ExecutionStatus.valueOf(document.getString(SCRIPT_DOCUMENT_EXECUTION_STATUS)),
+                    document.getString(SCRIPT_DOCUMENT_EXECUTION_OUTPUT)
+            )
 
     private val script1 = ExecutedScript(
             "script1.js",

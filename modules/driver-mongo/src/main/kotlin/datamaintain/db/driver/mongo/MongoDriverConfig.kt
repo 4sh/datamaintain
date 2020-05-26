@@ -1,6 +1,5 @@
 package datamaintain.db.driver.mongo
 
-import com.mongodb.ConnectionString
 import datamaintain.core.config.ConfigKey
 import datamaintain.core.config.getProperty
 import datamaintain.core.db.driver.DatamaintainDriverConfig
@@ -31,24 +30,11 @@ data class MongoDriverConfig @JvmOverloads constructor(val mongoUri: String,
     }
 
     override fun toDriver() = MongoDriver(
-            buildConnectionString(mongoUri),
+            ConnectionString.buildConnectionString(mongoUri),
             tmpFilePath,
             clientPath,
             printOutput,
             saveOutput)
-
-    private fun buildConnectionString(mongoUri: String): ConnectionString {
-        val connectionString = ConnectionString(mongoUri)
-        // mongoUri can come with a database but currently driver's dbName is mandatory
-        if (connectionString.database == null) {
-            throw IllegalArgumentException("MongoUri does not contains a database name")
-        }
-        // mongoUri can come with a collection. It has no sense in DataMaintain's logic
-        if (connectionString.collection != null) {
-            throw IllegalArgumentException("MongoUri contains a collection name, please remove it")
-        }
-        return connectionString
-    }
 
     override fun log() {
         logger.info { "Mongo driver configuration: " }
