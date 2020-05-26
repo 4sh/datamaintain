@@ -7,14 +7,10 @@ Datamaintain is a Kotlin library that runs your scripts on your database and tra
 1. [Getting started](README.md#getting-started)
 
 ## Getting started
-### As a dependency
-#### gradle kotlin
-```kotlin
 
-```
+### 
 
-#### gradle groovy
-```groovy```
+
 
 #### maven
 
@@ -42,5 +38,25 @@ Add the following in your pom:
 </dependency>
 
 ```
+
+### Switching to Datamaintain
+
+When you already have executed scripts on your project and you want to start using Datamaintain, please follow those steps:
+- Add Datamaintain as a dependency to your project, as decribed here. 
+- Download the CLI from the version you are aiming for. 
+- Execute the CLI using the following command replacing the arguments with the values you want. An explanation about each configuration key is provided here.
+```bash
+
+./datamaintain-cli --db-type $DB_TYPE --mongo-uri $MONGO_URI update-db --path $PATH --identifier-regex $REGEX --execution-mode FORCE_MARK_AS_EXECUTED
+```
+
+### As a dependency
+#### gradle kotlin
+```kotlin
+
+```
+
+#### gradle groovy
+```groovy```
 
 ### Using the CLI
