@@ -12,30 +12,51 @@ During a project lifetime, you will often have to run scripts to update your dat
 
 Each time your launch your server, Datamaintain will check if you added new scripts and if you did, play them in an order based on their identifier, which you may define. Every script execution will be remembered to prevent scripts from being run twice.
 
-## Datamaintain modules
+## Available packages
 
-| Module name | Description | 
+| Package | Description | 
 |---|---|
-| cli |   |
-| core |  |
-| driver-mongo | |
-| test | |
+| datamaintain-core | Core package, needed for all uses of Datamaintain |
+| datamaintain-mongo | Mongo driver package to run scripts on a mongo database |
 
 ## Add Datamaintain as a dependency
 
 To install Datamaintain in your project, you will have to add it as a dependency. Since the releases are available on [jitpack](https://jitpack.io/), you will first have to add the jitpack repository in your project.
  
-Then, you may add the dependencies to ```datamaintain-core``` and the driver module you need. A list of all the available modules is available [here](README.md#datamaintain-modules). Here is an example of the dependencies declaration for a project using mongo:
+Then, you may add the dependencies to ```datamaintain-core``` and the driver module you need. A list of all the available modules is available [here](README.md#available-packages). Here is an example of the dependencies declaration for a project using mongo:
 
 - gradle using kotlin DSL:
-    - add the following
+    - In your 
 ```kotlin
 
 ```
 - gradle using groovy DSL: 
-```groovy
-
-```
+    - In your root build.gradle, at the end of repositories:
+    ```groovy
+    
+    maven { url 'https://jitpack.io' }
+	```
+    
+    It should look like that:
+    ```groovy
+    
+    allprojects {
+		repositories {
+			...
+			maven { url 'https://jitpack.io' }
+		}
+	}
+    ```
+    - Add the following dependency in your build.gradle:
+    
+    ```groovy
+    
+    dependencies {
+	    implementation 'com.github.4sh.datamaintain:datamaintain-core:v1.0.0-rc8',
+        implementation 'com.github.4sh.datamaintain:datamaintain-mongo:v1.0.0-rc8',
+	} 
+    ```
+    
 - maven:
 
 ```xml
