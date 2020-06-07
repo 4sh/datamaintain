@@ -43,12 +43,11 @@ Then, you may add the dependencies to ```datamaintain-core``` and the driver mod
 	}
     ```
     - Add the following dependency in your build.gradle:
-    
     ```kotlin
     
     dependencies {
 		implementation("com.github.4sh.datamaintain:datamaintain-core:v1.0.0-rc8"),
-        implementation("com.github.4sh.datamaintain:datamaintain-mongo:v1.0.0-rc8"),
+        	implementation("com.github.4sh.datamaintain:datamaintain-mongo:v1.0.0-rc8")
 	} 
     ```
     
