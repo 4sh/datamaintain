@@ -111,7 +111,7 @@ Then, you may add the dependencies to ```datamaintain-core``` and the driver mod
 
 | Key | Description | Default value | Mandatory? | Values examples |
 |---|---|---|---|---|
-| scan.path | Path to the folder containing all your scripts | ```./scripts/``` | yes | exa |
+| scan.path | Path to the folder containing all your scripts | ```./scripts/``` | yes |  |
 | scan.identifier.regex | Regex that will be used to determine an identifier for each file. It has to contain a capturing group. Identifiers are then used to sort the scripts before running them. | ```(.*)``` (with this regex, the script's whole name will be its identifier) | no | With the regex ```(.*?)_.*```, a script named ```1.23_my-script.js``` will have ```1.23``` as its identifier  |
 | scan.tags.createFromFolder | Option to add parent folders names as tags on scripts. Relative path to ```scan.path``` is used.  | ```false``` | no | ```false``` or ```true``` |
 | tag.*your_tag* | Glob paths to your scripts that you want to apply the tag "your_tag" on. To declare multiple tags, you will have to add multiple properties in your settings. A tag ```my_tag``` will have as as property name ```tag.my_tag```  |  | no | ```[data/*, script1.js, old/old_script1.js]``` |
@@ -123,11 +123,11 @@ Then, you may add the dependencies to ```datamaintain-core``` and the driver mod
 
 | Key | Description | Default value | Mandatory? | Values examples |
 |---|---|---|---|---|
-| scan.path | des | def | yes | exa |
-| scan.path | des | def | yes | exa |
-| scan.path | des | def | yes | exa |
-| scan.path | des | def | yes | exa |
-| scan.path | des | def | yes | exa |
+| db.mongo.uri | des |  | yes | ```mongodb://localhost/my-db```<br />```mongodb://localhost:8000/my-db```<br />```mongodb://username:password@localhost/my-db```<br />```mongodb+srv://server.example.com/my-db``` <br />```mongodb://my-db,my-db2:27018/my-db``` Please see the [mongo URI documentation](https://docs.mongodb.com/manual/reference/connection-string/) |
+| db.mongo.tmp.path | des | ```/tmp/datamaintain.tmp``` | no | exa |
+| db.mongo.client.path | des | ```mongo``` | no | exa |
+| db.mongo.print.output | des | ```false``` | no | exa |
+| db.mongo.save.output |  | ```false``` | no | exa |
 
 ## Use the CLI
 
