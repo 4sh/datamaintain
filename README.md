@@ -111,13 +111,12 @@ Then, you may add the dependencies to ```datamaintain-core``` and the driver mod
 
 | Key | Description | Default value | Mandatory? | Values examples |
 |---|---|---|---|---|
-| scan.path | des | def | yes | exa |
-| scan.path | des | def | yes | exa |
-| scan.path | des | def | yes | exa |
-| scan.path | des | def | yes | exa |
-| scan.path | des | def | yes | exa |
-| scan.path | des | def | yes | exa |
-| scan.path | des | def | yes | exa |
+| scan.path | Path to the folder containing all your scripts | ```./scripts/``` | yes | exa |
+| scan.identifier.regex | Regex that will be used to determine an identifier for each file. It has to contain a capturing group. Identifiers are then used to sort the scripts before running them. | ```(.*)``` (with this regex, the script's whole name will be its identifier) | no | ```(.*?)_.*```  |
+| scan.tags.createFromFolder | des | ```false``` | no | exa |
+| filter.tags.blacklisted | Scripts that have these tags will be ignored | None | no |  |
+| execution.mode | Execution mode. Possible values:<br />- ```NORMAL```: Regular execution: your scripts will be run on your database.<br />- ```DRY```: Scripts will not be executed. A full report of what would happen is you ran Datamaintain normally will be logged.<br />- ```FORCE_AS_EXECUTED```: Scripts will not be executed but their execution will be remembered by Datamaintain for later executions. | ```NORMAL``` | no | ```NORMAL```, ```DRY``` or ```FORCE_MARK_AS_EXECUTED``` |
+| verbose | Print more logs | ```false``` | no | ```true``` or ```false``` |
 
 ### Mongo driver configuration
 
