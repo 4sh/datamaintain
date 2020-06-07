@@ -131,7 +131,7 @@ Then, you may add the dependencies to ```datamaintain-core``` and the driver mod
 
 ## Use the CLI
 
-You will find the 
+You will find the CLI for each release in its assets in the [releases](https://github.com/4sh/datamaintain/releases). To launch Datamaintain using the CLI, you just have to execute the bash script you will find in the archive. To give values to the settings, you just have to add ```--setting $SETTING_VALUE``` after ```./datamaintain-cli```.
 
 ![](docs/img/release-page-cli.png)
 
@@ -145,8 +145,3 @@ When you already have executed scripts on your project and you want to start usi
 
 ./datamaintain-cli --db-type $DB_TYPE --mongo-uri $MONGO_URI update-db --path $PATH --identifier-regex $REGEX --execution-mode FORCE_MARK_AS_EXECUTED
 ```
-
-## Help to develop Datamaintain
-
-## Contributors
-
