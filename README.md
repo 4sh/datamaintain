@@ -49,7 +49,7 @@ Then, you may add the dependencies to ```datamaintain-core``` and the driver mod
     
     dependencies {
 		implementation("com.github.4sh.datamaintain:datamaintain-core:v1.0.0-rc8"),
-        	implementation("com.github.4sh.datamaintain:datamaintain-mongo:v1.0.0-rc8")
+		implementation("com.github.4sh.datamaintain:datamaintain-mongo:v1.0.0-rc8")
 	} 
     ```
     
@@ -112,9 +112,10 @@ Then, you may add the dependencies to ```datamaintain-core``` and the driver mod
 | Key | Description | Default value | Mandatory? | Values examples |
 |---|---|---|---|---|
 | scan.path | Path to the folder containing all your scripts | ```./scripts/``` | yes | exa |
-| scan.identifier.regex | Regex that will be used to determine an identifier for each file. It has to contain a capturing group. Identifiers are then used to sort the scripts before running them. | ```(.*)``` (with this regex, the script's whole name will be its identifier) | no | ```(.*?)_.*```  |
-| scan.tags.createFromFolder | des | ```false``` | no | exa |
-| filter.tags.blacklisted | Scripts that have these tags will be ignored | None | no |  |
+| scan.identifier.regex | Regex that will be used to determine an identifier for each file. It has to contain a capturing group. Identifiers are then used to sort the scripts before running them. | ```(.*)``` (with this regex, the script's whole name will be its identifier) | no | With the regex ```(.*?)_.*```, a script named ```1.23_my-script.js``` will have ```1.23``` as its identifier  |
+| scan.tags.createFromFolder | Option to add parent folders names as tags on scripts. Relative path to ```scan.path``` is used.  | ```false``` | no | ```false``` or ```true``` |
+| tag.*your_tag* | Glob paths to your scripts that you want to apply the tag "your_tag" on. To declare multiple tags, you will have to add multiple properties in your settings. A tag ```my_tag``` will have as as property name ```tag.my_tag```  |  | no | ```[data/*, script1.js, old/old_script1.js]``` |
+| filter.tags.blacklisted | Scripts that have these tags will be ignored | None | no | ```DATA,tag``` |
 | execution.mode | Execution mode. Possible values:<br />- ```NORMAL```: Regular execution: your scripts will be run on your database.<br />- ```DRY```: Scripts will not be executed. A full report of what would happen is you ran Datamaintain normally will be logged.<br />- ```FORCE_AS_EXECUTED```: Scripts will not be executed but their execution will be remembered by Datamaintain for later executions. | ```NORMAL``` | no | ```NORMAL```, ```DRY``` or ```FORCE_MARK_AS_EXECUTED``` |
 | verbose | Print more logs | ```false``` | no | ```true``` or ```false``` |
 
