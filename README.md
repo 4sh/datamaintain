@@ -26,10 +26,32 @@ To install Datamaintain in your project, you will have to add it as a dependency
 Then, you may add the dependencies to ```datamaintain-core``` and the driver module you need. A list of all the available modules is available [here](README.md#available-packages). Here is an example of the dependencies declaration for a project using mongo:
 
 - gradle using kotlin DSL:
-    - In your 
-```kotlin
-
-```
+    - In your root build.gradle, at the end of repositories:
+    ```kotlin
+    
+    maven(url = "https://jitpack.io")
+	```
+    
+    It should look like that:
+    ```kotlin
+    
+    allprojects {
+		repositories {
+			...
+    		maven(url = "https://jitpack.io")
+		}
+	}
+    ```
+    - Add the following dependency in your build.gradle:
+    
+    ```kotlin
+    
+    dependencies {
+		implementation("com.github.4sh.datamaintain:datamaintain-core:v1.0.0-rc8"),
+        implementation("com.github.4sh.datamaintain:datamaintain-mongo:v1.0.0-rc8"),
+	} 
+    ```
+    
 - gradle using groovy DSL: 
     - In your root build.gradle, at the end of repositories:
     ```groovy
