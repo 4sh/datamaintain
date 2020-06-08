@@ -7,6 +7,9 @@ Datamaintain is a Kotlin library that runs your scripts on your database and tra
 1. [Introduction](README.md#introduction)
 2. [Available packages](README.md#available-packages)
 3. [Add Datamaintain as a dependency](README.md#add-datamaintain-as-a-dependency)
+4. [Datamaintain configuration](README.md#datamaintain-configuration)
+5. [Use the CLI](README.md#use-the-cli)
+6. [Installation in a project with already executed scripts](README.md#installation-in-a-project-with-already-executed-scripts)
 
 ## Introduction
 
