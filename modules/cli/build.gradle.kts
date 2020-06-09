@@ -3,7 +3,7 @@ import java.io.ByteArrayOutputStream
 plugins {
     id("org.jetbrains.kotlin.jvm")
     application
-    maven
+    id("maven-publish")
     id("com.sourcemuse.mongo")
     id("com.palantir.graal")
 }
@@ -46,3 +46,12 @@ tasks.register<Exec>("graalCheckNative") {
     }
 }
 
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            groupId = group.toString()
+            artifactId = "datamaintain-cli"
+            version = version
+        }
+    }
+}
