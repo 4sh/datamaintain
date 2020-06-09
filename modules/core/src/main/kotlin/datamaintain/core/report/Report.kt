@@ -7,11 +7,11 @@ import mu.KotlinLogging
 private val logger = KotlinLogging.logger {}
 
 class Report @JvmOverloads constructor(
-        private val scannedScripts: List<ScriptWithContent> = listOf(),
-        private val filteredScripts: List<ScriptWithContent> = listOf(),
-        private val prunedScripts: List<ScriptWithContent> = listOf(),
+        val scannedScripts: List<ScriptWithContent> = listOf(),
+        val filteredScripts: List<ScriptWithContent> = listOf(),
+        val prunedScripts: List<ScriptWithContent> = listOf(),
         val executedScripts: List<ExecutedScript> = listOf(),
-        private val scriptInError: ExecutedScript? = null
+        val scriptInError: ExecutedScript? = null
 ) {
     fun print(verbose: Boolean) {
         logger.info { "Summary => " }
