@@ -8,7 +8,6 @@ import datamaintain.core.script.ScriptWithContent
 import datamaintain.core.util.runProcess
 import mu.KotlinLogging
 import java.io.InputStream
-import java.lang.IllegalStateException
 import java.nio.file.Path
 import kotlin.streams.asSequence
 import kotlin.streams.toList
@@ -21,7 +20,7 @@ class MongoDriver(private val mongoUri: String,
                   private val printOutput: Boolean,
                   private val saveOutput: Boolean
 ) : DatamaintainDriver {
-    private val bsonParser = KBsonParser()
+    private val jsonParser = KJsonParser()
 
     companion object {
         const val EXECUTED_SCRIPTS_COLLECTION = "executedScripts"
@@ -71,11 +70,11 @@ class MongoDriver(private val mongoUri: String,
 
     override fun listExecutedScripts(): Sequence<ExecutedScript> {
         val executionOutput: String = executeMongoQuery("db.$EXECUTED_SCRIPTS_COLLECTION.find().toArray()")
-        return if (executionOutput.isNotBlank()) bsonParser.parseArrayOfExecutedScripts(executionOutput) else emptySequence()
+        return if (executionOutput.isNotBlank()) jsonParser.parseArrayOfExecutedScripts(executionOutput) else emptySequence()
     }
 
     override fun markAsExecuted(executedScript: ExecutedScript): ExecutedScript {
-        val executedScriptBson = bsonParser.serializeExecutedScript(executedScript)
+        val executedScriptBson = jsonParser.serializeExecutedScript(executedScript)
         executeMongoQuery("db.$EXECUTED_SCRIPTS_COLLECTION.insert($executedScriptBson)")
         return executedScript
     }
