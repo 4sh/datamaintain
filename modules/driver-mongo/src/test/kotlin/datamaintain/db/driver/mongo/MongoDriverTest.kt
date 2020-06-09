@@ -1,10 +1,11 @@
 package datamaintain.db.driver.mongo
 
 import com.mongodb.client.model.Filters
-import datamaintain.core.script.*
+import datamaintain.core.script.ExecutedScript
+import datamaintain.core.script.ExecutionStatus
+import datamaintain.core.script.FileScript
 import datamaintain.db.driver.mongo.test.AbstractMongoDbTest
 import org.bson.Document
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.*
@@ -214,19 +215,22 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
 
     private fun insertDataInDb() {
         collection.insertMany(listOf(
-                executedScriptToDocument(script1),
-                executedScriptToDocument(script2)
+                executedScriptToDocument(script1.toExecutedScriptDb()),
+                executedScriptToDocument(script2.toExecutedScriptDb())
         ))
     }
 
+    private val SCRIPT_DOCUMENT_ID = "_id"
     private val SCRIPT_DOCUMENT_NAME = "name"
     private val SCRIPT_DOCUMENT_CHECKSUM = "checksum"
     private val SCRIPT_DOCUMENT_IDENTIFIER = "identifier"
     private val SCRIPT_DOCUMENT_EXECUTION_STATUS = "executionStatus"
     private val SCRIPT_DOCUMENT_EXECUTION_OUTPUT = "executionOutput"
 
-    private fun executedScriptToDocument(executedScript: ExecutedScript): Document =
-            Document().append(SCRIPT_DOCUMENT_NAME, executedScript.name)
+    private fun executedScriptToDocument(executedScript: ExecutedScriptDb): Document =
+            Document()
+                    .append(SCRIPT_DOCUMENT_ID, executedScript.id)
+                    .append(SCRIPT_DOCUMENT_NAME, executedScript.name)
                     .append(SCRIPT_DOCUMENT_CHECKSUM, executedScript.checksum)
                     .append(SCRIPT_DOCUMENT_IDENTIFIER, executedScript.identifier)
                     .append(SCRIPT_DOCUMENT_EXECUTION_STATUS, executedScript.executionStatus.name)
