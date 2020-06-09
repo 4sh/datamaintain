@@ -2,7 +2,7 @@ plugins {
     id("org.jetbrains.kotlin.jvm")
     id("com.sourcemuse.mongo")
     kotlin("plugin.serialization") version "1.3.70"
-    maven // Needed for Jitpack
+    id("maven-publish")
 }
 
 baseProject()
@@ -23,3 +23,13 @@ mongo {
 }
 
 tasks.getByPath("test").dependsOn("startManagedMongoDb")
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            groupId = group.toString()
+            artifactId = "driver-mongo"
+            version = version
+        }
+    }
+}

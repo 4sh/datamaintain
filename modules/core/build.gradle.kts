@@ -1,7 +1,7 @@
 
 plugins {
     id("org.jetbrains.kotlin.jvm")
-    maven // Needed for Jitpack
+    id("maven-publish")
 }
 
 repositories {
@@ -13,3 +13,12 @@ baseProject()
 dependencies {
 }
 
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            groupId = group.toString()
+            artifactId = "core"
+            version = version
+        }
+    }
+}
