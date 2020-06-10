@@ -51,8 +51,8 @@ Then, you may add the dependencies to ```datamaintain-core``` and the driver mod
     ```kotlin
     
     dependencies {
-		implementation("com.github.4sh.datamaintain:datamaintain-core:v1.0.0-rc8"),
-		implementation("com.github.4sh.datamaintain:datamaintain-mongo:v1.0.0-rc8")
+		implementation("com.github.4sh.datamaintain:datamaintain-core:v1.0.0-rc14"),
+		implementation("com.github.4sh.datamaintain:datamaintain-mongo:v1.0.0-rc14")
 	} 
     ```
     
@@ -78,8 +78,8 @@ Then, you may add the dependencies to ```datamaintain-core``` and the driver mod
     ```groovy
     
     dependencies {
-	    implementation 'com.github.4sh.datamaintain:datamaintain-core:v1.0.0-rc8',
-        implementation 'com.github.4sh.datamaintain:datamaintain-mongo:v1.0.0-rc8',
+	    implementation 'com.github.4sh.datamaintain:datamaintain-core:v1.0.0-rc14',
+        implementation 'com.github.4sh.datamaintain:datamaintain-mongo:v1.0.0-rc14',
 	} 
     ```
     
@@ -97,13 +97,13 @@ Then, you may add the dependencies to ```datamaintain-core``` and the driver mod
 <dependency>
     <groupId>com.github.4sh.datamaintain</groupId>
     <artifactId>datamaintain-core</artifactId>
-    <version>v1.0.0-rc8</version>
+    <version>v1.0.0-rc14</version>
 </dependency>
 
 <dependency>
     <groupId>com.github.4sh.datamaintain</groupId>
     <artifactId>datamaintain-mongo</artifactId>
-    <version>v1.0.0-rc8</version>
+    <version>v1.0.0-rc14</version>
 </dependency>
 
 ```
