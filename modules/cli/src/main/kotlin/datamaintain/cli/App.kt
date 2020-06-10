@@ -100,10 +100,10 @@ class UpdateDb : CliktCommand(name = "update-db") {
         path?.let { props.put(CoreConfigKey.SCAN_PATH.key, it) }
         identifierRegex?.let { props.put(CoreConfigKey.SCAN_IDENTIFIER_REGEX.key, it) }
         blacklistedTags?.let { props.put(CoreConfigKey.TAGS_BLACKLISTED.key, it) }
-        createTagsFromFolder?.let { props.put(CoreConfigKey.CREATE_TAGS_FROM_FOLDER.key, it) }
-        verbose?.let { props.put(CoreConfigKey.VERBOSE.key, it) }
-        mongoSaveOutput?.let { props.put(MongoConfigKey.DB_MONGO_SAVE_OUTPUT.key, it) }
-        mongoPrintOutput?.let { props.put(MongoConfigKey.DB_MONGO_PRINT_OUTPUT.key, it) }
+        createTagsFromFolder?.let { props.put(CoreConfigKey.CREATE_TAGS_FROM_FOLDER.key, it.toString()) }
+        verbose?.let { props.put(CoreConfigKey.VERBOSE.key, it.toString()) }
+        mongoSaveOutput?.let { props.put(MongoConfigKey.DB_MONGO_SAVE_OUTPUT.key, it.toString()) }
+        mongoPrintOutput?.let { props.put(MongoConfigKey.DB_MONGO_PRINT_OUTPUT.key, it.toString()) }
         executionMode?.let { props.put(CoreConfigKey.EXECUTION_MODE.key, it) }
         tagsMatchers?.forEach {
             props.put("${CoreConfigKey.TAG.key}.${it.first}", it.second)

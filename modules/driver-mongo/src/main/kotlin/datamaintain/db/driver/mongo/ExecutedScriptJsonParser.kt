@@ -2,10 +2,10 @@ package datamaintain.db.driver.mongo
 
 import datamaintain.core.script.ExecutedScript
 
-interface ExecutedScriptBsonParser {
-    // parse a stringify bson array to an Array of ExecutedScript
+interface ExecutedScriptJsonParser {
+    // parse a stringify json array to an Array of ExecutedScript
     fun parseArrayOfExecutedScripts(executedScriptJsonArray: String): Sequence<ExecutedScript>
 
-    // Serialize an ExecutedScript to a stringify bson document
+    // Serialize an ExecutedScript to a stringify json document
     fun serializeExecutedScript(executedScript:ExecutedScript): String
 }
