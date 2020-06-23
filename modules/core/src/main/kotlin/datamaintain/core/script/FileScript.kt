@@ -1,5 +1,6 @@
 package datamaintain.core.script
 
+import java.lang.IllegalStateException
 import java.math.BigInteger
 import java.nio.file.Path
 import java.security.MessageDigest
@@ -22,7 +23,13 @@ class FileScript @JvmOverloads constructor(
     }
 
     override val identifier: String by lazy(fun(): String {
-        val matchResult = identifierRegex.matchEntire(name) ?: return ""
+        val matchResult = identifierRegex.matchEntire(name);
+
+        if (matchResult == null) {
+            throw IllegalStateException("The file $name doesn't match the pattern $identifierRegex " +
+                    "and so can't extract its identifier");
+        }
+
         return matchResult.groupValues[1]
     })
 

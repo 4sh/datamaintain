@@ -1,0 +1,46 @@
+package datamaintain.core.script
+
+import jdk.nashorn.internal.runtime.regexp.RegExp
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Test
+import strikt.api.expectCatching
+import strikt.api.expectThat
+import strikt.assertions.containsExactly
+import strikt.assertions.failed
+import strikt.assertions.isA
+import strikt.assertions.isEqualTo
+import java.lang.IllegalStateException
+import java.nio.file.Path
+import java.nio.file.Paths
+
+internal class FileScriptTest {
+    @Test
+    fun `should extract id`() {
+        // Given
+        val path = Paths.get("v1.1_removeEmoSecurityLevel.js")
+        val identifierRegex = Regex("(.*)_.*")
+
+        // When
+        val fileScript = FileScript(path, identifierRegex)
+
+        // Then
+        expectThat(fileScript).and {
+            get { identifier }.isEqualTo("v1.1")
+        }
+    }
+
+    @Test
+    fun `should throw error when extracting id`() {
+        // Given
+        val path = Paths.get("v1.1-removeEmoSecurityLevel.js")
+        val identifierRegex = Regex("(.*)_.*")
+
+        // When
+        val fileScript = FileScript(path, identifierRegex)
+
+        // Then
+        expectCatching { fileScript.identifier }
+                .failed()
+                .isA<IllegalStateException>()
+    }
+}
