@@ -72,7 +72,7 @@ class UpdateDb : CliktCommand(name = "update-db") {
 
     private val tagsMatchers: List<Pair<String, String>>? by option("--tag", help = "Tag defined using glob path matchers. " +
             "To define multiple tags, use option multiple times. " +
-            "Syntax example: MYTAG1=[pathMatcher1; pathMatcher2]")
+            "Syntax example: MYTAG1=[pathMatcher1, pathMatcher2]")
             .convert {
                 val split = it.split("=")
                 Pair(split[0], split[1])
