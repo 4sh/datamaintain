@@ -28,6 +28,11 @@ class Scanner(private val context: Context) {
                 }
                 .toList()
         logger.info { "${scannedFiles.size} files scanned" }
+        context.config.tagsMatchers.onEach { tagMatcher ->
+            if (scannedFiles.none { it.tags.contains(tagMatcher.tag) }) {
+                logger.warn {"WARNING: ${tagMatcher.tag} did not match any scripts, please make sure your glob path matcher is correctly formed."}
+            }
+        }
         logger.info { "" }
         return scannedFiles
     }
