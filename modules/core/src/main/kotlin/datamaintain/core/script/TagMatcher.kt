@@ -38,10 +38,21 @@ class TagMatcher(val tag: Tag, val globPaths: Iterable<String>) {
     companion object {
         @JvmStatic
         fun parse(name: String, pathMatchers: String): TagMatcher {
-            return TagMatcher(Tag(name = name),
-                    pathMatchers.split(",")
-                            .map { pathMatcher -> pathMatcher.trim('[', ']', ' ') }
-                            .toSet())
+            return TagMatcher(Tag(name = name), pathMatchers.split(",")
+                    .map { pathMatcher -> pathMatcher.trim('[', ']', ' ') }
+                    .onEach { if (isNotAbsolute(it)) { throw  NotAbsolutePathMatcherPathException(name, it)} }
+                    .toSet())
+        }
+
+        @JvmStatic
+        private fun isNotAbsolute(pathMatcher: String): Boolean {
+            return pathMatcher.startsWith("~") || pathMatcher.contains("../")
         }
     }
 }
+
+class NotAbsolutePathMatcherPathException(name: String, pathMatcher: String):
+        IllegalArgumentException("The path matcher '${pathMatcher}' given to match scripts for the tag named '${name}' is not absolute " +
+                "(it contains '../' or starts with a ~). " +
+                "Datamaintain only support absolute paths. You may find it using the command pwd" +
+                " in the concerned folder.")

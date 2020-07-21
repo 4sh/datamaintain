@@ -2,8 +2,11 @@ package datamaintain.core.script
 
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import strikt.api.expectCatching
 import strikt.api.expectThat
 import strikt.assertions.containsExactly
+import strikt.assertions.failed
+import strikt.assertions.isA
 import strikt.assertions.isEqualTo
 
 internal class TagMatcherTest {
@@ -63,6 +66,33 @@ internal class TagMatcherTest {
             expectThat(tagMatcher).and {
                 get { tag }.isEqualTo(expectedTag)
                 get { globPaths }.containsExactly(pathMatcher1, pathMatcher2)
+            }
+        }
+
+        @Nested
+        inner class NotAbsolutePathMatcher {
+            @Test
+            fun `should throw an exception when path matcher starts with a tilde`() {
+                // Given
+                val pathMatcher = "~/me/path"
+                val tagName = "tag"
+
+                // When
+                expectCatching { TagMatcher.parse(tagName, "[$pathMatcher]") }
+                        .failed()
+                        .isA<NotAbsolutePathMatcherPathException>()
+            }
+
+            @Test
+            fun `should throw an exception when path matcher contains relative path`() {
+                // Given
+                val pathMatcher = "/me/../path"
+                val tagName = "tag"
+
+                // When
+                expectCatching { TagMatcher.parse(tagName, "[$pathMatcher]") }
+                        .failed()
+                        .isA<NotAbsolutePathMatcherPathException>()
             }
         }
     }
