@@ -14,7 +14,8 @@ class Pruner(private val context: Context) {
                 .toList()
         val prunedScripts = scripts
                 .filterNot { script ->
-                    val skipped = executedChecksums.contains(script.checksum)
+                    val skipped = executedChecksums.contains(script.checksum) &&
+                            script.tags.intersect(context.config.tagsToPlayAgain).isEmpty()
                     if (context.config.verbose && skipped) {
                         logger.info { "${script.name} is skipped" }
                     }
