@@ -30,6 +30,15 @@ data class ExecutedScript @JvmOverloads constructor(
                         script.identifier,
                         ExecutionStatus.SHOULD_BE_EXECUTED
                 )
+
+        fun build(script: ScriptWithContent, execution: Execution) =
+                ExecutedScript(
+                        script.name,
+                        script.checksum,
+                        script.identifier,
+                        executionStatus = execution.executionStatus,
+                        executionOutput = execution.executionOutput
+                )
     }
 }
 

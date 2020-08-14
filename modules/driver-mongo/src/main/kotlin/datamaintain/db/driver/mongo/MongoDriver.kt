@@ -5,6 +5,7 @@ import datamaintain.core.script.ExecutedScript
 import datamaintain.core.script.ExecutionStatus
 import datamaintain.core.script.FileScript
 import datamaintain.core.script.ScriptWithContent
+import datamaintain.core.step.executor.Execution
 import datamaintain.core.util.runProcess
 import mu.KotlinLogging
 import java.io.InputStream
@@ -26,7 +27,7 @@ class MongoDriver(private val mongoUri: String,
         const val EXECUTED_SCRIPTS_COLLECTION = "executedScripts"
     }
 
-    override fun executeScript(script: ScriptWithContent): ExecutedScript {
+    override fun executeScript(script: ScriptWithContent): Execution {
         // $eval mongo command is not available after driver 4.0, so we execute script via an external process
 
         val scriptPath = when (script) {
@@ -43,13 +44,7 @@ class MongoDriver(private val mongoUri: String,
             executionOutput = processDriverOutput(inputStream)
         }
 
-        return ExecutedScript(
-                script.name,
-                script.checksum,
-                script.identifier,
-                if (exitCode == 0) ExecutionStatus.OK else ExecutionStatus.KO,
-                executionOutput
-        )
+        return Execution(if (exitCode == 0) ExecutionStatus.OK else ExecutionStatus.KO, executionOutput)
     }
 
     private fun processDriverOutput(inputStream: InputStream): String? {

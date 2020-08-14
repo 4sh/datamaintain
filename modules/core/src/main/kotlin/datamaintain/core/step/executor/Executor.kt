@@ -15,7 +15,7 @@ class Executor(private val context: Context) {
         logger.info { "Executes scripts.." }
         for (script in scripts) {
             val executedScript = when (context.config.executionMode) {
-                ExecutionMode.NORMAL -> context.dbDriver.executeScript(script)
+                ExecutionMode.NORMAL ->  ExecutedScript.build(script, context.dbDriver.executeScript(script))
                 ExecutionMode.FORCE_MARK_AS_EXECUTED -> ExecutedScript.forceMarkAsExecuted(script)
                 ExecutionMode.DRY -> ExecutedScript.shouldBeExecuted(script)
             }
