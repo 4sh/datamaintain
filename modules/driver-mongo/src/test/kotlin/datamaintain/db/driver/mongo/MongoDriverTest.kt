@@ -87,7 +87,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
         )
 
         // When
-        val executedScript = mongoDatamaintainDriver.executeScript(fileScript)
+        val execution = mongoDatamaintainDriver.executeScript(fileScript)
 
         // Then
         val coll = database.getCollection("simple")
@@ -99,8 +99,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
                     }
                 }
 
-        expectThat(executedScript) {
-            get { name }.isEqualTo("mongo_simple_insert.js")
+        expectThat(execution) {
             get { executionStatus }.isEqualTo(ExecutionStatus.OK)
             get { executionOutput }.isNull()
         }
@@ -173,7 +172,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
         val inMemoryScript = InMemoryScript("test", content, "")
 
         // When
-        val executedScript = mongoDatamaintainDriver.executeScript(inMemoryScript)
+        val execution = mongoDatamaintainDriver.executeScript(inMemoryScript)
 
         // Then
         val coll = database.getCollection("simple")
@@ -185,8 +184,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
                     }
                 }
 
-        expectThat(executedScript) {
-            get { name }.isEqualTo("test")
+        expectThat(execution) {
             get { executionStatus }.isEqualTo(ExecutionStatus.OK)
             get { executionOutput }.isNull()
         }
@@ -199,15 +197,14 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
         val fileScript = FileScript(Paths.get("src/test/resources/executor_test_files/mongo/mongo_error_insert.js"), Regex(""))
 
         // When
-        val executedScript = mongoDatamaintainDriver.executeScript(fileScript)
+        val execution = mongoDatamaintainDriver.executeScript(fileScript)
 
         // Then
         val coll = database.getCollection("simple")
         val cursor = coll.find(Filters.eq("find", "me"))
         expectThat(cursor.toList()).hasSize(0)
 
-        expectThat(executedScript) {
-            get { name }.isEqualTo("mongo_error_insert.js")
+        expectThat(execution) {
             get { executionStatus }.isEqualTo(ExecutionStatus.KO)
             get { executionOutput }.isNull()
         }

@@ -1,5 +1,7 @@
 package datamaintain.core.script
 
+import datamaintain.core.step.executor.Execution
+
 
 interface Script {
     val name: String
