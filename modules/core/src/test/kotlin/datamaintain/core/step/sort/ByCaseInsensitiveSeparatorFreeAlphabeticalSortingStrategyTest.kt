@@ -62,8 +62,8 @@ internal class ByCaseInsensitiveSeparatorFreeAlphabeticalSortingStrategyTest  {
                 Script::name)) {
             // Then
             first().isEqualTo(script1)
-            get(1).isEqualTo(script2)
-            last().isEqualTo(script10)
+            get(1).isEqualTo(script10)
+            last().isEqualTo(script2)
         }
     }
 
@@ -150,6 +150,51 @@ internal class ByCaseInsensitiveSeparatorFreeAlphabeticalSortingStrategyTest  {
             get(4).isEqualTo(script5)
             get(5).isEqualTo(script6)
             last().isEqualTo(script7)
+        }
+    }
+
+    @Test
+    fun `should sort scripts list by complex identifier1`() {
+        // Given
+        val script1 = ExecutedScript("1", "checksum1", "abc", ExecutionStatus.OK)
+        val script2 = ExecutedScript("2", "checksum2", "bc", ExecutionStatus.OK)
+
+        // When
+        expectThat(sortingStrategy.sort(listOf(script1, script2), Script::identifier)) {
+            // Then
+            size.isEqualTo(2)
+            first().isEqualTo(script1)
+            get(1).isEqualTo(script2)
+        }
+    }
+
+    @Test
+    fun `should sort scripts list by complex identifier2`() {
+        // Given
+        val script1 = ExecutedScript("1", "checksum1", "v0.1", ExecutionStatus.OK)
+        val script2 = ExecutedScript("2", "checksum2", "v1", ExecutionStatus.OK)
+
+        // When
+        expectThat(sortingStrategy.sort(listOf(script1, script2), Script::identifier)) {
+            // Then
+            size.isEqualTo(2)
+            first().isEqualTo(script1)
+            get(1).isEqualTo(script2)
+        }
+    }
+
+    @Test
+    fun `should sort scripts list by complex identifier3`() {
+        // Given
+        val script1 = ExecutedScript("1", "checksum1", "1.0001", ExecutionStatus.OK)
+        val script2 = ExecutedScript("2", "checksum2", "1.0002", ExecutionStatus.OK)
+
+        // When
+        expectThat(sortingStrategy.sort(listOf(script1, script2), Script::identifier)) {
+            // Then
+            size.isEqualTo(2)
+            first().isEqualTo(script1)
+            get(1).isEqualTo(script2)
         }
     }
 }
