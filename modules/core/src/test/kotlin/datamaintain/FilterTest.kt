@@ -18,25 +18,26 @@ import java.nio.file.Paths
 
 internal class FilterTest {
     private val dbDriver = mockk<DatamaintainDriver>()
-    private val blacklistedTag = Tag("blacklistedTag")
-    private val context = Context(
-            DatamaintainConfig(
-                    Paths.get(""),
-                    Regex(""),
-                    false,
-                    setOf(blacklistedTag),
-                    emptySet(),
-                    ExecutionMode.NORMAL,
-                    FakeDriverConfig()),
-            dbDriver = dbDriver)
-
-    private val filter = Filter(context)
+    private val otherTag = Tag("other")
 
     @Test
     fun `should filter blacklisted scripts`() {
-        val normalTag = Tag("other")
-
         // Given
+        val blacklistedTag = Tag("blacklistedTag")
+        val context = Context(
+                DatamaintainConfig(
+                        Paths.get(""),
+                        Regex(""),
+                        false,
+                        emptySet(),
+                        setOf(blacklistedTag),
+                        emptySet(),
+                        emptySet(),ExecutionMode.NORMAL,
+                        FakeDriverConfig()),
+                dbDriver = dbDriver)
+
+        val filter = Filter(context)
+
         val scripts = listOf(
                 FileScript(
                         Paths.get("src/test/resources/scanner_test_files/01_file1"),
@@ -46,12 +47,12 @@ internal class FilterTest {
                 FileScript(
                         Paths.get("src/test/resources/scanner_test_files/02_file2"),
                         Regex(""),
-                        setOf(normalTag, blacklistedTag)
+                        setOf(otherTag, blacklistedTag)
                 ),
                 FileScript(
                         Paths.get("src/test/resources/scanner_test_files/03_file3"),
                         Regex(""),
-                        setOf(normalTag)
+                        setOf(otherTag)
                 ),
                 FileScript(Paths.get("src/test/resources/scanner_test_files/10_file10"), Regex("")))
 
@@ -63,6 +64,112 @@ internal class FilterTest {
             hasSize(2)
             get(0).get { this.name }.isEqualTo("03_file3")
             get(1).get { this.name }.isEqualTo("10_file10")
+        }
+    }
+
+    @Test
+    fun `should filter whitelisted scripts`() {
+        // Given
+        val whitelistedTag = Tag("whitelistedTag")
+        val context = Context(
+                DatamaintainConfig(
+                        Paths.get(""),
+                        Regex(""),
+                        false,
+                        setOf(whitelistedTag),
+                        setOf(),
+                        emptySet(),
+                        emptySet(),
+                        ExecutionMode.NORMAL,
+                        FakeDriverConfig()),
+                dbDriver = dbDriver)
+
+        val filter = Filter(context)
+
+        val scripts = listOf(
+                FileScript(
+                        Paths.get("src/test/resources/scanner_test_files/01_file1"),
+                        Regex(""),
+                        setOf(whitelistedTag)
+                ),
+                FileScript(
+                        Paths.get("src/test/resources/scanner_test_files/02_file2"),
+                        Regex(""),
+                        setOf(otherTag, whitelistedTag)
+                ),
+                FileScript(
+                        Paths.get("src/test/resources/scanner_test_files/03_file3"),
+                        Regex(""),
+                        setOf(otherTag)
+                ),
+                FileScript(Paths.get("src/test/resources/scanner_test_files/10_file10"), Regex("")))
+
+        // When
+        val filteredScript = filter.filter(scripts)
+
+        // Then
+        expectThat(filteredScript) {
+            hasSize(2)
+            get(0).get { this.name }.isEqualTo("01_file1")
+            get(1).get { this.name }.isEqualTo("02_file2")
+        }
+    }
+
+    @Test
+    fun `should filter whitelisted and blacklisted scripts`() {
+        // Given
+        val whitelistedTag = Tag("whitelistedTag")
+        val blacklistedTag = Tag("blacklistedTag")
+        val blackAndWhitelistedTag = Tag("both")
+
+        val whitelistedTags = setOf(whitelistedTag, blackAndWhitelistedTag)
+        val blacklistedTags = setOf(blacklistedTag, blackAndWhitelistedTag)
+
+        val context = Context(
+                DatamaintainConfig(
+                        Paths.get(""),
+                        Regex(""),
+                        false,
+                        whitelistedTags,
+                        blacklistedTags,
+                        emptySet(),
+                        emptySet(),
+                        ExecutionMode.NORMAL,
+                        FakeDriverConfig()),
+                dbDriver = dbDriver)
+
+        val filter = Filter(context)
+
+        val scripts = listOf(
+                FileScript(
+                        Paths.get("src/test/resources/scanner_test_files/01_file1"),
+                        Regex(""),
+                        setOf(whitelistedTag)
+                ),
+                FileScript(
+                        Paths.get("src/test/resources/scanner_test_files/02_file2"),
+                        Regex(""),
+                        setOf(blackAndWhitelistedTag)
+                ),
+                FileScript(
+                        Paths.get("src/test/resources/scanner_test_files/03_file3"),
+                        Regex(""),
+                        setOf(blacklistedTag)
+                ),
+                FileScript(
+                        Paths.get("src/test/resources/scanner_test_files/03_file3"),
+                        Regex(""),
+                        setOf(Tag("bla"))
+                ),
+                FileScript(Paths.get("src/test/resources/scanner_test_files/10_file10"), Regex("")))
+
+        // When
+        val filteredScript = filter.filter(scripts)
+
+        // Then
+        expectThat(filteredScript) {
+            hasSize(1)
+            get(0).get { this.name }.isEqualTo("01_file1")
         }
     }
 }

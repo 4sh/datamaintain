@@ -56,7 +56,11 @@ class UpdateDb : CliktCommand(name = "update-db") {
 
     private val identifierRegex: String? by option(help = "regex to extract identifier part from scripts")
 
-    private val blacklistedTags: String? by option(help = "tags to blacklist (separated by ','")
+    private val whitelistedTags: String? by option(help = "tags to whitelist (separated by ','")
+
+    private val blacklistedTags: String? by option(help = "tags to blacklist (separated by ',')")
+
+    private val tagsToPlayAgain: String? by option(help = "tags to play again at each datamaintain execution (separated by ',')")
 
     private val createTagsFromFolder: Boolean? by option(help = "create automatically tags from parent folders").flag()
 
@@ -72,7 +76,7 @@ class UpdateDb : CliktCommand(name = "update-db") {
 
     private val tagsMatchers: List<Pair<String, String>>? by option("--tag", help = "Tag defined using glob path matchers. " +
             "To define multiple tags, use option multiple times. " +
-            "Syntax example: MYTAG1=[pathMatcher1; pathMatcher2]")
+            "Syntax example: MYTAG1=[pathMatcher1, pathMatcher2]")
             .convert {
                 val split = it.split("=")
                 Pair(split[0], split[1])
@@ -99,7 +103,9 @@ class UpdateDb : CliktCommand(name = "update-db") {
     private fun overloadPropsFromArgs(props: Properties) {
         path?.let { props.put(CoreConfigKey.SCAN_PATH.key, it) }
         identifierRegex?.let { props.put(CoreConfigKey.SCAN_IDENTIFIER_REGEX.key, it) }
+        whitelistedTags?.let { props.put(CoreConfigKey.TAGS_WHITELISTED.key, it) }
         blacklistedTags?.let { props.put(CoreConfigKey.TAGS_BLACKLISTED.key, it) }
+        tagsToPlayAgain?.let { props.put(CoreConfigKey.PRUNE_TAGS_TO_RUN_AGAIN, it) }
         createTagsFromFolder?.let { props.put(CoreConfigKey.CREATE_TAGS_FROM_FOLDER.key, it.toString()) }
         verbose?.let { props.put(CoreConfigKey.VERBOSE.key, it.toString()) }
         mongoSaveOutput?.let { props.put(MongoConfigKey.DB_MONGO_SAVE_OUTPUT.key, it.toString()) }
