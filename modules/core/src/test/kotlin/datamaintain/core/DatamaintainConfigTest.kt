@@ -26,6 +26,7 @@ class DatamaintainConfigTest {
             get { path }.isEqualTo(expectedPath)
             get { identifierRegex.pattern }.isEqualTo("(.*?)_.*")
             get { blacklistedTags }.isEqualTo(setOf(Tag("un"), Tag("deux")))
+            get { tagsToPlayAgain }.isEqualTo(setOf(Tag("again")))
             get { doesCreateTagsFromFolder }.isTrue()
             get { executionMode }.isEqualTo(ExecutionMode.DRY)
             get { tagsMatchers }.containsExactlyInAnyOrder(
@@ -68,6 +69,7 @@ class DatamaintainConfigTest {
             get { identifierRegex.pattern }.isEqualTo("(.*?)_.*")
             get { doesCreateTagsFromFolder }.isFalse()
             get { blacklistedTags }.isEqualTo(setOf(Tag("un"), Tag("deux")))
+            get { tagsToPlayAgain }.isEqualTo(setOf(Tag("again")))
             get { executionMode }.isEqualTo(ExecutionMode.NORMAL)
             get { verbose }.isFalse()
         }

@@ -7,10 +7,12 @@ import datamaintain.core.db.driver.FakeDriverConfig
 import datamaintain.core.script.FileScript
 import datamaintain.core.script.ExecutedScript
 import datamaintain.core.script.ExecutionStatus
+import datamaintain.core.script.Tag
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
+import strikt.assertions.containsExactlyInAnyOrder
 import strikt.assertions.get
 import strikt.assertions.hasSize
 import strikt.assertions.isEqualTo
@@ -18,7 +20,13 @@ import java.nio.file.Paths
 
 internal class PrunerTest {
     private val dbDriver = mockk<DatamaintainDriver>()
-    private val context = Context(DatamaintainConfig(Paths.get(""), Regex(""), driverConfig = FakeDriverConfig()), dbDriver = dbDriver)
+    private val tagToPlayAgain = Tag("again")
+    private val context = Context(DatamaintainConfig(
+            Paths.get(""),
+            Regex(""),
+            tagsToPlayAgain = setOf(tagToPlayAgain),
+            driverConfig = FakeDriverConfig()),
+            dbDriver = dbDriver)
 
     private val pruner = Pruner(context)
 
@@ -74,5 +82,21 @@ internal class PrunerTest {
             get(0).get { this.name }.isEqualTo("02_file2")
             get(1).get { this.name }.isEqualTo("10_file10")
         }
+    }
+
+    @Test
+    fun `should not prune script when it has at least one tag to play again`() {
+        // Given
+        val script = FileScript(Paths.get("src/test/resources/scanner_test_files/01_file1"), Regex(""),
+                setOf(tagToPlayAgain, Tag("tag")))
+
+        every { dbDriver.listExecutedScripts() }
+                .returns(sequenceOf())
+
+        // When
+        val prunedScripts = pruner.prune(listOf(script))
+
+        // Then
+        expectThat(prunedScripts).containsExactlyInAnyOrder(script)
     }
 }

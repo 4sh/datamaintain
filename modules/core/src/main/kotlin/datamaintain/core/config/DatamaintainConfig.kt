@@ -18,6 +18,7 @@ data class DatamaintainConfig @JvmOverloads constructor(val path: Path = Paths.g
                                                         val identifierRegex: Regex = Regex(SCAN_IDENTIFIER_REGEX.default!!),
                                                         val doesCreateTagsFromFolder: Boolean = CREATE_TAGS_FROM_FOLDER.default!!.toBoolean(),
                                                         val blacklistedTags: Set<Tag> = setOf(),
+                                                        val tagsToPlayAgain: Set<Tag> = setOf(),
                                                         val tagsMatchers: Set<TagMatcher> = setOf(),
                                                         val executionMode: ExecutionMode = defaultExecutionMode,
                                                         val driverConfig: DatamaintainDriverConfig,
@@ -41,16 +42,22 @@ data class DatamaintainConfig @JvmOverloads constructor(val path: Path = Paths.g
                     Paths.get(props.getProperty(SCAN_PATH)),
                     Regex(props.getProperty(SCAN_IDENTIFIER_REGEX)),
                     props.getProperty(CREATE_TAGS_FROM_FOLDER).toBoolean(),
-                    props.getNullableProperty(TAGS_BLACKLISTED)?.split(",")
-                            ?.map { Tag(it) }
-                            ?.toSet()
-                            ?: setOf(),
+                    extractTags(props.getNullableProperty(TAGS_BLACKLISTED)),
+                    extractTags(props.getNullableProperty(PRUNE_TAGS_TO_RUN_AGAIN)),
                     props.getStringPropertiesByPrefix(TAG.key)
                             .map { TagMatcher.parse(it.first.replace("${TAG.key}.", ""), it.second) }
                             .toSet(),
                     ExecutionMode.fromNullable(props.getNullableProperty(EXECUTION_MODE), defaultExecutionMode),
                     driverConfig,
-                    props.getProperty(VERBOSE).toBoolean())
+                    props.getProperty(VERBOSE).toBoolean()
+            )
+        }
+
+        private fun extractTags(tags: String?): Set<Tag> {
+            return tags?.split(",")
+                    ?.map { Tag(it) }
+                    ?.toSet()
+                    ?: setOf()
         }
     }
 
@@ -59,6 +66,7 @@ data class DatamaintainConfig @JvmOverloads constructor(val path: Path = Paths.g
         path.let { logger.info { "- path -> $it" } }
         identifierRegex.let { logger.info { "- identifier regex -> ${it.pattern}" } }
         blacklistedTags.let { logger.info { "- blacklisted tags -> $it" } }
+        tagsToPlayAgain.let { logger.info { "- tags to play again -> $it" } }
         tagsMatchers.let { logger.info { "- tags -> $tagsMatchers" } }
         executionMode.let { logger.info { "- execution mode -> $it" } }
         verbose.let { logger.info { "- verbose -> $it" } }
@@ -95,6 +103,9 @@ enum class CoreConfigKey(override val key: String,
 
     // FILTER
     TAGS_BLACKLISTED("filter.tags.blacklisted"),
+
+    // PRUNER
+    PRUNE_TAGS_TO_RUN_AGAIN("prune.tags.to.run.again"),
 
     // EXECUTE
     EXECUTION_MODE("execute.mode", "NORMAL")
