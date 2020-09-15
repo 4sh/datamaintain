@@ -25,6 +25,7 @@ class DatamaintainConfigTest {
         expectThat(config).and {
             get { path }.isEqualTo(expectedPath)
             get { identifierRegex.pattern }.isEqualTo("(.*?)_.*")
+            get { whitelistedTags }.isEqualTo(setOf(Tag("trois"), Tag("quatre")))
             get { blacklistedTags }.isEqualTo(setOf(Tag("un"), Tag("deux")))
             get { tagsToPlayAgain }.isEqualTo(setOf(Tag("again")))
             get { doesCreateTagsFromFolder }.isTrue()
