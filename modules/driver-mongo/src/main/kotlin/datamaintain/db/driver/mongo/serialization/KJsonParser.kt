@@ -1,13 +1,15 @@
-package datamaintain.db.driver.mongo
+package datamaintain.db.driver.mongo.serialization
 
 import datamaintain.core.script.ExecutedScript
 import datamaintain.core.script.ExecutionStatus
+import datamaintain.db.driver.mongo.ExecutedScriptJsonParser
 import kotlinx.serialization.ContextualSerialization
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.list
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
+import java.time.Duration
 import java.util.*
 
 // Copy of ExecutedScript, this is aim for add the Serializable annotation
@@ -18,15 +20,24 @@ data class ExecutedScriptDb(@SerialName("_id") @ContextualSerialization val id: 
                             val checksum: String,
                             val identifier: String,
                             val executionStatus: ExecutionStatus,
+                            @Serializable(with = DurationSerializer::class) val executionDuration: Duration? = null,
                             val executionOutput: String? = null)
 
 // Mapping function
-fun ExecutedScriptDb.toExecutedScript() = ExecutedScript(name, checksum, identifier, executionStatus, executionOutput)
+fun ExecutedScriptDb.toExecutedScript() = ExecutedScript(
+        name,
+        checksum,
+        identifier,
+        executionStatus,
+        executionDuration,
+        executionOutput
+)
 fun ExecutedScript.toExecutedScriptDb() = ExecutedScriptDb(
         name = name,
         checksum = checksum,
         identifier = identifier,
         executionStatus = executionStatus,
+        executionDuration = executionDuration,
         executionOutput = executionOutput
 )
 

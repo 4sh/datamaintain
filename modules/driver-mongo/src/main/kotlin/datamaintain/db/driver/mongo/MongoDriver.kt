@@ -7,6 +7,7 @@ import datamaintain.core.script.FileScript
 import datamaintain.core.script.ScriptWithContent
 import datamaintain.core.step.executor.Execution
 import datamaintain.core.util.runProcess
+import datamaintain.db.driver.mongo.serialization.KJsonParser
 import mu.KotlinLogging
 import java.io.InputStream
 import java.nio.file.Path

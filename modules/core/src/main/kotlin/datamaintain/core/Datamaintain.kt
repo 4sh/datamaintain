@@ -9,6 +9,7 @@ import datamaintain.core.step.Scanner
 import datamaintain.core.step.executor.Executor
 import datamaintain.core.step.sort.ByLengthAndCaseInsensitiveAlphabeticalSorter
 import mu.KotlinLogging
+import java.time.Clock
 
 private val logger = KotlinLogging.logger {}
 
@@ -34,7 +35,7 @@ class Datamaintain(config: DatamaintainConfig) {
                             .sort(scripts, Script::identifier)
                 }
                 .let { scripts -> Pruner(context).prune(scripts) }
-                .let { scripts -> Executor(context).execute(scripts) }
+                .let { scripts -> Executor(context, Clock.systemDefaultZone()).execute(scripts) }
     }
 
     fun listExecutedScripts() = context.dbDriver.listExecutedScripts()

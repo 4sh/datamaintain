@@ -4,12 +4,15 @@ import com.mongodb.client.model.Filters
 import datamaintain.core.script.ExecutedScript
 import datamaintain.core.script.ExecutionStatus
 import datamaintain.core.script.FileScript
+import datamaintain.db.driver.mongo.serialization.ExecutedScriptDb
+import datamaintain.db.driver.mongo.serialization.toExecutedScriptDb
 import datamaintain.db.driver.mongo.test.AbstractMongoDbTest
 import org.bson.Document
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.*
 import java.nio.file.Paths
+import java.time.Duration
 
 
 internal class MongoDriverTest : AbstractMongoDbTest() {
@@ -59,6 +62,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
                         get { identifier }.isEqualTo("")
                         get { executionStatus }.isEqualTo(ExecutionStatus.OK)
                         get { executionOutput }.isNull()
+                        get { executionDuration }.isNull()
                     }
                     get(1).and {
                         get { name }.isEqualTo("script2.js")
@@ -66,6 +70,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
                         get { identifier }.isEqualTo("")
                         get { executionStatus }.isEqualTo(ExecutionStatus.OK)
                         get { executionOutput }.isNull()
+                        get { executionDuration }.isNull()
                     }
                     get(2).and {
                         get { name }.isEqualTo("script3.js")
@@ -73,6 +78,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
                         get { identifier }.isEqualTo("")
                         get { executionStatus }.isEqualTo(ExecutionStatus.OK)
                         get { executionOutput }.isNull()
+                        get { executionDuration }.isNull()
                     }
                 }
     }
@@ -145,6 +151,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
                 "d3d9446802a44259755d38e6d163e820",
                 "",
                 ExecutionStatus.OK,
+                Duration.ZERO,
                 executionOutput = "test"
         )
 
@@ -222,6 +229,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
     private val SCRIPT_DOCUMENT_CHECKSUM = "checksum"
     private val SCRIPT_DOCUMENT_IDENTIFIER = "identifier"
     private val SCRIPT_DOCUMENT_EXECUTION_STATUS = "executionStatus"
+    private val SCRIPT_DOCUMENT_EXECUTION_DURATION = "executionDuration"
     private val SCRIPT_DOCUMENT_EXECUTION_OUTPUT = "executionOutput"
 
     private fun executedScriptToDocument(executedScript: ExecutedScriptDb): Document =
@@ -231,6 +239,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
                     .append(SCRIPT_DOCUMENT_CHECKSUM, executedScript.checksum)
                     .append(SCRIPT_DOCUMENT_IDENTIFIER, executedScript.identifier)
                     .append(SCRIPT_DOCUMENT_EXECUTION_STATUS, executedScript.executionStatus.name)
+                    .append(SCRIPT_DOCUMENT_EXECUTION_DURATION, executedScript.executionDuration)
                     .append(SCRIPT_DOCUMENT_EXECUTION_OUTPUT, executedScript.executionOutput)
 
     private fun documentToExecutedScript(document: Document) =
@@ -239,6 +248,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
                     document.getString(SCRIPT_DOCUMENT_CHECKSUM),
                     document.getString(SCRIPT_DOCUMENT_IDENTIFIER),
                     ExecutionStatus.valueOf(document.getString(SCRIPT_DOCUMENT_EXECUTION_STATUS)),
+                    if(document.containsKey(SCRIPT_DOCUMENT_EXECUTION_DURATION)) Duration.ofSeconds(document.getLong(SCRIPT_DOCUMENT_EXECUTION_DURATION)) else null,
                     document.getString(SCRIPT_DOCUMENT_EXECUTION_OUTPUT)
             )
 

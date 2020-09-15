@@ -8,25 +8,33 @@ import datamaintain.core.report.Report
 import datamaintain.core.script.ExecutedScript
 import datamaintain.core.script.ExecutionStatus.*
 import datamaintain.core.script.InMemoryScript
-import datamaintain.core.script.ScriptWithContent
 import datamaintain.core.step.executor.Execution
 import datamaintain.core.step.executor.ExecutionMode
 import datamaintain.core.step.executor.Executor
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.containsExactly
 import strikt.assertions.hasSize
 import strikt.assertions.map
 import java.nio.file.Paths
+import java.time.Clock
+import java.time.Duration
+import java.time.Instant
+import java.time.ZoneId
 
 internal class ExecutorTest {
     private val dbDriverMock = mockk<DatamaintainDriver>()
-    private val context = Context(DatamaintainConfig(Paths.get(""), Regex(""), driverConfig = FakeDriverConfig()), dbDriver = dbDriverMock)
+    private val context = Context(
+            DatamaintainConfig(Paths.get(""), Regex(""), driverConfig = FakeDriverConfig()),
+            dbDriver = dbDriverMock
+    )
+    private val clock = Clock.fixed(Instant.parse("2020-09-03T18:02:30.00Z"), ZoneId.systemDefault())
 
-    private val executor = Executor(context)
+    private val executor = Executor(context, clock)
 
     private val script1 = InMemoryScript("1", "1", "1")
     private val script2 = InMemoryScript("2", "2", "2")
@@ -57,6 +65,10 @@ internal class ExecutorTest {
                         map { it.executionStatus }
                                 .containsExactly(OK, KO)
                     }
+                    .and {
+                        map { it.executionDuration }
+                                .containsExactly(Duration.ZERO, Duration.ZERO)
+                    }
         }
     }
 
@@ -84,6 +96,10 @@ internal class ExecutorTest {
                         map { it.executionStatus }
                                 .containsExactly(OK, OK, OK)
                     }
+                    .and {
+                        map { it.executionDuration }
+                                .containsExactly(Duration.ZERO, Duration.ZERO, Duration.ZERO)
+                    }
         }
     }
 
@@ -98,7 +114,7 @@ internal class ExecutorTest {
                 driverConfig = FakeDriverConfig(),
                 executionMode = ExecutionMode.FORCE_MARK_AS_EXECUTED
         ), dbDriver = dbDriverMock)
-        val executor = Executor(context)
+        val executor = Executor(context, clock)
 
         // When
         val report: Report = executor.execute(listOf(script1, script2, script3))
@@ -117,6 +133,10 @@ internal class ExecutorTest {
                     .and {
                         map { it.executionStatus }
                                 .containsExactly(FORCE_MARKED_AS_EXECUTED, FORCE_MARKED_AS_EXECUTED, FORCE_MARKED_AS_EXECUTED)
+                    }
+                    .and {
+                        map { it.executionDuration }
+                                .containsExactly(null, null, null)
                     }
         }
     }
@@ -146,7 +166,7 @@ internal class ExecutorTest {
                         driverConfig = FakeDriverConfig(),
                         executionMode = ExecutionMode.DRY),
                 dbDriver = dbDriverMock)
-        val executor = Executor(context)
+        val executor = Executor(context, clock)
 
         // When
         val report = executor.execute(listOf(script1, script2, script3))
@@ -165,6 +185,10 @@ internal class ExecutorTest {
                     .and {
                         map { it.executionStatus }
                                 .containsExactly(SHOULD_BE_EXECUTED, SHOULD_BE_EXECUTED, SHOULD_BE_EXECUTED)
+                    }
+                    .and {
+                        map { it.executionDuration }
+                                .containsExactly(null, null, null)
                     }
         }
     }
