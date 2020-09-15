@@ -83,7 +83,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
         database.getCollection("simple").drop()
         val fileScript = FileScript(
                 Paths.get("src/test/resources/executor_test_files/mongo/mongo_simple_insert.js"),
-                Regex(".*")
+                Regex("(.*)")
         )
 
         // When
@@ -112,7 +112,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
         database.getCollection("simple").drop()
         val fileScript = FileScript(
                 Paths.get("src/test/resources/executor_test_files/mongo/mongo_simple_insert.js"),
-                Regex(".*")
+                Regex("(.*)")
         )
         val mongoDatamaintainDriver = MongoDriver(
                 mongoUri,
@@ -196,7 +196,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
     fun `should execute incorrect file script`() {
         // Given
         database.getCollection("simple").drop()
-        val fileScript = FileScript(Paths.get("src/test/resources/executor_test_files/mongo/mongo_error_insert.js"), Regex(".*"))
+        val fileScript = FileScript(Paths.get("src/test/resources/executor_test_files/mongo/mongo_error_insert.js"), Regex("(.*)"))
 
         // When
         val executedScript = mongoDatamaintainDriver.executeScript(fileScript)
