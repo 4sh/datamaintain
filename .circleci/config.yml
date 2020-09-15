@@ -25,7 +25,7 @@ jobs:
       - run:
           name: Run tests
           command: |
-            ./gradlew test --stacktrace
+            ./gradlew test
       - save_cache:
           paths:
             - ~/.gradle/wrapper
