@@ -16,7 +16,7 @@ data class ExecutedScript @JvmOverloads constructor(
         override val checksum: String,
         override val identifier: String,
         val executionStatus: ExecutionStatus,
-        val executionDuration: Duration? = null,
+        val executionDurationInMillis: Long? = null,
         val executionOutput: String? = null
 ) : Script {
     companion object {
@@ -36,13 +36,13 @@ data class ExecutedScript @JvmOverloads constructor(
                         ExecutionStatus.SHOULD_BE_EXECUTED
                 )
 
-        fun build(script: ScriptWithContent, execution: Execution, executionStartDate: LocalDateTime, executionEndDate: LocalDateTime) =
+        fun build(script: ScriptWithContent, execution: Execution, executionDurationInMillis: Long) =
                 ExecutedScript(
                         script.name,
                         script.checksum,
                         script.identifier,
                         execution.executionStatus,
-                        Duration.between(executionStartDate, executionEndDate),
+                        executionDurationInMillis,
                         execution.executionOutput
                 )
     }

@@ -62,7 +62,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
                         get { identifier }.isEqualTo("")
                         get { executionStatus }.isEqualTo(ExecutionStatus.OK)
                         get { executionOutput }.isNull()
-                        get { executionDuration }.isNull()
+                        get { executionDurationInMillis }.isNull()
                     }
                     get(1).and {
                         get { name }.isEqualTo("script2.js")
@@ -70,7 +70,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
                         get { identifier }.isEqualTo("")
                         get { executionStatus }.isEqualTo(ExecutionStatus.OK)
                         get { executionOutput }.isNull()
-                        get { executionDuration }.isNull()
+                        get { executionDurationInMillis }.isNull()
                     }
                     get(2).and {
                         get { name }.isEqualTo("script3.js")
@@ -78,7 +78,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
                         get { identifier }.isEqualTo("")
                         get { executionStatus }.isEqualTo(ExecutionStatus.OK)
                         get { executionOutput }.isNull()
-                        get { executionDuration }.isNull()
+                        get { executionDurationInMillis }.isNull()
                     }
                 }
     }
@@ -151,7 +151,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
                 "d3d9446802a44259755d38e6d163e820",
                 "",
                 ExecutionStatus.OK,
-                Duration.ZERO,
+                0,
                 executionOutput = "test"
         )
 
@@ -248,7 +248,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
                     document.getString(SCRIPT_DOCUMENT_CHECKSUM),
                     document.getString(SCRIPT_DOCUMENT_IDENTIFIER),
                     ExecutionStatus.valueOf(document.getString(SCRIPT_DOCUMENT_EXECUTION_STATUS)),
-                    if(document.get(SCRIPT_DOCUMENT_EXECUTION_DURATION_IN_MILLIS) != null) Duration.ofSeconds(document.getDouble(SCRIPT_DOCUMENT_EXECUTION_DURATION_IN_MILLIS).toLong()) else null,
+                    if(document.get(SCRIPT_DOCUMENT_EXECUTION_DURATION_IN_MILLIS) != null) document.getDouble(SCRIPT_DOCUMENT_EXECUTION_DURATION_IN_MILLIS).toLong() else null,
                     document.getString(SCRIPT_DOCUMENT_EXECUTION_OUTPUT)
             )
 

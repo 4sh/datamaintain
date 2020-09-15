@@ -35,7 +35,7 @@ class Datamaintain(config: DatamaintainConfig) {
                             .sort(scripts, Script::identifier)
                 }
                 .let { scripts -> Pruner(context).prune(scripts) }
-                .let { scripts -> Executor(context, Clock.systemDefaultZone()).execute(scripts) }
+                .let { scripts -> Executor(context).execute(scripts) }
     }
 
     fun listExecutedScripts() = context.dbDriver.listExecutedScripts()
