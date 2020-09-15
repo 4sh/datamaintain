@@ -148,3 +148,16 @@ When you already have executed scripts on your project and you want to start usi
 
 ./datamaintain-cli --db-type $DB_TYPE --mongo-uri $MONGO_URI update-db --path $PATH --identifier-regex $REGEX --execution-mode FORCE_MARK_AS_EXECUTED
 ```
+
+## Executed scripts in your database
+Your scripts executions will be stored in your database. In Mongo, you will have a collectio named ```executedScripts``` that will contain executed scripts, as defined below:
+
+| Attribute | Description |
+|---|---|
+| id | | 
+| name | | 
+| checksum | | 
+| identifier | | 
+| executionStatus | | 
+| executionDurationInMillis | Duration of your script execution, in milliseconds. | 
+| executionOutput | | 

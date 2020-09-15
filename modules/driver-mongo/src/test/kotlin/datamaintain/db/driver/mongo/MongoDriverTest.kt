@@ -239,7 +239,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
                     .append(SCRIPT_DOCUMENT_CHECKSUM, executedScript.checksum)
                     .append(SCRIPT_DOCUMENT_IDENTIFIER, executedScript.identifier)
                     .append(SCRIPT_DOCUMENT_EXECUTION_STATUS, executedScript.executionStatus.name)
-                    .append(SCRIPT_DOCUMENT_EXECUTION_DURATION, executedScript.executionDuration)
+                    .append(SCRIPT_DOCUMENT_EXECUTION_DURATION, executedScript.executionDurationInMillis)
                     .append(SCRIPT_DOCUMENT_EXECUTION_OUTPUT, executedScript.executionOutput)
 
     private fun documentToExecutedScript(document: Document) =
@@ -248,7 +248,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
                     document.getString(SCRIPT_DOCUMENT_CHECKSUM),
                     document.getString(SCRIPT_DOCUMENT_IDENTIFIER),
                     ExecutionStatus.valueOf(document.getString(SCRIPT_DOCUMENT_EXECUTION_STATUS)),
-                    if(document.containsKey(SCRIPT_DOCUMENT_EXECUTION_DURATION)) Duration.ofSeconds(document.getLong(SCRIPT_DOCUMENT_EXECUTION_DURATION)) else null,
+                    if(document.get(SCRIPT_DOCUMENT_EXECUTION_DURATION) != null) Duration.ofSeconds(document.getDouble(SCRIPT_DOCUMENT_EXECUTION_DURATION).toLong()) else null,
                     document.getString(SCRIPT_DOCUMENT_EXECUTION_OUTPUT)
             )
 

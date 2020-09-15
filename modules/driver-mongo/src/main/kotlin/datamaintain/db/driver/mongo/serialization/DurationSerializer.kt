@@ -8,10 +8,10 @@ object DurationSerializer: KSerializer<Duration> {
     override val descriptor: SerialDescriptor = PrimitiveDescriptor("java.time.Duration", PrimitiveKind.STRING)
 
     override fun serialize(encoder: Encoder, value: Duration) {
-        encoder.encodeLong(value.seconds)
+        encoder.encodeLong(value.toMillis())
     }
 
     override fun deserialize(decoder: Decoder): Duration {
-        return Duration.ofSeconds(decoder.decodeLong())
+        return Duration.ofMillis(decoder.decodeLong())
     }
 }

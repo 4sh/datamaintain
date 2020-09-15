@@ -20,7 +20,7 @@ data class ExecutedScriptDb(@SerialName("_id") @ContextualSerialization val id: 
                             val checksum: String,
                             val identifier: String,
                             val executionStatus: ExecutionStatus,
-                            @Serializable(with = DurationSerializer::class) val executionDuration: Duration? = null,
+                            @Serializable(with = DurationSerializer::class) val executionDurationInMillis: Duration? = null,
                             val executionOutput: String? = null)
 
 // Mapping function
@@ -29,7 +29,7 @@ fun ExecutedScriptDb.toExecutedScript() = ExecutedScript(
         checksum,
         identifier,
         executionStatus,
-        executionDuration,
+        executionDurationInMillis,
         executionOutput
 )
 fun ExecutedScript.toExecutedScriptDb() = ExecutedScriptDb(
@@ -37,7 +37,7 @@ fun ExecutedScript.toExecutedScriptDb() = ExecutedScriptDb(
         checksum = checksum,
         identifier = identifier,
         executionStatus = executionStatus,
-        executionDuration = executionDuration,
+        executionDurationInMillis = executionDuration,
         executionOutput = executionOutput
 )
 

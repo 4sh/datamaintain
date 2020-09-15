@@ -42,7 +42,7 @@ data class ExecutedScript @JvmOverloads constructor(
                         script.checksum,
                         script.identifier,
                         execution.executionStatus,
-                        Duration.between(executionEndDate, executionStartDate),
+                        Duration.between(executionStartDate, executionEndDate),
                         execution.executionOutput
                 )
     }
