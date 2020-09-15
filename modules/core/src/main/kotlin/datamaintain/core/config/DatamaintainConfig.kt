@@ -43,7 +43,7 @@ data class DatamaintainConfig @JvmOverloads constructor(val path: Path = Paths.g
                     Regex(props.getProperty(SCAN_IDENTIFIER_REGEX)),
                     props.getProperty(CREATE_TAGS_FROM_FOLDER).toBoolean(),
                     extractTags(props.getNullableProperty(TAGS_BLACKLISTED)),
-                    extractTags(props.getNullableProperty(PRUNE_TAGS_TO_PLAY_AGAIN)),
+                    extractTags(props.getNullableProperty(PRUNE_TAGS_TO_RUN_AGAIN)),
                     props.getStringPropertiesByPrefix(TAG.key)
                             .map { TagMatcher.parse(it.first.replace("${TAG.key}.", ""), it.second) }
                             .toSet(),
@@ -105,7 +105,7 @@ enum class CoreConfigKey(override val key: String,
     TAGS_BLACKLISTED("filter.tags.blacklisted"),
 
     // PRUNER
-    PRUNE_TAGS_TO_PLAY_AGAIN("prune.tags.to.play.again"),
+    PRUNE_TAGS_TO_RUN_AGAIN("prune.tags.to.run.again"),
 
     // EXECUTE
     EXECUTION_MODE("execute.mode", "NORMAL")

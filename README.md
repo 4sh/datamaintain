@@ -121,7 +121,7 @@ Then, you may add the dependencies to ```datamaintain-core``` and the driver mod
 | filter.tags.blacklisted | Scripts that have these tags will be ignored | None | no | ```DATA,tag``` |
 | execution.mode | Execution mode. Possible values:<br />- ```NORMAL```: Regular execution: your scripts will be run on your database.<br />- ```DRY```: Scripts will not be executed. A full report of what would happen is you ran Datamaintain normally will be logged.<br />- ```FORCE_AS_EXECUTED```: Scripts will not be executed but their execution will be remembered by Datamaintain for later executions. | ```NORMAL``` | no | ```NORMAL```, ```DRY``` or ```FORCE_MARK_AS_EXECUTED``` |
 | verbose | If true, more logs will be printed | ```false``` | no | ```true``` or ```false``` |
-
+| prune.tags.to.run.again | Scripts that have these tags will be run, even they were already executed  | None | no | ```tag,again``` |
 ### Mongo driver configuration
 
 | Key | Description | Default value | Mandatory? | Values examples |

@@ -17,7 +17,8 @@ class Pruner(private val context: Context) {
                     val skipped = executedChecksums.contains(script.checksum) &&
                             script.tags.intersect(context.config.tagsToPlayAgain).isEmpty()
                     if (context.config.verbose && skipped) {
-                        logger.info { "${script.name} is skipped" }
+                        logger.info { "${script.name} is skipped because it was already executed " +
+                                "and it does not have a tag to play again." }
                     }
                     skipped
                 }
