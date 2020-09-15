@@ -150,7 +150,7 @@ When you already have executed scripts on your project and you want to start usi
 ```
 
 ## Executed scripts in your database
-Your scripts executions will be stored in your database. In Mongo, you will have a collectio named ```executedScripts``` that will contain executed scripts, as defined below:
+Your scripts executions will be stored in your database. In Mongo, you will have a collection named ```executedScripts``` that will contain executed scripts, as defined below:
 
 | Attribute | Description |
 |---|---|
