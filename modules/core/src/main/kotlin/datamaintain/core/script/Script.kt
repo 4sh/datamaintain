@@ -1,5 +1,9 @@
 package datamaintain.core.script
 
+import datamaintain.core.step.executor.Execution
+
+import java.time.Duration
+import java.time.LocalDateTime
 
 interface Script {
     val name: String
@@ -12,6 +16,7 @@ data class ExecutedScript @JvmOverloads constructor(
         override val checksum: String,
         override val identifier: String,
         val executionStatus: ExecutionStatus,
+        val executionDurationInMillis: Long? = null,
         val executionOutput: String? = null
 ) : Script {
     companion object {
@@ -29,6 +34,16 @@ data class ExecutedScript @JvmOverloads constructor(
                         script.checksum,
                         script.identifier,
                         ExecutionStatus.SHOULD_BE_EXECUTED
+                )
+
+        fun build(script: ScriptWithContent, execution: Execution, executionDurationInMillis: Long) =
+                ExecutedScript(
+                        script.name,
+                        script.checksum,
+                        script.identifier,
+                        execution.executionStatus,
+                        executionDurationInMillis,
+                        execution.executionOutput
                 )
     }
 }

@@ -4,12 +4,15 @@ import com.mongodb.client.model.Filters
 import datamaintain.core.script.ExecutedScript
 import datamaintain.core.script.ExecutionStatus
 import datamaintain.core.script.FileScript
+import datamaintain.db.driver.mongo.serialization.ExecutedScriptDb
+import datamaintain.db.driver.mongo.serialization.toExecutedScriptDb
 import datamaintain.db.driver.mongo.test.AbstractMongoDbTest
 import org.bson.Document
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.*
 import java.nio.file.Paths
+import java.time.Duration
 
 
 internal class MongoDriverTest : AbstractMongoDbTest() {
@@ -59,6 +62,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
                         get { identifier }.isEqualTo("")
                         get { executionStatus }.isEqualTo(ExecutionStatus.OK)
                         get { executionOutput }.isNull()
+                        get { executionDurationInMillis }.isNull()
                     }
                     get(1).and {
                         get { name }.isEqualTo("script2.js")
@@ -66,6 +70,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
                         get { identifier }.isEqualTo("")
                         get { executionStatus }.isEqualTo(ExecutionStatus.OK)
                         get { executionOutput }.isNull()
+                        get { executionDurationInMillis }.isNull()
                     }
                     get(2).and {
                         get { name }.isEqualTo("script3.js")
@@ -73,6 +78,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
                         get { identifier }.isEqualTo("")
                         get { executionStatus }.isEqualTo(ExecutionStatus.OK)
                         get { executionOutput }.isNull()
+                        get { executionDurationInMillis }.isNull()
                     }
                 }
     }
@@ -87,7 +93,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
         )
 
         // When
-        val executedScript = mongoDatamaintainDriver.executeScript(fileScript)
+        val execution = mongoDatamaintainDriver.executeScript(fileScript)
 
         // Then
         val coll = database.getCollection("simple")
@@ -99,8 +105,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
                     }
                 }
 
-        expectThat(executedScript) {
-            get { name }.isEqualTo("mongo_simple_insert.js")
+        expectThat(execution) {
             get { executionStatus }.isEqualTo(ExecutionStatus.OK)
             get { executionOutput }.isNull()
         }
@@ -146,6 +151,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
                 "d3d9446802a44259755d38e6d163e820",
                 "",
                 ExecutionStatus.OK,
+                0,
                 executionOutput = "test"
         )
 
@@ -173,7 +179,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
         val inMemoryScript = InMemoryScript("test", content, "")
 
         // When
-        val executedScript = mongoDatamaintainDriver.executeScript(inMemoryScript)
+        val execution = mongoDatamaintainDriver.executeScript(inMemoryScript)
 
         // Then
         val coll = database.getCollection("simple")
@@ -185,8 +191,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
                     }
                 }
 
-        expectThat(executedScript) {
-            get { name }.isEqualTo("test")
+        expectThat(execution) {
             get { executionStatus }.isEqualTo(ExecutionStatus.OK)
             get { executionOutput }.isNull()
         }
@@ -199,15 +204,14 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
         val fileScript = FileScript(Paths.get("src/test/resources/executor_test_files/mongo/mongo_error_insert.js"), Regex("(.*)"))
 
         // When
-        val executedScript = mongoDatamaintainDriver.executeScript(fileScript)
+        val execution = mongoDatamaintainDriver.executeScript(fileScript)
 
         // Then
         val coll = database.getCollection("simple")
         val cursor = coll.find(Filters.eq("find", "me"))
         expectThat(cursor.toList()).hasSize(0)
 
-        expectThat(executedScript) {
-            get { name }.isEqualTo("mongo_error_insert.js")
+        expectThat(execution) {
             get { executionStatus }.isEqualTo(ExecutionStatus.KO)
             get { executionOutput }.isNull()
         }
@@ -225,6 +229,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
     private val SCRIPT_DOCUMENT_CHECKSUM = "checksum"
     private val SCRIPT_DOCUMENT_IDENTIFIER = "identifier"
     private val SCRIPT_DOCUMENT_EXECUTION_STATUS = "executionStatus"
+    private val SCRIPT_DOCUMENT_EXECUTION_DURATION_IN_MILLIS = "executionDurationInMillis"
     private val SCRIPT_DOCUMENT_EXECUTION_OUTPUT = "executionOutput"
 
     private fun executedScriptToDocument(executedScript: ExecutedScriptDb): Document =
@@ -234,6 +239,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
                     .append(SCRIPT_DOCUMENT_CHECKSUM, executedScript.checksum)
                     .append(SCRIPT_DOCUMENT_IDENTIFIER, executedScript.identifier)
                     .append(SCRIPT_DOCUMENT_EXECUTION_STATUS, executedScript.executionStatus.name)
+                    .append(SCRIPT_DOCUMENT_EXECUTION_DURATION_IN_MILLIS, executedScript.executionDurationInMillis)
                     .append(SCRIPT_DOCUMENT_EXECUTION_OUTPUT, executedScript.executionOutput)
 
     private fun documentToExecutedScript(document: Document) =
@@ -242,6 +248,9 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
                     document.getString(SCRIPT_DOCUMENT_CHECKSUM),
                     document.getString(SCRIPT_DOCUMENT_IDENTIFIER),
                     ExecutionStatus.valueOf(document.getString(SCRIPT_DOCUMENT_EXECUTION_STATUS)),
+                    // A getDouble is done here because JSON is used for serialization and, since mongo, by default,
+                    // Reads numbers as doubles, the duration is stored as a double
+                    if(document.get(SCRIPT_DOCUMENT_EXECUTION_DURATION_IN_MILLIS) != null) document.getDouble(SCRIPT_DOCUMENT_EXECUTION_DURATION_IN_MILLIS).toLong() else null,
                     document.getString(SCRIPT_DOCUMENT_EXECUTION_OUTPUT)
             )
 

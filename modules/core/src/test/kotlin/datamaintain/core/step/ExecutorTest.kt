@@ -6,10 +6,9 @@ import datamaintain.core.db.driver.DatamaintainDriver
 import datamaintain.core.db.driver.FakeDriverConfig
 import datamaintain.core.report.Report
 import datamaintain.core.script.ExecutedScript
-import datamaintain.core.script.ExecutionStatus
 import datamaintain.core.script.ExecutionStatus.*
 import datamaintain.core.script.InMemoryScript
-import datamaintain.core.script.ScriptWithContent
+import datamaintain.core.step.executor.Execution
 import datamaintain.core.step.executor.ExecutionMode
 import datamaintain.core.step.executor.Executor
 import io.mockk.every
@@ -21,10 +20,17 @@ import strikt.assertions.containsExactly
 import strikt.assertions.hasSize
 import strikt.assertions.map
 import java.nio.file.Paths
+import java.time.Clock
+import java.time.Duration
+import java.time.Instant
+import java.time.ZoneId
 
 internal class ExecutorTest {
     private val dbDriverMock = mockk<DatamaintainDriver>()
-    private val context = Context(DatamaintainConfig(Paths.get(""), Regex(""), driverConfig = FakeDriverConfig()), dbDriver = dbDriverMock)
+    private val context = Context(
+            DatamaintainConfig(Paths.get(""), Regex(""), driverConfig = FakeDriverConfig()),
+            dbDriver = dbDriverMock
+    )
 
     private val executor = Executor(context)
 
@@ -35,12 +41,8 @@ internal class ExecutorTest {
     @Test
     fun `should execute and build invalid report`() {
         // Given
-        every { dbDriverMock.executeScript(eq(script2)) }.answers {
-            generateKoExecutedScript(it.invocation.args.first() as ScriptWithContent)
-        }
-        every { dbDriverMock.executeScript(neq(script2)) }.answers {
-            generateOkExecutedScript(it.invocation.args.first() as ScriptWithContent)
-        }
+        every { dbDriverMock.executeScript(eq(script2)) }.answers { Execution(KO) }
+        every { dbDriverMock.executeScript(neq(script2)) }.answers { Execution(OK) }
         every { dbDriverMock.markAsExecuted(any()) }.returnsArgument(0)
 
         // When
@@ -67,9 +69,7 @@ internal class ExecutorTest {
     @Test
     fun `should execute and build valid report`() {
         // Given
-        every { dbDriverMock.executeScript(any()) }.answers {
-            generateOkExecutedScript(it.invocation.args.first() as ScriptWithContent)
-        }
+        every { dbDriverMock.executeScript(any()) }.answers { Execution(OK) }
         every { dbDriverMock.markAsExecuted(any()) }.answers { it.invocation.args.first() as ExecutedScript }
 
         // When
@@ -124,6 +124,10 @@ internal class ExecutorTest {
                         map { it.executionStatus }
                                 .containsExactly(FORCE_MARKED_AS_EXECUTED, FORCE_MARKED_AS_EXECUTED, FORCE_MARKED_AS_EXECUTED)
                     }
+                    .and {
+                        map { it.executionDurationInMillis }
+                                .containsExactly(null, null, null)
+                    }
         }
     }
 
@@ -172,12 +176,10 @@ internal class ExecutorTest {
                         map { it.executionStatus }
                                 .containsExactly(SHOULD_BE_EXECUTED, SHOULD_BE_EXECUTED, SHOULD_BE_EXECUTED)
                     }
+                    .and {
+                        map { it.executionDurationInMillis }
+                                .containsExactly(null, null, null)
+                    }
         }
     }
-
-    private fun generateOkExecutedScript(script: ScriptWithContent) =
-            ExecutedScript(script.name, "", script.identifier, OK)
-
-    private fun generateKoExecutedScript(script: ScriptWithContent) =
-            ExecutedScript(script.name, "", script.identifier, KO)
 }

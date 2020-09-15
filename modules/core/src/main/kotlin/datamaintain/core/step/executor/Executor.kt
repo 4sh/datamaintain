@@ -6,6 +6,9 @@ import datamaintain.core.script.ExecutedScript
 import datamaintain.core.script.ExecutionStatus
 import datamaintain.core.script.ScriptWithContent
 import mu.KotlinLogging
+import java.time.Clock
+import java.time.LocalDateTime
+import kotlin.system.measureTimeMillis
 
 private val logger = KotlinLogging.logger {}
 
@@ -15,7 +18,13 @@ class Executor(private val context: Context) {
         logger.info { "Executes scripts.." }
         for (script in scripts) {
             val executedScript = when (context.config.executionMode) {
-                ExecutionMode.NORMAL -> context.dbDriver.executeScript(script)
+                ExecutionMode.NORMAL ->  {
+                    var execution = Execution(ExecutionStatus.SHOULD_BE_EXECUTED)
+                    val executionDurationInMillis = measureTimeMillis {
+                        execution = context.dbDriver.executeScript(script)
+                    }
+                    ExecutedScript.build(script, execution, executionDurationInMillis)
+                }
                 ExecutionMode.FORCE_MARK_AS_EXECUTED -> ExecutedScript.forceMarkAsExecuted(script)
                 ExecutionMode.DRY -> ExecutedScript.shouldBeExecuted(script)
             }
