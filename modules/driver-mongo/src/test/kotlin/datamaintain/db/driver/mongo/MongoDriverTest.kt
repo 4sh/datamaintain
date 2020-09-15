@@ -248,6 +248,8 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
                     document.getString(SCRIPT_DOCUMENT_CHECKSUM),
                     document.getString(SCRIPT_DOCUMENT_IDENTIFIER),
                     ExecutionStatus.valueOf(document.getString(SCRIPT_DOCUMENT_EXECUTION_STATUS)),
+                    // A getDouble is done here because JSON is used for serialization and, since mongo, by default,
+                    // Reads numbers as doubles, the duration is stored as a double
                     if(document.get(SCRIPT_DOCUMENT_EXECUTION_DURATION_IN_MILLIS) != null) document.getDouble(SCRIPT_DOCUMENT_EXECUTION_DURATION_IN_MILLIS).toLong() else null,
                     document.getString(SCRIPT_DOCUMENT_EXECUTION_OUTPUT)
             )
