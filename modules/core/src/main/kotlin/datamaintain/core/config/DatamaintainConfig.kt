@@ -17,6 +17,7 @@ private val logger = KotlinLogging.logger {}
 data class DatamaintainConfig @JvmOverloads constructor(val path: Path = Paths.get(SCAN_PATH.default!!),
                                                         val identifierRegex: Regex = Regex(SCAN_IDENTIFIER_REGEX.default!!),
                                                         val doesCreateTagsFromFolder: Boolean = CREATE_TAGS_FROM_FOLDER.default!!.toBoolean(),
+                                                        val whitelistedTags: Set<Tag> = setOf(),
                                                         val blacklistedTags: Set<Tag> = setOf(),
                                                         val tagsToPlayAgain: Set<Tag> = setOf(),
                                                         val tagsMatchers: Set<TagMatcher> = setOf(),
@@ -42,6 +43,7 @@ data class DatamaintainConfig @JvmOverloads constructor(val path: Path = Paths.g
                     Paths.get(props.getProperty(SCAN_PATH)),
                     Regex(props.getProperty(SCAN_IDENTIFIER_REGEX)),
                     props.getProperty(CREATE_TAGS_FROM_FOLDER).toBoolean(),
+                    extractTags(props.getNullableProperty(TAGS_WHITELISTED)),
                     extractTags(props.getNullableProperty(TAGS_BLACKLISTED)),
                     extractTags(props.getNullableProperty(PRUNE_TAGS_TO_RUN_AGAIN)),
                     props.getStringPropertiesByPrefix(TAG.key)
@@ -102,6 +104,7 @@ enum class CoreConfigKey(override val key: String,
     TAG("tag", ""),
 
     // FILTER
+    TAGS_WHITELISTED("filter.tags.whitelisted"),
     TAGS_BLACKLISTED("filter.tags.blacklisted"),
 
     // PRUNER

@@ -56,6 +56,8 @@ class UpdateDb : CliktCommand(name = "update-db") {
 
     private val identifierRegex: String? by option(help = "regex to extract identifier part from scripts")
 
+    private val whitelistedTags: String? by option(help = "tags to whitelist (separated by ','")
+
     private val blacklistedTags: String? by option(help = "tags to blacklist (separated by ',')")
 
     private val tagsToPlayAgain: String? by option(help = "tags to play again at each datamaintain execution (separated by ',')")
@@ -101,6 +103,7 @@ class UpdateDb : CliktCommand(name = "update-db") {
     private fun overloadPropsFromArgs(props: Properties) {
         path?.let { props.put(CoreConfigKey.SCAN_PATH.key, it) }
         identifierRegex?.let { props.put(CoreConfigKey.SCAN_IDENTIFIER_REGEX.key, it) }
+        whitelistedTags?.let { props.put(CoreConfigKey.TAGS_WHITELISTED.key, it) }
         blacklistedTags?.let { props.put(CoreConfigKey.TAGS_BLACKLISTED.key, it) }
         tagsToPlayAgain?.let { props.put(CoreConfigKey.PRUNE_TAGS_TO_RUN_AGAIN, it) }
         createTagsFromFolder?.let { props.put(CoreConfigKey.CREATE_TAGS_FROM_FOLDER.key, it.toString()) }
