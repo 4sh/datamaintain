@@ -25,7 +25,8 @@ jobs:
       - run:
           name: Run tests
           command: |
-            ./gradlew test --stack-trace
+            ./gradlew test
+          args: ["--stack-trace"]
       - save_cache:
           paths:
             - ~/.gradle/wrapper
