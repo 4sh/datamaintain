@@ -94,6 +94,18 @@ internal class TagMatcherTest {
                         .failed()
                         .isA<NotAbsolutePathMatcherPathException>()
             }
+
+            @Test
+            fun `should throw an exception when path matcher starts with dot`() {
+                // Given
+                val pathMatcher = "./path"
+                val tagName = "tag"
+
+                // When
+                expectCatching { TagMatcher.parse(tagName, "[$pathMatcher]") }
+                        .failed()
+                        .isA<NotAbsolutePathMatcherPathException>()
+            }
         }
     }
 }

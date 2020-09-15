@@ -46,7 +46,7 @@ class TagMatcher(val tag: Tag, val globPaths: Iterable<String>) {
 
         @JvmStatic
         private fun isNotAbsolute(pathMatcher: String): Boolean {
-            return pathMatcher.startsWith("~") || pathMatcher.contains("../")
+            return pathMatcher.startsWith("~") || pathMatcher.contains("../") || pathMatcher.startsWith("./")
         }
     }
 }
