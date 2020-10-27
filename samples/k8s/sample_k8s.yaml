@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mongo-client
+spec:
+  containers:
+    - name: mongo-client
+      image: mongo:4.2
+      env:
+        - name: MONGO_HOST
+          value: "mongo-mongodb-replicaset-0.mongo-mongodb-replicaset"
+      command: ["/bin/sh"]
+      args:
+        - -c
+        - >
+          echo "Starting" &&
+          while true; do echo alive; sleep 60; done
+  initContainers:
+    - name: datamaintain
+      image: datamaintain-sample
+      imagePullPolicy: Never
+      env:
+        - name: MONGO_HOST
+          value: "mongodb://mongo-mongodb-replicaset-0.mongo-mongodb-replicaset/test"
+        - name: LOCK_EXPIRE_IN_MINUTES
+          value: "10"
+        - name: SLEEP_BEFORE_RETRY_MILLI
+          value: "5"
