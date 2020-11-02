@@ -23,6 +23,7 @@ Each time your launch your server, Datamaintain will check if you added new scri
 |---|---|
 | datamaintain-core | Core package, needed for all uses of Datamaintain |
 | datamaintain-driver-mongo | Mongo driver package to run scripts on a mongo database |
+| datamaintain-driver-jdbc | JDBC driver package to run scripts on a SQL database |
 
 ## Add Datamaintain as a dependency
 
@@ -144,6 +145,16 @@ For ```db.uri```, please see the [mongo URI documentation](https://docs.mongodb.
 |---|---|---|---|---|
 | db.mongo.tmp.path | Path where the driver will write temporary files. | ```/tmp/datamaintain.tmp``` | no |  |
 | db.mongo.client.path | Path or alias to your mongo executable. | ```mongo``` | no |  |
+
+
+### JDBC driver configuration
+| Key | Description | Default value | Mandatory? | Values examples |
+|---|---|---|---|---|
+| db.jdbc.uri | URI to your JDBC server. **Database name is mandatory.** Please see the [mongo URI documentation](https://docs.mongodb.com/manual/reference/connection-string/) to learn about writing mongo URIs. |  | yes | ```mongodb://localhost/my-db```<br />```mongodb://localhost:8000/my-db```<br />```mongodb://username:password@localhost/my-db```<br />```mongodb+srv://server.example.com/my-db``` <br />```mongodb://my-db,my-db2:27018/my-db``` <br /> |
+| db.jdbc.tmp.path | Path where the driver will write temporary files. | ```/tmp/datamaintain.tmp``` | no |  |
+| db.jdbc.client.path | Path or alias to your database executable. | ```mongo``` | no |  |
+| db.jdbc.print.output | If true, JDBC output will be logged. | ```false``` | no | ```true``` or ```false``` |
+| db.jdbc.save.output | If true, JDBC output will be saved in script execution report.  | ```false``` | no | ```true``` or ```false``` |
 
 ## Use the CLI
 ### Download and execute
