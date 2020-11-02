@@ -61,15 +61,7 @@ class JdbcDriver(private val jdbcUri: String,
         val executionOutput: ResultSet = statement.executeQuery("SELECT * from $EXECUTED_SCRIPTS_COLLECTION")
         val executedScript = mutableListOf<ExecutedScript>()
         while (executionOutput.next()) {
-            // TODO: put this in a KResultParser
-            executedScript.plus(ExecutedScript(
-                    name = executionOutput.getString("name"),
-                    checksum = executionOutput.getString("checksum"),
-                    executionDurationInMillis = executionOutput.getLong("executionDurationInMillis"),
-                    executionOutput = executionOutput.getString("executionOutput"),
-                    executionStatus = ExecutionStatus.valueOf(executionOutput.getString("executionStatus")),
-                    identifier = executionOutput.getString("identifier")
-            ))
+            executedScript.plus(executionOutput.toExecutedScript())
         }
         return executedScript.asSequence()
     }
@@ -97,4 +89,13 @@ class JdbcDriver(private val jdbcUri: String,
         }
         return executedScript
     }
+
+    fun ResultSet.toExecutedScript() = ExecutedScript(
+            name = this.getString("name"),
+            checksum = this.getString("checksum"),
+            executionDurationInMillis = this.getLong("executionDurationInMillis"),
+            executionOutput = this.getString("executionOutput"),
+            executionStatus = ExecutionStatus.valueOf(this.getString("executionStatus")),
+            identifier = this.getString("identifier")
+    )
 }
