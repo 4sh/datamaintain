@@ -6,7 +6,6 @@ import datamaintain.core.script.ExecutionStatus
 import datamaintain.core.script.FileScript
 import datamaintain.db.driver.jdbc.serialization.ExecutedScriptDb
 import datamaintain.db.driver.jdbc.serialization.toExecutedScriptDb
-import datamaintain.db.driver.jdbc.test.AbstractMongoDbTest
 import org.bson.Document
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
@@ -14,7 +13,7 @@ import strikt.assertions.*
 import java.nio.file.Paths
 
 
-internal class JdbcDriverTest : AbstractMongoDbTest() {
+internal class JdbcDriverTest {
     private val jdbcDatamaintainDriver = JdbcDriver(
             mongoUri,
             Paths.get(JdbcConfigKey.DB_JDBC_TMP_PATH.default!!),
