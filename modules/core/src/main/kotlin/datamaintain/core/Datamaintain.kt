@@ -28,22 +28,28 @@ class Datamaintain(config: DatamaintainConfig) {
     )
 
     fun updateDatabase(): Report {
+        val checkerData = CheckerData()
+
         return Scanner(context).scan()
                 .let { scannedScripts ->
-                    val checkerData = CheckerData(scannedScripts = scannedScripts.asSequence())
-
-                    checkerData.filteredScripts = Filter(context).filter(scannedScripts).asSequence()
-                    checkerData
+                    checkerData.scannedScripts = scannedScripts.asSequence()
+                    scannedScripts
                 }
-                .let { checkerData ->
-                    checkerData.sortedScripts = Sorter(context).sort(checkerData.filteredScripts.toList()).asSequence()
-                    checkerData
+                .let { scannedScripts ->
+                    val filteredScripts = Filter(context).filter(scannedScripts)
+                    checkerData.filteredScripts = filteredScripts.asSequence()
+                    filteredScripts
                 }
-                .let { checkerData ->
-                    checkerData.prunedScripts = Pruner(context).prune(checkerData.sortedScripts.toList()).asSequence()
-                    checkerData
+                .let { filteredScripts ->
+                    val sortedScripts = Sorter(context).sort(filteredScripts)
+                    checkerData.sortedScripts = sortedScripts.asSequence()
+                    sortedScripts
                 }
-                .let { checkerData -> Checker(context).check(checkerData) }
+                .let { sortedScripts ->
+                    val prunedScripts = Pruner(context).prune(sortedScripts)
+                    checkerData.prunedScripts = prunedScripts.asSequence()
+                }
+                .let { Checker(context).check(checkerData) }
                 .let { scripts -> Executor(context).execute(scripts) }
     }
 
