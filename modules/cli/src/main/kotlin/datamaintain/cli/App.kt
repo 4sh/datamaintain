@@ -51,7 +51,11 @@ class App : CliktCommand() {
 
 }
 
-class UpdateDb : CliktCommand(name = "update-db") {
+private fun defaultUpdateDbRunner(config: DatamaintainConfig) {
+    Datamaintain(config).updateDatabase().print(config.verbose)
+}
+
+class UpdateDb(val runner: (DatamaintainConfig) -> Unit = ::defaultUpdateDbRunner) : CliktCommand(name = "update-db") {
 
     private val path: String? by option(help = "path to directory containing scripts")
 
@@ -93,7 +97,7 @@ class UpdateDb : CliktCommand(name = "update-db") {
         try {
             overloadPropsFromArgs(props)
             val config = loadConfig(props)
-            Datamaintain(config).updateDatabase().print(config.verbose)
+            runner(config)
         } catch (e: DbTypeNotFoundException) {
             echo("dbType ${e.dbType} is unknown")
             exitProcess(1)
@@ -120,7 +124,7 @@ class UpdateDb : CliktCommand(name = "update-db") {
         tagsMatchers?.forEach {
             props.put("${CoreConfigKey.TAG.key}.${it.first}", it.second)
         }
-        checkRules?.let { props.put(CoreConfigKey.CHECK_RULES.key, it) }
+        checkRules?.let { props.put(CoreConfigKey.CHECK_RULES.key, it.joinToString(",")) }
     }
 }
 

@@ -77,6 +77,7 @@ data class DatamaintainConfig @JvmOverloads constructor(val path: Path = Paths.g
         blacklistedTags.let { logger.info { "- blacklisted tags -> $it" } }
         tagsToPlayAgain.let { logger.info { "- tags to play again -> $it" } }
         tagsMatchers.let { logger.info { "- tags -> $tagsMatchers" } }
+        checkRules.let { logger.info { "- rules -> $checkRules" } }
         executionMode.let { logger.info { "- execution mode -> $it" } }
         verbose.let { logger.info { "- verbose -> $it" } }
         logger.info { "" }
