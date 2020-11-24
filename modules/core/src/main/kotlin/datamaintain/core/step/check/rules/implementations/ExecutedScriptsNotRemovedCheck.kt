@@ -4,7 +4,6 @@ import datamaintain.core.script.ExecutedScript
 import datamaintain.core.script.ScriptWithContent
 import datamaintain.core.step.check.rules.ScriptType
 import datamaintain.core.step.check.rules.contracts.FullContextCheckRule
-import java.lang.IllegalStateException
 
 class ExecutedScriptsNotRemovedCheck(
         executedScripts: Sequence<ExecutedScript>
@@ -17,7 +16,7 @@ class ExecutedScriptsNotRemovedCheck(
 
         if (executedScriptChecksumsNotFoundInSortedScripts.isNotEmpty()) {
             throw IllegalStateException("ERROR - ${getName()} - Some executed scripts are not present : " +
-                    "${executedScriptChecksumsNotFoundInSortedScripts}")
+                    "$executedScriptChecksumsNotFoundInSortedScripts")
         }
     }
 
