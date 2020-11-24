@@ -7,6 +7,8 @@ import datamaintain.core.step.check.rules.ScriptType
 import datamaintain.core.step.check.rules.contracts.FullContextCheckRule
 import datamaintain.core.step.check.rules.contracts.ScriptCheckRule
 import datamaintain.core.step.check.rules.contracts.ScriptWithContextCheckRule
+import datamaintain.core.step.check.rules.implementations.AlwaysFailedCheck
+import datamaintain.core.step.check.rules.implementations.AlwaysSucceedCheck
 import datamaintain.core.step.check.rules.implementations.ExecutedScriptsNotRemovedCheck
 import mu.KotlinLogging
 
@@ -42,6 +44,10 @@ class Checker(private val context: Context) {
 
         return when (ruleName) {
             ExecutedScriptsNotRemovedCheck.NAME -> ExecutedScriptsNotRemovedCheck(executedScripts)
+            // Rules for Tests only
+            AlwaysSucceedCheck.NAME -> AlwaysSucceedCheck()
+            AlwaysFailedCheck.NAME -> AlwaysFailedCheck()
+            // Else
             else -> throw IllegalArgumentException("Check rule `${ruleName}` not found")
         }
     }

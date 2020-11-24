@@ -4,21 +4,17 @@ import datamaintain.core.Context
 import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.db.driver.DatamaintainDriver
 import datamaintain.core.db.driver.FakeDriverConfig
-import datamaintain.core.script.ExecutedScript
-import datamaintain.core.script.ExecutionStatus
-import datamaintain.core.step.check.rules.implementations.ExecutedScriptsNotRemovedCheck
-import datamaintain.core.step.executor.Execution
+import datamaintain.core.step.check.rules.implementations.AlwaysFailedCheck
+import datamaintain.core.step.check.rules.implementations.AlwaysSucceedCheck
 import datamaintain.test.ScriptWithContentWithFixedChecksum
 import io.mockk.every
 import io.mockk.mockk
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.api.expectThrows
 import strikt.assertions.get
 import strikt.assertions.hasSize
 import strikt.assertions.isEqualTo
-import java.lang.IllegalArgumentException
 import java.nio.file.Paths
 
 internal class CheckerTest {
@@ -28,9 +24,6 @@ internal class CheckerTest {
     private val script2 = ScriptWithContentWithFixedChecksum("2", "2", "2")
     private val script3 = ScriptWithContentWithFixedChecksum("3", "3", "3")
     private val script4 = ScriptWithContentWithFixedChecksum("4", "4", "4")
-
-    private val executedScript1 = ExecutedScript("1", "1", "1", ExecutionStatus.OK)
-    private val executedScript2 = ExecutedScript("2", "2", "2", ExecutionStatus.OK)
 
     val checkerData = CheckerData(
             sequenceOf(script1, script2, script3, script4),
@@ -64,11 +57,11 @@ internal class CheckerTest {
     @Test
     fun `should succeed when check rules succeed`() {
         // Given
-        every { dbDriverMock.listExecutedScripts() }.answers { sequenceOf(executedScript1, executedScript2) }
+        every { dbDriverMock.listExecutedScripts() }.answers { sequenceOf() }
 
         val context = Context(
                 DatamaintainConfig(Paths.get(""), Regex(""), driverConfig = FakeDriverConfig(),
-                        checkRules = sequenceOf(ExecutedScriptsNotRemovedCheck.NAME)),
+                        checkRules = sequenceOf(AlwaysSucceedCheck.NAME)),
                 dbDriver = dbDriverMock
         )
 
@@ -86,13 +79,33 @@ internal class CheckerTest {
     }
 
     @Test
-    fun `should failed when check rule name doesn't exist`() {
+    fun `should failed when check rule failed`() {
         // Given
-        every { dbDriverMock.listExecutedScripts() }.answers { sequenceOf(executedScript1, executedScript2) }
+        every { dbDriverMock.listExecutedScripts() }.answers { sequenceOf() }
 
         val context = Context(
                 DatamaintainConfig(Paths.get(""), Regex(""), driverConfig = FakeDriverConfig(),
-                        checkRules = sequenceOf("sadfsdf")),
+                        checkRules = sequenceOf(AlwaysFailedCheck.NAME)),
+                dbDriver = dbDriverMock
+        )
+
+        val checker = Checker(context)
+
+        // WhenThen
+        expectThrows<IllegalStateException> { checker.check(checkerData) }
+                .get { message }
+                .isEqualTo("ERROR - ${AlwaysFailedCheck.NAME} - Use this rule for tests only")
+    }
+
+    @Test
+    fun `should failed when check rule name doesn't exist`() {
+        // Given
+        every { dbDriverMock.listExecutedScripts() }.answers { sequenceOf() }
+
+        val badRuleName = "sadfsdf"
+        val context = Context(
+                DatamaintainConfig(Paths.get(""), Regex(""), driverConfig = FakeDriverConfig(),
+                        checkRules = sequenceOf(badRuleName)),
                 dbDriver = dbDriverMock
         )
 
@@ -100,16 +113,19 @@ internal class CheckerTest {
 
         // WhenThen
         expectThrows<IllegalArgumentException> { checker.check(checkerData) }
+                .get { message }
+                .isEqualTo("Check rule `${badRuleName}` not found")
     }
 
     @Test
     fun `should failed without launching any rule when a check rule name doesn't exist`() {
         // Given
-        every { dbDriverMock.listExecutedScripts() }.answers { sequenceOf(executedScript1, executedScript2) }
+        every { dbDriverMock.listExecutedScripts() }.answers { sequenceOf() }
 
+        val badRuleName = "sadfsdf"
         val context = Context(
                 DatamaintainConfig(Paths.get(""), Regex(""), driverConfig = FakeDriverConfig(),
-                        checkRules = sequenceOf(ExecutedScriptsNotRemovedCheck.NAME, "sadfsdf")),
+                        checkRules = sequenceOf(AlwaysFailedCheck.NAME, badRuleName)),
                 dbDriver = dbDriverMock
         )
 
@@ -117,5 +133,7 @@ internal class CheckerTest {
 
         // WhenThen
         expectThrows<IllegalArgumentException> { checker.check(CheckerData()) }
+                .get { message }
+                .isEqualTo("Check rule `${badRuleName}` not found")
     }
 }
