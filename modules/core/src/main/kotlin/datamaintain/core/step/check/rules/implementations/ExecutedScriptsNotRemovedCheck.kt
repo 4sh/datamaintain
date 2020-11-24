@@ -9,14 +9,14 @@ class ExecutedScriptsNotRemovedCheck(
         executedScripts: Sequence<ExecutedScript>
 ) : FullContextCheckRule(executedScripts) {
     override fun check(scripts: Sequence<ScriptWithContent>) {
-        val executedScriptChecksumsNotFoundInSortedScripts = executedScripts
+        val executedScriptChecksumsNotFoundInScannedScripts = executedScripts
                 .map { it.checksum }
                 .minus(scripts.map { it.checksum })
                 .toList()
 
-        if (executedScriptChecksumsNotFoundInSortedScripts.isNotEmpty()) {
+        if (executedScriptChecksumsNotFoundInScannedScripts.isNotEmpty()) {
             throw IllegalStateException("ERROR - ${getName()} - Some executed scripts are not present : " +
-                    "$executedScriptChecksumsNotFoundInSortedScripts")
+                    "$executedScriptChecksumsNotFoundInScannedScripts")
         }
     }
 
