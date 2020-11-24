@@ -48,7 +48,7 @@ class Checker(private val context: Context) {
             AlwaysSucceedCheck.NAME -> AlwaysSucceedCheck()
             AlwaysFailedCheck.NAME -> AlwaysFailedCheck()
             // Else
-            else -> throw IllegalArgumentException("Check rule `${ruleName}` not found")
+            else -> throw IllegalArgumentException("Aborting - Check rule `${ruleName}` not found")
         }
     }
 

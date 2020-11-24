@@ -114,7 +114,7 @@ internal class CheckerTest {
         // WhenThen
         expectThrows<IllegalArgumentException> { checker.check(checkerData) }
                 .get { message }
-                .isEqualTo("Check rule `${badRuleName}` not found")
+                .isEqualTo("Aborting - Check rule `${badRuleName}` not found")
     }
 
     @Test
@@ -134,6 +134,6 @@ internal class CheckerTest {
         // WhenThen
         expectThrows<IllegalArgumentException> { checker.check(CheckerData()) }
                 .get { message }
-                .isEqualTo("Check rule `${badRuleName}` not found")
+                .isEqualTo("Aborting - Check rule `${badRuleName}` not found")
     }
 }
