@@ -2,12 +2,10 @@ package datamaintain.core.step.check.rules.implementations
 
 import datamaintain.core.script.ExecutedScript
 import datamaintain.core.script.ExecutionStatus
-import datamaintain.core.script.InMemoryScript
 import datamaintain.test.ScriptWithContentWithFixedChecksum
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import strikt.api.expectThrows
-import java.lang.IllegalStateException
 
 internal class ExecutedScriptsNotRemovedCheckTest {
     private val script1 = ScriptWithContentWithFixedChecksum("1", "1", "1")
@@ -32,7 +30,7 @@ internal class ExecutedScriptsNotRemovedCheckTest {
     }
 
     @Test
-    fun `should succeed with one element in both list`() {
+    fun `should succeed with same element in both list`() {
         // Given
         val checker = ExecutedScriptsNotRemovedCheck(sequenceOf(executedScript1))
 
