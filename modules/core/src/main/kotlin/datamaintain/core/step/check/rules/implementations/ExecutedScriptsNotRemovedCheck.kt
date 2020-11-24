@@ -15,8 +15,13 @@ class ExecutedScriptsNotRemovedCheck(
                 .toList()
 
         if (executedScriptChecksumsNotFoundInScannedScripts.isNotEmpty()) {
+            val executedScriptNames = executedScripts
+                    .filter { executedScriptChecksumsNotFoundInScannedScripts.contains(it.checksum) }
+                    .map { it.name }
+                    .toList()
+
             throw IllegalStateException("ERROR - ${getName()} - Some executed scripts are not present : " +
-                    "$executedScriptChecksumsNotFoundInScannedScripts")
+                    "$executedScriptNames")
         }
     }
 
