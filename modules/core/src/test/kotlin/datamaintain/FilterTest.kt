@@ -32,7 +32,9 @@ internal class FilterTest {
                         emptySet(),
                         setOf(blacklistedTag),
                         emptySet(),
-                        emptySet(),ExecutionMode.NORMAL,
+                        emptySet(),
+                        emptySequence(),
+                        ExecutionMode.NORMAL,
                         FakeDriverConfig()),
                 dbDriver = dbDriver)
 
@@ -80,6 +82,7 @@ internal class FilterTest {
                         setOf(),
                         emptySet(),
                         emptySet(),
+                        emptySequence(),
                         ExecutionMode.NORMAL,
                         FakeDriverConfig()),
                 dbDriver = dbDriver)
@@ -134,6 +137,7 @@ internal class FilterTest {
                         blacklistedTags,
                         emptySet(),
                         emptySet(),
+                        emptySequence(),
                         ExecutionMode.NORMAL,
                         FakeDriverConfig()),
                 dbDriver = dbDriver)

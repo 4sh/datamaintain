@@ -5,10 +5,11 @@ import datamaintain.core.report.Report
 import datamaintain.core.step.Filter
 import datamaintain.core.step.Pruner
 import datamaintain.core.step.Scanner
+import datamaintain.core.step.check.Checker
+import datamaintain.core.step.check.CheckerData
 import datamaintain.core.step.executor.Executor
 import datamaintain.core.step.sort.Sorter
 import mu.KotlinLogging
-import java.time.Clock
 
 private val logger = KotlinLogging.logger {}
 
@@ -28,13 +29,23 @@ class Datamaintain(config: DatamaintainConfig) {
 
     fun updateDatabase(): Report {
         return Scanner(context).scan()
-                .let { scripts -> Filter(context).filter(scripts) }
-                .let { scripts -> Sorter(context).sort(scripts) }
-                .let { scripts -> Pruner(context).prune(scripts) }
+                .let { scannedScripts ->
+                    val checkerData = CheckerData(scannedScripts = scannedScripts.asSequence())
+
+                    checkerData.filteredScripts = Filter(context).filter(scannedScripts).asSequence()
+                    checkerData
+                }
+                .let { checkerData ->
+                    checkerData.sortedScripts = Sorter(context).sort(checkerData.filteredScripts.toList()).asSequence()
+                    checkerData
+                }
+                .let { checkerData ->
+                    checkerData.prunedScripts = Pruner(context).prune(checkerData.sortedScripts.toList()).asSequence()
+                    checkerData
+                }
+                .let { checkerData -> Checker(context).check(checkerData) }
                 .let { scripts -> Executor(context).execute(scripts) }
     }
 
     fun listExecutedScripts() = context.dbDriver.listExecutedScripts()
-
 }
-

@@ -21,6 +21,7 @@ data class DatamaintainConfig @JvmOverloads constructor(val path: Path = Paths.g
                                                         val blacklistedTags: Set<Tag> = setOf(),
                                                         val tagsToPlayAgain: Set<Tag> = setOf(),
                                                         val tagsMatchers: Set<TagMatcher> = setOf(),
+                                                        val checkRules: Sequence<String> = emptySequence(),
                                                         val executionMode: ExecutionMode = defaultExecutionMode,
                                                         val driverConfig: DatamaintainDriverConfig,
                                                         val verbose: Boolean = VERBOSE.default!!.toBoolean()) {
@@ -49,6 +50,7 @@ data class DatamaintainConfig @JvmOverloads constructor(val path: Path = Paths.g
                     props.getStringPropertiesByPrefix(TAG.key)
                             .map { TagMatcher.parse(it.first.replace("${TAG.key}.", ""), it.second) }
                             .toSet(),
+                    extractCheckRules(props.getNullableProperty(CHECK_RULES)),
                     ExecutionMode.fromNullable(props.getNullableProperty(EXECUTION_MODE), defaultExecutionMode),
                     driverConfig,
                     props.getProperty(VERBOSE).toBoolean()
@@ -60,6 +62,11 @@ data class DatamaintainConfig @JvmOverloads constructor(val path: Path = Paths.g
                     ?.map { Tag(it) }
                     ?.toSet()
                     ?: setOf()
+        }
+
+        private fun extractCheckRules(checkRules: String?): Sequence<String> {
+            return checkRules?.splitToSequence(",")
+                    ?: sequenceOf()
         }
     }
 
@@ -109,6 +116,9 @@ enum class CoreConfigKey(override val key: String,
 
     // PRUNER
     PRUNE_TAGS_TO_RUN_AGAIN("prune.tags.to.run.again"),
+
+    // CHECKER
+    CHECK_RULES("check.rules"),
 
     // EXECUTE
     EXECUTION_MODE("execute.mode", "NORMAL")
