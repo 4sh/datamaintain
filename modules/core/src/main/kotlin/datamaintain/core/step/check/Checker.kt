@@ -9,7 +9,6 @@ import datamaintain.core.step.check.rules.contracts.ScriptCheckRule
 import datamaintain.core.step.check.rules.contracts.ScriptWithContextCheckRule
 import datamaintain.core.step.check.rules.implementations.ExecutedScriptsNotRemovedCheck
 import mu.KotlinLogging
-import java.lang.IllegalArgumentException
 
 private val logger = KotlinLogging.logger {}
 
@@ -30,7 +29,7 @@ class Checker(private val context: Context) {
         // All rules exist so we can launch them
         rules.forEach { executeRule(it, checkedData) }
 
-        logger.info { "All check rules passed !" }
+        logger.info { "All check rules were executed!" }
         logger.info { "" }
 
         // Checker doesn't have responsability to add or remove script.
