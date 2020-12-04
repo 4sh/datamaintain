@@ -22,7 +22,7 @@ Each time your launch your server, Datamaintain will check if you added new scri
 | Package | Description | 
 |---|---|
 | datamaintain-core | Core package, needed for all uses of Datamaintain |
-| datamaintain-mongo | Mongo driver package to run scripts on a mongo database |
+| datamaintain-driver-mongo | Mongo driver package to run scripts on a mongo database |
 
 ## Add Datamaintain as a dependency
 
@@ -51,8 +51,8 @@ Then, you may add the dependencies to ```datamaintain-core``` and the driver mod
     ```kotlin
     
     dependencies {
-		implementation("com.github.4sh.datamaintain:datamaintain-core:v1.0.0-rc14"),
-		implementation("com.github.4sh.datamaintain:datamaintain-mongo:v1.0.0-rc14")
+		implementation("com.github.4sh.datamaintain:datamaintain-core:v1.1.0"),
+		implementation("com.github.4sh.datamaintain:datamaintain-driver-mongo:v1.1.0")
 	} 
     ```
     
@@ -78,8 +78,8 @@ Then, you may add the dependencies to ```datamaintain-core``` and the driver mod
     ```groovy
     
     dependencies {
-	    implementation 'com.github.4sh.datamaintain:datamaintain-core:v1.0.0-rc14',
-        implementation 'com.github.4sh.datamaintain:datamaintain-mongo:v1.0.0-rc14',
+	    implementation 'com.github.4sh.datamaintain:datamaintain-core:v1.1.0',
+        implementation 'com.github.4sh.datamaintain:datamaintain-driver-mongo:v1.1.0',
 	} 
     ```
     
