@@ -39,7 +39,6 @@ while [ "$is_locked" -eq 0 ]
   done
 
 # Execute datamaintain
-# Use a "try catch" structure for remove the lock at the end
 {
   "/code/datamaintain/bin/cli" \
     --db-type mongo \
@@ -50,6 +49,9 @@ while [ "$is_locked" -eq 0 ]
       --mongo-print-output
 } || {
   echo "Error while executing Datamaintain !"
+  echo "Remove datamaintain lock"
+  mongo_eval "db.getCollection(\"$lock_collection\").remove({_id: \"$lock_id\"})"
+  exit 1
 }
 
 echo
