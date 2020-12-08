@@ -7,7 +7,7 @@ lock_id=datamaintain
 lock_collection=datamaintainLock
 
 mongo_eval() {
-  mongo "$MONGO_HOST" --quiet --eval "$1"
+  mongo "$MONGO_URI" --quiet --eval "$1"
 }
 
 echo "Start datamaintain"
@@ -43,7 +43,7 @@ while [ "$is_locked" -eq 0 ]
 {
   "/code/datamaintain/bin/cli" \
     --db-type mongo \
-    --mongo-uri "$MONGO_HOST" \
+    --mongo-uri "$MONGO_URI" \
     update-db \
       --path /workspace/scripts \
       --identifier-regex "(.*)" \
