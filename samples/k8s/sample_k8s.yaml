@@ -20,7 +20,7 @@ spec:
       image: datamaintain-sample
       imagePullPolicy: Never
       env:
-        - name: MONGO_HOST
+        - name: MONGO_URI
           value: "mongodb://mongo-mongodb-replicaset-0.mongo-mongodb-replicaset/test"
         - name: LOCK_EXPIRE_IN_MINUTES
           value: "10"
