@@ -26,6 +26,10 @@ class MongoDriver(private val mongoUri: String,
 
     companion object {
         const val EXECUTED_SCRIPTS_COLLECTION = "executedScripts"
+
+        // This constant was found doing multiple tests on scripts logging too match
+        const val OUTPUT_MAX_SIZE = 150000
+        const val OUTPUT_TRUNCATED_MESSAGE = "... output was truncated because it was too long"
     }
 
     override fun executeScript(script: ScriptWithContent): Execution {
@@ -58,7 +62,18 @@ class MongoDriver(private val mongoUri: String,
                     }
                     .toList()
             if (saveOutput) {
-                return lines.joinToString("\n")
+                val totalOutputSize = lines.map { line -> line.length }.foldRight(0, Int::plus)
+                var dropped = 0;
+                return lines
+                        .dropLastWhile { line ->
+                            val drop = totalOutputSize - dropped > OUTPUT_MAX_SIZE
+                            if(drop) {
+                                dropped += line.length
+                            }
+                            drop
+                        }
+                        .joinToString("\n")
+                        .plus(if(dropped > 0) OUTPUT_TRUNCATED_MESSAGE else "")
             }
         }
         return null

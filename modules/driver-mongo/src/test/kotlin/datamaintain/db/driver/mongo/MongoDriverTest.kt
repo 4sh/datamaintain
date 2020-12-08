@@ -9,6 +9,7 @@ import datamaintain.db.driver.mongo.serialization.toExecutedScriptDb
 import datamaintain.db.driver.mongo.test.AbstractMongoDbTest
 import org.bson.Document
 import org.junit.jupiter.api.Test
+import strikt.api.expectCatching
 import strikt.api.expectThat
 import strikt.assertions.*
 import java.nio.file.Paths
@@ -215,6 +216,52 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
             get { executionStatus }.isEqualTo(ExecutionStatus.KO)
             get { executionOutput }.isNull()
         }
+    }
+
+    @Test
+    fun `should truncate execution output when it is too big`() {
+        // Given
+        val mongoDatamaintainDriver = MongoDriver(
+                mongoUri,
+                Paths.get(MongoConfigKey.DB_MONGO_TMP_PATH.default!!),
+                Paths.get("mongo"),
+                printOutput = false,
+                saveOutput = true
+        )
+        val fileScript = FileScript(Paths.get("src/test/resources/executor_test_files/mongo/mongo_print_too_many_logs.js"),
+                        Regex("(.*)"))
+
+        // When
+        val execution = mongoDatamaintainDriver.executeScript(fileScript)
+
+        // Then
+        expectThat(execution.executionOutput) {
+            and {
+                isNotNull()
+                get { this!!.endsWith(MongoDriver.OUTPUT_TRUNCATED_MESSAGE) }.isTrue()
+            }
+        }
+    }
+
+    @Test
+    fun `should not throw exception when inserting in database execution of a scripts that logs too much`() {
+        // Given
+        val mongoDatamaintainDriver = MongoDriver(
+                mongoUri,
+                Paths.get(MongoConfigKey.DB_MONGO_TMP_PATH.default!!),
+                Paths.get("mongo"),
+                printOutput = false,
+                saveOutput = true
+        )
+        val fileScript = FileScript(Paths.get("src/test/resources/executor_test_files/mongo/mongo_print_too_many_logs.js"),
+                Regex("(.*)"))
+
+        // When
+        val execution = mongoDatamaintainDriver.executeScript(fileScript)
+
+        // Then
+        expectCatching { mongoDatamaintainDriver.markAsExecuted(ExecutedScript.build(fileScript, execution, 0)) }
+                .succeeded()
     }
 
     private fun insertDataInDb() {
