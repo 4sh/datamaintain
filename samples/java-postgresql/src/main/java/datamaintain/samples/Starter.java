@@ -1,16 +1,28 @@
 package datamaintain.samples;
 
-import java.util.List;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class Starter {
     private String name;
-    private List<String> types;
+    private String type;
     private int hp;
     private int attack;
     private int defense;
     private int specialAttack;
     private int specialDefense;
     private int speed;
+
+    public Starter(ResultSet resultSet) throws SQLException {
+        this.name = resultSet.getString("name");
+        this.type = resultSet.getString("type");
+        this.hp = resultSet.getInt("hp");
+        this.attack = resultSet.getInt("attack");
+        this.defense = resultSet.getInt("defense");
+        this.specialAttack = resultSet.getInt("specialAttack");
+        this.specialDefense = resultSet.getInt("specialDefense");
+        this.speed = resultSet.getInt("speed");
+    }
 
     public String getName() {
         return name;
@@ -21,12 +33,12 @@ public class Starter {
         return this;
     }
 
-    public List<String> getTypes() {
-        return types;
+    public String getType() {
+        return type;
     }
 
-    public Starter setTypes(List<String> types) {
-        this.types = types;
+    public Starter setType(String type) {
+        this.type = type;
         return this;
     }
 
@@ -88,7 +100,7 @@ public class Starter {
     public String toString() {
         return "Starter{" +
                 "name='" + name + '\'' +
-                ", types=" + types +
+                ", type=" + type +
                 ", hp=" + hp +
                 ", attack=" + attack +
                 ", defense=" + defense +
