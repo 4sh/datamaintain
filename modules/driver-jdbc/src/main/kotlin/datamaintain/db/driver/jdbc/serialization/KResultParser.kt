@@ -43,14 +43,14 @@ class KResultParser {
     // Mapper between json and object
     private val mapper = Json(JsonConfiguration.Stable.copy())
 
-    override fun parseArrayOfExecutedScripts(executedScriptJsonArray: String): Sequence<ExecutedScript> {
+    fun parseArrayOfExecutedScripts(executedScriptJsonArray: String): Sequence<ExecutedScript> {
 
         return mapper.parse(ExecutedScriptDb.serializer().list, executedScriptJsonArray)
                 .map { it.toExecutedScript() }
                 .asSequence()
     }
 
-    override fun serializeExecutedScript(executedScript: ExecutedScript): String {
+    fun serializeExecutedScript(executedScript: ExecutedScript): String {
         val executedScriptDb = executedScript.toExecutedScriptDb()
 
         return mapper.stringify(ExecutedScriptDb.serializer(), executedScriptDb)
