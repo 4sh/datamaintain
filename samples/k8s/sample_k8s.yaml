@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: mongo-client
+  name: busybox
 spec:
   containers:
-    - name: mongo-client
-      image: mongo:4.2
+    - name: busybox
+      image: busybox
       command: ["/bin/sh"]
       args:
         - -c
