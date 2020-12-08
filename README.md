@@ -134,10 +134,38 @@ Then, you may add the dependencies to ```datamaintain-core``` and the driver mod
 | db.mongo.save.output | If true, mongo output will be saved in script execution report.  | ```false``` | no | ```true``` or ```false``` |
 
 ## Use the CLI
-
+### Download and execute
 You will find the CLI for each release in its assets in the [releases](https://github.com/4sh/datamaintain/releases). To launch Datamaintain using the CLI, you just have to execute the bash script you will find in the archive. To give values to the settings, you just have to add ```--setting $SETTING_VALUE``` after ```./datamaintain-cli```.
 
 ![](docs/img/release-page-cli.png)
+
+For example :
+```
+./cli --db-type mongo --mongo-uri mongodb://localhost:27017/sample update-db --path $script_path --identifier-regex "(.*)"
+```
+
+This command will start Datamaintain on a mongo db, the mongo is accessible with URI `mongodb://localhost:27017/sample`.
+The folder path containing scripts is `$script_path`. 
+
+### Use docker
+// TODO replace image name
+You can use the CLI via a docker image. You just need to mount the script path to the container :
+```
+docker run --rm --volume $script_path:/scripts datamaintain --db-type mongo --mongo-uri mongodb://localhost:27017/sample update-db --path /scripts --identifier-regex "(.*)"
+```
+
+In this example :
+* `$script_path` is a path to the script folder
+* `--rm` will remove the container once Datamaintain is finish
+* `--volume` mounts the script folder on your machine to the Datamaintain container with the path `/scripts`
+* After the image name `datamaintain` you can pass arguments to the cli normally.
+* On Mac OS you may need to replace `localhost` in the mongo URI 
+  by `host.docker.internal`. See [docker documentation](https://docs.docker.com/docker-for-mac/networking/).
+
+Datamaintain image use a mongo shell.
+Image tag has form _datamaintainVersion_-_mongoVersion_ for example `datamaintain:1.2-4.2` is a datamaintain 1.2 with a mongo shell 4.2.
+You can see all images here // TODO link to image repo
+
 
 ## Installation in a project with already executed scripts
 
