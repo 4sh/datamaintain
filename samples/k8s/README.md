@@ -7,23 +7,23 @@ Init a sample for start an init container that use Datamaintain.
 ## How does it work ?
 ### Docker
 
-First `docker/DockerFile` create a docker image from Datamaintain's image. 
+First the file `DockerFile` in `docker` folder create a docker image from Datamaintain's image. 
 The image embark the script folder with one script `v1.0_init.js`, and an entrypoint script.
 
 Right now Datamaintain does not have a "lock" feature, so the entrypoint is here for implements
 a lock in sh (in case two pods start at the same time).
 Here how the entrypoint work :
 * Insert a document (with id `datamaintain`) on the `datamaintainLock` collection.
-The lock has an expiration date in case the init container is kill by Kubernetes. 
+The lock has an expiration date in case the init container is killed by Kubernetes. 
 * If a document already exist then wait and retry
 * After the document is inserted then start Datamaintain
 * Remove the lock
-* If datamaintain crash, exit with code 1
+* If Datamaintain crash, exit with code 1
 
 ### Kubernetes
 
 Kubernetes sample is a simple yaml file `sample_k8s.yaml`. The file describes a pod named `busybox`,
-the pod has no real purpose, it just show how to use Datamaintain in an init container.
+the pod has no real purpose, it just shows how to use Datamaintain in an init container.
 
 The sample file use two init containers :
 * `wait-mongo` that just check `mongodb://mongo-mongodb-replicaset-0.mongo-mongodb-replicaset/test` 
@@ -66,8 +66,8 @@ kubectl logs busybox -c wait-mongo
 kubectl logs busybox -c datamaintain
 ```
 
-Once busybox is started you can check that datamaintain start correctly by checking the `executedScripts` collection :
+Once busybox is started you can check that Datamaintain start correctly by checking the `executedScripts` collection :
 ```
-kubectl exec mongo-mongodb-replicaset-0 -- mongo --quiet --eval 'db.getCollection("executedScripts").find()'             ✔ ╱ minikube ⎈
+kubectl exec mongo-mongodb-replicaset-0 -- mongo --quiet --eval 'db.getCollection("executedScripts").find()'
 ```
 You must find one entry : `v1.0_init.js`.
