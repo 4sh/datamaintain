@@ -148,10 +148,9 @@ This command will start Datamaintain on a mongo db, the mongo is accessible with
 The folder path containing scripts is `$script_path`. 
 
 ### Use docker
-// TODO replace image name
 You can use the CLI via a docker image. You just need to mount the script path to the container :
 ```
-docker run --rm --volume $script_path:/scripts datamaintain --db-type mongo --mongo-uri mongodb://localhost:27017/sample update-db --path /scripts --identifier-regex "(.*)"
+docker run --rm --volume $script_path:/scripts docker.pkg.github.com/4sh/datamaintain/datamaintain:1.2-mongo-4.4 --db-type mongo --mongo-uri mongodb://localhost:27017/sample update-db --path /scripts --identifier-regex "(.*)"
 ```
 
 In this example :
@@ -163,8 +162,8 @@ In this example :
   by `host.docker.internal`. See [docker documentation](https://docs.docker.com/docker-for-mac/networking/).
 
 Datamaintain image use a mongo shell.
-Image tag has form _datamaintainVersion_-_mongoVersion_ for example `datamaintain:1.2-4.2` is a datamaintain 1.2 with a mongo shell 4.2.
-You can see all images here // TODO link to image repo
+Image tag has form _datamaintainVersion_-_mongoVersion_ for example `datamaintain:1.2-4.4` is a datamaintain 1.2 with a mongo shell 4.4.
+You can see all images [here](https://github.com/orgs/4sh/packages?repo_name=datamaintain)
 
 
 ## Installation in a project with already executed scripts
