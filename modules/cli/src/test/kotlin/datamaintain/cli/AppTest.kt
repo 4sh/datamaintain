@@ -13,15 +13,15 @@ import java.nio.file.Paths
 internal class AppTest {
     data class ConfigWrapper(var datamaintainConfig: DatamaintainConfig? = null)
 
+    private val configWrapper = ConfigWrapper()
+
+    private fun runner(config: DatamaintainConfig) {
+        configWrapper.datamaintainConfig = config
+    }
+
     @Test
     fun `should build config with one rule`() {
         // Given
-        val configWrapper = ConfigWrapper()
-
-        fun runner(config: DatamaintainConfig) {
-            configWrapper.datamaintainConfig = config
-        }
-
         val argv = getSmallestArgs().plus(listOf(
                 "--rule", SameScriptsAsExecutedCheck.NAME
         ))
@@ -43,12 +43,6 @@ internal class AppTest {
     @Test
     fun `should build config with 2 rules`() {
         // Given
-        val configWrapper = ConfigWrapper()
-
-        fun runner(config: DatamaintainConfig) {
-            configWrapper.datamaintainConfig = config
-        }
-
         val argv = getSmallestArgs().plus(listOf(
                 "--rule", SameScriptsAsExecutedCheck.NAME,
                 "--rule", SameScriptsAsExecutedCheck.NAME
