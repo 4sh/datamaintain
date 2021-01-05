@@ -5,10 +5,11 @@ import datamaintain.core.report.Report
 import datamaintain.core.step.Filter
 import datamaintain.core.step.Pruner
 import datamaintain.core.step.Scanner
+import datamaintain.core.step.check.Checker
+import datamaintain.core.step.check.CheckerData
 import datamaintain.core.step.executor.Executor
 import datamaintain.core.step.sort.Sorter
 import mu.KotlinLogging
-import java.time.Clock
 
 private val logger = KotlinLogging.logger {}
 
@@ -27,14 +28,30 @@ class Datamaintain(config: DatamaintainConfig) {
     )
 
     fun updateDatabase(): Report {
+        val checkerData = CheckerData()
+
         return Scanner(context).scan()
-                .let { scripts -> Filter(context).filter(scripts) }
-                .let { scripts -> Sorter(context).sort(scripts) }
-                .let { scripts -> Pruner(context).prune(scripts) }
+                .let { scannedScripts ->
+                    checkerData.scannedScripts = scannedScripts.asSequence()
+                    scannedScripts
+                }
+                .let { scannedScripts ->
+                    val filteredScripts = Filter(context).filter(scannedScripts)
+                    checkerData.filteredScripts = filteredScripts.asSequence()
+                    filteredScripts
+                }
+                .let { filteredScripts ->
+                    val sortedScripts = Sorter(context).sort(filteredScripts)
+                    checkerData.sortedScripts = sortedScripts.asSequence()
+                    sortedScripts
+                }
+                .let { sortedScripts ->
+                    val prunedScripts = Pruner(context).prune(sortedScripts)
+                    checkerData.prunedScripts = prunedScripts.asSequence()
+                }
+                .let { Checker(context).check(checkerData) }
                 .let { scripts -> Executor(context).execute(scripts) }
     }
 
     fun listExecutedScripts() = context.dbDriver.listExecutedScripts()
-
 }
-

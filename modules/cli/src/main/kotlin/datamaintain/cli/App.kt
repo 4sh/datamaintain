@@ -9,6 +9,7 @@ import com.github.ajalt.clikt.parameters.types.choice
 import datamaintain.core.Datamaintain
 import datamaintain.core.config.CoreConfigKey
 import datamaintain.core.config.DatamaintainConfig
+import datamaintain.core.step.check.allCheckRuleNames
 import datamaintain.core.step.executor.ExecutionMode
 import datamaintain.db.driver.mongo.MongoConfigKey
 import datamaintain.db.driver.mongo.MongoDriverConfig
@@ -50,7 +51,11 @@ class App : CliktCommand() {
 
 }
 
-class UpdateDb : CliktCommand(name = "update-db") {
+private fun defaultUpdateDbRunner(config: DatamaintainConfig) {
+    Datamaintain(config).updateDatabase().print(config.verbose)
+}
+
+class UpdateDb(val runner: (DatamaintainConfig) -> Unit = ::defaultUpdateDbRunner) : CliktCommand(name = "update-db") {
 
     private val path: String? by option(help = "path to directory containing scripts")
 
@@ -83,11 +88,16 @@ class UpdateDb : CliktCommand(name = "update-db") {
             }
             .multiple()
 
+    private val checkRules: List<String>? by option("--rule", help = "check rule to play. " +
+            "To define multiple rules, use option multiple times.")
+            .choice(allCheckRuleNames.map { it to it }.toMap())
+            .multiple()
+
     override fun run() {
         try {
             overloadPropsFromArgs(props)
             val config = loadConfig(props)
-            Datamaintain(config).updateDatabase().print(config.verbose)
+            runner(config)
         } catch (e: DbTypeNotFoundException) {
             echo("dbType ${e.dbType} is unknown")
             exitProcess(1)
@@ -114,6 +124,7 @@ class UpdateDb : CliktCommand(name = "update-db") {
         tagsMatchers?.forEach {
             props.put("${CoreConfigKey.TAG.key}.${it.first}", it.second)
         }
+        checkRules?.let { props.put(CoreConfigKey.CHECK_RULES.key, it.joinToString(",")) }
     }
 }
 
