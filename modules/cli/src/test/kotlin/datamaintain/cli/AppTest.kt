@@ -37,6 +37,22 @@ internal class AppTest {
             expectThat(configWrapper.datamaintainConfig!!.path).get { Paths.get(path) }
         }
 
+        @Test
+        fun `should build config with identifier regex`() {
+            // Given
+            val identifierRegex = "myIdentifierRegex"
+
+            val argv = updateDbMinimumArguments().plus(listOf(
+                    "--identifier-regex", identifierRegex
+            ))
+
+            // When
+            runUpdateDb(argv)
+
+            // Then
+            expectThat(configWrapper.datamaintainConfig!!.identifierRegex).get { identifierRegex }
+        }
+
         @Nested
         inner class Rules {
             @Test
