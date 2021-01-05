@@ -65,8 +65,11 @@ data class DatamaintainConfig @JvmOverloads constructor(val path: Path = Paths.g
         }
 
         private fun extractCheckRules(checkRules: String?): Sequence<String> {
-            return checkRules?.splitToSequence(",")
-                    ?: sequenceOf()
+            return if (checkRules.isNullOrEmpty()) {
+                sequenceOf()
+            } else {
+                checkRules.splitToSequence(",")
+            }
         }
     }
 
