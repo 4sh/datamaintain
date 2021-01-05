@@ -30,7 +30,7 @@ internal class AppTest {
                 ))
 
                 // When
-                App().subcommands(UpdateDb(runner = ::runner), ListExecutedScripts()).main(argv)
+                runUpdateDb(argv)
 
                 // Then
                 expectThat(configWrapper) {
@@ -51,7 +51,7 @@ internal class AppTest {
                 ))
 
                 // When
-                App().subcommands(UpdateDb(runner = ::runner), ListExecutedScripts()).main(argv)
+                runUpdateDb(argv)
 
                 // Then
                 expectThat(configWrapper) {
@@ -65,110 +65,11 @@ internal class AppTest {
             }
         }
 
-        @Test
-    fun `should build default config without auto override`() {
-        // Given
-        val configWrapper = ConfigWrapper()
-
-        fun runner(config: DatamaintainConfig) {
-            configWrapper.datamaintainConfig = config
-        }
-
-        val argv = getSmallestArgs()
-
-        // When
-        App().subcommands(UpdateDb(runner = ::runner), ListExecutedScripts()).main(argv)
-
-        // Then
-        defaultChecks(configWrapper)
-        expectThat(configWrapper) {
-            get { datamaintainConfig }.isNotNull()
-        }
-        expectThat(configWrapper.datamaintainConfig!!.overrideExecutedScripts) {
-            isFalse()
-        }
-    }
-
-    @Test
-    fun `should build config with auto override`() {
-        // Given
-        val configWrapper = ConfigWrapper()
-
-        fun runner(config: DatamaintainConfig) {
-            configWrapper.datamaintainConfig = config
-        }
-
-        val argv = getSmallestArgs().plus(listOf(
-                "--allow-auto-override"
-        ))
-
-        // When
-        App().subcommands(UpdateDb(runner = ::runner), ListExecutedScripts()).main(argv)
-
-        // Then
-        defaultChecks(configWrapper)
-        expectThat(configWrapper) {
-            get { datamaintainConfig }.isNotNull()
-        }
-        expectThat(configWrapper.datamaintainConfig!!.overrideExecutedScripts) {
-            isTrue()
-        }
-    }
-
-    @Nested
-    inner class TrustUri {
-        @Test
-        fun `should build config with trust uri`() {
-            // Given
-            val configWrapper = ConfigWrapper()
-
-            fun runner(config: DatamaintainConfig) {
-                configWrapper.datamaintainConfig = config
-            }
-
-            val argv = listOf(
-                    "--trust-uri"
-            ).plus(getSmallestArgs())
-
-            // When
+        private fun runUpdateDb(argv: List<String>) {
             App().subcommands(UpdateDb(runner = ::runner), ListExecutedScripts()).main(argv)
-
-            // Then
-            defaultChecks(configWrapper)
-            expectThat(configWrapper) {
-                get { datamaintainConfig }.isNotNull()
-            }
-            expectThat((configWrapper.datamaintainConfig!!.driverConfig as MongoDriverConfig).trustUri) {
-                isTrue()
-            }
         }
 
-        @Test
-        fun `should build config without trust uri`() {
-            // Given
-            val configWrapper = ConfigWrapper()
-
-            fun runner(config: DatamaintainConfig) {
-                configWrapper.datamaintainConfig = config
-            }
-
-            val argv = getSmallestArgs()
-
-            // When
-            App().subcommands(UpdateDb(runner = ::runner), ListExecutedScripts()).main(argv)
-
-            // Then
-            defaultChecks(configWrapper)
-            expectThat(configWrapper) {
-                get { datamaintainConfig }.isNotNull()
-            }
-            expectThat((configWrapper.datamaintainConfig!!.driverConfig as MongoDriverConfig).trustUri) {
-                isFalse()
-            }
-        }
-    }
-
-    private fun updateDbMinimumArguments(): List<String> {
+        private fun updateDbMinimumArguments(): List<String> {
             return listOf(
                     "--mongo-uri", "mongo-uri",
                     "update-db"
