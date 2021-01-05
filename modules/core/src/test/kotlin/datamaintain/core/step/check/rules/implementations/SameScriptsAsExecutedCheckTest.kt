@@ -3,10 +3,11 @@ package datamaintain.core.step.check.rules.implementations
 import datamaintain.core.script.ExecutedScript
 import datamaintain.core.script.ExecutionStatus
 import datamaintain.test.ScriptWithContentWithFixedChecksum
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import strikt.api.expectCatching
 import strikt.api.expectThrows
 import strikt.assertions.isEqualTo
+import strikt.assertions.succeeded
 
 internal class SameScriptsAsExecutedCheckTest {
     private val script1 = ScriptWithContentWithFixedChecksum("script1", "1", "1")
@@ -23,11 +24,9 @@ internal class SameScriptsAsExecutedCheckTest {
         // Given
         val checker = SameScriptsAsExecutedCheck(emptySequence())
 
-        // When
-        checker.check(emptySequence())
-
-        // Then
-        assertTrue(true)
+        // WhenThen
+        expectCatching { checker.check(emptySequence()) }
+                .succeeded()
     }
 
     @Test
@@ -35,11 +34,9 @@ internal class SameScriptsAsExecutedCheckTest {
         // Given
         val checker = SameScriptsAsExecutedCheck(sequenceOf(executedScript1))
 
-        // When
-        checker.check(sequenceOf(script1))
-
-        // Then
-        assertTrue(true)
+        // WhenThen
+        expectCatching { checker.check(sequenceOf(script1)) }
+                .succeeded()
     }
 
     @Test
@@ -47,11 +44,9 @@ internal class SameScriptsAsExecutedCheckTest {
         // Given
         val checker = SameScriptsAsExecutedCheck(sequenceOf(executedScript1, executedScript2))
 
-        // When
-        checker.check(sequenceOf(script1, script2, script3))
-
-        // Then
-        assertTrue(true)
+        // WhenThen
+        expectCatching { checker.check(sequenceOf(script1, script2, script3)) }
+                .succeeded()
     }
 
     @Test
