@@ -19,51 +19,53 @@ internal class AppTest {
     }
 
     @Nested
-    inner class Rules {
-        @Test
-        fun `should build config with one rule`() {
-            // Given
-            val argv = getSmallestArgs().plus(listOf(
-                    "--rule", SameScriptsAsExecutedCheck.NAME
-            ))
+    inner class UpdateDb {
+        @Nested
+        inner class Rules {
+            @Test
+            fun `should build config with one rule`() {
+                // Given
+                val argv = updateDbMinimumArguments().plus(listOf(
+                        "--rule", SameScriptsAsExecutedCheck.NAME
+                ))
 
-            // When
-            App().subcommands(UpdateDb(runner = ::runner), ListExecutedScripts()).main(argv)
+                // When
+                App().subcommands(UpdateDb(runner = ::runner), ListExecutedScripts()).main(argv)
 
-            // Then
-            expectThat(configWrapper) {
-                get { datamaintainConfig }.isNotNull()
+                // Then
+                expectThat(configWrapper) {
+                    get { datamaintainConfig }.isNotNull()
+                }
+                expectThat(configWrapper.datamaintainConfig!!.checkRules.toList()) {
+                    hasSize(1)
+                    first().isEqualTo(SameScriptsAsExecutedCheck.NAME)
+                }
             }
-            expectThat(configWrapper.datamaintainConfig!!.checkRules.toList()) {
-                hasSize(1)
-                first().isEqualTo(SameScriptsAsExecutedCheck.NAME)
+
+            @Test
+            fun `should build config with 2 rules`() {
+                // Given
+                val argv = updateDbMinimumArguments().plus(listOf(
+                        "--rule", SameScriptsAsExecutedCheck.NAME,
+                        "--rule", SameScriptsAsExecutedCheck.NAME
+                ))
+
+                // When
+                App().subcommands(UpdateDb(runner = ::runner), ListExecutedScripts()).main(argv)
+
+                // Then
+                expectThat(configWrapper) {
+                    get { datamaintainConfig }.isNotNull()
+                }
+                expectThat(configWrapper.datamaintainConfig!!.checkRules.toList()) {
+                    hasSize(2)
+                    first().isEqualTo(SameScriptsAsExecutedCheck.NAME)
+                    last().isEqualTo(SameScriptsAsExecutedCheck.NAME)
+                }
             }
         }
 
         @Test
-        fun `should build config with 2 rules`() {
-            // Given
-            val argv = getSmallestArgs().plus(listOf(
-                    "--rule", SameScriptsAsExecutedCheck.NAME,
-                    "--rule", SameScriptsAsExecutedCheck.NAME
-            ))
-
-            // When
-            App().subcommands(UpdateDb(runner = ::runner), ListExecutedScripts()).main(argv)
-
-            // Then
-            expectThat(configWrapper) {
-                get { datamaintainConfig }.isNotNull()
-            }
-            expectThat(configWrapper.datamaintainConfig!!.checkRules.toList()) {
-                hasSize(2)
-                first().isEqualTo(SameScriptsAsExecutedCheck.NAME)
-                last().isEqualTo(SameScriptsAsExecutedCheck.NAME)
-            }
-        }
-    }
-
-    @Test
     fun `should build default config without auto override`() {
         // Given
         val configWrapper = ConfigWrapper()
@@ -166,12 +168,11 @@ internal class AppTest {
         }
     }
 
-    private fun getSmallestArgs(): List<String> {
-        return listOf(
-                "--db-type", "mongo",
-                "--mongo-uri", "localhost:27017",
-                "update-db",
-                "--path", "/tmp"
-        )
+    private fun updateDbMinimumArguments(): List<String> {
+            return listOf(
+                    "--mongo-uri", "mongo-uri",
+                    "update-db"
+            )
+        }
     }
 }
