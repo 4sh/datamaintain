@@ -9,13 +9,13 @@ import datamaintain.core.step.check.rules.contracts.ScriptCheckRule
 import datamaintain.core.step.check.rules.contracts.ScriptWithContextCheckRule
 import datamaintain.core.step.check.rules.implementations.AlwaysFailedCheck
 import datamaintain.core.step.check.rules.implementations.AlwaysSucceedCheck
-import datamaintain.core.step.check.rules.implementations.ExecutedScriptsNotRemovedCheck
+import datamaintain.core.step.check.rules.implementations.SameScriptsAsExecutedCheck
 import mu.KotlinLogging
 
 private val logger = KotlinLogging.logger {}
 
 val allCheckRuleNames: Sequence<String> = sequenceOf(
-        ExecutedScriptsNotRemovedCheck.NAME
+        SameScriptsAsExecutedCheck.NAME
 )
 
 class Checker(private val context: Context) {
@@ -43,7 +43,7 @@ class Checker(private val context: Context) {
         val executedScripts = context.dbDriver.listExecutedScripts()
 
         return when (ruleName) {
-            ExecutedScriptsNotRemovedCheck.NAME -> ExecutedScriptsNotRemovedCheck(executedScripts)
+            SameScriptsAsExecutedCheck.NAME -> SameScriptsAsExecutedCheck(executedScripts)
             // Rules for Tests only
             AlwaysSucceedCheck.NAME -> AlwaysSucceedCheck()
             AlwaysFailedCheck.NAME -> AlwaysFailedCheck()

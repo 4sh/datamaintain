@@ -2,7 +2,7 @@ package datamaintain.cli
 
 import com.github.ajalt.clikt.core.subcommands
 import datamaintain.core.config.DatamaintainConfig
-import datamaintain.core.step.check.rules.implementations.ExecutedScriptsNotRemovedCheck
+import datamaintain.core.step.check.rules.implementations.SameScriptsAsExecutedCheck
 import datamaintain.db.driver.mongo.MongoDriverConfig
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
@@ -22,7 +22,7 @@ internal class AppTest {
         }
 
         val argv = getSmallestArgs().plus(listOf(
-                "--rule", ExecutedScriptsNotRemovedCheck.NAME
+                "--rule", SameScriptsAsExecutedCheck.NAME
         ))
 
         // When
@@ -35,7 +35,7 @@ internal class AppTest {
         }
         expectThat(configWrapper.datamaintainConfig!!.checkRules.toList()) {
             hasSize(1)
-            first().isEqualTo(ExecutedScriptsNotRemovedCheck.NAME)
+            first().isEqualTo(SameScriptsAsExecutedCheck.NAME)
         }
     }
 
@@ -49,8 +49,8 @@ internal class AppTest {
         }
 
         val argv = getSmallestArgs().plus(listOf(
-                "--rule", ExecutedScriptsNotRemovedCheck.NAME,
-                "--rule", ExecutedScriptsNotRemovedCheck.NAME
+                "--rule", SameScriptsAsExecutedCheck.NAME,
+                "--rule", SameScriptsAsExecutedCheck.NAME
         ))
 
         // When
@@ -63,8 +63,8 @@ internal class AppTest {
         }
         expectThat(configWrapper.datamaintainConfig!!.checkRules.toList()) {
             hasSize(2)
-            first().isEqualTo(ExecutedScriptsNotRemovedCheck.NAME)
-            last().isEqualTo(ExecutedScriptsNotRemovedCheck.NAME)
+            first().isEqualTo(SameScriptsAsExecutedCheck.NAME)
+            last().isEqualTo(SameScriptsAsExecutedCheck.NAME)
         }
     }
 

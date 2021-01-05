@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test
 import strikt.api.expectThrows
 import strikt.assertions.isEqualTo
 
-internal class ExecutedScriptsNotRemovedCheckTest {
+internal class SameScriptsAsExecutedCheckTest {
     private val script1 = ScriptWithContentWithFixedChecksum("script1", "1", "1")
     private val script2 = ScriptWithContentWithFixedChecksum("script2", "2", "2")
     private val script3 = ScriptWithContentWithFixedChecksum("script3", "3", "3")
@@ -21,7 +21,7 @@ internal class ExecutedScriptsNotRemovedCheckTest {
     @Test
     fun `should succeed with empty sequences`() {
         // Given
-        val checker = ExecutedScriptsNotRemovedCheck(emptySequence())
+        val checker = SameScriptsAsExecutedCheck(emptySequence())
 
         // When
         checker.check(emptySequence())
@@ -33,7 +33,7 @@ internal class ExecutedScriptsNotRemovedCheckTest {
     @Test
     fun `should succeed with same element in both list`() {
         // Given
-        val checker = ExecutedScriptsNotRemovedCheck(sequenceOf(executedScript1))
+        val checker = SameScriptsAsExecutedCheck(sequenceOf(executedScript1))
 
         // When
         checker.check(sequenceOf(script1))
@@ -45,7 +45,7 @@ internal class ExecutedScriptsNotRemovedCheckTest {
     @Test
     fun `should succeed when scripts is an overset of executedScript`() {
         // Given
-        val checker = ExecutedScriptsNotRemovedCheck(sequenceOf(executedScript1, executedScript2))
+        val checker = SameScriptsAsExecutedCheck(sequenceOf(executedScript1, executedScript2))
 
         // When
         checker.check(sequenceOf(script1, script2, script3))
@@ -57,24 +57,24 @@ internal class ExecutedScriptsNotRemovedCheckTest {
     @Test
     fun `should failed when scripts is a subset of executedScript`() {
         // Given
-        val checker = ExecutedScriptsNotRemovedCheck(sequenceOf(executedScript1, executedScript2, executedScript3))
+        val checker = SameScriptsAsExecutedCheck(sequenceOf(executedScript1, executedScript2, executedScript3))
 
         // WhenThen
         expectThrows<IllegalStateException> { checker.check(sequenceOf(script1, script2)) }
                 .get { message }
-                .isEqualTo("ERROR - ${ExecutedScriptsNotRemovedCheck.NAME} - " +
+                .isEqualTo("ERROR - ${SameScriptsAsExecutedCheck.NAME} - " +
                         "Some executed scripts are not present : [${executedScript3.name}]")
     }
 
     @Test
     fun `should failed when scripts is a subset (with new elements) of executedScript`() {
         // Given
-        val checker = ExecutedScriptsNotRemovedCheck(sequenceOf(executedScript1, executedScript2, executedScript3))
+        val checker = SameScriptsAsExecutedCheck(sequenceOf(executedScript1, executedScript2, executedScript3))
 
         // WhenThen
         expectThrows<IllegalStateException> { checker.check(sequenceOf(script1, script4)) }
                 .get { message }
-                .isEqualTo("ERROR - ${ExecutedScriptsNotRemovedCheck.NAME} - " +
+                .isEqualTo("ERROR - ${SameScriptsAsExecutedCheck.NAME} - " +
                         "Some executed scripts are not present : [${executedScript2.name}, ${executedScript3.name}]")
     }
 }

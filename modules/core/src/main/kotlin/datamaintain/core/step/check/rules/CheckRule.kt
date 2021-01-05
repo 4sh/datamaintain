@@ -1,7 +1,5 @@
 package datamaintain.core.step.check.rules
 
-import datamaintain.core.step.check.rules.implementations.ExecutedScriptsNotRemovedCheck
-
 interface CheckRule {
     fun getName(): String
     fun scriptType(): ScriptType

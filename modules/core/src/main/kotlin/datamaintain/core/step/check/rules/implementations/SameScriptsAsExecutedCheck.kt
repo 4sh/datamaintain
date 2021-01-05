@@ -5,7 +5,7 @@ import datamaintain.core.script.ScriptWithContent
 import datamaintain.core.step.check.rules.ScriptType
 import datamaintain.core.step.check.rules.contracts.FullContextCheckRule
 
-class ExecutedScriptsNotRemovedCheck(
+class SameScriptsAsExecutedCheck(
         executedScripts: Sequence<ExecutedScript>
 ) : FullContextCheckRule(executedScripts) {
     override fun check(scripts: Sequence<ScriptWithContent>) {
@@ -35,6 +35,6 @@ class ExecutedScriptsNotRemovedCheck(
 
     companion object {
         @JvmStatic
-        val NAME = "ExecutedScriptsNotRemoved"
+        val NAME = "SameScriptsAsExecutedCheck"
     }
 }
