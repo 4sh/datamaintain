@@ -162,7 +162,10 @@ In this example :
   by `host.docker.internal`. See [docker documentation](https://docs.docker.com/docker-for-mac/networking/).
 
 Datamaintain image use a mongo shell.
-Image tag has form _datamaintainVersion_-_mongoVersion_ for example `datamaintain:1.2-4.4` is a datamaintain 1.2 with a mongo shell 4.4.
+
+Image tag has form `<datamaintain version>-<db type>-<db version>` for example 
+`docker.pkg.github.com/4sh/datamaintain/datamaintain:1.2-mongo-4.4` is a datamaintain 1.2 with a mongo shell 4.4.
+For now, datamaintain only support mongo database.
 You can see all images [here](https://github.com/orgs/4sh/packages?repo_name=datamaintain)
 
 
