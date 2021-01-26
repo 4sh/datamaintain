@@ -3,6 +3,7 @@ package datamaintain.cli
 import com.github.ajalt.clikt.core.subcommands
 import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.script.Tag
+import datamaintain.core.script.TagMatcher
 import datamaintain.core.step.check.rules.implementations.SameScriptsAsExecutedCheck
 import org.junit.jupiter.api.Nested
 import datamaintain.db.driver.mongo.MongoDriverConfig
@@ -53,6 +54,29 @@ internal class AppTest {
 
             // Then
             expectThat(configWrapper.datamaintainConfig!!.identifierRegex.pattern).isEqualTo(identifierRegex)
+        }
+
+        @Nested
+        inner class TagMatchers {
+            @Test
+            fun `should build config with path matchers`() {
+                // Given
+                val tagMatcher1 = TagMatcher(Tag("MYTAG1"), listOf("pathMatcher1", "pathMatcher2"))
+                val tagMatcher2 = TagMatcher(Tag("MYTAG2"), listOf("pathMatcher3", "pathMatcher4"))
+
+                val argv = updateDbMinimumArguments().plus(listOf(
+                        "--tag", tagMatcher1.toArgument(), "--tag", tagMatcher2.toArgument()
+                ))
+
+                // When
+                runUpdateDb(argv)
+
+                // Then
+                expectThat(configWrapper.datamaintainConfig!!.tagsMatchers)
+                        .containsExactlyInAnyOrder(tagMatcher1, tagMatcher2)
+            }
+
+            private fun TagMatcher.toArgument(): String = "${this.tag.name}=[${this.globPaths.joinToString(", ")}]"
         }
 
         @Nested
