@@ -28,207 +28,210 @@ internal class AppTest {
 
     @Nested
     inner class UpdateDb {
-        @Test
-        fun `should build config with path`() {
-            // Given
-            val path = "myPath"
-
-            val argv = updateDbMinimumArguments().plus(listOf(
-                    "--path", path
-            ))
-
-            // When
-            runUpdateDb(argv)
-
-            // Then
-            expectThat(configWrapper.datamaintainConfig!!.path).isEqualTo(Paths.get(path))
-        }
-
-        @Test
-        fun `should build config with identifier regex`() {
-            // Given
-            val identifierRegex = "myIdentifierRegex"
-
-            val argv = updateDbMinimumArguments().plus(listOf(
-                    "--identifier-regex", identifierRegex
-            ))
-
-            // When
-            runUpdateDb(argv)
-
-            // Then
-            expectThat(configWrapper.datamaintainConfig!!.identifierRegex.pattern).isEqualTo(identifierRegex)
-        }
-
-        @ParameterizedTest
-        @EnumSource
-        @DisplayName("Should build config with execution mode {0}")
-        fun `should build config with execution mode`(executionMode: ExecutionMode) {
-            // Given
-            val argv = updateDbMinimumArguments().plus(listOf(
-                    "--execution-mode", executionMode.name
-            ))
-
-            // When
-            runUpdateDb(argv)
-
-            // Then
-            expectThat(configWrapper.datamaintainConfig!!.executionMode).isEqualTo(executionMode)
-        }
-
         @Nested
-        inner class Verbose {
+        inner class ConfigurationBuild {
             @Test
-            fun `should build config with verbose set to true`() {
+            fun `should build config with path`() {
                 // Given
-                val argv = updateDbMinimumArguments().plus("--verbose")
-
-                // When
-                runUpdateDb(argv)
-
-                // Then
-                expectThat(configWrapper.datamaintainConfig!!.verbose).isTrue()
-            }
-
-            @Test
-            fun `should build config with verbose set to false`() {
-                // Given
-                val argv = updateDbMinimumArguments()
-
-                // When
-                runUpdateDb(argv)
-
-                // Then
-                expectThat(configWrapper.datamaintainConfig!!.verbose).isFalse()
-            }
-        }
-
-        @Nested
-        inner class CreateTagsFromFolder {
-            @Test
-            fun `should build config with create tags from folder set to true`() {
-                // Given
-                val argv = updateDbMinimumArguments().plus("--create-tags-from-folder")
-
-                // When
-                runUpdateDb(argv)
-
-                // Then
-                expectThat(configWrapper.datamaintainConfig!!.doesCreateTagsFromFolder).isTrue()
-            }
-
-            @Test
-            fun `should build config with create tags from folder set to false`() {
-                // Given
-                val argv = updateDbMinimumArguments()
-
-                // When
-                runUpdateDb(argv)
-
-                // Then
-                expectThat(configWrapper.datamaintainConfig!!.doesCreateTagsFromFolder).isFalse()
-            }
-        }
-
-        @Nested
-        inner class TagMatchers {
-            @Test
-            fun `should build config with path matchers`() {
-                // Given
-                val tagMatcher1 = TagMatcher(Tag("MYTAG1"), listOf("pathMatcher1", "pathMatcher2"))
-                val tagMatcher2 = TagMatcher(Tag("MYTAG2"), listOf("pathMatcher3", "pathMatcher4"))
+                val path = "myPath"
 
                 val argv = updateDbMinimumArguments().plus(listOf(
-                        "--tag", tagMatcher1.toArgument(), "--tag", tagMatcher2.toArgument()
+                        "--path", path
                 ))
 
                 // When
                 runUpdateDb(argv)
 
                 // Then
-                expectThat(configWrapper.datamaintainConfig!!.tagsMatchers)
-                        .containsExactlyInAnyOrder(tagMatcher1, tagMatcher2)
-            }
-
-            private fun TagMatcher.toArgument(): String = "${this.tag.name}=[${this.globPaths.joinToString(", ")}]"
-        }
-
-        @Nested
-        inner class TagsList {
-            @Test
-            fun `should build config with blacklisted tags`() {
-                testBuildConfigWithTagsList("--blacklisted-tags", DatamaintainConfig::blacklistedTags)
+                expectThat(configWrapper.datamaintainConfig!!.path).isEqualTo(Paths.get(path))
             }
 
             @Test
-            fun `should build config with whitelisted tags`() {
-                testBuildConfigWithTagsList("--whitelisted-tags", DatamaintainConfig::whitelistedTags)
-            }
-
-            @Test
-            fun `should build config with tags to play again`() {
-                testBuildConfigWithTagsList("--tags-to-play-again", DatamaintainConfig::tagsToPlayAgain)
-            }
-
-            private fun testBuildConfigWithTagsList(key: String, getter: KProperty1<DatamaintainConfig, Set<Tag>>) {
+            fun `should build config with identifier regex`() {
                 // Given
-                val tagsList = setOf("MYTAG", "MYOTHERTAG")
+                val identifierRegex = "myIdentifierRegex"
 
                 val argv = updateDbMinimumArguments().plus(listOf(
-                        key, tagsList.joinToString(",")
+                        "--identifier-regex", identifierRegex
                 ))
 
                 // When
                 runUpdateDb(argv)
 
                 // Then
-                expectThat(getter.get(configWrapper.datamaintainConfig!!))
-                        .map { it.name }
-                        .containsExactlyInAnyOrder(tagsList)
+                expectThat(configWrapper.datamaintainConfig!!.identifierRegex.pattern).isEqualTo(identifierRegex)
             }
-        }
 
-        @Nested
-        inner class Rules {
-            @Test
-            fun `should build config with one rule`() {
+            @ParameterizedTest
+            @EnumSource
+            @DisplayName("Should build config with execution mode {0}")
+            fun `should build config with execution mode`(executionMode: ExecutionMode) {
                 // Given
                 val argv = updateDbMinimumArguments().plus(listOf(
-                        "--rule", SameScriptsAsExecutedCheck.NAME
+                        "--execution-mode", executionMode.name
                 ))
 
                 // When
                 runUpdateDb(argv)
 
                 // Then
-                expectThat(configWrapper) {
-                    get { datamaintainConfig }.isNotNull()
+                expectThat(configWrapper.datamaintainConfig!!.executionMode).isEqualTo(executionMode)
+            }
+
+            @Nested
+            inner class Verbose {
+                @Test
+                fun `should build config with verbose set to true`() {
+                    // Given
+                    val argv = updateDbMinimumArguments().plus("--verbose")
+
+                    // When
+                    runUpdateDb(argv)
+
+                    // Then
+                    expectThat(configWrapper.datamaintainConfig!!.verbose).isTrue()
                 }
-                expectThat(configWrapper.datamaintainConfig!!.checkRules.toList()) {
-                    hasSize(1)
-                    first().isEqualTo(SameScriptsAsExecutedCheck.NAME)
+
+                @Test
+                fun `should build config with verbose set to false`() {
+                    // Given
+                    val argv = updateDbMinimumArguments()
+
+                    // When
+                    runUpdateDb(argv)
+
+                    // Then
+                    expectThat(configWrapper.datamaintainConfig!!.verbose).isFalse()
                 }
             }
 
-            @Test
-            fun `should build config with 2 rules`() {
-                // Given
-                val argv = updateDbMinimumArguments().plus(listOf(
-                        "--rule", SameScriptsAsExecutedCheck.NAME,
-                        "--rule", SameScriptsAsExecutedCheck.NAME
-                ))
+            @Nested
+            inner class CreateTagsFromFolder {
+                @Test
+                fun `should build config with create tags from folder set to true`() {
+                    // Given
+                    val argv = updateDbMinimumArguments().plus("--create-tags-from-folder")
 
-                // When
-                runUpdateDb(argv)
+                    // When
+                    runUpdateDb(argv)
 
-                // Then
-                expectThat(configWrapper) {
-                    get { datamaintainConfig }.isNotNull()
+                    // Then
+                    expectThat(configWrapper.datamaintainConfig!!.doesCreateTagsFromFolder).isTrue()
                 }
-                expectThat(configWrapper.datamaintainConfig!!.checkRules.toList()) {
-                    hasSize(2)
-                    first().isEqualTo(SameScriptsAsExecutedCheck.NAME)
-                    last().isEqualTo(SameScriptsAsExecutedCheck.NAME)
+
+                @Test
+                fun `should build config with create tags from folder set to false`() {
+                    // Given
+                    val argv = updateDbMinimumArguments()
+
+                    // When
+                    runUpdateDb(argv)
+
+                    // Then
+                    expectThat(configWrapper.datamaintainConfig!!.doesCreateTagsFromFolder).isFalse()
+                }
+            }
+
+            @Nested
+            inner class TagMatchers {
+                @Test
+                fun `should build config with path matchers`() {
+                    // Given
+                    val tagMatcher1 = TagMatcher(Tag("MYTAG1"), listOf("pathMatcher1", "pathMatcher2"))
+                    val tagMatcher2 = TagMatcher(Tag("MYTAG2"), listOf("pathMatcher3", "pathMatcher4"))
+
+                    val argv = updateDbMinimumArguments().plus(listOf(
+                            "--tag", tagMatcher1.toArgument(), "--tag", tagMatcher2.toArgument()
+                    ))
+
+                    // When
+                    runUpdateDb(argv)
+
+                    // Then
+                    expectThat(configWrapper.datamaintainConfig!!.tagsMatchers)
+                            .containsExactlyInAnyOrder(tagMatcher1, tagMatcher2)
+                }
+
+                private fun TagMatcher.toArgument(): String = "${this.tag.name}=[${this.globPaths.joinToString(", ")}]"
+            }
+
+            @Nested
+            inner class TagsList {
+                @Test
+                fun `should build config with blacklisted tags`() {
+                    testBuildConfigWithTagsList("--blacklisted-tags", DatamaintainConfig::blacklistedTags)
+                }
+
+                @Test
+                fun `should build config with whitelisted tags`() {
+                    testBuildConfigWithTagsList("--whitelisted-tags", DatamaintainConfig::whitelistedTags)
+                }
+
+                @Test
+                fun `should build config with tags to play again`() {
+                    testBuildConfigWithTagsList("--tags-to-play-again", DatamaintainConfig::tagsToPlayAgain)
+                }
+
+                private fun testBuildConfigWithTagsList(key: String, getter: KProperty1<DatamaintainConfig, Set<Tag>>) {
+                    // Given
+                    val tagsList = setOf("MYTAG", "MYOTHERTAG")
+
+                    val argv = updateDbMinimumArguments().plus(listOf(
+                            key, tagsList.joinToString(",")
+                    ))
+
+                    // When
+                    runUpdateDb(argv)
+
+                    // Then
+                    expectThat(getter.get(configWrapper.datamaintainConfig!!))
+                            .map { it.name }
+                            .containsExactlyInAnyOrder(tagsList)
+                }
+            }
+
+            @Nested
+            inner class Rules {
+                @Test
+                fun `should build config with one rule`() {
+                    // Given
+                    val argv = updateDbMinimumArguments().plus(listOf(
+                            "--rule", SameScriptsAsExecutedCheck.NAME
+                    ))
+
+                    // When
+                    runUpdateDb(argv)
+
+                    // Then
+                    expectThat(configWrapper) {
+                        get { datamaintainConfig }.isNotNull()
+                    }
+                    expectThat(configWrapper.datamaintainConfig!!.checkRules.toList()) {
+                        hasSize(1)
+                        first().isEqualTo(SameScriptsAsExecutedCheck.NAME)
+                    }
+                }
+
+                @Test
+                fun `should build config with 2 rules`() {
+                    // Given
+                    val argv = updateDbMinimumArguments().plus(listOf(
+                            "--rule", SameScriptsAsExecutedCheck.NAME,
+                            "--rule", SameScriptsAsExecutedCheck.NAME
+                    ))
+
+                    // When
+                    runUpdateDb(argv)
+
+                    // Then
+                    expectThat(configWrapper) {
+                        get { datamaintainConfig }.isNotNull()
+                    }
+                    expectThat(configWrapper.datamaintainConfig!!.checkRules.toList()) {
+                        hasSize(2)
+                        first().isEqualTo(SameScriptsAsExecutedCheck.NAME)
+                        last().isEqualTo(SameScriptsAsExecutedCheck.NAME)
+                    }
                 }
             }
         }
