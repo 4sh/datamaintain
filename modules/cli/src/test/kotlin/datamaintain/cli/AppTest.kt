@@ -104,6 +104,33 @@ internal class AppTest {
         }
 
         @Nested
+        inner class CreateTagsFromFolder {
+            @Test
+            fun `should build config with create tags from folder set to true`() {
+                // Given
+                val argv = updateDbMinimumArguments().plus("--create-tags-from-folder")
+
+                // When
+                runUpdateDb(argv)
+
+                // Then
+                expectThat(configWrapper.datamaintainConfig!!.doesCreateTagsFromFolder).isTrue()
+            }
+
+            @Test
+            fun `should build config with create tags from folder set to false`() {
+                // Given
+                val argv = updateDbMinimumArguments()
+
+                // When
+                runUpdateDb(argv)
+
+                // Then
+                expectThat(configWrapper.datamaintainConfig!!.doesCreateTagsFromFolder).isFalse()
+            }
+        }
+
+        @Nested
         inner class TagMatchers {
             @Test
             fun `should build config with path matchers`() {
