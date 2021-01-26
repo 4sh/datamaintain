@@ -67,6 +67,11 @@ internal class AppTest {
                 testBuildConfigWithTagsList("--whitelisted-tags", DatamaintainConfig::whitelistedTags)
             }
 
+            @Test
+            fun `should build config with tags to play again`() {
+                testBuildConfigWithTagsList("--tags-to-play-again", DatamaintainConfig::tagsToPlayAgain)
+            }
+
             private fun testBuildConfigWithTagsList(key: String, getter: KProperty1<DatamaintainConfig, Set<Tag>>) {
                 // Given
                 val tagsList = setOf("MYTAG", "MYOTHERTAG")
