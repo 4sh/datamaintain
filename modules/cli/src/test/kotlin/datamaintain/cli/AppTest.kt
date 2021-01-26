@@ -2,6 +2,7 @@ package datamaintain.cli
 
 import com.github.ajalt.clikt.core.subcommands
 import datamaintain.core.config.DatamaintainConfig
+import datamaintain.core.script.Tag
 import datamaintain.core.step.check.rules.implementations.SameScriptsAsExecutedCheck
 import org.junit.jupiter.api.Nested
 import datamaintain.db.driver.mongo.MongoDriverConfig
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.*
 import java.nio.file.Paths
+import kotlin.reflect.KProperty1
 
 internal class AppTest {
     data class ConfigWrapper(var datamaintainConfig: DatamaintainConfig? = null)
@@ -53,40 +55,34 @@ internal class AppTest {
             expectThat(configWrapper.datamaintainConfig!!.identifierRegex).get { identifierRegex }
         }
 
-        @Test
-        fun `should build config with blacklisted tags`() {
-            // Given
-            val blacklistedTags = setOf("MYTAG", "MYOTHERTAG")
+        @Nested
+        inner class TagsList {
+            @Test
+            fun `should build config with blacklisted tags`() {
+                testBuildConfigWithTagsList("--blacklisted-tags", DatamaintainConfig::blacklistedTags)
+            }
 
-            val argv = updateDbMinimumArguments().plus(listOf(
-                    "--blacklisted-tags", blacklistedTags.joinToString(",")
-            ))
+            @Test
+            fun `should build config with whitelisted tags`() {
+                testBuildConfigWithTagsList("--whitelisted-tags", DatamaintainConfig::whitelistedTags)
+            }
 
-            // When
-            runUpdateDb(argv)
+            private fun testBuildConfigWithTagsList(key: String, getter: KProperty1<DatamaintainConfig, Set<Tag>>) {
+                // Given
+                val tagsList = setOf("MYTAG", "MYOTHERTAG")
 
-            // Then
-            expectThat(configWrapper.datamaintainConfig!!.blacklistedTags)
-                    .map { it.name }
-                    .containsExactlyInAnyOrder(blacklistedTags)
-        }
+                val argv = updateDbMinimumArguments().plus(listOf(
+                        key, tagsList.joinToString(",")
+                ))
 
-        @Test
-        fun `should build config with whitelisted tags`() {
-            // Given
-            val whitelistedTags = setOf("MYTAG", "MYOTHERTAG")
+                // When
+                runUpdateDb(argv)
 
-            val argv = updateDbMinimumArguments().plus(listOf(
-                    "--whitelisted-tags", whitelistedTags.joinToString(",")
-            ))
-
-            // When
-            runUpdateDb(argv)
-
-            // Then
-            expectThat(configWrapper.datamaintainConfig!!.whitelistedTags)
-                    .map { it.name }
-                    .containsExactlyInAnyOrder(whitelistedTags)
+                // Then
+                expectThat(getter.get(configWrapper.datamaintainConfig!!))
+                        .map { it.name }
+                        .containsExactlyInAnyOrder(tagsList)
+            }
         }
 
         @Nested
