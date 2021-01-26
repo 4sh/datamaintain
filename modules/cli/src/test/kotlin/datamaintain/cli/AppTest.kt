@@ -52,7 +52,7 @@ internal class AppTest {
             runUpdateDb(argv)
 
             // Then
-            expectThat(configWrapper.datamaintainConfig!!.identifierRegex).get { identifierRegex }
+            expectThat(configWrapper.datamaintainConfig!!.identifierRegex.pattern).isEqualTo(identifierRegex)
         }
 
         @Nested
