@@ -53,6 +53,24 @@ internal class AppTest {
             expectThat(configWrapper.datamaintainConfig!!.identifierRegex).get { identifierRegex }
         }
 
+        @Test
+        fun `should build config with blacklisted tags`() {
+            // Given
+            val blacklistedTags = setOf("MYTAG", "MYOTHERTAG")
+
+            val argv = updateDbMinimumArguments().plus(listOf(
+                    "--blacklisted-tags", blacklistedTags.joinToString(",")
+            ))
+
+            // When
+            runUpdateDb(argv)
+
+            // Then
+            expectThat(configWrapper.datamaintainConfig!!.blacklistedTags)
+                    .map { it.name }
+                    .containsExactlyInAnyOrder(blacklistedTags)
+        }
+
         @Nested
         inner class Rules {
             @Test
