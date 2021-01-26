@@ -134,6 +134,37 @@ internal class AppTest {
             }
 
             @Nested
+            inner class MongoSaveOutput {
+                @Test
+                fun `should build config with create tags from folder set to true`() {
+                    // Given
+                    val argv = updateMongoDbMinimumArguments().plus("--mongo-save-output")
+
+                    // When
+                    runUpdateDb(argv)
+
+                    // Then
+                    expectThat((configWrapper.datamaintainConfig!!.driverConfig) as MongoDriverConfig)
+                            .get { saveOutput }
+                            .isTrue()
+                }
+
+                @Test
+                fun `should build config with create tags from folder set to false`() {
+                    // Given
+                    val argv = updateMongoDbMinimumArguments()
+
+                    // When
+                    runUpdateDb(argv)
+
+                    // Then
+                    expectThat((configWrapper.datamaintainConfig!!.driverConfig) as MongoDriverConfig)
+                            .get { saveOutput }
+                            .isFalse()
+                }
+            }
+
+            @Nested
             inner class TagMatchers {
                 @Test
                 fun `should build config with path matchers`() {
