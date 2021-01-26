@@ -71,6 +71,24 @@ internal class AppTest {
                     .containsExactlyInAnyOrder(blacklistedTags)
         }
 
+        @Test
+        fun `should build config with whitelisted tags`() {
+            // Given
+            val whitelistedTags = setOf("MYTAG", "MYOTHERTAG")
+
+            val argv = updateDbMinimumArguments().plus(listOf(
+                    "--whitelisted-tags", whitelistedTags.joinToString(",")
+            ))
+
+            // When
+            runUpdateDb(argv)
+
+            // Then
+            expectThat(configWrapper.datamaintainConfig!!.whitelistedTags)
+                    .map { it.name }
+                    .containsExactlyInAnyOrder(whitelistedTags)
+        }
+
         @Nested
         inner class Rules {
             @Test
