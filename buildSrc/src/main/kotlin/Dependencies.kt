@@ -4,7 +4,7 @@ import org.gradle.kotlin.dsl.dependencies
 
 fun Project.kotlinProject() {
     dependencies {
-        "implementation"(platform("org.jetbrains.kotlin:kotlin-bom"))
+        "implementation"(platform("org.jetbrains.kotlin:kotlin-bom:${Versions.kotlin}@pom"))
         "implementation"("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     }
 }
