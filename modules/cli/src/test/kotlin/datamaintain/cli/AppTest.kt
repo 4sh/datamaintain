@@ -77,6 +77,33 @@ internal class AppTest {
         }
 
         @Nested
+        inner class Verbose {
+            @Test
+            fun `should build config with verbose set to true`() {
+                // Given
+                val argv = updateDbMinimumArguments().plus("--verbose")
+
+                // When
+                runUpdateDb(argv)
+
+                // Then
+                expectThat(configWrapper.datamaintainConfig!!.verbose).isTrue()
+            }
+
+            @Test
+            fun `should build config with verbose set to false`() {
+                // Given
+                val argv = updateDbMinimumArguments()
+
+                // When
+                runUpdateDb(argv)
+
+                // Then
+                expectThat(configWrapper.datamaintainConfig!!.verbose).isFalse()
+            }
+        }
+
+        @Nested
         inner class TagMatchers {
             @Test
             fun `should build config with path matchers`() {
