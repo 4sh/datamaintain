@@ -271,6 +271,37 @@ internal class AppTest {
                                 .isFalse()
                     }
                 }
+
+                @Nested
+                inner class MongoPrintOutput {
+                    @Test
+                    fun `should build config with create tags from folder set to true`() {
+                        // Given
+                        val argv = updateMongoDbMinimumArguments().plus("--mongo-print-output")
+
+                        // When
+                        runUpdateDb(argv)
+
+                        // Then
+                        expectThat((configWrapper.datamaintainConfig!!.driverConfig) as MongoDriverConfig)
+                                .get { printOutput }
+                                .isTrue()
+                    }
+
+                    @Test
+                    fun `should build config with create tags from folder set to false`() {
+                        // Given
+                        val argv = updateMongoDbMinimumArguments()
+
+                        // When
+                        runUpdateDb(argv)
+
+                        // Then
+                        expectThat((configWrapper.datamaintainConfig!!.driverConfig) as MongoDriverConfig)
+                                .get { printOutput }
+                                .isFalse()
+                    }
+                }
             }
         }
 
