@@ -36,7 +36,7 @@ internal class AppTest {
             runUpdateDb(argv)
 
             // Then
-            expectThat(configWrapper.datamaintainConfig!!.path).get { Paths.get(path) }
+            expectThat(configWrapper.datamaintainConfig!!.path).isEqualTo(Paths.get(path))
         }
 
         @Test
