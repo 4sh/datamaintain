@@ -23,7 +23,7 @@ class TagMatcher(val tag: Tag, val globPaths: Iterable<String>) {
         other as TagMatcher
 
         if (tag != other.tag) return false
-        if (globPaths != other.globPaths) return false
+        if (globPaths.toList() != other.globPaths.toList()) return false
 
         return true
     }
