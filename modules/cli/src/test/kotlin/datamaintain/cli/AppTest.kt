@@ -6,6 +6,7 @@ import datamaintain.core.script.Tag
 import datamaintain.core.script.TagMatcher
 import datamaintain.core.step.check.rules.implementations.SameScriptsAsExecutedCheck
 import datamaintain.core.step.executor.ExecutionMode
+import datamaintain.db.driver.mongo.MongoDriverConfig
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import datamaintain.db.driver.mongo.MongoDriverConfig
@@ -35,7 +36,7 @@ internal class AppTest {
                 // Given
                 val path = "myPath"
 
-                val argv = updateDbMinimumArguments().plus(listOf(
+                val argv = updateMongoDbMinimumArguments().plus(listOf(
                         "--path", path
                 ))
 
@@ -51,7 +52,7 @@ internal class AppTest {
                 // Given
                 val identifierRegex = "myIdentifierRegex"
 
-                val argv = updateDbMinimumArguments().plus(listOf(
+                val argv = updateMongoDbMinimumArguments().plus(listOf(
                         "--identifier-regex", identifierRegex
                 ))
 
@@ -67,7 +68,7 @@ internal class AppTest {
             @DisplayName("Should build config with execution mode {0}")
             fun `should build config with execution mode`(executionMode: ExecutionMode) {
                 // Given
-                val argv = updateDbMinimumArguments().plus(listOf(
+                val argv = updateMongoDbMinimumArguments().plus(listOf(
                         "--execution-mode", executionMode.name
                 ))
 
@@ -83,7 +84,7 @@ internal class AppTest {
                 @Test
                 fun `should build config with verbose set to true`() {
                     // Given
-                    val argv = updateDbMinimumArguments().plus("--verbose")
+                    val argv = updateMongoDbMinimumArguments().plus("--verbose")
 
                     // When
                     runUpdateDb(argv)
@@ -95,7 +96,7 @@ internal class AppTest {
                 @Test
                 fun `should build config with verbose set to false`() {
                     // Given
-                    val argv = updateDbMinimumArguments()
+                    val argv = updateMongoDbMinimumArguments()
 
                     // When
                     runUpdateDb(argv)
@@ -110,7 +111,7 @@ internal class AppTest {
                 @Test
                 fun `should build config with create tags from folder set to true`() {
                     // Given
-                    val argv = updateDbMinimumArguments().plus("--create-tags-from-folder")
+                    val argv = updateMongoDbMinimumArguments().plus("--create-tags-from-folder")
 
                     // When
                     runUpdateDb(argv)
@@ -122,7 +123,7 @@ internal class AppTest {
                 @Test
                 fun `should build config with create tags from folder set to false`() {
                     // Given
-                    val argv = updateDbMinimumArguments()
+                    val argv = updateMongoDbMinimumArguments()
 
                     // When
                     runUpdateDb(argv)
@@ -140,7 +141,7 @@ internal class AppTest {
                     val tagMatcher1 = TagMatcher(Tag("MYTAG1"), listOf("pathMatcher1", "pathMatcher2"))
                     val tagMatcher2 = TagMatcher(Tag("MYTAG2"), listOf("pathMatcher3", "pathMatcher4"))
 
-                    val argv = updateDbMinimumArguments().plus(listOf(
+                    val argv = updateMongoDbMinimumArguments().plus(listOf(
                             "--tag", tagMatcher1.toArgument(), "--tag", tagMatcher2.toArgument()
                     ))
 
@@ -176,7 +177,7 @@ internal class AppTest {
                     // Given
                     val tagsList = setOf("MYTAG", "MYOTHERTAG")
 
-                    val argv = updateDbMinimumArguments().plus(listOf(
+                    val argv = updateMongoDbMinimumArguments().plus(listOf(
                             key, tagsList.joinToString(",")
                     ))
 
@@ -195,7 +196,7 @@ internal class AppTest {
                 @Test
                 fun `should build config with one rule`() {
                     // Given
-                    val argv = updateDbMinimumArguments().plus(listOf(
+                    val argv = updateMongoDbMinimumArguments().plus(listOf(
                             "--rule", SameScriptsAsExecutedCheck.NAME
                     ))
 
@@ -215,7 +216,7 @@ internal class AppTest {
                 @Test
                 fun `should build config with 2 rules`() {
                     // Given
-                    val argv = updateDbMinimumArguments().plus(listOf(
+                    val argv = updateMongoDbMinimumArguments().plus(listOf(
                             "--rule", SameScriptsAsExecutedCheck.NAME,
                             "--rule", SameScriptsAsExecutedCheck.NAME
                     ))
@@ -240,11 +241,14 @@ internal class AppTest {
             App().subcommands(UpdateDb(runner = ::runner), ListExecutedScripts()).main(argv)
         }
 
-        private fun updateDbMinimumArguments(): List<String> {
+        private fun updateMongoDbMinimumArguments(): List<String> {
             return listOf(
                     "--mongo-uri", "mongo-uri",
                     "update-db"
             )
         }
     }
+
+    @Nested
+    inner class Configuration
 }
