@@ -1,5 +1,6 @@
 package datamaintain.core.script
 
+import datamaintain.core.exception.DatamaintainFileIdentifierPatternException
 import org.junit.jupiter.api.Test
 import strikt.api.expectCatching
 import strikt.api.expectThat
@@ -36,6 +37,6 @@ internal class FileScriptTest {
         // Then
         expectCatching { fileScript.identifier }
                 .failed()
-                .isA<IllegalStateException>()
+                .isA<DatamaintainFileIdentifierPatternException>()
     }
 }

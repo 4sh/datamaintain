@@ -125,9 +125,6 @@ class UpdateDb(val runner: (DatamaintainConfig) -> Unit = ::defaultUpdateDbRunne
             echo(e.resolutionMessage)
 
             exitProcess(1)
-        } catch (e: DbTypeNotFoundException) {
-            echo("dbType ${e.dbType} is unknown", err = true)
-            exitProcess(1)
         } catch (e: IllegalArgumentException) {
             echo(e.message, err = true)
             exitProcess(1)
@@ -172,9 +169,6 @@ class ListExecutedScripts : CliktCommand(name = "list") {
             echo(e.resolutionMessage)
 
             exitProcess(1)
-        } catch (e: DbTypeNotFoundException) {
-            echo("dbType ${e.dbType} is unknown")
-            exitProcess(1)
         } catch (e: IllegalArgumentException) {
             echo(e.message)
             exitProcess(1)
@@ -206,4 +200,4 @@ fun main(args: Array<String>) {
     App().subcommands(UpdateDb(), ListExecutedScripts()).main(args)
 }
 
-class DbTypeNotFoundException(val dbType: String) : RuntimeException()
+class DbTypeNotFoundException(val dbType: String) : DatamaintainBaseException("dbType $dbType is unknown")

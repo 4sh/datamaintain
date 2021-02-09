@@ -1,6 +1,7 @@
 package datamaintain.core.exception
 
 class DatamaintainCheckException (
-    override val message: String,
-    val resolutionMessage: String = ""
-): Exception(message)
+    checkName: String,
+    checkErrorMessage: String,
+    override val resolutionMessage: String = ""
+) : DatamaintainBaseException("ERROR - $checkName - $checkErrorMessage", resolutionMessage)

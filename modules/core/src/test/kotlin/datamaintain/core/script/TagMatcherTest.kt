@@ -77,7 +77,7 @@ internal class TagMatcherTest {
                 // When
                 expectCatching { TagMatcher.parse(tagName, "[$pathMatcher]") }
                         .failed()
-                        .isA<PathMatcherUsesEnvironmentVariables>()
+                        .isA<DatamaintainPathMatcherUsesEnvironmentVariablesException>()
             }
 
             @Test
@@ -89,7 +89,7 @@ internal class TagMatcherTest {
                 // When
                 expectCatching { TagMatcher.parse(tagName, "[$pathMatcher]") }
                         .failed()
-                        .isA<PathMatcherUsesEnvironmentVariables>()
+                        .isA<DatamaintainPathMatcherUsesEnvironmentVariablesException>()
             }
 
             @Test

@@ -8,8 +8,8 @@ class DatamaintainException(
     override val message: String,
     val step: Step,
     val report: Report,
-    val resolutionMessage: String = ""
-) : Exception(message) {
+    override val resolutionMessage: String = ""
+) : DatamaintainBaseException(message) {
     constructor(
         message: String,
         step: Step,

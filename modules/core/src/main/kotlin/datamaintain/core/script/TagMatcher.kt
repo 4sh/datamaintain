@@ -1,5 +1,6 @@
 package datamaintain.core.script
 
+import datamaintain.core.exception.DatamaintainBaseException
 import java.nio.file.FileSystems
 import java.nio.file.Path
 import java.nio.file.PathMatcher
@@ -40,7 +41,7 @@ class TagMatcher(val tag: Tag, val globPaths: Iterable<String>) {
         fun parse(name: String, pathMatchers: String): TagMatcher {
             return TagMatcher(Tag(name = name), pathMatchers.split(",")
                     .map { pathMatcher -> pathMatcher.trim('[', ']', ' ') }
-                    .onEach { if (containsEnvironmentVariables(it)) { throw  PathMatcherUsesEnvironmentVariables(name, it)} }
+                    .onEach { if (containsEnvironmentVariables(it)) { throw  DatamaintainPathMatcherUsesEnvironmentVariablesException(name, it)} }
                     .toSet())
         }
 
@@ -51,8 +52,8 @@ class TagMatcher(val tag: Tag, val globPaths: Iterable<String>) {
     }
 }
 
-class PathMatcherUsesEnvironmentVariables(name: String, pathMatcher: String):
-        IllegalArgumentException("The path matcher '${pathMatcher}' given to match scripts for the tag named '${name}' is not valid " +
+class DatamaintainPathMatcherUsesEnvironmentVariablesException(name: String, pathMatcher: String):
+        DatamaintainBaseException("The path matcher '${pathMatcher}' given to match scripts for the tag named '${name}' is not valid " +
                 "because it starts with a '~' or '\$HOME'. You can not use such environments variables in the settings.\n" +
                 "You may want to give the absolute path to your folder. If that is what you want, you can find it using " +
                 "the command `pwd` in the concerned folder.\n")

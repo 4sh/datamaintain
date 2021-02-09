@@ -1,11 +1,14 @@
 package datamaintain.core.step.executor
 
 import datamaintain.core.Context
+import datamaintain.core.exception.DatamaintainBaseException
+import datamaintain.core.exception.DatamaintainException
 import datamaintain.core.report.Report
 import datamaintain.core.script.ExecutedScript
 import datamaintain.core.script.ExecutionStatus
 import datamaintain.core.script.ScriptAction
 import datamaintain.core.script.ScriptWithContent
+import datamaintain.core.step.Step
 import mu.KotlinLogging
 import kotlin.system.measureTimeMillis
 
@@ -15,26 +18,34 @@ class Executor(private val context: Context) {
 
     fun execute(scripts: List<ScriptWithContent>): Report {
         logger.info { "Executes scripts.." }
+        try {
+            for (script in scripts) {
+                val executedScript = when (context.config.executionMode) {
+                    ExecutionMode.NORMAL -> doAction(script)
+                    ExecutionMode.DRY -> simulateAction(script)
+                    else -> throw IllegalStateException("Should not be in that case")
+                }
 
-        for (script in scripts) {
-            val executedScript = when (context.config.executionMode) {
-                ExecutionMode.NORMAL -> doAction(script)
-                ExecutionMode.DRY -> simulateAction(script)
-                else -> throw IllegalStateException("Should not be in that case")
+                    context.reportBuilder.addExecutedScript(executedScript)
+
+                if (executedScript.executionStatus == ExecutionStatus.KO) {
+                    context.reportBuilder.inError(executedScript)
+                    logger.info { "${executedScript.name} has not been correctly executed" }
+                    // TODO handle interactive shell
+                    return context.reportBuilder.toReport()
+                }
             }
 
-            context.reportBuilder.addExecutedScript(executedScript)
-
-            if (executedScript.executionStatus == ExecutionStatus.KO) {
-                context.reportBuilder.inError(executedScript)
-                logger.info { "${executedScript.name} has not been correctly executed" }
-                // TODO handle interactive shell
-                return context.reportBuilder.toReport()
-            }
+            logger.info { "" }
+            return context.reportBuilder.toReport()
+        } catch (datamaintainException: DatamaintainBaseException) {
+            throw DatamaintainException(
+                datamaintainException.message,
+                Step.EXECUTE,
+                context.reportBuilder,
+                datamaintainException.resolutionMessage
+            )
         }
-
-        logger.info { "" }
-        return context.reportBuilder.toReport()
     }
 
     private fun doAction(script: ScriptWithContent): ExecutedScript {

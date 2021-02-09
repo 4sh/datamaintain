@@ -1,7 +1,9 @@
 package datamaintain.core.step.check
 
 import datamaintain.core.Context
+import datamaintain.core.exception.DatamaintainBaseException
 import datamaintain.core.exception.DatamaintainCheckException
+import datamaintain.core.exception.DatamaintainCheckRuleNotFoundException
 import datamaintain.core.exception.DatamaintainException
 import datamaintain.core.script.ScriptWithContent
 import datamaintain.core.step.Step
@@ -23,33 +25,33 @@ val allCheckRuleNames: Sequence<String> = sequenceOf(
 
 class Checker(private val context: Context) {
     fun check(checkedData: CheckerData): List<ScriptWithContent> {
-        logger.info { "Check scripts..." }
+        try {
+            logger.info { "Check scripts..." }
 
-        // we want to ensure all rule can be built before to launch the first check,
-        // so end the sequence stream by building a list.
-        val rules = context.config.checkRules
+            // we want to ensure all rule can be built before to launch the first check,
+            // so end the sequence stream by building a list.
+            val rules = context.config.checkRules
                 .map { buildCheckRule(it) }
                 .toList()
 
-        // All rules exist so we can launch them. Check must throw an DatamaintainCheckException for been catch
-        try {
+            // All rules exist so we can launch them. Check must throw an DatamaintainCheckException for been catch
             rules.onEach { executeRule(it, checkedData) }
-                .forEach {context.reportBuilder.addValidatedCheckRules(it)}
-        } catch (datamaintainCheckException: DatamaintainCheckException) {
+                .forEach { context.reportBuilder.addValidatedCheckRules(it) }
+
+            logger.info { "All check rules were executed!" }
+            logger.info { "" }
+
+            // Checker doesn't have responsability to add or remove script.
+            // So if all checks passed then return the prunedScripts
+            return checkedData.prunedScripts.toList()
+        } catch (datamaintainException: DatamaintainBaseException) {
             throw DatamaintainException(
-                datamaintainCheckException.message,
+                datamaintainException.message,
                 Step.CHECK,
                 context.reportBuilder,
-                datamaintainCheckException.resolutionMessage
+                datamaintainException.resolutionMessage
             )
         }
-
-        logger.info { "All check rules were executed!" }
-        logger.info { "" }
-
-        // Checker doesn't have responsability to add or remove script.
-        // So if all checks passed then return the prunedScripts
-        return checkedData.prunedScripts.toList()
     }
 
     private fun buildCheckRule(ruleName: String): CheckRule {
@@ -61,7 +63,7 @@ class Checker(private val context: Context) {
             AlwaysSucceedCheck.NAME -> AlwaysSucceedCheck()
             AlwaysFailedCheck.NAME -> AlwaysFailedCheck()
             // Else
-            else -> throw IllegalArgumentException("Aborting - Check rule `${ruleName}` not found")
+            else -> throw DatamaintainCheckRuleNotFoundException(ruleName)
         }
     }
 
