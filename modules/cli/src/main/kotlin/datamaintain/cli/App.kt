@@ -10,6 +10,7 @@ import datamaintain.core.Datamaintain
 import datamaintain.core.config.CoreConfigKey
 import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.script.ScriptAction
+import datamaintain.core.exception.DatamaintainException
 import datamaintain.core.step.check.allCheckRuleNames
 import datamaintain.core.step.executor.ExecutionMode
 import datamaintain.db.driver.mongo.MongoConfigKey
@@ -99,18 +100,29 @@ class UpdateDb(val runner: (DatamaintainConfig) -> Unit = ::defaultUpdateDbRunne
             .multiple()
 
     override fun run() {
+        var config: DatamaintainConfig? = null
         try {
             overloadPropsFromArgs(props)
-            val config = loadConfig(props)
+            config = loadConfig(props)
             runner(config)
+        } catch (e: DatamaintainException) {
+            val verbose: Boolean = config?.verbose ?: false
+
+            echo("Error at step ${e.step}", err = true)
+            echo(e.report.print(verbose))
+            echo("")
+            echo(e.message, err = true)
+            echo(e.resolutionMessage)
+
+            exitProcess(1)
         } catch (e: DbTypeNotFoundException) {
-            echo("dbType ${e.dbType} is unknown")
+            echo("dbType ${e.dbType} is unknown", err = true)
             exitProcess(1)
         } catch (e: IllegalArgumentException) {
-            echo(e.message)
+            echo(e.message, err = true)
             exitProcess(1)
         } catch (e: Exception) {
-            echo(e.message ?: "unexpected error")
+            echo(e.message ?: "unexpected error", err = true)
             exitProcess(1)
         }
     }
