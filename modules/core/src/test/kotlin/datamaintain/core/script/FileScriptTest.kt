@@ -1,16 +1,11 @@
 package datamaintain.core.script
 
-import jdk.nashorn.internal.runtime.regexp.RegExp
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import strikt.api.expectCatching
 import strikt.api.expectThat
-import strikt.assertions.containsExactly
 import strikt.assertions.failed
 import strikt.assertions.isA
 import strikt.assertions.isEqualTo
-import java.lang.IllegalStateException
-import java.nio.file.Path
 import java.nio.file.Paths
 
 internal class FileScriptTest {

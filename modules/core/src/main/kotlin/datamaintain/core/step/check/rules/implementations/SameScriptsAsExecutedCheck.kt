@@ -1,5 +1,6 @@
 package datamaintain.core.step.check.rules.implementations
 
+import datamaintain.core.exception.DatamaintainCheckException
 import datamaintain.core.script.ExecutedScript
 import datamaintain.core.script.ScriptWithContent
 import datamaintain.core.step.check.rules.ScriptType
@@ -20,8 +21,10 @@ class SameScriptsAsExecutedCheck(
                     .map { it.name }
                     .toList()
 
-            throw IllegalStateException("ERROR - ${getName()} - Some executed scripts are not present : " +
-                    "$executedScriptNames")
+            throw DatamaintainCheckException(
+                "ERROR - ${getName()} - Some executed scripts are not present : $executedScriptNames",
+                resolutionMessage = "Please restore executed scripts or disable check ${getName()}"
+            )
         }
     }
 

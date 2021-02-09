@@ -4,6 +4,7 @@ import datamaintain.core.Context
 import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.db.driver.DatamaintainDriver
 import datamaintain.core.db.driver.FakeDriverConfig
+import datamaintain.core.exception.DatamaintainException
 import datamaintain.core.step.check.rules.implementations.AlwaysFailedCheck
 import datamaintain.core.step.check.rules.implementations.AlwaysSucceedCheck
 import datamaintain.test.ScriptWithContentWithFixedChecksum
@@ -92,7 +93,7 @@ internal class CheckerTest {
         val checker = Checker(context)
 
         // WhenThen
-        expectThrows<IllegalStateException> { checker.check(checkerData) }
+        expectThrows<DatamaintainException> { checker.check(checkerData) }
                 .get { message }
                 .isEqualTo("ERROR - ${AlwaysFailedCheck.NAME} - Use this rule for tests only")
     }

@@ -1,5 +1,7 @@
 package datamaintain.core.step.check.rules.implementations
 
+import datamaintain.core.exception.DatamaintainCheckException
+import datamaintain.core.exception.DatamaintainException
 import datamaintain.core.script.ExecutedScript
 import datamaintain.core.script.ExecutionStatus
 import datamaintain.core.script.ScriptAction
@@ -59,7 +61,7 @@ internal class SameScriptsAsExecutedCheckTest {
         val checker = SameScriptsAsExecutedCheck(sequenceOf(executedScript1, executedScript2, executedScript3))
 
         // WhenThen
-        expectThrows<IllegalStateException> { checker.check(sequenceOf(script1, script2)) }
+        expectThrows<DatamaintainCheckException> { checker.check(sequenceOf(script1, script2)) }
                 .get { message }
                 .isEqualTo("ERROR - ${SameScriptsAsExecutedCheck.NAME} - " +
                         "Some executed scripts are not present : [${executedScript3.name}]")
@@ -71,7 +73,7 @@ internal class SameScriptsAsExecutedCheckTest {
         val checker = SameScriptsAsExecutedCheck(sequenceOf(executedScript1, executedScript2, executedScript3))
 
         // WhenThen
-        expectThrows<IllegalStateException> { checker.check(sequenceOf(script1, script4)) }
+        expectThrows<DatamaintainCheckException> { checker.check(sequenceOf(script1, script4)) }
                 .get { message }
                 .isEqualTo("ERROR - ${SameScriptsAsExecutedCheck.NAME} - " +
                         "Some executed scripts are not present : [${executedScript2.name}, ${executedScript3.name}]")
