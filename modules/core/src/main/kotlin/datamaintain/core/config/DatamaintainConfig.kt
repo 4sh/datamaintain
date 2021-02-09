@@ -3,6 +3,7 @@ package datamaintain.core.config
 import datamaintain.core.config.ConfigKey.Companion.overrideBySystemProperties
 import datamaintain.core.config.CoreConfigKey.*
 import datamaintain.core.db.driver.DatamaintainDriverConfig
+import datamaintain.core.script.ScriptAction
 import datamaintain.core.script.Tag
 import datamaintain.core.script.TagMatcher
 import datamaintain.core.step.executor.ExecutionMode
@@ -23,11 +24,13 @@ data class DatamaintainConfig @JvmOverloads constructor(val path: Path = Paths.g
                                                         val tagsMatchers: Set<TagMatcher> = setOf(),
                                                         val checkRules: Sequence<String> = emptySequence(),
                                                         val executionMode: ExecutionMode = defaultExecutionMode,
+                                                        val defaultScriptAction: ScriptAction = defaultAction,
                                                         val driverConfig: DatamaintainDriverConfig,
                                                         val verbose: Boolean = VERBOSE.default!!.toBoolean()) {
 
     companion object {
         private val defaultExecutionMode = ExecutionMode.NORMAL
+        private val defaultAction = ScriptAction.RUN
 
         @JvmStatic
         fun buildConfig(configInputStream: InputStream, driverConfig: DatamaintainDriverConfig): DatamaintainConfig {
@@ -40,6 +43,17 @@ data class DatamaintainConfig @JvmOverloads constructor(val path: Path = Paths.g
         @JvmOverloads
         fun buildConfig(driverConfig: DatamaintainDriverConfig, props: Properties = Properties()): DatamaintainConfig {
             overrideBySystemProperties(props, values().asList())
+
+            val executionMode = ExecutionMode.fromNullable(props.getNullableProperty(EXECUTION_MODE), defaultExecutionMode)
+
+            val scriptAction = if (ExecutionMode.FORCE_MARK_AS_EXECUTED == executionMode) {
+                // To be compliant with previous version (and avoir breaking changes)
+                // we set script action from ExecutionMode.FORCE_MARK_AS_EXECUTED
+                 ScriptAction.MARK_AS_EXECUTED
+            } else {
+                 ScriptAction.fromNullable(props.getNullableProperty(DEFAULT_SCRIPT_ACTION), defaultAction)
+            }
+
             return DatamaintainConfig(
                     Paths.get(props.getProperty(SCAN_PATH)),
                     Regex(props.getProperty(SCAN_IDENTIFIER_REGEX)),
@@ -51,7 +65,8 @@ data class DatamaintainConfig @JvmOverloads constructor(val path: Path = Paths.g
                             .map { TagMatcher.parse(it.first.replace("${TAG.key}.", ""), it.second) }
                             .toSet(),
                     extractCheckRules(props.getNullableProperty(CHECK_RULES)),
-                    ExecutionMode.fromNullable(props.getNullableProperty(EXECUTION_MODE), defaultExecutionMode),
+                    executionMode,
+                    scriptAction,
                     driverConfig,
                     props.getProperty(VERBOSE).toBoolean()
             )
@@ -107,6 +122,7 @@ enum class CoreConfigKey(override val key: String,
                          override val default: String? = null) : ConfigKey {
     // GLOBAL
     VERBOSE("verbose", "false"),
+    DEFAULT_SCRIPT_ACTION("default.script.action", "RUN"),
 
     // SCAN
     SCAN_PATH("scan.path", "./scripts/"),

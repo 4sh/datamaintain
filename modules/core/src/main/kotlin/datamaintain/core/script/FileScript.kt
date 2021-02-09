@@ -1,6 +1,5 @@
 package datamaintain.core.script
 
-import java.lang.IllegalStateException
 import java.math.BigInteger
 import java.nio.file.Path
 import java.security.MessageDigest
@@ -8,7 +7,8 @@ import java.security.MessageDigest
 class FileScript @JvmOverloads constructor(
         val path: Path,
         identifierRegex: Regex,
-        override val tags: Set<Tag> = setOf()
+        override val tags: Set<Tag> = setOf(),
+        override var action: ScriptAction = ScriptAction.RUN
 ) : ScriptWithContent {
 
     override val name: String

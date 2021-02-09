@@ -5,6 +5,7 @@ import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.db.driver.DatamaintainDriver
 import datamaintain.core.db.driver.FakeDriverConfig
 import datamaintain.core.script.FileScript
+import datamaintain.core.script.ScriptAction
 import datamaintain.core.script.Tag
 import datamaintain.core.step.Filter
 import datamaintain.core.step.executor.ExecutionMode
@@ -35,6 +36,7 @@ internal class FilterTest {
                         emptySet(),
                         emptySequence(),
                         ExecutionMode.NORMAL,
+                        ScriptAction.RUN,
                         FakeDriverConfig()),
                 dbDriver = dbDriver)
 
@@ -84,6 +86,7 @@ internal class FilterTest {
                         emptySet(),
                         emptySequence(),
                         ExecutionMode.NORMAL,
+                        ScriptAction.RUN,
                         FakeDriverConfig()),
                 dbDriver = dbDriver)
 
@@ -139,6 +142,7 @@ internal class FilterTest {
                         emptySet(),
                         emptySequence(),
                         ExecutionMode.NORMAL,
+                        ScriptAction.RUN,
                         FakeDriverConfig()),
                 dbDriver = dbDriver)
 

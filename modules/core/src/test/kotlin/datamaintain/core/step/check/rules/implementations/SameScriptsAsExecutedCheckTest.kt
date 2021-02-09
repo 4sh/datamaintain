@@ -2,6 +2,7 @@ package datamaintain.core.step.check.rules.implementations
 
 import datamaintain.core.script.ExecutedScript
 import datamaintain.core.script.ExecutionStatus
+import datamaintain.core.script.ScriptAction
 import datamaintain.test.ScriptWithContentWithFixedChecksum
 import org.junit.jupiter.api.Test
 import strikt.api.expectCatching
@@ -15,9 +16,12 @@ internal class SameScriptsAsExecutedCheckTest {
     private val script3 = ScriptWithContentWithFixedChecksum("script3", "3", "3")
     private val script4 = ScriptWithContentWithFixedChecksum("script4", "4", "4")
 
-    private val executedScript1 = ExecutedScript("script1", "1", "1", ExecutionStatus.OK)
-    private val executedScript2 = ExecutedScript("script2", "2", "2", ExecutionStatus.OK)
-    private val executedScript3 = ExecutedScript("script3", "3", "3", ExecutionStatus.OK)
+    private val executedScript1 = ExecutedScript("script1", "1", "1", ExecutionStatus.OK,
+            ScriptAction.RUN)
+    private val executedScript2 = ExecutedScript("script2", "2", "2", ExecutionStatus.OK,
+            ScriptAction.RUN)
+    private val executedScript3 = ExecutedScript("script3", "3", "3", ExecutionStatus.OK,
+            ScriptAction.RUN)
 
     @Test
     fun `should succeed with empty sequences`() {
