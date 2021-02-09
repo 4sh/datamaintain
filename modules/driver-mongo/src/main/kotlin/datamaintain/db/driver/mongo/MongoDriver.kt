@@ -1,6 +1,7 @@
 package datamaintain.db.driver.mongo
 
 import datamaintain.core.db.driver.DatamaintainDriver
+import datamaintain.core.exception.DatamaintainMongoQueryException
 import datamaintain.core.script.ExecutedScript
 import datamaintain.core.script.ExecutionStatus
 import datamaintain.core.script.FileScript
@@ -63,7 +64,7 @@ class MongoDriver(private val mongoUri: String,
                     .toList()
             if (saveOutput) {
                 val totalOutputSize = lines.map { line -> line.length }.foldRight(0, Int::plus)
-                var dropped = 0;
+                var dropped = 0
                 return lines
                         .dropLastWhile { line ->
                             val drop = totalOutputSize - dropped > OUTPUT_MAX_SIZE
@@ -118,7 +119,7 @@ class MongoDriver(private val mongoUri: String,
         }
 
         if (exitCode != 0 || executionOutput == null) {
-            throw IllegalStateException("Query $query fail with exit code $exitCode an output : $executionOutput")
+            throw DatamaintainMongoQueryException(query, exitCode, executionOutput)
         }
 
         return executionOutput as String

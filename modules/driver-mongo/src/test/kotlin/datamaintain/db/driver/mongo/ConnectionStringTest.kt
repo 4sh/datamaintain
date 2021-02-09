@@ -1,5 +1,6 @@
 package datamaintain.db.driver.mongo
 
+import datamaintain.core.exception.DatamaintainMongoUriException
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
@@ -25,7 +26,7 @@ internal class ConnectionStringTest {
             // Then
             expectCatching { ConnectionString.buildConnectionString(mongoUri) }
                     .failed()
-                    .isA<IllegalArgumentException>()
+                    .isA<DatamaintainMongoUriException>()
         }
 
         @Test
@@ -68,7 +69,7 @@ internal class ConnectionStringTest {
             // Then
             expectCatching { ConnectionString.buildConnectionString(mongoUri) }
                     .failed()
-                    .isA<IllegalArgumentException>()
+                    .isA<DatamaintainMongoUriException>()
         }
 
         @Test
@@ -97,7 +98,7 @@ internal class ConnectionStringTest {
             // Then
             expectCatching { ConnectionString.buildConnectionString(mongoUri) }
                     .failed()
-                    .isA<IllegalArgumentException>()
+                    .isA<DatamaintainMongoUriException>()
         }
 
         @Test
@@ -147,7 +148,7 @@ internal class ConnectionStringTest {
             // Then
             expectCatching { ConnectionString.buildConnectionString(mongoUri) }
                     .failed()
-                    .isA<IllegalArgumentException>()
+                    .isA<DatamaintainMongoUriException>()
         }
 
         @Test
@@ -161,7 +162,7 @@ internal class ConnectionStringTest {
             // Then
             expectCatching { ConnectionString.buildConnectionString(mongoUri) }
                     .failed()
-                    .isA<IllegalArgumentException>()
+                    .isA<DatamaintainMongoUriException>()
         }
 
         @Test
@@ -189,7 +190,7 @@ internal class ConnectionStringTest {
             // Then
             expectCatching { ConnectionString.buildConnectionString(mongoUri) }
                     .failed()
-                    .isA<IllegalArgumentException>()
+                    .isA<DatamaintainMongoUriException>()
         }
 
         @Test
@@ -202,7 +203,7 @@ internal class ConnectionStringTest {
             // Then
             expectCatching { ConnectionString.buildConnectionString(mongoUri) }
                     .failed()
-                    .isA<IllegalArgumentException>()
+                    .isA<DatamaintainMongoUriException>()
         }
 
         @Test
@@ -215,7 +216,7 @@ internal class ConnectionStringTest {
             // Then
             expectCatching { ConnectionString.buildConnectionString(mongoUri) }
                     .failed()
-                    .isA<IllegalArgumentException>()
+                    .isA<DatamaintainMongoUriException>()
         }
 
         @Test
@@ -244,7 +245,7 @@ internal class ConnectionStringTest {
             // Then
             expectCatching { ConnectionString.buildConnectionString(mongoUri) }
                     .failed()
-                    .isA<IllegalArgumentException>()
+                    .isA<DatamaintainMongoUriException>()
         }
 
         @Test
@@ -257,7 +258,7 @@ internal class ConnectionStringTest {
             // Then
             expectCatching { ConnectionString.buildConnectionString(mongoUri) }
                     .failed()
-                    .isA<IllegalArgumentException>()
+                    .isA<DatamaintainMongoUriException>()
         }
 
         @Test

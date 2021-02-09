@@ -7,7 +7,7 @@ import datamaintain.core.step.check.rules.contracts.ScriptCheckRule
 
 class AlwaysFailedCheck: ScriptCheckRule() {
     override fun check(script: ScriptWithContent) {
-        throw DatamaintainCheckException("ERROR - ${getName()} - Use this rule for tests only")
+        throw DatamaintainCheckException(getName(), "Use this rule for tests only")
     }
 
     override fun getName(): String {

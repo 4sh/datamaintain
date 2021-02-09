@@ -1,5 +1,7 @@
 package datamaintain.db.driver.mongo
 
+import datamaintain.core.exception.DatamaintainMongoUriException
+
 class ConnectionString {
     companion object {
         private val MONGO_URI_REGEX = Regex("^mongodb(?:\\+srv)?://(?:([-._\\w]+):(.+)@)?([-.\\w]+)(?::([0-9]+))?(?:/([\\w-_]+)(?:\\?([\\w_.]+=[\\w_]+))?)")
@@ -10,7 +12,7 @@ class ConnectionString {
                 return mongoUri
             }
 
-            throw IllegalArgumentException("MongoUri is not correct. The expected format is: mongodb://[username:password@]host[:port]/databasename[?options]")
+            throw DatamaintainMongoUriException(mongoUri)
         }
     }
 }

@@ -22,7 +22,8 @@ class SameScriptsAsExecutedCheck(
                     .toList()
 
             throw DatamaintainCheckException(
-                "ERROR - ${getName()} - Some executed scripts are not present : $executedScriptNames",
+                getName(),
+                "Some executed scripts are not present : $executedScriptNames",
                 resolutionMessage = "Please restore executed scripts or disable check ${getName()}"
             )
         }

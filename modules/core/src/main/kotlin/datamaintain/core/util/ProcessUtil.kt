@@ -1,5 +1,6 @@
 package datamaintain.core.util
 
+import datamaintain.core.exception.DatamaintainProcessException
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
@@ -23,6 +24,6 @@ fun List<String>.runProcess(
         proc.waitFor(timeoutValue, timeoutUnit)
         return  proc.exitValue()
     } catch (e: IOException) {
-        throw IllegalStateException(e.message, e)
+        throw DatamaintainProcessException(this, e.message ?: "")
     }
 }

@@ -4,6 +4,7 @@ import datamaintain.core.Context
 import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.db.driver.DatamaintainDriver
 import datamaintain.core.db.driver.FakeDriverConfig
+import datamaintain.core.exception.DatamaintainCheckRuleNotFoundException
 import datamaintain.core.exception.DatamaintainException
 import datamaintain.core.step.check.rules.implementations.AlwaysFailedCheck
 import datamaintain.core.step.check.rules.implementations.AlwaysSucceedCheck
@@ -113,7 +114,7 @@ internal class CheckerTest {
         val checker = Checker(context)
 
         // WhenThen
-        expectThrows<IllegalArgumentException> { checker.check(checkerData) }
+        expectThrows<DatamaintainException> { checker.check(checkerData) }
                 .get { message }
                 .isEqualTo("Aborting - Check rule `${badRuleName}` not found")
     }
@@ -133,7 +134,7 @@ internal class CheckerTest {
         val checker = Checker(context)
 
         // WhenThen
-        expectThrows<IllegalArgumentException> { checker.check(CheckerData()) }
+        expectThrows<DatamaintainException> { checker.check(CheckerData()) }
                 .get { message }
                 .isEqualTo("Aborting - Check rule `${badRuleName}` not found")
     }
