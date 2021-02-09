@@ -10,7 +10,9 @@ import datamaintain.core.Datamaintain
 import datamaintain.core.config.CoreConfigKey
 import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.script.ScriptAction
+import datamaintain.core.exception.DatamaintainBaseException
 import datamaintain.core.exception.DatamaintainException
+import datamaintain.core.report.Report
 import datamaintain.core.step.check.allCheckRuleNames
 import datamaintain.core.step.executor.ExecutionMode
 import datamaintain.db.driver.mongo.MongoConfigKey
@@ -109,8 +111,16 @@ class UpdateDb(val runner: (DatamaintainConfig) -> Unit = ::defaultUpdateDbRunne
             val verbose: Boolean = config?.verbose ?: false
 
             echo("Error at step ${e.step}", err = true)
-            echo(e.report.print(verbose))
+            e.report.print(verbose)
             echo("")
+            echo(e.message, err = true)
+
+            if (e.resolutionMessage.isNotEmpty()) {
+                echo(e.resolutionMessage)
+            }
+
+            exitProcess(1)
+        } catch (e: DatamaintainBaseException) {
             echo(e.message, err = true)
             echo(e.resolutionMessage)
 
@@ -157,6 +167,11 @@ class ListExecutedScripts : CliktCommand(name = "list") {
             Datamaintain(config).listExecutedScripts().forEach {
                 logger.info { "${it.name} (${it.checksum})" }
             }
+        } catch (e: DatamaintainBaseException) {
+            echo(e.message, err = true)
+            echo(e.resolutionMessage)
+
+            exitProcess(1)
         } catch (e: DbTypeNotFoundException) {
             echo("dbType ${e.dbType} is unknown")
             exitProcess(1)
