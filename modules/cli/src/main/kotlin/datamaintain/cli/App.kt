@@ -9,6 +9,7 @@ import com.github.ajalt.clikt.parameters.types.choice
 import datamaintain.core.Datamaintain
 import datamaintain.core.config.CoreConfigKey
 import datamaintain.core.config.DatamaintainConfig
+import datamaintain.core.script.ScriptAction
 import datamaintain.core.step.check.allCheckRuleNames
 import datamaintain.core.step.executor.ExecutionMode
 import datamaintain.db.driver.mongo.MongoConfigKey
@@ -71,6 +72,8 @@ class UpdateDb(val runner: (DatamaintainConfig) -> Unit = ::defaultUpdateDbRunne
 
     private val executionMode by option(help = "execution mode").choice(ExecutionMode.values().map { it.name }.map { it to it }.toMap())
 
+    private val action by option(help = "script action").choice(ScriptAction.values().map { it.name }.map { it to it }.toMap())
+
     private val verbose: Boolean? by option(help = "verbose").flag()
 
     private val mongoSaveOutput: Boolean? by option(help = "save mongo output").flag()
@@ -121,6 +124,7 @@ class UpdateDb(val runner: (DatamaintainConfig) -> Unit = ::defaultUpdateDbRunne
         mongoSaveOutput?.let { props.put(MongoConfigKey.DB_MONGO_SAVE_OUTPUT.key, it.toString()) }
         mongoPrintOutput?.let { props.put(MongoConfigKey.DB_MONGO_PRINT_OUTPUT.key, it.toString()) }
         executionMode?.let { props.put(CoreConfigKey.EXECUTION_MODE.key, it) }
+        action?.let { props.put(CoreConfigKey.DEFAULT_SCRIPT_ACTION.key, it) }
         tagsMatchers?.forEach {
             props.put("${CoreConfigKey.TAG.key}.${it.first}", it.second)
         }

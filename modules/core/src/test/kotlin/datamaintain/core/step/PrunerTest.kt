@@ -1,13 +1,10 @@
 package datamaintain.core.step
 
-import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.Context
+import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.db.driver.DatamaintainDriver
 import datamaintain.core.db.driver.FakeDriverConfig
-import datamaintain.core.script.FileScript
-import datamaintain.core.script.ExecutedScript
-import datamaintain.core.script.ExecutionStatus
-import datamaintain.core.script.Tag
+import datamaintain.core.script.*
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
@@ -43,7 +40,8 @@ internal class PrunerTest {
                         "01_file1",
                         "c4ca4238a0b923820dcc509a6f75849b",
                         "",
-                        ExecutionStatus.OK
+                        ExecutionStatus.OK,
+                        ScriptAction.RUN
                 )))
 
         // When
@@ -70,7 +68,8 @@ internal class PrunerTest {
                         "01_file1_renamed",
                         "c4ca4238a0b923820dcc509a6f75849b",
                         "",
-                        ExecutionStatus.OK
+                        ExecutionStatus.OK,
+                        ScriptAction.RUN
                 )))
 
         // When

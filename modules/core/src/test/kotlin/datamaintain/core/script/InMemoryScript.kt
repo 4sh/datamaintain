@@ -7,7 +7,8 @@ data class InMemoryScript(
         override val name: String,
         override val content: String,
         override val identifier: String,
-        override val tags: Set<Tag> = setOf()) : ScriptWithContent {
+        override val tags: Set<Tag> = setOf(),
+        override var action: ScriptAction = ScriptAction.RUN) : ScriptWithContent {
 
     override val checksum: String by lazy {
         content.hash()
