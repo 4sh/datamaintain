@@ -1,7 +1,10 @@
 package datamaintain.core.step.check
 
 import datamaintain.core.Context
+import datamaintain.core.exception.DatamaintainCheckException
+import datamaintain.core.exception.DatamaintainException
 import datamaintain.core.script.ScriptWithContent
+import datamaintain.core.step.Step
 import datamaintain.core.step.check.rules.CheckRule
 import datamaintain.core.step.check.rules.ScriptType
 import datamaintain.core.step.check.rules.contracts.FullContextCheckRule
@@ -28,8 +31,18 @@ class Checker(private val context: Context) {
                 .map { buildCheckRule(it) }
                 .toList()
 
-        // All rules exist so we can launch them
-        rules.forEach { executeRule(it, checkedData) }
+        // All rules exist so we can launch them. Check must throw an DatamaintainCheckException for been catch
+        try {
+            rules.onEach { executeRule(it, checkedData) }
+                .forEach {context.reportBuilder.addValidatedCheckRules(it)}
+        } catch (datamaintainCheckException: DatamaintainCheckException) {
+            throw DatamaintainException(
+                datamaintainCheckException.message,
+                Step.CHECK,
+                context.reportBuilder,
+                datamaintainCheckException.resolutionMessage
+            )
+        }
 
         logger.info { "All check rules were executed!" }
         logger.info { "" }
