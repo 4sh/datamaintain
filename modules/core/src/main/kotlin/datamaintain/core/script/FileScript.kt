@@ -1,5 +1,6 @@
 package datamaintain.core.script
 
+import datamaintain.core.config.DatamaintainConfig
 import java.math.BigInteger
 import java.nio.file.Path
 import java.security.MessageDigest
@@ -8,7 +9,7 @@ class FileScript @JvmOverloads constructor(
         val path: Path,
         identifierRegex: Regex,
         override val tags: Set<Tag> = setOf(),
-        override var action: ScriptAction = ScriptAction.RUN
+        override var action: ScriptAction = DatamaintainConfig.defaultAction
 ) : ScriptWithContent {
 
     override val name: String

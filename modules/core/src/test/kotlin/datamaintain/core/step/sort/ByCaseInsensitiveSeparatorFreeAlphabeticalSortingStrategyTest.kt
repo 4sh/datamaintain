@@ -14,10 +14,8 @@ internal class ByCaseInsensitiveSeparatorFreeAlphabeticalSortingStrategyTest  {
     @Test
     fun `should sort scripts list by name`() {
         // Given
-        val superScript = ExecutedScript("super script", "checksum", "", ExecutionStatus.OK,
-                ScriptAction.RUN)
-        val greatScript = ExecutedScript("great script", "checksum", "", ExecutionStatus.OK,
-                ScriptAction.RUN)
+        val superScript = buildExecutedScript("super script", "checksum", "")
+        val greatScript = buildExecutedScript("great script", "checksum", "")
 
         // When
         expectThat(sortingStrategy.sort(listOf(
@@ -33,12 +31,9 @@ internal class ByCaseInsensitiveSeparatorFreeAlphabeticalSortingStrategyTest  {
     @Test
     fun `should sort scripts list by name containing numbers`() {
         // Given
-        val script2 = ExecutedScript("2", "checksum", "", ExecutionStatus.OK,
-                ScriptAction.RUN)
-        val script1 = ExecutedScript("1", "checksum", "", ExecutionStatus.OK,
-                ScriptAction.RUN)
-        val script10 = ExecutedScript("10", "checksum", "", ExecutionStatus.OK,
-                ScriptAction.RUN)
+        val script2 = buildExecutedScript("2", "checksum", "")
+        val script1 = buildExecutedScript("1", "checksum", "")
+        val script10 = buildExecutedScript("10", "checksum", "")
 
         // When
         expectThat(sortingStrategy.sort(listOf(
@@ -56,12 +51,9 @@ internal class ByCaseInsensitiveSeparatorFreeAlphabeticalSortingStrategyTest  {
     @Test
     fun `should sort scripts list by name containing numbers, letters and caps`() {
         // Given
-        val script2 = ExecutedScript("Script2", "checksum", "", ExecutionStatus.OK,
-                ScriptAction.RUN)
-        val script1 = ExecutedScript("scrIpt1", "checksum", "", ExecutionStatus.OK,
-                ScriptAction.RUN)
-        val script10 = ExecutedScript("script10", "checksum", "", ExecutionStatus.OK,
-                ScriptAction.RUN)
+        val script2 = buildExecutedScript("Script2", "checksum", "")
+        val script1 = buildExecutedScript("scrIpt1", "checksum", "")
+        val script10 = buildExecutedScript("script10", "checksum", "")
 
         // When
         expectThat(sortingStrategy.sort(listOf(
@@ -79,12 +71,9 @@ internal class ByCaseInsensitiveSeparatorFreeAlphabeticalSortingStrategyTest  {
     @Test
     fun `should sort scripts list by identifier`() {
         // Given
-        val superScript = ExecutedScript("super script", "checksum1", "2", ExecutionStatus.OK,
-                ScriptAction.RUN)
-        val greatScript = ExecutedScript("great script", "checksum2", "1", ExecutionStatus.OK,
-                ScriptAction.RUN)
-        val script = ExecutedScript("script", "checksum3", "11", ExecutionStatus.OK,
-                ScriptAction.RUN)
+        val superScript = buildExecutedScript("super script", "checksum1", "2")
+        val greatScript = buildExecutedScript("great script", "checksum2", "1")
+        val script = buildExecutedScript("script", "checksum3", "11")
 
         // When
         expectThat(sortingStrategy.sort(listOf(superScript, greatScript, script), Script::identifier)) {
@@ -99,18 +88,12 @@ internal class ByCaseInsensitiveSeparatorFreeAlphabeticalSortingStrategyTest  {
     @Test
     fun `should sort scripts list by complex identifier with only digit`() {
         // Given
-        val script1 = ExecutedScript("v1", "checksum1", "1", ExecutionStatus.OK,
-                ScriptAction.RUN)
-        val script2 = ExecutedScript("v1.1", "checksum2", "1.1", ExecutionStatus.OK,
-                ScriptAction.RUN)
-        val script3 = ExecutedScript("v1.1.0-1", "checksum3", "1.1.0-1", ExecutionStatus.OK,
-                ScriptAction.RUN)
-        val script4 = ExecutedScript("v1.2", "checksum4", "1.2", ExecutionStatus.OK,
-                ScriptAction.RUN)
-        val script5 = ExecutedScript("v11", "checksum5", "11", ExecutionStatus.OK,
-                ScriptAction.RUN)
-        val script6 = ExecutedScript("v101", "checksum6", "101", ExecutionStatus.OK,
-                ScriptAction.RUN)
+        val script1 = buildExecutedScript("v1", "checksum1", "1")
+        val script2 = buildExecutedScript("v1.1", "checksum2", "1.1")
+        val script3 = buildExecutedScript("v1.1.0-1", "checksum3", "1.1.0-1")
+        val script4 = buildExecutedScript("v1.2", "checksum4", "1.2")
+        val script5 = buildExecutedScript("v11", "checksum5", "11")
+        val script6 = buildExecutedScript("v101", "checksum6", "101")
 
         // When
         expectThat(sortingStrategy.sort(listOf(script4, script1, script5, script3, script6, script2), Script::identifier)) {
@@ -128,16 +111,11 @@ internal class ByCaseInsensitiveSeparatorFreeAlphabeticalSortingStrategyTest  {
     @Test
     fun `should sort scripts list by complex identifier with only char`() {
         // Given
-        val script1 = ExecutedScript("va", "checksum1", "a", ExecutionStatus.OK,
-                ScriptAction.RUN)
-        val script2 = ExecutedScript("va.a", "checksum2", "a.a", ExecutionStatus.OK,
-                ScriptAction.RUN)
-        val script3 = ExecutedScript("va.a.b-a", "checksum3", "a.a.b-a", ExecutionStatus.OK,
-                ScriptAction.RUN)
-        val script4 = ExecutedScript("va.b", "checksum4", "a.b", ExecutionStatus.OK,
-                ScriptAction.RUN)
-        val script5 = ExecutedScript("vaa", "checksum5", "aa", ExecutionStatus.OK,
-                ScriptAction.RUN)
+        val script1 = buildExecutedScript("va", "checksum1", "a")
+        val script2 = buildExecutedScript("va.a", "checksum2", "a.a")
+        val script3 = buildExecutedScript("va.a.b-a", "checksum3", "a.a.b-a")
+        val script4 = buildExecutedScript("va.b", "checksum4", "a.b")
+        val script5 = buildExecutedScript("vaa", "checksum5", "aa")
 
         // When
         expectThat(sortingStrategy.sort(listOf(script4, script1, script5, script3, script2), Script::identifier)) {
@@ -154,20 +132,13 @@ internal class ByCaseInsensitiveSeparatorFreeAlphabeticalSortingStrategyTest  {
     @Test
     fun `should sort scripts list by complex identifier`() {
         // Given
-        val script1 = ExecutedScript("va", "checksum1", "a", ExecutionStatus.OK,
-                ScriptAction.RUN)
-        val script2 = ExecutedScript("va.1", "checksum2", "a.1", ExecutionStatus.OK,
-                ScriptAction.RUN)
-        val script3 = ExecutedScript("va.1.b-1", "checksum3", "a.1.b-1", ExecutionStatus.OK,
-                ScriptAction.RUN)
-        val script4 = ExecutedScript("va.1.b-2", "checksum4", "a.1.b-2", ExecutionStatus.OK,
-                ScriptAction.RUN)
-        val script5 = ExecutedScript("va.1.c", "checksum5", "a.1.c", ExecutionStatus.OK,
-                ScriptAction.RUN)
-        val script6 = ExecutedScript("va.2", "checksum6", "a.2", ExecutionStatus.OK,
-                ScriptAction.RUN)
-        val script7 = ExecutedScript("vaa", "checksum7", "aa", ExecutionStatus.OK,
-                ScriptAction.RUN)
+        val script1 = buildExecutedScript("va", "checksum1", "a")
+        val script2 = buildExecutedScript("va.1", "checksum2", "a.1")
+        val script3 = buildExecutedScript("va.1.b-1", "checksum3", "a.1.b-1")
+        val script4 = buildExecutedScript("va.1.b-2", "checksum4", "a.1.b-2")
+        val script5 = buildExecutedScript("va.1.c", "checksum5", "a.1.c")
+        val script6 = buildExecutedScript("va.2", "checksum6", "a.2")
+        val script7 = buildExecutedScript("vaa", "checksum7", "aa")
 
         // When
         expectThat(sortingStrategy.sort(listOf(script4, script6, script1, script5, script3, script7, script2), Script::identifier)) {
@@ -186,10 +157,8 @@ internal class ByCaseInsensitiveSeparatorFreeAlphabeticalSortingStrategyTest  {
     @Test
     fun `should sort scripts list by complex identifier1`() {
         // Given
-        val script1 = ExecutedScript("1", "checksum1", "abc", ExecutionStatus.OK,
-                ScriptAction.RUN)
-        val script2 = ExecutedScript("2", "checksum2", "bc", ExecutionStatus.OK,
-                ScriptAction.RUN)
+        val script1 = buildExecutedScript("1", "checksum1", "abc")
+        val script2 = buildExecutedScript("2", "checksum2", "bc")
 
         // When
         expectThat(sortingStrategy.sort(listOf(script1, script2), Script::identifier)) {
@@ -203,10 +172,8 @@ internal class ByCaseInsensitiveSeparatorFreeAlphabeticalSortingStrategyTest  {
     @Test
     fun `should sort scripts list by complex identifier2`() {
         // Given
-        val script1 = ExecutedScript("1", "checksum1", "v0.1", ExecutionStatus.OK,
-                ScriptAction.RUN)
-        val script2 = ExecutedScript("2", "checksum2", "v1", ExecutionStatus.OK,
-                ScriptAction.RUN)
+        val script1 = buildExecutedScript("1", "checksum1", "v0.1")
+        val script2 = buildExecutedScript("2", "checksum2", "v1")
 
         // When
         expectThat(sortingStrategy.sort(listOf(script1, script2), Script::identifier)) {
@@ -220,10 +187,8 @@ internal class ByCaseInsensitiveSeparatorFreeAlphabeticalSortingStrategyTest  {
     @Test
     fun `should sort scripts list by complex identifier3`() {
         // Given
-        val script1 = ExecutedScript("1", "checksum1", "1.0001", ExecutionStatus.OK,
-                ScriptAction.RUN)
-        val script2 = ExecutedScript("2", "checksum2", "1.0002", ExecutionStatus.OK,
-                ScriptAction.RUN)
+        val script1 = buildExecutedScript("1", "checksum1", "1.0001")
+        val script2 = buildExecutedScript("2", "checksum2", "1.0002")
 
         // When
         expectThat(sortingStrategy.sort(listOf(script1, script2), Script::identifier)) {
@@ -233,4 +198,7 @@ internal class ByCaseInsensitiveSeparatorFreeAlphabeticalSortingStrategyTest  {
             get(1).isEqualTo(script2)
         }
     }
+
+    private fun buildExecutedScript(name: String, checksum: String, identifier: String) = ExecutedScript(
+            name, checksum, identifier, ExecutionStatus.OK, ScriptAction.RUN)
 }

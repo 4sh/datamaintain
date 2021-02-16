@@ -19,19 +19,17 @@ class Executor(private val context: Context) {
         for (script in scripts) {
             val executedScript = when (context.config.executionMode) {
                 ExecutionMode.NORMAL -> doAction(script)
-                else -> simulateAction(script)
+                ExecutionMode.DRY -> simulateAction(script)
+                else -> throw IllegalStateException("Should not be in that case")
             }
 
             context.reportBuilder.addExecutedScript(executedScript)
 
-            when (executedScript.executionStatus) {
-                ExecutionStatus.KO -> {
-                    context.reportBuilder.inError(executedScript)
-                    logger.info { "${executedScript.name} has not been correctly executed" }
-                    // TODO handle interactive shell
-                    return context.reportBuilder.toReport()
-                }
-                else -> {}
+            if (executedScript.executionStatus == ExecutionStatus.KO) {
+                context.reportBuilder.inError(executedScript)
+                logger.info { "${executedScript.name} has not been correctly executed" }
+                // TODO handle interactive shell
+                return context.reportBuilder.toReport()
             }
         }
 

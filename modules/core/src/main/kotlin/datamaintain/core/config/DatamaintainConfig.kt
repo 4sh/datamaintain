@@ -31,7 +31,7 @@ data class DatamaintainConfig @JvmOverloads constructor(val path: Path = Paths.g
 
     companion object {
         private val defaultExecutionMode = ExecutionMode.NORMAL
-        private val defaultAction = ScriptAction.RUN
+        public val defaultAction = ScriptAction.RUN
 
         @JvmStatic
         fun buildConfig(configInputStream: InputStream, driverConfig: DatamaintainDriverConfig): DatamaintainConfig {
@@ -48,7 +48,7 @@ data class DatamaintainConfig @JvmOverloads constructor(val path: Path = Paths.g
             var executionMode = ExecutionMode.fromNullable(props.getNullableProperty(EXECUTION_MODE), defaultExecutionMode)
 
             val scriptAction = if (ExecutionMode.FORCE_MARK_AS_EXECUTED == executionMode) {
-                // To be compliant with previous version (and avoir breaking changes)
+                // To be compliant with previous version (and avoid breaking changes)
                 // we set script action from ExecutionMode.FORCE_MARK_AS_EXECUTED
                 executionMode = ExecutionMode.NORMAL
                 ScriptAction.MARK_AS_EXECUTED
@@ -94,6 +94,7 @@ data class DatamaintainConfig @JvmOverloads constructor(val path: Path = Paths.g
     fun log() {
         logger.info { "Configuration: " }
         path.let { logger.info { "- path -> $it" } }
+        defaultScriptAction.let { logger.info { "- script action -> ${it}" } }
         identifierRegex.let { logger.info { "- identifier regex -> ${it.pattern}" } }
         blacklistedTags.let { logger.info { "- blacklisted tags -> $it" } }
         tagsToPlayAgain.let { logger.info { "- tags to play again -> $it" } }

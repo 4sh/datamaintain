@@ -31,14 +31,7 @@ data class ExecutedScript @JvmOverloads constructor(
                         script.action
                 )
 
-        fun build(script: ScriptWithContent, execution: Execution) =
-                ExecutedScript(
-                        script.name,
-                        script.checksum,
-                        script.identifier,
-                        execution.executionStatus,
-                        script.action
-                )
+        fun build(script: ScriptWithContent, execution: Execution) = simulateExecuted(script, execution.executionStatus)
 
         fun build(script: ScriptWithContent, execution: Execution, executionDurationInMillis: Long) =
                 ExecutedScript(
