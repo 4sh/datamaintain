@@ -28,7 +28,7 @@ class MongoDriver(private val mongoUri: String,
         const val EXECUTED_SCRIPTS_COLLECTION = "executedScripts"
 
         // This constant was found doing multiple tests on scripts logging too match
-        const val OUTPUT_MAX_SIZE = 150000
+        const val OUTPUT_MAX_SIZE = 120000
         const val OUTPUT_TRUNCATED_MESSAGE = "... output was truncated because it was too long"
     }
 
@@ -87,6 +87,24 @@ class MongoDriver(private val mongoUri: String,
     override fun markAsExecuted(executedScript: ExecutedScript): ExecutedScript {
         val executedScriptBson = jsonParser.serializeExecutedScript(executedScript)
         executeMongoQuery("db.$EXECUTED_SCRIPTS_COLLECTION.insert($executedScriptBson)")
+        return executedScript
+    }
+
+    override fun overrideScript(executedScript: ExecutedScript): ExecutedScript {
+        val set = "\$set";
+
+        executeMongoQuery("""
+            db.$EXECUTED_SCRIPTS_COLLECTION.update({
+                  "identifier": "${executedScript.identifier}",
+                  "name": "${executedScript.name}"
+                }, {
+                  "$set" : {
+                    "checksum" : "${executedScript.checksum}",
+                    "executionStatus": "${executedScript.executionStatus.name}",
+                    "action": "${executedScript.action.name}"
+                  }
+                }, {})
+                """)
         return executedScript
     }
 

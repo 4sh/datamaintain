@@ -159,6 +159,44 @@ class MongoIT : AbstractMongoDbTest() {
     }
 
     @Test
+    fun `should override`() {
+        // Given
+        main(arrayOf(
+                "--db-type", "mongo",
+                "--mongo-uri", mongoUri,
+                "update-db",
+                "--verbose",
+                "--path", "src/test/resources/integration/partial",
+                "--identifier-regex", "(.*?)_.*"
+
+        ))
+
+        expectThat(database.getCollection("simple").countDocuments()).isEqualTo(2)
+        expectThat(collection.countDocuments()).isEqualTo(2)
+
+        val args = arrayOf(
+                "--db-type", "mongo",
+                "--mongo-uri", mongoUri,
+                "update-db",
+                "--verbose",
+                "--path", "src/test/resources/integration/override",
+                "--identifier-regex", "(.*?)_.*",
+                "--execution-mode", "NORMAL",
+                "--allow-auto-override"
+        )
+
+        // When
+        main(args)
+
+        // Then
+        expectThat(listExecutedFiles())
+                .hasSize(2)
+                .containsExactly(
+                        "01_file.js",
+                        "02_file.js")
+    }
+
+    @Test
     fun `should fail with invalid script`() {
         // Given
         val args = arrayOf(

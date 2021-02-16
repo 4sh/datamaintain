@@ -20,4 +20,9 @@ interface DatamaintainDriver {
      * Does not execute the given script, only inserts its execution in the database
      */
     fun markAsExecuted(executedScript: ExecutedScript): ExecutedScript
+
+    /**
+     * Does not execute the given script, only update its execution in the database
+     */
+    fun overrideScript(executedScript: ExecutedScript): ExecutedScript
 }

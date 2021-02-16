@@ -89,6 +89,45 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
     }
 
     @Test
+    fun `should override script`() {
+        // Given
+        insertDataInDb()
+        val script3 = ExecutedScript(
+                "script1.js",
+                "8747e564eb53cb2f1dcb9aae0779c2aa",
+                "",
+                ExecutionStatus.OK,
+                ScriptAction.OVERRIDE_EXECUTED
+        )
+
+        // When
+        mongoDatamaintainDriver.overrideScript(script3)
+
+        // Then
+        expectThat(collection.find().toList().map { documentToExecutedScript(it) })
+                .hasSize(2).and {
+                    get(0).and {
+                        get { name }.isEqualTo("script1.js")
+                        get { checksum }.isEqualTo("8747e564eb53cb2f1dcb9aae0779c2aa")
+                        get { identifier }.isEqualTo("")
+                        get { executionStatus }.isEqualTo(ExecutionStatus.OK)
+                        get { action }.isEqualTo(ScriptAction.OVERRIDE_EXECUTED)
+                        get { executionOutput }.isNull()
+                        get { executionDurationInMillis }.isNull()
+                    }
+                    get(1).and {
+                        get { name }.isEqualTo("script2.js")
+                        get { checksum }.isEqualTo("c81e728d9d4c2f636f067f89cc14862c")
+                        get { identifier }.isEqualTo("")
+                        get { executionStatus }.isEqualTo(ExecutionStatus.OK)
+                        get { action }.isEqualTo(ScriptAction.RUN)
+                        get { executionOutput }.isNull()
+                        get { executionDurationInMillis }.isNull()
+                    }
+                }
+    }
+
+    @Test
     fun `should execute correct file script`() {
         // Given
         database.getCollection("simple").drop()

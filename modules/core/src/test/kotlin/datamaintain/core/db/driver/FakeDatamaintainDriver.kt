@@ -18,4 +18,8 @@ class FakeDatamaintainDriver : DatamaintainDriver {
         throw NotImplementedError("FakeDatamaintainDriver markAsExecuted method should not be used")
     }
 
+    override fun overrideScript(executedScript: ExecutedScript): ExecutedScript {
+        throw NotImplementedError("FakeDatamaintainDriver override method should not be used")
+    }
+
 }

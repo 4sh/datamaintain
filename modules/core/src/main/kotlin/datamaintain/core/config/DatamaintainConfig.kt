@@ -21,6 +21,7 @@ data class DatamaintainConfig @JvmOverloads constructor(val path: Path = Paths.g
                                                         val whitelistedTags: Set<Tag> = setOf(),
                                                         val blacklistedTags: Set<Tag> = setOf(),
                                                         val tagsToPlayAgain: Set<Tag> = setOf(),
+                                                        val overrideExecutedScripts: Boolean = PRUNE_OVERRIDE_UPDATED_SCRIPTS.default!!.toBoolean(),
                                                         val tagsMatchers: Set<TagMatcher> = setOf(),
                                                         val checkRules: Sequence<String> = emptySequence(),
                                                         val executionMode: ExecutionMode = defaultExecutionMode,
@@ -62,6 +63,7 @@ data class DatamaintainConfig @JvmOverloads constructor(val path: Path = Paths.g
                     extractTags(props.getNullableProperty(TAGS_WHITELISTED)),
                     extractTags(props.getNullableProperty(TAGS_BLACKLISTED)),
                     extractTags(props.getNullableProperty(PRUNE_TAGS_TO_RUN_AGAIN)),
+                    props.getProperty(PRUNE_OVERRIDE_UPDATED_SCRIPTS).toBoolean(),
                     props.getStringPropertiesByPrefix(TAG.key)
                             .map { TagMatcher.parse(it.first.replace("${TAG.key}.", ""), it.second) }
                             .toSet(),
@@ -96,6 +98,7 @@ data class DatamaintainConfig @JvmOverloads constructor(val path: Path = Paths.g
         blacklistedTags.let { logger.info { "- blacklisted tags -> $it" } }
         tagsToPlayAgain.let { logger.info { "- tags to play again -> $it" } }
         tagsMatchers.let { logger.info { "- tags -> $tagsMatchers" } }
+        overrideExecutedScripts.let { logger.info { "- Allow override executed script -> ${it}" } }
         checkRules.let { logger.info { "- rules -> $checkRules" } }
         executionMode.let { logger.info { "- execution mode -> $it" } }
         verbose.let { logger.info { "- verbose -> $it" } }
@@ -137,6 +140,7 @@ enum class CoreConfigKey(override val key: String,
 
     // PRUNER
     PRUNE_TAGS_TO_RUN_AGAIN("prune.tags.to.run.again"),
+    PRUNE_OVERRIDE_UPDATED_SCRIPTS("prune.scripts.override.executed", "false"),
 
     // CHECKER
     CHECK_RULES("check.rules"),

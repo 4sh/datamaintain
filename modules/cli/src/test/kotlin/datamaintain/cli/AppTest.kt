@@ -68,6 +68,56 @@ internal class AppTest {
         }
     }
 
+    @Test
+    fun `should build default config without auto override`() {
+        // Given
+        val configWrapper = ConfigWrapper()
+
+        fun runner(config: DatamaintainConfig) {
+            configWrapper.datamaintainConfig = config
+        }
+
+        val argv = getSmallestArgs()
+
+        // When
+        App().subcommands(UpdateDb(runner = ::runner), ListExecutedScripts()).main(argv)
+
+        // Then
+        defaultChecks(configWrapper)
+        expectThat(configWrapper) {
+            get { datamaintainConfig }.isNotNull()
+        }
+        expectThat(configWrapper.datamaintainConfig!!.overrideExecutedScripts) {
+            isFalse()
+        }
+    }
+
+    @Test
+    fun `should build config with auto override`() {
+        // Given
+        val configWrapper = ConfigWrapper()
+
+        fun runner(config: DatamaintainConfig) {
+            configWrapper.datamaintainConfig = config
+        }
+
+        val argv = getSmallestArgs().plus(listOf(
+                "--allow-auto-override"
+        ))
+
+        // When
+        App().subcommands(UpdateDb(runner = ::runner), ListExecutedScripts()).main(argv)
+
+        // Then
+        defaultChecks(configWrapper)
+        expectThat(configWrapper) {
+            get { datamaintainConfig }.isNotNull()
+        }
+        expectThat(configWrapper.datamaintainConfig!!.overrideExecutedScripts) {
+            isTrue()
+        }
+    }
+
     private fun defaultChecks(configWrapper: ConfigWrapper) {
         expectThat(configWrapper) {
             get { datamaintainConfig }

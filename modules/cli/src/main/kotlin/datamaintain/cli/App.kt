@@ -74,6 +74,8 @@ class UpdateDb(val runner: (DatamaintainConfig) -> Unit = ::defaultUpdateDbRunne
 
     private val action by option(help = "script action").choice(ScriptAction.values().map { it.name }.map { it to it }.toMap())
 
+    private val allowAutoOverride: Boolean? by option(help = "Allow datamaintain to automaticaly override scripts").flag()
+
     private val verbose: Boolean? by option(help = "verbose").flag()
 
     private val mongoSaveOutput: Boolean? by option(help = "save mongo output").flag()
@@ -129,6 +131,7 @@ class UpdateDb(val runner: (DatamaintainConfig) -> Unit = ::defaultUpdateDbRunne
             props.put("${CoreConfigKey.TAG.key}.${it.first}", it.second)
         }
         checkRules?.let { props.put(CoreConfigKey.CHECK_RULES.key, it.joinToString(",")) }
+        allowAutoOverride?.let { props.put(CoreConfigKey.PRUNE_OVERRIDE_UPDATED_SCRIPTS.key, it.toString()) }
     }
 }
 
