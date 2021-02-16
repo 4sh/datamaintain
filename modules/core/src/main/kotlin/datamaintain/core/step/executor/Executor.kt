@@ -65,6 +65,14 @@ class Executor(private val context: Context) {
 
                 executedScript
             }
+            ScriptAction.OVERRIDE_EXECUTED -> {
+                val executedScript = ExecutedScript.build(script, Execution(ExecutionStatus.OK))
+
+                overrideExecuted(executedScript)
+                logger.info { "${executedScript.name} only marked as executed (so not executed)" }
+
+                executedScript
+            }
         }
     }
 
@@ -86,6 +94,15 @@ class Executor(private val context: Context) {
             logger.error { "error during mark execution of ${it.name} " }
             throw e
             // TODO handle interactive shell
+        }
+    }
+
+    private fun overrideExecuted(it: ExecutedScript) {
+        try {
+            context.dbDriver.overrideScript(it)
+        } catch (e: Exception) {
+            logger.error { "error during override of ${it.fullName()} " }
+            throw e
         }
     }
 }

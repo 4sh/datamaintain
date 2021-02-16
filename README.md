@@ -124,6 +124,7 @@ Then, you may add the dependencies to ```datamaintain-core``` and the driver mod
 | execution.mode | Execution mode. Possible values:<br />- ```NORMAL```: Regular execution: the action for each script will be done.<br />- ```DRY```: No action will be done on script. A full report of what would happen is you ran Datamaintain normally will be logged.<br />- ```FORCE_AS_EXECUTED```: **Deprecated (will be removed in 2.0, use action) !** Scripts will not be executed but their execution will be remembered by Datamaintain for later executions. | ```NORMAL``` | no | ```NORMAL```, ```DRY``` ~~or FORCE_MARK_AS_EXECUTED~~ |
 | verbose | If true, more logs will be printed | ```false``` | no | ```true``` or ```false``` |
 | prune.tags.to.run.again | Scripts that have these tags will be run, even they were already executed  | None | no | ```tag,again``` |
+| prune.scripts.override.executed | Allow datamaintain to override a script if it detect a checksum change on a script already runned (assuming its filename) | ```false``` | no | ```true``` or ```false``` |
 ### Mongo driver configuration
 
 | Key | Description | Default value | Mandatory? | Values examples |

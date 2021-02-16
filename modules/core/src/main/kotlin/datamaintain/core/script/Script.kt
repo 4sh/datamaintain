@@ -6,6 +6,10 @@ interface Script {
     val name: String
     val checksum: String
     val identifier: String
+
+    fun fullName(): String {
+        return name + identifier
+    }
 }
 
 data class ExecutedScript @JvmOverloads constructor(
