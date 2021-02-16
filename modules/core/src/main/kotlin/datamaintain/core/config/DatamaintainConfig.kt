@@ -44,14 +44,15 @@ data class DatamaintainConfig @JvmOverloads constructor(val path: Path = Paths.g
         fun buildConfig(driverConfig: DatamaintainDriverConfig, props: Properties = Properties()): DatamaintainConfig {
             overrideBySystemProperties(props, values().asList())
 
-            val executionMode = ExecutionMode.fromNullable(props.getNullableProperty(EXECUTION_MODE), defaultExecutionMode)
+            var executionMode = ExecutionMode.fromNullable(props.getNullableProperty(EXECUTION_MODE), defaultExecutionMode)
 
             val scriptAction = if (ExecutionMode.FORCE_MARK_AS_EXECUTED == executionMode) {
                 // To be compliant with previous version (and avoir breaking changes)
                 // we set script action from ExecutionMode.FORCE_MARK_AS_EXECUTED
-                 ScriptAction.MARK_AS_EXECUTED
+                executionMode = ExecutionMode.NORMAL
+                ScriptAction.MARK_AS_EXECUTED
             } else {
-                 ScriptAction.fromNullable(props.getNullableProperty(DEFAULT_SCRIPT_ACTION), defaultAction)
+                ScriptAction.fromNullable(props.getNullableProperty(DEFAULT_SCRIPT_ACTION), defaultAction)
             }
 
             return DatamaintainConfig(
