@@ -391,6 +391,20 @@ internal class AppTest {
             expectThat((configWrapper.datamaintainConfig!!.driverConfig) as MongoDriverConfig)
                     .get { mongoUri }.isEqualTo(mongoUri)
         }
+
+        @Test
+        fun `should build configuration with mongo tmp path`() {
+            // Given
+            val mongoTmpPath = "my mongo tmp path"
+            val argv = listOf("--mongo-uri", "mongouri", "--mongo-tmp-path", mongoTmpPath, "update-db")
+
+            // When
+            runApp(argv)
+
+            // Then
+            expectThat((configWrapper.datamaintainConfig!!.driverConfig) as MongoDriverConfig)
+                    .get { mongoTmpPath }.isEqualTo(mongoTmpPath)
+        }
     }
 
     private fun runApp(argv: List<String>) {
