@@ -1,0 +1,55 @@
+name: CI
+
+# Run this workflow every time a new commit pushed to your repository
+on: push
+
+jobs:
+  build-and-test:
+    name: Build and test
+    runs-on: ubuntu-latest
+
+    steps:
+      - run: sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv E52529D4
+      - run: echo "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/4.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.0.list
+      - run: sudo apt-get update
+      - run: sudo apt-get install -y gnupg
+      - run: sudo apt-get install -y mongodb-org-shell
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Build
+        run: ./gradlew build
+
+      - name: Upload Unit Test Results
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: tests-results # Name artifact for storage in cache
+          path: |
+            modules/cli/build/test-results/**/*.xml
+            modules/core/build/test-results/**/*.xml
+            modules/driver-mongo/build/test-results/**/*.xml
+            modules/test/build/test-results/**/*.xml
+
+
+  publish-test-results:
+    name: Publish tests results
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    # the build-and-test job might be skipped, we don't need to run this job then
+    if: success() || failure()
+
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: tests-results # Name of artifact in cache
+          path: tests-results/
+
+      - name: Publish Unit Test Results
+        uses: docker://ghcr.io/enricomi/publish-unit-test-result-action:v1
+        if: always()
+        with:
+          github_token: ${{ github.token }}
+          files: tests-results/**/*.xml

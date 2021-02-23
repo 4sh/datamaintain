@@ -1,6 +1,5 @@
 package datamaintain.core.script
 
-import datamaintain.core.exception.DatamaintainFileIdentifierPatternException
 import org.junit.jupiter.api.Test
 import strikt.api.expectCatching
 import strikt.api.expectThat
@@ -8,6 +7,7 @@ import strikt.assertions.failed
 import strikt.assertions.isA
 import strikt.assertions.isEqualTo
 import java.nio.file.Paths
+import datamaintain.core.exception.DatamaintainFileIdentifierPatternException
 
 internal class FileScriptTest {
     @Test
