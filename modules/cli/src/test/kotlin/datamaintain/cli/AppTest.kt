@@ -377,6 +377,20 @@ internal class AppTest {
                         .isA<DbTypeNotFoundException>()
             }
         }
+
+        @Test
+        fun `should build configuration with mongo uri`() {
+            // Given
+            val mongoUri = "my great mongo uri"
+            val argv = listOf("--mongo-uri", mongoUri, "update-db")
+
+            // When
+            runApp(argv)
+
+            // Then
+            expectThat((configWrapper.datamaintainConfig!!.driverConfig) as MongoDriverConfig)
+                    .get { mongoUri }.isEqualTo(mongoUri)
+        }
     }
 
     private fun runApp(argv: List<String>) {
