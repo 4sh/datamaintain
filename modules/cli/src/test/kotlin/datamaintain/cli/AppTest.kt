@@ -7,12 +7,14 @@ import datamaintain.core.script.TagMatcher
 import datamaintain.core.step.check.rules.implementations.SameScriptsAsExecutedCheck
 import datamaintain.core.step.executor.ExecutionMode
 import datamaintain.db.driver.mongo.MongoDriverConfig
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import datamaintain.db.driver.mongo.MongoDriverConfig
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
+import strikt.api.expectCatching
 import strikt.api.expectThat
 import strikt.assertions.*
 import java.nio.file.Paths
@@ -332,6 +334,8 @@ internal class AppTest {
             }
 
             @Test
+            @Disabled
+            //TODO@ERO: fix this when PR #120 is merged
             fun `should throw error when specified config file path does not exist`() {
                 // Given
                 val argv = listOf("--config-file-path", "non-existing-file.properties", "update-db")
@@ -344,6 +348,35 @@ internal class AppTest {
             }
         }
 
+        @Nested
+        inner class DbType {
+            @Test
+            fun `should build configuration with mongo db type`() {
+                // Given
+                val argv = listOf("--db-type", datamaintain.cli.DbType.MONGO.value, "--mongo-uri", "mongoUri", "update-db")
+
+                // When
+                runApp(argv)
+
+                // Then
+                expectThat(configWrapper.datamaintainConfig!!.driverConfig).isA<MongoDriverConfig>()
+            }
+
+            @Test
+            @Disabled("Does not work")
+            //TODO@ERO: fix this when PR #120 is merged
+            fun `should throw error when given db type is not valid`() {
+                // Given
+                val argv = listOf("--db-type", "invalid db type", "update-db")
+
+                // When
+
+                // Then
+                expectCatching { runApp(argv) }
+                        .failed()
+                        .isA<DbTypeNotFoundException>()
+            }
+        }
     }
 
     private fun runApp(argv: List<String>) {
