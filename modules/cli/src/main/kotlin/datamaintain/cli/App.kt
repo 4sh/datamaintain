@@ -197,7 +197,7 @@ private fun loadDriverConfig(props: Properties): MongoDriverConfig {
     }
 }
 
-private enum class DbType(val value: String) {
+enum class DbType(val value: String) {
     MONGO("mongo")
 }
 
