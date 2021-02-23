@@ -94,7 +94,7 @@ class MongoDriver(private val mongoUri: String,
         val set = "\$set";
 
         executeMongoQuery("""
-            db.$EXECUTED_SCRIPTS_COLLECTION.update({
+            db.$EXECUTED_SCRIPTS_COLLECTION.updateOne({
                   "identifier": "${executedScript.identifier}",
                   "name": "${executedScript.name}"
                 }, {
