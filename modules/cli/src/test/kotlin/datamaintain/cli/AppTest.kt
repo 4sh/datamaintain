@@ -43,7 +43,7 @@ internal class AppTest {
                     ))
 
                     // When
-                    runUpdateDb(argv)
+                    runApp(argv)
 
                     // Then
                     expectThat(configWrapper.datamaintainConfig!!.path).isEqualTo(Paths.get(path))
@@ -59,7 +59,7 @@ internal class AppTest {
                     ))
 
                     // When
-                    runUpdateDb(argv)
+                    runApp(argv)
 
                     // Then
                     expectThat(configWrapper.datamaintainConfig!!.identifierRegex.pattern).isEqualTo(identifierRegex)
@@ -75,7 +75,7 @@ internal class AppTest {
                     ))
 
                     // When
-                    runUpdateDb(argv)
+                    runApp(argv)
 
                     // Then
                     expectThat(configWrapper.datamaintainConfig!!.executionMode).isEqualTo(executionMode)
@@ -89,7 +89,7 @@ internal class AppTest {
                         val argv = updateMongoDbMinimumArguments().plus("--verbose")
 
                         // When
-                        runUpdateDb(argv)
+                        runApp(argv)
 
                         // Then
                         expectThat(configWrapper.datamaintainConfig!!.verbose).isTrue()
@@ -101,7 +101,7 @@ internal class AppTest {
                         val argv = updateMongoDbMinimumArguments()
 
                         // When
-                        runUpdateDb(argv)
+                        runApp(argv)
 
                         // Then
                         expectThat(configWrapper.datamaintainConfig!!.verbose).isFalse()
@@ -116,7 +116,7 @@ internal class AppTest {
                         val argv = updateMongoDbMinimumArguments().plus("--create-tags-from-folder")
 
                         // When
-                        runUpdateDb(argv)
+                        runApp(argv)
 
                         // Then
                         expectThat(configWrapper.datamaintainConfig!!.doesCreateTagsFromFolder).isTrue()
@@ -128,7 +128,7 @@ internal class AppTest {
                         val argv = updateMongoDbMinimumArguments()
 
                         // When
-                        runUpdateDb(argv)
+                        runApp(argv)
 
                         // Then
                         expectThat(configWrapper.datamaintainConfig!!.doesCreateTagsFromFolder).isFalse()
@@ -148,7 +148,7 @@ internal class AppTest {
                         ))
 
                         // When
-                        runUpdateDb(argv)
+                        runApp(argv)
 
                         // Then
                         expectThat(configWrapper.datamaintainConfig!!.tagsMatchers)
@@ -184,7 +184,7 @@ internal class AppTest {
                         ))
 
                         // When
-                        runUpdateDb(argv)
+                        runApp(argv)
 
                         // Then
                         expectThat(getter.get(configWrapper.datamaintainConfig!!))
@@ -203,7 +203,7 @@ internal class AppTest {
                         ))
 
                         // When
-                        runUpdateDb(argv)
+                        runApp(argv)
 
                         // Then
                         expectThat(configWrapper) {
@@ -224,7 +224,7 @@ internal class AppTest {
                         ))
 
                         // When
-                        runUpdateDb(argv)
+                        runApp(argv)
 
                         // Then
                         expectThat(configWrapper) {
@@ -249,7 +249,7 @@ internal class AppTest {
                         val argv = updateMongoDbMinimumArguments().plus("--mongo-save-output")
 
                         // When
-                        runUpdateDb(argv)
+                        runApp(argv)
 
                         // Then
                         expectThat((configWrapper.datamaintainConfig!!.driverConfig) as MongoDriverConfig)
@@ -263,7 +263,7 @@ internal class AppTest {
                         val argv = updateMongoDbMinimumArguments()
 
                         // When
-                        runUpdateDb(argv)
+                        runApp(argv)
 
                         // Then
                         expectThat((configWrapper.datamaintainConfig!!.driverConfig) as MongoDriverConfig)
@@ -280,7 +280,7 @@ internal class AppTest {
                         val argv = updateMongoDbMinimumArguments().plus("--mongo-print-output")
 
                         // When
-                        runUpdateDb(argv)
+                        runApp(argv)
 
                         // Then
                         expectThat((configWrapper.datamaintainConfig!!.driverConfig) as MongoDriverConfig)
@@ -294,7 +294,7 @@ internal class AppTest {
                         val argv = updateMongoDbMinimumArguments()
 
                         // When
-                        runUpdateDb(argv)
+                        runApp(argv)
 
                         // Then
                         expectThat((configWrapper.datamaintainConfig!!.driverConfig) as MongoDriverConfig)
@@ -303,10 +303,6 @@ internal class AppTest {
                     }
                 }
             }
-        }
-
-        private fun runUpdateDb(argv: List<String>) {
-            App().subcommands(UpdateDb(runner = ::runner), ListExecutedScripts()).main(argv)
         }
 
         private fun updateMongoDbMinimumArguments(): List<String> {
@@ -318,5 +314,39 @@ internal class AppTest {
     }
 
     @Nested
-    inner class Configuration
+    inner class BaseConfiguration {
+        @Nested
+        inner class ConfigFilePath {
+            @Test
+            fun `should build configuration with existing config file path`() {
+                // Given
+                val argv = listOf("--config-file-path", "src/test/resources/config.properties", "update-db")
+
+                // When
+                runApp(argv)
+
+                // Then
+                expectThat((configWrapper.datamaintainConfig!!.driverConfig) as MongoDriverConfig)
+                        .get { mongoUri }
+                        .isEqualTo("mongo-uri")
+            }
+
+            @Test
+            fun `should throw error when specified config file path does not exist`() {
+                // Given
+                val argv = listOf("--config-file-path", "non-existing-file.properties", "update-db")
+
+                // When
+                runApp(argv)
+
+                // Then
+
+            }
+        }
+
+    }
+
+    private fun runApp(argv: List<String>) {
+        App().subcommands(UpdateDb(runner = ::runner), ListExecutedScripts()).main(argv)
+    }
 }
