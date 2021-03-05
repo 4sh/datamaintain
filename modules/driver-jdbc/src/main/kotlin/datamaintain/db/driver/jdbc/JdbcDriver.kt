@@ -24,13 +24,12 @@ class JdbcDriver(jdbcUri: String,
     }
 
     override fun executeScript(script: ScriptWithContent): Execution {
-        val exitCode = try {
+        return try {
             connection.createStatement().executeUpdate(script.content)
+            Execution(ExecutionStatus.OK, null)
         } catch (e: SQLException) {
-            e.errorCode
+            Execution(ExecutionStatus.KO, e.message)
         }
-
-        return Execution(if (exitCode == 0) ExecutionStatus.OK else ExecutionStatus.KO, null /* TODO ?*/)
     }
 
     override fun listExecutedScripts(): Sequence<ExecutedScript> {
