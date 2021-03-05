@@ -60,7 +60,7 @@ class JdbcDriver(jdbcUri: String,
         val executionOutput: ResultSet = statement.executeQuery("SELECT * from $EXECUTED_SCRIPTS_TABLE")
         val executedScript = mutableListOf<ExecutedScript>()
         while (executionOutput.next()) {
-            executedScript.plus(executionOutput.toExecutedScript())
+            executedScript.add(executionOutput.toExecutedScript())
         }
         return executedScript.asSequence()
     }
