@@ -8,6 +8,7 @@ import java.io.BufferedReader
 import java.io.FileReader
 import java.nio.file.Path
 import java.sql.*
+import java.util.*
 
 
 private val logger = KotlinLogging.logger {}
@@ -66,21 +67,22 @@ class JdbcDriver(jdbcUri: String,
     }
 
     override fun markAsExecuted(executedScript: ExecutedScript): ExecutedScript {
-        val insertStmt = connection.prepareStatement("INSERT INTO $EXECUTED_SCRIPTS_TABLE VALUES (?, ?, ?, ?, ?, ?)")
+        val insertStmt = connection.prepareStatement("""
+            INSERT INTO $EXECUTED_SCRIPTS_TABLE (id, `name`, checksum, identifier, executionStatus, `action`) 
+            VALUES (?, ?, ?, ?, ?, ?)"""
+        )
 
         try {
             connection.autoCommit = false
             with(executedScript) {
-                insertStmt.setString(1, name)
-                insertStmt.setString(2, checksum)
-                executionDurationInMillis
-                        ?.let { insertStmt.setLong(3, it) }
-                        ?: insertStmt.setNull(3, Types.INTEGER)
-                insertStmt.setString(4, executionOutput)
+                insertStmt.setString(1, UUID.randomUUID().toString())
+                insertStmt.setString(2, name)
+                insertStmt.setString(3, checksum)
+                insertStmt.setString(4, identifier)
                 insertStmt.setString(5, executionStatus.name)
-                insertStmt.setString(6, identifier)
+                insertStmt.setString(6, action!!.name)
             }
-            insertStmt.executeQuery()
+            insertStmt.execute()
             connection.commit()
         } catch (e: SQLException) {
             connection.rollback()
