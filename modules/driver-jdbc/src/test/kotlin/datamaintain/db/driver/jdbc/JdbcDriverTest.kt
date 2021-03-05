@@ -5,19 +5,24 @@ import datamaintain.core.script.ExecutionStatus
 import datamaintain.core.script.ScriptAction
 import org.h2.tools.Server
 import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import strikt.api.expectThat
-import strikt.assertions.*
+import strikt.assertions.contains
+import strikt.assertions.isEqualTo
+import strikt.assertions.size
 import java.nio.file.Paths
+import java.sql.Connection
+import java.sql.DriverManager
 
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class JdbcDriverTest {
     private val server: Server = Server.createTcpServer().start()
+    private val jdbcUri = "jdbc:h2:mem"
+    private val connection: Connection = DriverManager.getConnection(jdbcUri)
     private val jdbcDatamaintainDriver = JdbcDriver(
-            "jdbc:h2:mem",
+            jdbcUri,
             Paths.get(JdbcConfigKey.DB_JDBC_TMP_PATH.default!!),
             Paths.get("jdbc"),
             printOutput = false,
@@ -26,12 +31,14 @@ internal class JdbcDriverTest {
 
     @AfterAll
     fun `stop h2 database`() {
+        connection.prepareStatement("""DROP TABLE ${JdbcDriver.EXECUTED_SCRIPTS_TABLE}""").execute()
         this.server.stop()
     }
 
     @Test
     fun `should list scripts in db`() {
         // Given
+        jdbcDatamaintainDriver.createExecutedScriptsTableIfNotExists()
         insertDataInDb()
 
         // When
@@ -223,10 +230,13 @@ internal class JdbcDriverTest {
 //    }
 
     private fun insertDataInDb() {
-//        collection.insertMany(listOf(
-//                executedScriptToDocument(script1.toExecutedScriptDb()),
-//                executedScriptToDocument(script2.toExecutedScriptDb())
-//        ))
+        connection.prepareStatement("""
+            INSERT INTO ${JdbcDriver.EXECUTED_SCRIPTS_TABLE} (
+                id, `name`, checksum, identifier, executionStatus, `action`
+            ) VALUES 
+            ('id1', 'script1.sql', 'c4ca4238a0b923820dcc509a6f75849b', '', 'OK', 'RUN'), 
+            ('id2', 'script2.sql', 'c81e728d9d4c2f636f067f89cc14862c', '', 'OK', 'RUN')
+        """).execute()
     }
 
     private val SCRIPT_DOCUMENT_ID = "_id"
@@ -242,7 +252,8 @@ internal class JdbcDriverTest {
             "c4ca4238a0b923820dcc509a6f75849b",
             "",
             ExecutionStatus.OK,
-            ScriptAction.RUN
+            ScriptAction.RUN,
+            0
     )
 
     private val script2 = ExecutedScript(
@@ -250,7 +261,8 @@ internal class JdbcDriverTest {
             "c81e728d9d4c2f636f067f89cc14862c",
             "",
             ExecutionStatus.OK,
-            ScriptAction.RUN
+            ScriptAction.RUN,
+            0
     )
 }
 
