@@ -2,6 +2,7 @@ package datamaintain.db.driver.jdbc
 
 import datamaintain.core.script.ExecutedScript
 import datamaintain.core.script.ExecutionStatus
+import datamaintain.core.script.FileScript
 import datamaintain.core.script.ScriptAction
 import org.h2.tools.Server
 import org.junit.jupiter.api.*
@@ -10,6 +11,7 @@ import strikt.assertions.*
 import java.nio.file.Paths
 import java.sql.Connection
 import java.sql.DriverManager
+import java.sql.ResultSet
 
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -103,41 +105,47 @@ internal class JdbcDriverTest {
                     }
                 }
     }
-//
-//    @Test
-//    fun `should execute correct file script`() {
-//        // Given
-//        database.getCollection("simple").drop()
-//        val fileScript = FileScript(
-//                Paths.get("src/test/resources/executor_test_files/mongo/mongo_simple_insert.js"),
-//                Regex("(.*)")
-//        )
-//
-//        // When
-//        val execution = jdbcDatamaintainDriver.executeScript(fileScript)
-//
-//        // Then
-//        val coll = database.getCollection("simple")
-//        val cursor = coll.find(Filters.eq("find", "me"))
-//        expectThat(cursor.toList())
-//                .hasSize(1).and {
-//                    get(0).and {
-//                        get { getValue("data") }.isEqualTo("inserted")
-//                    }
-//                }
-//
-//        expectThat(execution) {
-//            get { executionStatus }.isEqualTo(ExecutionStatus.OK)
-//            get { executionOutput }.isNull()
-//        }
-//    }
-//
+
+    @Test
+    fun `should execute correct file script`() {
+        // Given
+        val fileScript = FileScript(
+                Paths.get("src/test/resources/executor_test_files/jdbc/sql_simple_insert.sql"),
+                Regex("(.*)")
+        )
+
+        // When
+        val execution = jdbcDatamaintainDriver.executeScript(fileScript)
+
+        // Then
+        val crystalDevs = connection.prepareStatement("SELECT * FROM crystalDevs").executeQuery().toCrystalDevs()
+
+        expectThat(crystalDevs).containsExactly("Elise", "Tom")
+
+        expectThat(execution) {
+            get { executionStatus }.isEqualTo(ExecutionStatus.OK)
+            get { executionOutput }.isNull()
+        }
+
+        connection.prepareStatement("DROP TABLE crystalDevs").execute()
+    }
+
+    private fun ResultSet.toCrystalDevs(): List<String> {
+        val crystalDevs = mutableListOf<String>()
+
+        while(this.next()) {
+            crystalDevs.add(this.getString("firstName"))
+        }
+
+        return crystalDevs
+    }
+
 //    @Test
 //    fun `should print output`() {
 //        // Given
 //        database.getCollection("simple").drop()
 //        val fileScript = FileScript(
-//                Paths.get("src/test/resources/executor_test_files/mongo/mongo_simple_insert.js"),
+//                Paths.get("src/test/resources/executor_test_files/mongo/sql_simple_insert.sql"),
 //                Regex("(.*)")
 //        )
 //        val mongoDatamaintainDriver = JdbcDriver(
@@ -196,7 +204,7 @@ internal class JdbcDriverTest {
 //    fun `should execute correct in memory script`() {
 //        // Given
 //        database.getCollection("simple").drop()
-//        val content = Paths.get("src/test/resources/executor_test_files/mongo/mongo_simple_insert.js").toFile().readText()
+//        val content = Paths.get("src/test/resources/executor_test_files/mongo/sql_simple_insert.sql").toFile().readText()
 //        val inMemoryScript = InMemoryScript("test", content, "")
 //
 //        // When
