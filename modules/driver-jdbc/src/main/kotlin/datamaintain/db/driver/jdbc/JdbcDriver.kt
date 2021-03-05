@@ -1,10 +1,7 @@
 package datamaintain.db.driver.jdbc
 
 import datamaintain.core.db.driver.DatamaintainDriver
-import datamaintain.core.script.ExecutedScript
-import datamaintain.core.script.ExecutionStatus
-import datamaintain.core.script.FileScript
-import datamaintain.core.script.ScriptWithContent
+import datamaintain.core.script.*
 import datamaintain.core.step.executor.Execution
 import mu.KotlinLogging
 import java.io.BufferedReader
@@ -111,12 +108,17 @@ class JdbcDriver(jdbcUri: String,
         tableCreationStatement.execute()
     }
 
-    private fun ResultSet.toExecutedScript() = ExecutedScript(
+    override fun overrideScript(executedScript: ExecutedScript): ExecutedScript {
+        TODO("Not yet implemented")
+    }
+
+    fun ResultSet.toExecutedScript() = ExecutedScript(
             name = this.getString("name"),
             checksum = this.getString("checksum"),
             executionDurationInMillis = this.getLong("executionDurationInMillis"),
             executionOutput = this.getString("executionOutput"),
             executionStatus = ExecutionStatus.valueOf(this.getString("executionStatus")),
-            identifier = this.getString("identifier")
+            identifier = this.getString("identifier"),
+            action = ScriptAction.valueOf(this.getString("action"))
     )
 }

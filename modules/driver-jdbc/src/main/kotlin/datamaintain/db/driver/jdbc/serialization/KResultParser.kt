@@ -2,6 +2,7 @@ package datamaintain.db.driver.jdbc.serialization
 
 import datamaintain.core.script.ExecutedScript
 import datamaintain.core.script.ExecutionStatus
+import datamaintain.core.script.ScriptAction
 import kotlinx.serialization.ContextualSerialization
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -18,6 +19,7 @@ data class ExecutedScriptDb(@SerialName("_id") @ContextualSerialization val id: 
                             val checksum: String,
                             val identifier: String,
                             val executionStatus: ExecutionStatus,
+                            val scriptAction: ScriptAction,
                             val executionDurationInMillis: Long? = null,
                             val executionOutput: String? = null)
 
@@ -27,6 +29,7 @@ fun ExecutedScriptDb.toExecutedScript() = ExecutedScript(
         checksum,
         identifier,
         executionStatus,
+        scriptAction,
         executionDurationInMillis,
         executionOutput
 )
@@ -36,7 +39,8 @@ fun ExecutedScript.toExecutedScriptDb() = ExecutedScriptDb(
         identifier = identifier,
         executionStatus = executionStatus,
         executionDurationInMillis = executionDurationInMillis,
-        executionOutput = executionOutput
+        executionOutput = executionOutput,
+        scriptAction = action!!
 )
 
 class KResultParser {
