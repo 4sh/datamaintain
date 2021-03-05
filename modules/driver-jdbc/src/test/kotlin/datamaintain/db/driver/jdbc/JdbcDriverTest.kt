@@ -4,10 +4,7 @@ import datamaintain.core.script.ExecutedScript
 import datamaintain.core.script.ExecutionStatus
 import datamaintain.core.script.ScriptAction
 import org.h2.tools.Server
-import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.*
 import strikt.api.expectThat
 import strikt.assertions.contains
 import strikt.assertions.isEqualTo
@@ -30,14 +27,18 @@ internal class JdbcDriverTest {
             saveOutput = false
     )
 
-    @BeforeAll
+    @BeforeEach
     fun `create executed scripts table`() {
         jdbcDatamaintainDriver.createExecutedScriptsTableIfNotExists()
     }
 
+    @AfterEach
+    fun `drop table`() {
+        connection.prepareStatement("""DROP TABLE ${JdbcDriver.EXECUTED_SCRIPTS_TABLE}""").execute()
+    }
+
     @AfterAll
     fun `stop h2 database`() {
-        connection.prepareStatement("""DROP TABLE ${JdbcDriver.EXECUTED_SCRIPTS_TABLE}""").execute()
         this.server.stop()
     }
 
