@@ -256,14 +256,6 @@ internal class JdbcDriverTest {
         """).execute()
     }
 
-    private val SCRIPT_DOCUMENT_ID = "_id"
-    private val SCRIPT_DOCUMENT_NAME = "name"
-    private val SCRIPT_DOCUMENT_CHECKSUM = "checksum"
-    private val SCRIPT_DOCUMENT_IDENTIFIER = "identifier"
-    private val SCRIPT_DOCUMENT_EXECUTION_STATUS = "executionStatus"
-    private val SCRIPT_DOCUMENT_EXECUTION_DURATION_IN_MILLIS = "executionDurationInMillis"
-    private val SCRIPT_DOCUMENT_EXECUTION_OUTPUT = "executionOutput"
-
     private val script1 = ExecutedScript(
             "script1.sql",
             "c4ca4238a0b923820dcc509a6f75849b",
