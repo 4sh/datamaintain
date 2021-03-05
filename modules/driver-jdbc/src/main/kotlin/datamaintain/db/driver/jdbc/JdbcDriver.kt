@@ -4,8 +4,6 @@ import datamaintain.core.db.driver.DatamaintainDriver
 import datamaintain.core.script.*
 import datamaintain.core.step.executor.Execution
 import mu.KotlinLogging
-import java.io.BufferedReader
-import java.io.FileReader
 import java.nio.file.Path
 import java.sql.*
 import java.util.*
@@ -26,29 +24,10 @@ class JdbcDriver(jdbcUri: String,
     }
 
     override fun executeScript(script: ScriptWithContent): Execution {
-        val statement = connection.createStatement()
-
-        val scriptPath = when (script) {
-            is FileScript -> script.path
-            else -> {
-                tmpFilePath.toFile().writeText(script.content)
-                tmpFilePath
-            }
-        }
-        var exitCode: Int
-
-        try {
-            val `in` = BufferedReader(FileReader(scriptPath.toString()))
-            var str: String
-            val sb = StringBuffer()
-            while (`in`.readLine().also { str = it } != null) {
-                sb.append("$str\n ")
-            }
-            `in`.close()
-            exitCode = statement.executeUpdate(sb.toString())
+        val exitCode = try {
+            connection.createStatement().executeUpdate(script.content)
         } catch (e: SQLException) {
-            System.err.println("Failed to Execute" + scriptPath + ". The error is" + e.message)
-            exitCode = e.errorCode
+            e.errorCode
         }
 
         return Execution(if (exitCode == 0) ExecutionStatus.OK else ExecutionStatus.KO, null /* TODO ?*/)
