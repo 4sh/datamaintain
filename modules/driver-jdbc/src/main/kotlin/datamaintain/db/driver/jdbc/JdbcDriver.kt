@@ -24,7 +24,7 @@ class JdbcDriver(private val jdbcUri: String,
     private val connection: Connection = DriverManager.getConnection(jdbcUri)
 
     companion object {
-        const val EXECUTED_SCRIPTS_COLLECTION = "executedScripts"
+        const val EXECUTED_SCRIPTS_TABLE = "executedScripts"
     }
 
     override fun executeScript(script: ScriptWithContent): Execution {
@@ -58,7 +58,7 @@ class JdbcDriver(private val jdbcUri: String,
 
     override fun listExecutedScripts(): Sequence<ExecutedScript> {
         val statement = connection.createStatement()
-        val executionOutput: ResultSet = statement.executeQuery("SELECT * from $EXECUTED_SCRIPTS_COLLECTION")
+        val executionOutput: ResultSet = statement.executeQuery("SELECT * from $EXECUTED_SCRIPTS_TABLE")
         val executedScript = mutableListOf<ExecutedScript>()
         while (executionOutput.next()) {
             executedScript.plus(executionOutput.toExecutedScript())
@@ -67,7 +67,7 @@ class JdbcDriver(private val jdbcUri: String,
     }
 
     override fun markAsExecuted(executedScript: ExecutedScript): ExecutedScript {
-        val insertStmt = connection.prepareStatement("INSERT INTO $EXECUTED_SCRIPTS_COLLECTION VALUES (?, ?, ?, ?, ?, ?)")
+        val insertStmt = connection.prepareStatement("INSERT INTO $EXECUTED_SCRIPTS_TABLE VALUES (?, ?, ?, ?, ?, ?)")
 
         try {
             connection.autoCommit = false
