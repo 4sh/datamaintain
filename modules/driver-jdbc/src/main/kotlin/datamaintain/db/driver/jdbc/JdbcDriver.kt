@@ -25,8 +25,6 @@ class JdbcDriver(jdbcUri: String,
     }
 
     override fun executeScript(script: ScriptWithContent): Execution {
-        createExecutedScriptsTableIfNotExists()
-
         val statement = connection.createStatement()
 
         val scriptPath = when (script) {
@@ -68,8 +66,6 @@ class JdbcDriver(jdbcUri: String,
     }
 
     override fun markAsExecuted(executedScript: ExecutedScript): ExecutedScript {
-        createExecutedScriptsTableIfNotExists()
-
         val insertStmt = connection.prepareStatement("INSERT INTO $EXECUTED_SCRIPTS_TABLE VALUES (?, ?, ?, ?, ?, ?)")
 
         try {
