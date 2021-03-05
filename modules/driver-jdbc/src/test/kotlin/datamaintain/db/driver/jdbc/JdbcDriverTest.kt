@@ -5,6 +5,7 @@ import datamaintain.core.script.ExecutionStatus
 import datamaintain.core.script.ScriptAction
 import org.h2.tools.Server
 import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import strikt.api.expectThat
@@ -29,6 +30,11 @@ internal class JdbcDriverTest {
             saveOutput = false
     )
 
+    @BeforeAll
+    fun `create executed scripts table`() {
+        jdbcDatamaintainDriver.createExecutedScriptsTableIfNotExists()
+    }
+
     @AfterAll
     fun `stop h2 database`() {
         connection.prepareStatement("""DROP TABLE ${JdbcDriver.EXECUTED_SCRIPTS_TABLE}""").execute()
@@ -38,7 +44,6 @@ internal class JdbcDriverTest {
     @Test
     fun `should list scripts in db`() {
         // Given
-        jdbcDatamaintainDriver.createExecutedScriptsTableIfNotExists()
         insertDataInDb()
 
         // When
@@ -51,49 +56,49 @@ internal class JdbcDriverTest {
         }
     }
 
-//    @Test
-//    fun `should mark script as executed`() {
-//        // Given
-//        insertDataInDb()
-//        val script3 = ExecutedScript(
-//                "script3.js",
-//                "d3d9446802a44259755d38e6d163e820",
-//                "",
-//                ExecutionStatus.OK
-//        )
-//
-//        // When
-//        jdbcDatamaintainDriver.markAsExecuted(script3)
-//
-//        // Then
-//        expectThat(collection.find().toList().map { documentToExecutedScript(it) })
-//                .hasSize(3).and {
-//                    get(0).and {
-//                        get { name }.isEqualTo("script1.js")
-//                        get { checksum }.isEqualTo("c4ca4238a0b923820dcc509a6f75849b")
-//                        get { identifier }.isEqualTo("")
-//                        get { executionStatus }.isEqualTo(ExecutionStatus.OK)
-//                        get { executionOutput }.isNull()
-//                        get { executionDurationInMillis }.isNull()
-//                    }
-//                    get(1).and {
-//                        get { name }.isEqualTo("script2.js")
-//                        get { checksum }.isEqualTo("c81e728d9d4c2f636f067f89cc14862c")
-//                        get { identifier }.isEqualTo("")
-//                        get { executionStatus }.isEqualTo(ExecutionStatus.OK)
-//                        get { executionOutput }.isNull()
-//                        get { executionDurationInMillis }.isNull()
-//                    }
-//                    get(2).and {
-//                        get { name }.isEqualTo("script3.js")
-//                        get { checksum }.isEqualTo("d3d9446802a44259755d38e6d163e820")
-//                        get { identifier }.isEqualTo("")
-//                        get { executionStatus }.isEqualTo(ExecutionStatus.OK)
-//                        get { executionOutput }.isNull()
-//                        get { executionDurationInMillis }.isNull()
-//                    }
-//                }
-//    }
+    @Test
+    fun `should mark script as executed`() {
+        // Given
+        insertDataInDb()
+        val script3 = ExecutedScript(
+                "script3.js",
+                "d3d9446802a44259755d38e6d163e820",
+                "",
+                ExecutionStatus.OK
+        )
+
+        // When
+        jdbcDatamaintainDriver.markAsExecuted(script3)
+
+        // Then
+        expectThat(collection.find().toList().map { documentToExecutedScript(it) })
+                .hasSize(3).and {
+                    get(0).and {
+                        get { name }.isEqualTo("script1.js")
+                        get { checksum }.isEqualTo("c4ca4238a0b923820dcc509a6f75849b")
+                        get { identifier }.isEqualTo("")
+                        get { executionStatus }.isEqualTo(ExecutionStatus.OK)
+                        get { executionOutput }.isNull()
+                        get { executionDurationInMillis }.isNull()
+                    }
+                    get(1).and {
+                        get { name }.isEqualTo("script2.js")
+                        get { checksum }.isEqualTo("c81e728d9d4c2f636f067f89cc14862c")
+                        get { identifier }.isEqualTo("")
+                        get { executionStatus }.isEqualTo(ExecutionStatus.OK)
+                        get { executionOutput }.isNull()
+                        get { executionDurationInMillis }.isNull()
+                    }
+                    get(2).and {
+                        get { name }.isEqualTo("script3.js")
+                        get { checksum }.isEqualTo("d3d9446802a44259755d38e6d163e820")
+                        get { identifier }.isEqualTo("")
+                        get { executionStatus }.isEqualTo(ExecutionStatus.OK)
+                        get { executionOutput }.isNull()
+                        get { executionDurationInMillis }.isNull()
+                    }
+                }
+    }
 //
 //    @Test
 //    fun `should execute correct file script`() {
