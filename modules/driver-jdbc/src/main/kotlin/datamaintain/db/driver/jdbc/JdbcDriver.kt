@@ -90,17 +90,18 @@ class JdbcDriver(jdbcUri: String,
     }
 
     private fun createExecutedScriptsTableIfNotExists() {
-        val tableCreationStatement = connection.prepareStatement("CREATE IF NOT EXISTS TABLE $EXECUTED_SCRIPTS_TABLE (" +
-                "id VARCHAR(255) NOT NULL," +
-                "name VARCHAR(255) NOT NULL," +
-                "checksum VARCHAR(255) NOT NULL," +
-                "identifier VARCHAR(255) NOT NULL," +
-                "executionStatus VARCHAR(255) NOT NULL," +
-                "action VARCHAR(255) NOT NULL," +
-                "executionDurationInMillis INT," +
-                "executionOutput VARCHAR(2047)," +
-                "PRIMARY KEY ( id )" +
-                ")")
+        val tableCreationStatement = connection.prepareStatement("""
+            CREATE TABLE IF NOT EXISTS $EXECUTED_SCRIPTS_TABLE (
+                id VARCHAR(255) NOT NULL,
+                name VARCHAR(255) NOT NULL,
+                checksum VARCHAR(255) NOT NULL,
+                identifier VARCHAR(255) NOT NULL,
+                executionStatus VARCHAR(255) NOT NULL,
+                action VARCHAR(255) NOT NULL,
+                executionDurationInMillis INT,
+                executionOutput VARCHAR(2047),
+                PRIMARY KEY ( id )
+            )""")
         tableCreationStatement.execute()
     }
 

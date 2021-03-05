@@ -2,20 +2,32 @@ package datamaintain.db.driver.jdbc
 
 import datamaintain.core.script.ExecutedScript
 import datamaintain.core.script.ExecutionStatus
+import datamaintain.core.script.ScriptAction
+import org.h2.tools.Server
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
 import strikt.api.expectThat
 import strikt.assertions.*
 import java.nio.file.Paths
 
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class JdbcDriverTest {
+    private val server: Server = Server.createTcpServer().start()
     private val jdbcDatamaintainDriver = JdbcDriver(
-            "jdbcUri",
+            "jdbc:h2:mem",
             Paths.get(JdbcConfigKey.DB_JDBC_TMP_PATH.default!!),
             Paths.get("jdbc"),
             printOutput = false,
             saveOutput = false
     )
+
+    @AfterAll
+    fun `stop h2 database`() {
+        this.server.stop()
+    }
 
     @Test
     fun `should list scripts in db`() {
