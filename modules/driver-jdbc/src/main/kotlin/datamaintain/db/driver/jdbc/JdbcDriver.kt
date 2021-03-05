@@ -15,7 +15,7 @@ import java.sql.*
 
 private val logger = KotlinLogging.logger {}
 
-class JdbcDriver(private val jdbcUri: String,
+class JdbcDriver(jdbcUri: String,
                  private val tmpFilePath: Path,
                  private val clientPath: Path,
                  private val printOutput: Boolean,
@@ -28,6 +28,8 @@ class JdbcDriver(private val jdbcUri: String,
     }
 
     override fun executeScript(script: ScriptWithContent): Execution {
+        createExecutedScriptsTableIfNotExists()
+
         val statement = connection.createStatement()
 
         val scriptPath = when (script) {
@@ -57,6 +59,8 @@ class JdbcDriver(private val jdbcUri: String,
     }
 
     override fun listExecutedScripts(): Sequence<ExecutedScript> {
+        createExecutedScriptsTableIfNotExists()
+
         val statement = connection.createStatement()
         val executionOutput: ResultSet = statement.executeQuery("SELECT * from $EXECUTED_SCRIPTS_TABLE")
         val executedScript = mutableListOf<ExecutedScript>()
@@ -67,6 +71,8 @@ class JdbcDriver(private val jdbcUri: String,
     }
 
     override fun markAsExecuted(executedScript: ExecutedScript): ExecutedScript {
+        createExecutedScriptsTableIfNotExists()
+
         val insertStmt = connection.prepareStatement("INSERT INTO $EXECUTED_SCRIPTS_TABLE VALUES (?, ?, ?, ?, ?, ?)")
 
         try {
@@ -90,7 +96,22 @@ class JdbcDriver(private val jdbcUri: String,
         return executedScript
     }
 
-    fun ResultSet.toExecutedScript() = ExecutedScript(
+    private fun createExecutedScriptsTableIfNotExists() {
+        val tableCreationStatement = connection.prepareStatement("CREATE IF NOT EXISTS TABLE $EXECUTED_SCRIPTS_TABLE (" +
+                "id VARCHAR(255) NOT NULL," +
+                "name VARCHAR(255) NOT NULL," +
+                "checksum VARCHAR(255) NOT NULL," +
+                "identifier VARCHAR(255) NOT NULL," +
+                "executionStatus VARCHAR(255) NOT NULL," +
+                "action VARCHAR(255) NOT NULL," +
+                "executionDurationInMillis INT," +
+                "executionOutput VARCHAR(2047)," +
+                "PRIMARY KEY ( id )" +
+                ")")
+        tableCreationStatement.execute()
+    }
+
+    private fun ResultSet.toExecutedScript() = ExecutedScript(
             name = this.getString("name"),
             checksum = this.getString("checksum"),
             executionDurationInMillis = this.getLong("executionDurationInMillis"),
