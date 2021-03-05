@@ -89,7 +89,7 @@ class JdbcDriver(jdbcUri: String,
         return executedScript
     }
 
-    private fun createExecutedScriptsTableIfNotExists() {
+    fun createExecutedScriptsTableIfNotExists() {
         val tableCreationStatement = connection.prepareStatement("""
             CREATE TABLE IF NOT EXISTS $EXECUTED_SCRIPTS_TABLE (
                 id VARCHAR(255) NOT NULL,
