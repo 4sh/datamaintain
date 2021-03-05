@@ -150,9 +150,9 @@ For ```db.uri```, please see the [mongo URI documentation](https://docs.mongodb.
 ### JDBC driver configuration
 | Key | Description | Default value | Mandatory? | Values examples |
 |---|---|---|---|---|
-| db.jdbc.uri | URI to your JDBC server. **Database name is mandatory.** Please see the [mongo URI documentation](https://docs.mongodb.com/manual/reference/connection-string/) to learn about writing mongo URIs. |  | yes | ```mongodb://localhost/my-db```<br />```mongodb://localhost:8000/my-db```<br />```mongodb://username:password@localhost/my-db```<br />```mongodb+srv://server.example.com/my-db``` <br />```mongodb://my-db,my-db2:27018/my-db``` <br /> |
+| db.jdbc.uri | URI to your JDBC server. **Database name is mandatory.** Please see the [Oracle JDBC URI documentation](https://docs.oracle.com/cd/E17952_01/connector-j-8.0-en/connector-j-reference-jdbc-url-format.html) to learn about JDBC mongo URIs. |  | yes | ```jdbc://localhost/my-db```<br />```jdbc://localhost:8000/my-db```<br />```jdbc://username:password@localhost/my-db```<br />```jdbc+srv://server.example.com/my-db``` <br />```jdbc://my-db,my-db2:27018/my-db``` <br /> |
 | db.jdbc.tmp.path | Path where the driver will write temporary files. | ```/tmp/datamaintain.tmp``` | no |  |
-| db.jdbc.client.path | Path or alias to your database executable. | ```mongo``` | no |  |
+| db.jdbc.client.path | Path or alias to your database executable. | ```psql``` | no |  |
 | db.jdbc.print.output | If true, JDBC output will be logged. | ```false``` | no | ```true``` or ```false``` |
 | db.jdbc.save.output | If true, JDBC output will be saved in script execution report.  | ```false``` | no | ```true``` or ```false``` |
 
