@@ -130,6 +130,23 @@ internal class JdbcDriverTest {
             connection.prepareStatement("DROP TABLE crystalDevs").execute()
         }
 
+        @Test
+        fun `should execute incorrect file script`() {
+            // Given
+            val fileScript = FileScript(
+                    Paths.get("src/test/resources/executor_test_files/jdbc/sql_error_insert.sql"),
+                    Regex("(.*)"))
+
+            // When
+            val execution = jdbcDatamaintainDriver.executeScript(fileScript)
+
+            // Then
+            expectThat(execution) {
+                get { executionStatus }.isEqualTo(ExecutionStatus.KO)
+                get { executionOutput }.isNull()
+            }
+        }
+
         private fun findCrystalDevs(): List<String> =
                 connection.prepareStatement("SELECT * FROM crystalDevs").executeQuery().toCrystalDevs()
 
@@ -229,26 +246,7 @@ internal class JdbcDriverTest {
 //            get { executionOutput }.isNull()
 //        }
 //    }
-//
-//    @Test
-//    fun `should execute incorrect file script`() {
-//        // Given
-//        database.getCollection("simple").drop()
-//        val fileScript = FileScript(Paths.get("src/test/resources/executor_test_files/mongo/mongo_error_insert.js"), Regex("(.*)"))
-//
-//        // When
-//        val execution = jdbcDatamaintainDriver.executeScript(fileScript)
-//
-//        // Then
-//        val coll = database.getCollection("simple")
-//        val cursor = coll.find(Filters.eq("find", "me"))
-//        expectThat(cursor.toList()).hasSize(0)
-//
-//        expectThat(execution) {
-//            get { executionStatus }.isEqualTo(ExecutionStatus.KO)
-//            get { executionOutput }.isNull()
-//        }
-//    }
+
 
     private fun insertDataInDb() {
         connection.prepareStatement("""
