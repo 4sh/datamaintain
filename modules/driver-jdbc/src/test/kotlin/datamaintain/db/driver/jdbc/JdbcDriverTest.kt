@@ -106,38 +106,41 @@ internal class JdbcDriverTest {
                 }
     }
 
-    @Test
-    fun `should execute correct file script`() {
-        // Given
-        val fileScript = FileScript(
-                Paths.get("src/test/resources/executor_test_files/jdbc/sql_simple_insert.sql"),
-                Regex("(.*)")
-        )
+    @Nested
+    inner class ExecuteScript {
+        @Test
+        fun `should execute correct file script`() {
+            // Given
+            val fileScript = FileScript(
+                    Paths.get("src/test/resources/executor_test_files/jdbc/sql_simple_insert.sql"),
+                    Regex("(.*)")
+            )
 
-        // When
-        val execution = jdbcDatamaintainDriver.executeScript(fileScript)
+            // When
+            val execution = jdbcDatamaintainDriver.executeScript(fileScript)
 
-        // Then
-        val crystalDevs = connection.prepareStatement("SELECT * FROM crystalDevs").executeQuery().toCrystalDevs()
+            // Then
+            val crystalDevs = connection.prepareStatement("SELECT * FROM crystalDevs").executeQuery().toCrystalDevs()
 
-        expectThat(crystalDevs).containsExactly("Elise", "Tom")
+            expectThat(crystalDevs).containsExactly("Elise", "Tom")
 
-        expectThat(execution) {
-            get { executionStatus }.isEqualTo(ExecutionStatus.OK)
-            get { executionOutput }.isNull()
+            expectThat(execution) {
+                get { executionStatus }.isEqualTo(ExecutionStatus.OK)
+                get { executionOutput }.isNull()
+            }
+
+            connection.prepareStatement("DROP TABLE crystalDevs").execute()
         }
 
-        connection.prepareStatement("DROP TABLE crystalDevs").execute()
-    }
+        private fun ResultSet.toCrystalDevs(): List<String> {
+            val crystalDevs = mutableListOf<String>()
 
-    private fun ResultSet.toCrystalDevs(): List<String> {
-        val crystalDevs = mutableListOf<String>()
+            while (this.next()) {
+                crystalDevs.add(this.getString("firstName"))
+            }
 
-        while(this.next()) {
-            crystalDevs.add(this.getString("firstName"))
+            return crystalDevs
         }
-
-        return crystalDevs
     }
 
 //    @Test
