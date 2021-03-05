@@ -120,9 +120,7 @@ internal class JdbcDriverTest {
             val execution = jdbcDatamaintainDriver.executeScript(fileScript)
 
             // Then
-            val crystalDevs = connection.prepareStatement("SELECT * FROM crystalDevs").executeQuery().toCrystalDevs()
-
-            expectThat(crystalDevs).containsExactly("Elise", "Tom")
+            expectThat(findCrystalDevs()).containsExactly("Elise", "Tom")
 
             expectThat(execution) {
                 get { executionStatus }.isEqualTo(ExecutionStatus.OK)
@@ -131,6 +129,9 @@ internal class JdbcDriverTest {
 
             connection.prepareStatement("DROP TABLE crystalDevs").execute()
         }
+
+        private fun findCrystalDevs(): List<String> =
+                connection.prepareStatement("SELECT * FROM crystalDevs").executeQuery().toCrystalDevs()
 
         private fun ResultSet.toCrystalDevs(): List<String> {
             val crystalDevs = mutableListOf<String>()
