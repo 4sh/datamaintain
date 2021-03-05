@@ -22,9 +22,7 @@ internal class JdbcDriverTest {
     private val jdbcDatamaintainDriver = JdbcDriver(
             jdbcUri,
             Paths.get(JdbcConfigKey.DB_JDBC_TMP_PATH.default!!),
-            Paths.get("jdbc"),
-            printOutput = false,
-            saveOutput = false
+            Paths.get("jdbc")
     )
 
     @BeforeEach
@@ -143,7 +141,8 @@ internal class JdbcDriverTest {
             // Then
             expectThat(execution) {
                 get { executionStatus }.isEqualTo(ExecutionStatus.KO)
-                get { executionOutput }.isNull()
+                get { executionOutput }.isEqualTo("Table \"CRYSTALDEVSERROR\" not found; SQL statement:\n" +
+                        "INSERT INTO crystalDevsError VALUES ('Elise'), ('Tom'); [42102-148]")
             }
         }
 
@@ -161,91 +160,44 @@ internal class JdbcDriverTest {
         }
     }
 
-//    @Test
-//    fun `should print output`() {
-//        // Given
-//        database.getCollection("simple").drop()
-//        val fileScript = FileScript(
-//                Paths.get("src/test/resources/executor_test_files/mongo/sql_simple_insert.sql"),
-//                Regex("(.*)")
-//        )
-//        val mongoDatamaintainDriver = JdbcDriver(
-//                mongoUri,
-//                Paths.get(JdbcConfigKey.DB_JDBC_TMP_PATH.default!!),
-//                Paths.get("mongo"),
-//                printOutput = true,
-//                saveOutput = true
-//        )
-//
-//        // When
-//        val executedScript = mongoDatamaintainDriver.executeScript(fileScript)
-//
-//        // Then
-//        expectThat(executedScript) {
-//            get { executionOutput }.isNotNull()
-//        }
-//    }
-//
-//    @Test
-//    fun `should save output`() {
-//        // Given
-//        val mongoDatamaintainDriver = JdbcDriver(
-//                mongoUri,
-//                Paths.get(JdbcConfigKey.DB_JDBC_TMP_PATH.default!!),
-//                Paths.get("mongo"),
-//                printOutput = false,
-//                saveOutput = true
-//        )
-//        val script3 = ExecutedScript(
-//                "script3.js",
-//                "d3d9446802a44259755d38e6d163e820",
-//                "",
-//                ExecutionStatus.OK,
-//                0,
-//                executionOutput = "test"
-//        )
-//
-//        // When
-//        val executedScript = mongoDatamaintainDriver.markAsExecuted(script3)
-//
-//        // Then
-//        expectThat(executedScript) {
-//            get { executionOutput }.isEqualTo("test")
-//        }
-//
-//        expectThat(collection.find().toList().map { documentToExecutedScript(it) })
-//                .hasSize(1).and {
-//                    get(0).and {
-//                        get { executionOutput }.isEqualTo("test")
-//                    }
-//                }
-//    }
-//
-//    @Test
-//    fun `should execute correct in memory script`() {
-//        // Given
-//        database.getCollection("simple").drop()
-//        val content = Paths.get("src/test/resources/executor_test_files/mongo/sql_simple_insert.sql").toFile().readText()
-//        val inMemoryScript = InMemoryScript("test", content, "")
-//
-//        // When
-//        val execution = jdbcDatamaintainDriver.executeScript(inMemoryScript)
-//
-//        // Then
-//        val coll = database.getCollection("simple")
-//        val cursor = coll.find(Filters.eq("find", "me"))
-//        expectThat(cursor.toList())
-//                .hasSize(1).and {
-//                    get(0).and {
-//                        get { getValue("data") }.isEqualTo("inserted")
-//                    }
-//                }
-//
-//        expectThat(execution) {
-//            get { executionStatus }.isEqualTo(ExecutionStatus.OK)
-//            get { executionOutput }.isNull()
-//        }
-//    }
+    //@Test
+    //    fun `should override script`() {
+    //        // Given
+    //        insertDataInDb()
+    //        val script3 = ExecutedScript(
+    //                "script1.js",
+    //                "8747e564eb53cb2f1dcb9aae0779c2aa",
+    //                "",
+    //                ExecutionStatus.OK,
+    //                ScriptAction.OVERRIDE_EXECUTED
+    //        )
+    //
+    //        // When
+    //        mongoDatamaintainDriver.overrideScript(script3)
+    //
+    //        // Then
+    //        expectThat(collection.find().toList().map { documentToExecutedScript(it) })
+    //                .hasSize(2).and {
+    //                    get(0).and {
+    //                        get { name }.isEqualTo("script1.js")
+    //                        get { checksum }.isEqualTo("8747e564eb53cb2f1dcb9aae0779c2aa")
+    //                        get { identifier }.isEqualTo("")
+    //                        get { executionStatus }.isEqualTo(ExecutionStatus.OK)
+    //                        get { action }.isEqualTo(ScriptAction.OVERRIDE_EXECUTED)
+    //                        get { executionOutput }.isNull()
+    //                        get { executionDurationInMillis }.isNull()
+    //                    }
+    //                    get(1).and {
+    //                        get { name }.isEqualTo("script2.js")
+    //                        get { checksum }.isEqualTo("c81e728d9d4c2f636f067f89cc14862c")
+    //                        get { identifier }.isEqualTo("")
+    //                        get { executionStatus }.isEqualTo(ExecutionStatus.OK)
+    //                        get { action }.isEqualTo(ScriptAction.RUN)
+    //                        get { executionOutput }.isNull()
+    //                        get { executionDurationInMillis }.isNull()
+    //                    }
+    //                }
+    //    }
 
 
     private fun insertDataInDb() {
