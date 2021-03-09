@@ -1,21 +1,54 @@
 # Datamaintain
 [![CircleCI](https://circleci.com/gh/4sh/datamaintain.svg?style=shield)](https://circleci.com/gh/4sh/datamaintain) ![GitHub](https://img.shields.io/github/license/4sh/datamaintain)
 
-Datamaintain is a Kotlin library that runs your scripts on your database and tracks the scripts runned. You may integrate it directly in your Java or Kotlin server or you may use the CLI.
+Datamaintain is a Kotlin library for maintaining consistency between data and code : it runs your scripts in your database and tracks the scripts runned. 
 
-## Table of contents
-1. [Introduction](README.md#introduction)
-2. [Available packages](README.md#available-packages)
-3. [Add Datamaintain as a dependency](README.md#add-datamaintain-as-a-dependency)
-4. [Datamaintain configuration](README.md#datamaintain-configuration)
-5. [Use the CLI](README.md#use-the-cli)
-6. [Installation in a project with already executed scripts](README.md#installation-in-a-project-with-already-executed-scripts)
+According to your needs you may :
+- Use it as a dependancy in your Java or Kotlin server, really handy to collaborate,
+- And/or use the Command Line Interface (CLI) to enable more control when deploying.
 
-## Introduction
+For the moment Datamaintains supports only the DBMS MongoDB, but other configurations will soon be added (JDBC very soon)! If you want to contribute, here is the documentation ["how to write a driver for your DBMS"](README.md#use-the-cli). It is quite easy (no need to deeply know Datamaintain) and it would help a lot 🙏.
 
+
+## Benefits
 During a project lifetime, you will often have to run scripts to update your database scheme or even add some data in it. The hard part comes when you have to ensure that all your scripts were executed and in the right order, which is exactly what Datamaintain is for! 
 
-Each time your launch your server, Datamaintain will check if you added new scripts and if you did, play them in an order based on their identifier, which you may define. Every script execution will be remembered to prevent scripts from being run twice.
+- **Transparent**, thanks to the script execution reports.
+- **Light**, with few dependencies.
+- **Customizable**, it is possible to run the scripts in different manners : with the server or independantly, ordered with tags, with your own program...
+- **Idiot-proof**, Datamaintain has an identification based on the content that enables to manage homonyms scripts. You will never get angry with your colleagues again. We also have unit tests for the Datamaintain contributors. 
+- **Evolutive and open-source**, the architecture does not matter to the DBMS so that we can easily create new DBMS drivers and finally have a common framework between all our projects.  We are a team of developers that come mainly from the [4SH agency](https://www.4sh.fr/), where Datamaintain is  used in several big projects. We works regularly on it according to the feedbacks of the users (our colleagues). We would be really happy to work with other people. If you are interested in this project don't hesitate to contact us.
+
+## What is the best configuration for me ?
+
+**👌 I want the simplest :** 
+
+I embed it. The scripts are launched automatiquelly when the server starts. This is simple and really handy to collaborate. 
+
+**👾 I want personalisation :** 
+- Used as a dependancy : I can program it with Java.
+- Used with the Command line interface : I can master the order of my scripts and launch them independantly to the server thanks to executable file. I can also use Datamaintain in a project with already executed scripts. 
+
+**Can I use both the embed mode and the Command Line Interface?**
+Yes ! And that is often the case ! You can develop your project with Datamaintain embedded and then deploy it in production with the Command Line Interface (CLI). 
+
+## Quick links
+### Getting started
+- How to install Datamaintain as a dependacy, in Command Line Interface
+- How to configure it
+- Use cases : read script reports, use tags (ex. CIN), 
+### Digging deeper
+- How to enhance performances with a synthesis of the scripts ? 
+### Contribute
+- How does Datamaintain (what Datamaintains does for you)
+- How to write a drive. 
+
+
+[Available packages](README.md#available-packages)
+[Add Datamaintain as a dependency](README.md#add-datamaintain-as-a-dependency)
+[Datamaintain configuration](README.md#datamaintain-configuration)
+[Use the CLI](README.md#use-the-cli)
+[Installation in a project with already executed scripts](README.md#installation-in-a-project-with-already-executed-scripts)
 
 ## Available packages
 
