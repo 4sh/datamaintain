@@ -2,9 +2,11 @@ package datamaintain.cli
 
 import com.github.ajalt.clikt.core.subcommands
 import datamaintain.core.config.DatamaintainConfig
+import datamaintain.core.script.ScriptAction
 import datamaintain.core.script.Tag
 import datamaintain.core.script.TagMatcher
 import datamaintain.core.step.check.rules.implementations.SameScriptsAsExecutedCheck
+import datamaintain.core.step.executor.ExecutionMode
 import datamaintain.db.driver.mongo.MongoDriverConfig
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
@@ -83,6 +85,23 @@ internal class AppTest {
 
                         // Then
                         expectThat(configWrapper.datamaintainConfig!!.executionMode).isEqualTo(executionMode)
+                    }
+
+                    @Test
+                    fun `should build config with FORCE_MARK_AS_EXECUTED as execution mode`() {
+                        // Given
+                        val argv = updateMongoDbMinimumArguments().plus(listOf(
+                                "--execution-mode", datamaintain.core.step.executor.ExecutionMode.FORCE_MARK_AS_EXECUTED.name
+                        ))
+
+                        // When
+                        runApp(argv)
+
+                        // Then
+                        expectThat(configWrapper.datamaintainConfig!!).and{
+                            get { executionMode }.isEqualTo(datamaintain.core.step.executor.ExecutionMode.NORMAL)
+                            get { defaultScriptAction }.isEqualTo(ScriptAction.MARK_AS_EXECUTED)
+                        }
                     }
                 }
 
