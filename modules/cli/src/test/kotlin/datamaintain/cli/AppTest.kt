@@ -438,18 +438,16 @@ internal class AppTest {
             }
 
             @Test
-            @Disabled("Does not work")
-            //TODO@ERO: fix this when PR #120 is merged
             fun `should throw error when given db type is not valid`() {
                 // Given
                 val argv = listOf("--db-type", "invalid db type", "update-db")
 
                 // When
+                val (exitCode, output) = execAppInSubprocess(argv)
 
                 // Then
-                expectCatching { runApp(argv) }
-                        .failed()
-                        .isA<DbTypeNotFoundException>()
+                expectThat(exitCode).isEqualTo(1)
+                expectThat(output).contains("dbType invalid db type is unknown")
             }
         }
 
