@@ -1,13 +1,13 @@
 # Datamaintain
 [![CircleCI](https://circleci.com/gh/4sh/datamaintain.svg?style=shield)](https://circleci.com/gh/4sh/datamaintain) ![GitHub](https://img.shields.io/github/license/4sh/datamaintain)
 
-Datamaintain is a Kotlin library for maintaining consistency between data and code : it runs your scripts in your database and tracks the scripts runned. 
+Datamaintain is a Kotlin library to maintain consistency between data and code : it runs your scripts in your database and tracks the scripts runned. 
 
 According to your needs you may :
-- Use it as a dependancy in your Java or Kotlin server, really handy to collaborate,
-- And/or use the Command Line Interface (CLI) to enable more control when deploying.
+- Use it as a dependancy in your Java or Kotlin server : really handy to collaborate,
+- And/or use the Command Line Interface (CLI) : enables more control when deploying.
 
-For the moment Datamaintains supports only the DBMS MongoDB, but other configurations will soon be added (JDBC very soon)! If you want to contribute, here is the documentation ["how to write a driver for your DBMS"](README.md#use-the-cli). It is quite easy (no need to deeply know Datamaintain) and it would help a lot 🙏.
+For the moment Datamaintains supports only the DBMS MongoDB, but other configurations will soon be added (JDBC very soon)! We have created a documentation for creating new drivers : ["how to write a driver for your DBMS"](README.md#use-the-cli). If you want to contribute, it is quite easy (no need to deeply know Datamaintain) and it would help a lot 🙏.
 
 
 ## Benefits
@@ -23,14 +23,14 @@ During a project lifetime, you will often have to run scripts to update your dat
 
 **👌 I want the simplest :** 
 
-I embed it. The scripts are launched automatiquelly when the server starts. This is simple and really handy to collaborate. 
+Use it as a dependancy. The scripts are launched automatiquelly when the server starts. This is simple and really handy to collaborate. 
 
 **👾 I want personalisation :** 
-- Used as a dependancy : I can program it with Java.
-- Used with the Command line interface : I can master the order of my scripts and launch them independantly to the server thanks to executable file. I can also use Datamaintain in a project with already executed scripts. 
+- Used as a dependancy : You can program it with Java.
+- Used with the Command line interface (CLI): You can master the order of my scripts and launch them independantly to the server thanks to executable file. I can also use Datamaintain in a project with already executed scripts. 
 
-**Can I use both the embed mode and the Command Line Interface?**
-Yes ! And that is often the case ! You can develop your project with Datamaintain embedded and then deploy it in production with the Command Line Interface (CLI). 
+**Can I use both as a dependancy and with the Command Line Interface?**
+Yes ! And that is often the case. You can develop your project with Datamaintain as a dependancy and then deploy in production with the Command Line Interface (CLI). 
 
 ## Quick links
 ### Getting started
