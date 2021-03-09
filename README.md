@@ -7,7 +7,7 @@ Your colleague added a column in the database without telling it to you and now 
 
 It is also a complete toolbox, [discover all the features !](README.md#Overview-of-the-features)
 
-For the moment Datamaintains supports only the DBMS MongoDB, but other configurations will soon be added (JDBC very soon)! If you want to contribute, you can  write a driver for your DBMS, let's have a look : ["how to write a driver for your DBMS"](docs/withcli.md). There is no need to deeply know Datamaintain and it would help a lot 🙏.
+For the moment Datamaintains supports only the DBMS MongoDB, but other configurations will soon be added (JDBC very soon)! If you want to contribute, you can  write a driver for your DBMS, let's have a look : ["how to write a driver for your DBMS"](docs/how-to-write-a-driver.md). There is no need to deeply know Datamaintain and it would help a lot 🙏.
 
 ## Benefits
 During a project lifetime, you will often have to run scripts to update your database scheme or even add some data in it. The hard part comes when you have to share it with your colleagues or to use another environment. You will have to ensure that all your scripts were executed and in the right order, which is exactly what Datamaintain is for!
