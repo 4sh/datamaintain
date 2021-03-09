@@ -32,14 +32,14 @@ Yes ! And that is often the case. You can develop your project with Datamaintain
 
 ## Quick links
 ### Getting started
-**1) Install :** you can [install it as a dependancy](docs/asdependancy.md) and/or [use the Command Line Interface](docs/withcli.md). If needed, you can [install in a a project with already executed scripts](docs/already-executed-scripts.md).
+**1. Install :** you can [install it as a dependancy](docs/asdependancy.md) and/or [use the Command Line Interface](docs/withcli.md). If needed, you can [install in a a project with already executed scripts](docs/already-executed-scripts.md).
 
-**2) Configure :** [How to configure Datamaintain](docs/configuration.md)
+**2. Configure :** [How to configure Datamaintain](docs/configuration.md),
 
 ### Overview of the features
 - [The execution reports](docs/executedscripts.md)
 - The tag feature (work in progress),
-- How to enhance performances with a synthesis of the scripts ? (work in progress)
+- How to enhance performances with a synthesis of the scripts ? (work in progress),
 ### Contribute
-- How does Datamaintain (what Datamaintains does for you)
-- How to write a driver. 
+- How does Datamaintains work (work in progress),
+- [How to write a driver](docs/how-to-write-a-driver.md). 
