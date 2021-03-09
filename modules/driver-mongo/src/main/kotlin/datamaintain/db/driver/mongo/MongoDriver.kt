@@ -17,12 +17,12 @@ import kotlin.streams.toList
 
 private val logger = KotlinLogging.logger {}
 
-class MongoDriver(private val mongoUri: String,
+class MongoDriver(mongoUri: String,
                   private val tmpFilePath: Path,
                   private val clientPath: Path,
                   private val printOutput: Boolean,
                   private val saveOutput: Boolean
-) : DatamaintainDriver {
+) : DatamaintainDriver(mongoUri) {
     private val jsonParser = KJsonParser()
 
     companion object {
@@ -46,7 +46,7 @@ class MongoDriver(private val mongoUri: String,
 
         var executionOutput: String? = null
 
-        val exitCode = listOf(clientPath.toString(), mongoUri, "--quiet", scriptPath.toString()).runProcess() { inputStream ->
+        val exitCode = listOf(clientPath.toString(), uri, "--quiet", scriptPath.toString()).runProcess() { inputStream ->
             executionOutput = processDriverOutput(inputStream)
         }
 
@@ -111,7 +111,7 @@ class MongoDriver(private val mongoUri: String,
 
     private fun executeMongoQuery(query: String): String {
         var executionOutput: String? = null
-        val exitCode = listOf(clientPath.toString(), mongoUri, "--quiet", "--eval", query).runProcess { inputStream ->
+        val exitCode = listOf(clientPath.toString(), uri, "--quiet", "--eval", query).runProcess { inputStream ->
             // Dropwhile is a workaround to fix this issue: https://jira.mongodb.org/browse/SERVER-27159
             val lines = inputStream.bufferedReader().lines().toList().dropWhile { !(it.startsWith("[").or(it.startsWith("{"))) }
 
