@@ -125,6 +125,7 @@ Then, you may add the dependencies to ```datamaintain-core``` and the driver mod
 | verbose | If true, more logs will be printed | ```false``` | no | ```true``` or ```false``` |
 | prune.tags.to.run.again | Scripts that have these tags will be run, even they were already executed  | None | no | ```tag,again``` |
 | prune.scripts.override.executed | Allow datamaintain to override a script if it detect a checksum change on a script already runned (assuming its filename) | ```false``` | no | ```true``` or ```false``` |
+| db.trust.uri | Bypass all checks that could be done on your URI because you are very sure of it and think our checks are just liars | ```false``` | no | ```true``` or ```false``` |
 ### Mongo driver configuration
 
 | Key | Description | Default value | Mandatory? | Values examples |
