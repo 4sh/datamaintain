@@ -10,7 +10,6 @@ import datamaintain.db.driver.mongo.MongoDriverConfig
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
-import datamaintain.db.driver.mongo.MongoDriverConfig
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
@@ -239,6 +238,43 @@ internal class AppTest {
                         }
                     }
                 }
+
+                @Nested
+                inner class AllowAutoOverride {
+                    @Test
+                    fun `should build default config without auto override`() {
+                        // Given
+                        val argv = updateMongoDbMinimumArguments()
+
+                        // When
+                        runApp(argv)
+
+                        // Then
+                        expectThat(configWrapper) {
+                            get { datamaintainConfig }.isNotNull()
+                        }
+                        expectThat(configWrapper.datamaintainConfig!!.overrideExecutedScripts) {
+                            isFalse()
+                        }
+                    }
+
+                    @Test
+                    fun `should build config with auto override`() {
+                        // Given
+                        val argv = updateMongoDbMinimumArguments().plus("--allow-auto-override")
+
+                        // When
+                        runApp(argv)
+
+                        // Then
+                        expectThat(configWrapper) {
+                            get { datamaintainConfig }.isNotNull()
+                        }
+                        expectThat(configWrapper.datamaintainConfig!!.overrideExecutedScripts) {
+                            isTrue()
+                        }
+                    }
+                }
             }
 
             @Nested
@@ -404,6 +440,50 @@ internal class AppTest {
             // Then
             expectThat((configWrapper.datamaintainConfig!!.driverConfig) as MongoDriverConfig)
                     .get { mongoTmpPath }.isEqualTo(mongoTmpPath)
+        }
+
+        @Nested
+        inner class TrustUri {
+            @Test
+            fun `should build config with trust uri`() {
+                // Given
+                val argv = listOf(
+                        "--trust-uri",
+                        "--db-type",
+                        datamaintain.cli.DbType.MONGO.value,
+                        "--mongo-uri",
+                        "mongoUri",
+                        "update-db"
+                )
+
+                // When
+                runApp(argv)
+
+                // Then
+                expectThat((configWrapper.datamaintainConfig!!.driverConfig as MongoDriverConfig).trustUri) {
+                    isTrue()
+                }
+            }
+
+            @Test
+            fun `should build config without trust uri`() {
+                // Given
+                val argv = listOf(
+                        "--db-type",
+                        datamaintain.cli.DbType.MONGO.value,
+                        "--mongo-uri",
+                        "mongoUri",
+                        "update-db"
+                )
+
+                // When
+                runApp(argv)
+
+                // Then
+                expectThat((configWrapper.datamaintainConfig!!.driverConfig as MongoDriverConfig).trustUri) {
+                    isFalse()
+                }
+            }
         }
     }
 
