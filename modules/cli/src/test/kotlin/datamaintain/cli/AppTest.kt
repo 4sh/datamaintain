@@ -4,6 +4,7 @@ import com.github.ajalt.clikt.core.subcommands
 import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.step.check.rules.implementations.SameScriptsAsExecutedCheck
 import datamaintain.db.driver.mongo.MongoDriverConfig
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.*
@@ -115,6 +116,59 @@ internal class AppTest {
         }
         expectThat(configWrapper.datamaintainConfig!!.overrideExecutedScripts) {
             isTrue()
+        }
+    }
+
+    @Nested
+    inner class TrustUri {
+        @Test
+        fun `should build config with trust uri`() {
+            // Given
+            val configWrapper = ConfigWrapper()
+
+            fun runner(config: DatamaintainConfig) {
+                configWrapper.datamaintainConfig = config
+            }
+
+            val argv = listOf(
+                    "--trust-uri"
+            ).plus(getSmallestArgs())
+
+            // When
+            App().subcommands(UpdateDb(runner = ::runner), ListExecutedScripts()).main(argv)
+
+            // Then
+            defaultChecks(configWrapper)
+            expectThat(configWrapper) {
+                get { datamaintainConfig }.isNotNull()
+            }
+            expectThat((configWrapper.datamaintainConfig!!.driverConfig as MongoDriverConfig).trustUri) {
+                isTrue()
+            }
+        }
+
+        @Test
+        fun `should build config without trust uri`() {
+            // Given
+            val configWrapper = ConfigWrapper()
+
+            fun runner(config: DatamaintainConfig) {
+                configWrapper.datamaintainConfig = config
+            }
+
+            val argv = getSmallestArgs()
+
+            // When
+            App().subcommands(UpdateDb(runner = ::runner), ListExecutedScripts()).main(argv)
+
+            // Then
+            defaultChecks(configWrapper)
+            expectThat(configWrapper) {
+                get { datamaintainConfig }.isNotNull()
+            }
+            expectThat((configWrapper.datamaintainConfig!!.driverConfig as MongoDriverConfig).trustUri) {
+                isFalse()
+            }
         }
     }
 
