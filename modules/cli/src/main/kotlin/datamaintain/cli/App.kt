@@ -1,3 +1,5 @@
+@file:JvmName("AppCli")
+
 package datamaintain.cli
 
 import com.github.ajalt.clikt.core.CliktCommand
@@ -12,7 +14,6 @@ import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.script.ScriptAction
 import datamaintain.core.exception.DatamaintainBaseException
 import datamaintain.core.exception.DatamaintainException
-import datamaintain.core.report.Report
 import datamaintain.core.step.check.allCheckRuleNames
 import datamaintain.core.step.executor.ExecutionMode
 import datamaintain.db.driver.mongo.MongoConfigKey
