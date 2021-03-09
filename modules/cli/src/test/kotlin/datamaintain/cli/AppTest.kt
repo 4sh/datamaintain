@@ -298,6 +298,22 @@ internal class AppTest {
                         }
                     }
                 }
+
+                @ParameterizedTest
+                @EnumSource(ScriptAction::class)
+                @DisplayName("Should build config with default script action {0}")
+                fun `should build config with script action`(scriptAction: ScriptAction) {
+                    // Given
+                    val argv = updateMongoDbMinimumArguments().plus(listOf(
+                            "--action", scriptAction.name
+                    ))
+
+                    // When
+                    runApp(argv)
+
+                    // Then
+                    expectThat(configWrapper.datamaintainConfig!!.defaultScriptAction).isEqualTo(scriptAction)
+                }
             }
 
             @Nested
