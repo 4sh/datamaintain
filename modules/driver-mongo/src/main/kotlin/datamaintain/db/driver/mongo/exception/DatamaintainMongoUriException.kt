@@ -1,4 +1,6 @@
-package datamaintain.core.exception
+package datamaintain.db.driver.mongo.exception
+
+import datamaintain.core.exception.DatamaintainBaseException
 
 class DatamaintainMongoUriException (
     mongoUri: String

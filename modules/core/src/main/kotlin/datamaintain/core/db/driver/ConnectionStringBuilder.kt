@@ -1,6 +1,8 @@
 package datamaintain.core.db.driver
 
-open class ConnectionStringBuilder(regexPattern: String, private val errorMessage: String) {
+import datamaintain.core.exception.DatamaintainBaseException
+
+open class ConnectionStringBuilder(regexPattern: String, private val exceptionBuilder: (String) -> DatamaintainBaseException) {
     private val regex = Regex(regexPattern)
 
     fun buildConnectionString(uri: String, trustUri: Boolean): String {
@@ -12,6 +14,6 @@ open class ConnectionStringBuilder(regexPattern: String, private val errorMessag
             return uri
         }
 
-        throw IllegalArgumentException(errorMessage)
+        throw exceptionBuilder(uri)
     }
 }
