@@ -1,4 +1,4 @@
-# How to - Datamaintain configuration
+# Datamaintain configuration
 
 ## Core configuration
 
