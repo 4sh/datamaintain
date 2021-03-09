@@ -8,6 +8,7 @@ import datamaintain.core.script.TagMatcher
 import datamaintain.core.step.check.rules.implementations.SameScriptsAsExecutedCheck
 import datamaintain.core.step.executor.ExecutionMode
 import datamaintain.db.driver.mongo.MongoDriverConfig
+import datamaintain.test.execAppInSubprocess
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -409,17 +410,16 @@ internal class AppTest {
             }
 
             @Test
-            @Disabled
-            //TODO@ERO: fix this when PR #120 is merged
             fun `should throw error when specified config file path does not exist`() {
                 // Given
                 val argv = listOf("--config-file-path", "non-existing-file.properties", "update-db")
 
                 // When
-                runApp(argv)
+                val (exitCode, output) = execAppInSubprocess(argv)
 
                 // Then
-
+                expectThat(exitCode).isEqualTo(1)
+                expectThat(output).contains("java.io.FileNotFoundException: non-existing-file.properties (No such file or directory)")
             }
         }
 
