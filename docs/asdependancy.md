@@ -13,7 +13,7 @@ Datamaintain can be used as a dependancy in your **Java** or **Kotlin server** :
 
 To install Datamaintain in your project, you will have to add it as a dependency. Since the releases are available on [jitpack](https://jitpack.io/), you will first have to add the jitpack repository in your project.
  
-Then, you may add the dependencies to ```datamaintain-core``` and the driver module you need. A list of all the available modules is available [here](README.md#available-packages). Here is an example of the dependencies declaration for a project using mongo:
+Then, you may add the dependencies to ```datamaintain-core``` and the driver module you need. A list of all the available modules is available [here](../README.md#available-packages). Here is an example of the dependencies declaration for a project using mongo:
 
 - gradle using kotlin DSL:
     - In your root build.gradle, at the end of repositories:
