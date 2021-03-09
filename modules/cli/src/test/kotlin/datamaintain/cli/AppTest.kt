@@ -5,7 +5,6 @@ import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.script.Tag
 import datamaintain.core.script.TagMatcher
 import datamaintain.core.step.check.rules.implementations.SameScriptsAsExecutedCheck
-import datamaintain.core.step.executor.ExecutionMode
 import datamaintain.db.driver.mongo.MongoDriverConfig
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
@@ -66,20 +65,25 @@ internal class AppTest {
                     expectThat(configWrapper.datamaintainConfig!!.identifierRegex.pattern).isEqualTo(identifierRegex)
                 }
 
-                @ParameterizedTest
-                @EnumSource
-                @DisplayName("Should build config with execution mode {0}")
-                fun `should build config with execution mode`(executionMode: ExecutionMode) {
-                    // Given
-                    val argv = updateMongoDbMinimumArguments().plus(listOf(
-                            "--execution-mode", executionMode.name
-                    ))
+                @Nested
+                inner class ExecutionMode {
+                    @ParameterizedTest
+                    @EnumSource(datamaintain.core.step.executor.ExecutionMode::class,
+                            names = ["FORCE_MARK_AS_EXECUTED"],
+                            mode = EnumSource.Mode.EXCLUDE)
+                    @DisplayName("Should build config with execution mode {0}")
+                    fun `should build config with execution mode`(executionMode: datamaintain.core.step.executor.ExecutionMode) {
+                        // Given
+                        val argv = updateMongoDbMinimumArguments().plus(listOf(
+                                "--execution-mode", executionMode.name
+                        ))
 
-                    // When
-                    runApp(argv)
+                        // When
+                        runApp(argv)
 
-                    // Then
-                    expectThat(configWrapper.datamaintainConfig!!.executionMode).isEqualTo(executionMode)
+                        // Then
+                        expectThat(configWrapper.datamaintainConfig!!.executionMode).isEqualTo(executionMode)
+                    }
                 }
 
                 @Nested
