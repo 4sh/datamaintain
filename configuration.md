@@ -1,0 +1,25 @@
+# How to - Datamaintain configuration
+
+## Core configuration
+
+| Key | Description | Default value | Mandatory? | Values examples |
+|---|---|---|---|---|
+| scan.path | Path to the folder containing all your scripts | ```./scripts/``` | yes |  |
+| scan.identifier.regex | Regex that will be used to determine an identifier for each file. It has to contain a capturing group. Identifiers are then used to sort the scripts before running them. | ```(.*)``` (with this regex, the script's whole name will be its identifier) | no | With the regex ```(.*?)_.*```, a script named ```1.23_my-script.js``` will have ```1.23``` as its identifier  |
+| scan.tags.createFromFolder | If true, scripts will have their parent folders names as tags. Relative path to ```scan.path``` is used.  | ```false``` | no | ```false``` or ```true``` |
+| tag.*your_tag* | Glob paths to your scripts that you want to apply the tag "your_tag" on. To declare multiple tags, you will have to add multiple properties in your settings. A tag ```my_tag``` will have as as property name ```tag.my_tag``` **WARNING:** ALWAYS declare your tags using absolute paths. Relative paths and even using a tilde (~) won't do the trick. |  | no | ```[data/*, script1.js, old/old_script1.js]``` |
+| filter.tags.whitelisted | Scripts that have these tags will be considered | None | no | ```DATA,tag``` |
+| filter.tags.blacklisted | Scripts that have these tags will be ignored. A script having a whitelisted tag and a blacklisted tag will be ignored | None | no | ```DATA,tag``` |
+| execution.mode | Execution mode. Possible values:<br />- ```NORMAL```: Regular execution: your scripts will be run on your database.<br />- ```DRY```: Scripts will not be executed. A full report of what would happen is you ran Datamaintain normally will be logged.<br />- ```FORCE_AS_EXECUTED```: Scripts will not be executed but their execution will be remembered by Datamaintain for later executions. | ```NORMAL``` | no | ```NORMAL```, ```DRY``` or ```FORCE_MARK_AS_EXECUTED``` |
+| verbose | If true, more logs will be printed | ```false``` | no | ```true``` or ```false``` |
+| prune.tags.to.run.again | Scripts that have these tags will be run, even they were already executed  | None | no | ```tag,again``` |
+
+## Mongo driver configuration
+
+| Key | Description | Default value | Mandatory? | Values examples |
+|---|---|---|---|---|
+| db.mongo.uri | Mongo URI to your mongo server. **Database name is mandatory.** Please see the [mongo URI documentation](https://docs.mongodb.com/manual/reference/connection-string/) to learn about writing mongo URIs. |  | yes | ```mongodb://localhost/my-db```<br />```mongodb://localhost:8000/my-db```<br />```mongodb://username:password@localhost/my-db```<br />```mongodb+srv://server.example.com/my-db``` <br />```mongodb://my-db,my-db2:27018/my-db``` <br /> |
+| db.mongo.tmp.path | Path where the driver will write temporary files. | ```/tmp/datamaintain.tmp``` | no |  |
+| db.mongo.client.path | Path or alias to your mongo executable. | ```mongo``` | no |  |
+| db.mongo.print.output | If true, mongo output will be logged. | ```false``` | no | ```true``` or ```false``` |
+| db.mongo.save.output | If true, mongo output will be saved in script execution report.  | ```false``` | no | ```true``` or ```false``` |
