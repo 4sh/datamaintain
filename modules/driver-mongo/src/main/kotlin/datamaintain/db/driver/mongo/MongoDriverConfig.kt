@@ -3,6 +3,7 @@ package datamaintain.db.driver.mongo
 import datamaintain.core.config.ConfigKey
 import datamaintain.core.config.getProperty
 import datamaintain.core.db.driver.DatamaintainDriverConfig
+import datamaintain.core.db.driver.DriverConfigKey
 import mu.KotlinLogging
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -14,23 +15,27 @@ data class MongoDriverConfig @JvmOverloads constructor(val mongoUri: String,
                                                        val tmpFilePath: Path = Paths.get(MongoConfigKey.DB_MONGO_TMP_PATH.default!!),
                                                        val clientPath: Path = Paths.get(MongoConfigKey.DB_MONGO_CLIENT_PATH.default!!),
                                                        val printOutput: Boolean = MongoConfigKey.DB_MONGO_PRINT_OUTPUT.default!!.toBoolean(),
-                                                       val saveOutput: Boolean = MongoConfigKey.DB_MONGO_SAVE_OUTPUT.default!!.toBoolean()
-) : DatamaintainDriverConfig {
+                                                       val saveOutput: Boolean = MongoConfigKey.DB_MONGO_SAVE_OUTPUT.default!!.toBoolean(),
+                                                       val trustUri: Boolean
+) : DatamaintainDriverConfig(trustUri) {
     companion object {
         @JvmStatic
         fun buildConfig(props: Properties): MongoDriverConfig {
             ConfigKey.overrideBySystemProperties(props, MongoConfigKey.values().asList())
+            ConfigKey.overrideBySystemProperties(props, DriverConfigKey.values().asList())
             return MongoDriverConfig(
                     props.getProperty(MongoConfigKey.DB_MONGO_URI),
                     props.getProperty(MongoConfigKey.DB_MONGO_TMP_PATH).let { Paths.get(it) },
                     props.getProperty(MongoConfigKey.DB_MONGO_CLIENT_PATH).let { Paths.get(it) },
                     props.getProperty(MongoConfigKey.DB_MONGO_PRINT_OUTPUT).toBoolean(),
-                    props.getProperty(MongoConfigKey.DB_MONGO_SAVE_OUTPUT).toBoolean())
+                    props.getProperty(MongoConfigKey.DB_MONGO_SAVE_OUTPUT).toBoolean(),
+                    props.getProperty(DriverConfigKey.DB_TRUST_URI).toBoolean()
+            )
         }
     }
 
     override fun toDriver() = MongoDriver(
-            ConnectionString.buildConnectionString(mongoUri),
+            ConnectionString.buildConnectionString(mongoUri, trustUri),
             tmpFilePath,
             clientPath,
             printOutput,

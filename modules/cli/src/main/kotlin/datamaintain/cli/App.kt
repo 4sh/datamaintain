@@ -11,6 +11,7 @@ import com.github.ajalt.clikt.parameters.types.choice
 import datamaintain.core.Datamaintain
 import datamaintain.core.config.CoreConfigKey
 import datamaintain.core.config.DatamaintainConfig
+import datamaintain.core.db.driver.DriverConfigKey
 import datamaintain.core.script.ScriptAction
 import datamaintain.core.exception.DatamaintainBaseException
 import datamaintain.core.exception.DatamaintainException
@@ -37,6 +38,8 @@ class App : CliktCommand() {
 
     private val mongoUri: String? by option(help = "mongo uri with at least database name. Ex: mongodb://localhost:27017/newName")
 
+    private val trustUri: Boolean? by option(help = "Deactivate all controls on the URI you provide Datamaintain").flag()
+
     private val mongoTmpPath: String? by option(help = "mongo tmp file path")
 
     private val props by findObject() { Properties() }
@@ -52,6 +55,7 @@ class App : CliktCommand() {
     private fun overloadPropsFromArgs(props: Properties) {
         mongoUri?.let { props.put(MongoConfigKey.DB_MONGO_URI.key, it) }
         mongoTmpPath?.let { props.put(MongoConfigKey.DB_MONGO_TMP_PATH.key, it) }
+        trustUri?.let { props.put(DriverConfigKey.DB_TRUST_URI.key, it.toString()) }
     }
 
 }

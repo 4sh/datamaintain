@@ -24,7 +24,7 @@ internal class ConnectionStringTest {
             // When
 
             // Then
-            expectCatching { ConnectionString.buildConnectionString(mongoUri) }
+            expectCatching { ConnectionString.buildConnectionString(mongoUri, false) }
                     .failed()
                     .isA<DatamaintainMongoUriException>()
         }
@@ -36,7 +36,7 @@ internal class ConnectionStringTest {
             val mongoUri = "mongodb://host1/databasename"
 
             // When
-            val connectionString = ConnectionString.buildConnectionString(mongoUri)
+            val connectionString = ConnectionString.buildConnectionString(mongoUri, false)
 
             // Then
             expectThat(connectionString).isEqualTo(mongoUri)
@@ -49,7 +49,7 @@ internal class ConnectionStringTest {
             val mongoUri = "mongodb+srv://host1/databasename"
 
             // When
-            val connectionString = ConnectionString.buildConnectionString(mongoUri)
+            val connectionString = ConnectionString.buildConnectionString(mongoUri, false)
 
             // Then
             expectThat(connectionString).isEqualTo(mongoUri)
@@ -67,7 +67,7 @@ internal class ConnectionStringTest {
             // When
 
             // Then
-            expectCatching { ConnectionString.buildConnectionString(mongoUri) }
+            expectCatching { ConnectionString.buildConnectionString(mongoUri, false) }
                     .failed()
                     .isA<DatamaintainMongoUriException>()
         }
@@ -79,7 +79,7 @@ internal class ConnectionStringTest {
             val mongoUri = "mongodb://username:password@host1/databasename"
 
             // When
-            val connectionString = ConnectionString.buildConnectionString(mongoUri)
+            val connectionString = ConnectionString.buildConnectionString(mongoUri, false)
 
             // Then
             expectThat(connectionString).isEqualTo(mongoUri)
@@ -96,7 +96,7 @@ internal class ConnectionStringTest {
             // When
 
             // Then
-            expectCatching { ConnectionString.buildConnectionString(mongoUri) }
+            expectCatching { ConnectionString.buildConnectionString(mongoUri, false) }
                     .failed()
                     .isA<DatamaintainMongoUriException>()
         }
@@ -107,7 +107,7 @@ internal class ConnectionStringTest {
             val mongoUri = "mongodb://host1/databasename"
 
             // When
-            val connectionString = ConnectionString.buildConnectionString(mongoUri)
+            val connectionString = ConnectionString.buildConnectionString(mongoUri, false)
 
             // Then
             expectThat(connectionString).isEqualTo(mongoUri)
@@ -119,7 +119,7 @@ internal class ConnectionStringTest {
             val mongoUri = "mongodb://www.host.com/databasename"
 
             // When
-            val connectionString = ConnectionString.buildConnectionString(mongoUri)
+            val connectionString = ConnectionString.buildConnectionString(mongoUri, false)
 
             // Then
             expectThat(connectionString).isEqualTo(mongoUri)
@@ -131,7 +131,7 @@ internal class ConnectionStringTest {
             val mongoUri = "mongodb://my-host/databasename"
 
             // When
-            val connectionString = ConnectionString.buildConnectionString(mongoUri)
+            val connectionString = ConnectionString.buildConnectionString(mongoUri, false)
 
             // Then
             expectThat(connectionString).isEqualTo(mongoUri)
@@ -146,7 +146,7 @@ internal class ConnectionStringTest {
             // When
 
             // Then
-            expectCatching { ConnectionString.buildConnectionString(mongoUri) }
+            expectCatching { ConnectionString.buildConnectionString(mongoUri, false) }
                     .failed()
                     .isA<DatamaintainMongoUriException>()
         }
@@ -160,7 +160,7 @@ internal class ConnectionStringTest {
             // When
 
             // Then
-            expectCatching { ConnectionString.buildConnectionString(mongoUri) }
+            expectCatching { ConnectionString.buildConnectionString(mongoUri, false) }
                     .failed()
                     .isA<DatamaintainMongoUriException>()
         }
@@ -171,7 +171,7 @@ internal class ConnectionStringTest {
             val mongoUri = "mongodb://host1:8080/databasename"
 
             // When
-            val connectionString = ConnectionString.buildConnectionString(mongoUri)
+            val connectionString = ConnectionString.buildConnectionString(mongoUri, false)
 
             // Then
             expectThat(connectionString).isEqualTo(mongoUri)
@@ -188,7 +188,7 @@ internal class ConnectionStringTest {
             // When
 
             // Then
-            expectCatching { ConnectionString.buildConnectionString(mongoUri) }
+            expectCatching { ConnectionString.buildConnectionString(mongoUri, false) }
                     .failed()
                     .isA<DatamaintainMongoUriException>()
         }
@@ -201,7 +201,7 @@ internal class ConnectionStringTest {
             // When
 
             // Then
-            expectCatching { ConnectionString.buildConnectionString(mongoUri) }
+            expectCatching { ConnectionString.buildConnectionString(mongoUri, false) }
                     .failed()
                     .isA<DatamaintainMongoUriException>()
         }
@@ -214,7 +214,7 @@ internal class ConnectionStringTest {
             // When
 
             // Then
-            expectCatching { ConnectionString.buildConnectionString(mongoUri) }
+            expectCatching { ConnectionString.buildConnectionString(mongoUri, false) }
                     .failed()
                     .isA<DatamaintainMongoUriException>()
         }
@@ -225,7 +225,7 @@ internal class ConnectionStringTest {
             val mongoUri = "mongodb://host1/databasename"
 
             // When
-            val connectionString = ConnectionString.buildConnectionString(mongoUri)
+            val connectionString = ConnectionString.buildConnectionString(mongoUri, false)
 
             // Then
             expectThat(connectionString).isEqualTo(mongoUri)
@@ -243,7 +243,7 @@ internal class ConnectionStringTest {
             // When
 
             // Then
-            expectCatching { ConnectionString.buildConnectionString(mongoUri) }
+            expectCatching { ConnectionString.buildConnectionString(mongoUri, false) }
                     .failed()
                     .isA<DatamaintainMongoUriException>()
         }
@@ -256,7 +256,7 @@ internal class ConnectionStringTest {
             // When
 
             // Then
-            expectCatching { ConnectionString.buildConnectionString(mongoUri) }
+            expectCatching { ConnectionString.buildConnectionString(mongoUri, false) }
                     .failed()
                     .isA<DatamaintainMongoUriException>()
         }
@@ -267,7 +267,7 @@ internal class ConnectionStringTest {
             val mongoUri = "mongodb://host1/databasename?name=value"
 
             // When
-            val connectionString = ConnectionString.buildConnectionString(mongoUri)
+            val connectionString = ConnectionString.buildConnectionString(mongoUri, false)
 
             // Then
             expectThat(connectionString).isEqualTo(mongoUri)
