@@ -4,10 +4,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import strikt.api.expectCatching
 import strikt.api.expectThat
-import strikt.assertions.containsExactly
-import strikt.assertions.failed
-import strikt.assertions.isA
-import strikt.assertions.isEqualTo
+import strikt.assertions.*
 
 internal class TagMatcherTest {
     @Nested
@@ -80,31 +77,41 @@ internal class TagMatcherTest {
                 // When
                 expectCatching { TagMatcher.parse(tagName, "[$pathMatcher]") }
                         .failed()
-                        .isA<NotAbsolutePathMatcherPathException>()
+                        .isA<DatamaintainPathMatcherUsesEnvironmentVariablesException>()
             }
 
             @Test
-            fun `should throw an exception when path matcher contains relative path`() {
+            fun `should throw an exception when path matcher starts with $HOME`() {
+                // Given
+                val pathMatcher = "\$HOME/me/path"
+                val tagName = "tag"
+
+                // When
+                expectCatching { TagMatcher.parse(tagName, "[$pathMatcher]") }
+                        .failed()
+                        .isA<DatamaintainPathMatcherUsesEnvironmentVariablesException>()
+            }
+
+            @Test
+            fun `should not throw an exception when path matcher contains relative path`() {
                 // Given
                 val pathMatcher = "/me/../path"
                 val tagName = "tag"
 
                 // When
                 expectCatching { TagMatcher.parse(tagName, "[$pathMatcher]") }
-                        .failed()
-                        .isA<NotAbsolutePathMatcherPathException>()
+                        .succeeded()
             }
 
             @Test
-            fun `should throw an exception when path matcher starts with dot`() {
+            fun `should not throw an exception when path matcher starts with dot`() {
                 // Given
                 val pathMatcher = "./path"
                 val tagName = "tag"
 
                 // When
                 expectCatching { TagMatcher.parse(tagName, "[$pathMatcher]") }
-                        .failed()
-                        .isA<NotAbsolutePathMatcherPathException>()
+                        .succeeded()
             }
         }
     }

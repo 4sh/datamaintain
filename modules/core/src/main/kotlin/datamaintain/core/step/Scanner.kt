@@ -2,6 +2,8 @@ package datamaintain.core.step
 
 import datamaintain.core.Context
 import datamaintain.core.config.DatamaintainConfig
+import datamaintain.core.exception.DatamaintainBaseException
+import datamaintain.core.exception.DatamaintainException
 import datamaintain.core.script.FileScript
 import datamaintain.core.script.ScriptWithContent
 import datamaintain.core.script.Tag
@@ -13,28 +15,41 @@ private val logger = KotlinLogging.logger {}
 
 class Scanner(private val context: Context) {
     fun scan(): List<ScriptWithContent> {
-        val rootFolder: File = context.config.path.toFile()
-        logger.info { "Scan ${rootFolder.absolutePath}..." }
-        val scannedFiles = rootFolder.walk()
-                .filter { it.isFile }
-                .map { FileScript(it.toPath(), context.config.identifierRegex,
-                        buildTags(context.config, rootFolder, it).toSet()) }
-                .sortedBy { it.name }
-                .onEach { context.reportBuilder.addScannedScript(it) }
-                .onEach {
-                    if (context.config.verbose) {
-                        logger.info { "${it.name} is scanned" }
+        try {
+            val rootFolder: File = context.config.path.toFile()
+            logger.info { "Scan ${rootFolder.absolutePath}..." }
+            val scannedFiles = rootFolder.walk()
+                    .filter { it.isFile }
+                    .map { FileScript(
+                            it.toPath(),
+                            context.config.identifierRegex,
+                            buildTags(context.config, rootFolder, it).toSet(),
+                            context.config.defaultScriptAction
+                    ) }
+                    .sortedBy { it.name }
+                    .onEach { context.reportBuilder.addScannedScript(it) }
+                    .onEach {
+                        if (context.config.verbose) {
+                            logger.info { "${it.name} is scanned" }
+                        }
                     }
+                    .toList()
+            logger.info { "${scannedFiles.size} files scanned" }
+            context.config.tagsMatchers.onEach { tagMatcher ->
+                if (scannedFiles.none { it.tags.contains(tagMatcher.tag) }) {
+                    logger.warn {"WARNING: ${tagMatcher.tag} did not match any scripts"}
                 }
-                .toList()
-        logger.info { "${scannedFiles.size} files scanned" }
-        context.config.tagsMatchers.onEach { tagMatcher ->
-            if (scannedFiles.none { it.tags.contains(tagMatcher.tag) }) {
-                logger.warn {"WARNING: ${tagMatcher.tag} did not match any scripts"}
             }
+            logger.info { "" }
+            return scannedFiles
+        } catch (datamaintainException: DatamaintainBaseException) {
+            throw DatamaintainException(
+                datamaintainException.message,
+                Step.SCAN,
+                context.reportBuilder,
+                datamaintainException.resolutionMessage
+            )
         }
-        logger.info { "" }
-        return scannedFiles
     }
 
     private fun buildTags(config: DatamaintainConfig, rootFolder: File, file: File): Set<Tag> {

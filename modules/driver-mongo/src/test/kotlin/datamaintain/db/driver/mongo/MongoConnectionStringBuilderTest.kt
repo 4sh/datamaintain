@@ -1,5 +1,6 @@
 package datamaintain.db.driver.mongo
 
+import datamaintain.db.driver.mongo.exception.DatamaintainMongoUriException
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
@@ -9,9 +10,8 @@ import strikt.api.expectThat
 import strikt.assertions.failed
 import strikt.assertions.isA
 import strikt.assertions.isEqualTo
-import java.lang.IllegalArgumentException
 
-internal class ConnectionStringTest {
+internal class MongoConnectionStringBuilderTest {
     @Nested
     inner class StartOfURI {
         @Test
@@ -23,9 +23,9 @@ internal class ConnectionStringTest {
             // When
 
             // Then
-            expectCatching { ConnectionString.buildConnectionString(mongoUri) }
+            expectCatching { MongoConnectionStringBuilder().buildConnectionString(mongoUri, false) }
                     .failed()
-                    .isA<IllegalArgumentException>()
+                    .isA<DatamaintainMongoUriException>()
         }
 
         @Test
@@ -35,7 +35,7 @@ internal class ConnectionStringTest {
             val mongoUri = "mongodb://host1/databasename"
 
             // When
-            val connectionString = ConnectionString.buildConnectionString(mongoUri)
+            val connectionString = MongoConnectionStringBuilder().buildConnectionString(mongoUri, false)
 
             // Then
             expectThat(connectionString).isEqualTo(mongoUri)
@@ -48,7 +48,7 @@ internal class ConnectionStringTest {
             val mongoUri = "mongodb+srv://host1/databasename"
 
             // When
-            val connectionString = ConnectionString.buildConnectionString(mongoUri)
+            val connectionString = MongoConnectionStringBuilder().buildConnectionString(mongoUri, false)
 
             // Then
             expectThat(connectionString).isEqualTo(mongoUri)
@@ -66,9 +66,9 @@ internal class ConnectionStringTest {
             // When
 
             // Then
-            expectCatching { ConnectionString.buildConnectionString(mongoUri) }
+            expectCatching { MongoConnectionStringBuilder().buildConnectionString(mongoUri, false) }
                     .failed()
-                    .isA<IllegalArgumentException>()
+                    .isA<DatamaintainMongoUriException>()
         }
 
         @Test
@@ -78,7 +78,7 @@ internal class ConnectionStringTest {
             val mongoUri = "mongodb://username:password@host1/databasename"
 
             // When
-            val connectionString = ConnectionString.buildConnectionString(mongoUri)
+            val connectionString = MongoConnectionStringBuilder().buildConnectionString(mongoUri, false)
 
             // Then
             expectThat(connectionString).isEqualTo(mongoUri)
@@ -95,9 +95,9 @@ internal class ConnectionStringTest {
             // When
 
             // Then
-            expectCatching { ConnectionString.buildConnectionString(mongoUri) }
+            expectCatching { MongoConnectionStringBuilder().buildConnectionString(mongoUri, false) }
                     .failed()
-                    .isA<IllegalArgumentException>()
+                    .isA<DatamaintainMongoUriException>()
         }
 
         @Test
@@ -106,7 +106,7 @@ internal class ConnectionStringTest {
             val mongoUri = "mongodb://host1/databasename"
 
             // When
-            val connectionString = ConnectionString.buildConnectionString(mongoUri)
+            val connectionString = MongoConnectionStringBuilder().buildConnectionString(mongoUri, false)
 
             // Then
             expectThat(connectionString).isEqualTo(mongoUri)
@@ -118,7 +118,7 @@ internal class ConnectionStringTest {
             val mongoUri = "mongodb://www.host.com/databasename"
 
             // When
-            val connectionString = ConnectionString.buildConnectionString(mongoUri)
+            val connectionString = MongoConnectionStringBuilder().buildConnectionString(mongoUri, false)
 
             // Then
             expectThat(connectionString).isEqualTo(mongoUri)
@@ -130,7 +130,7 @@ internal class ConnectionStringTest {
             val mongoUri = "mongodb://my-host/databasename"
 
             // When
-            val connectionString = ConnectionString.buildConnectionString(mongoUri)
+            val connectionString = MongoConnectionStringBuilder().buildConnectionString(mongoUri, false)
 
             // Then
             expectThat(connectionString).isEqualTo(mongoUri)
@@ -145,9 +145,9 @@ internal class ConnectionStringTest {
             // When
 
             // Then
-            expectCatching { ConnectionString.buildConnectionString(mongoUri) }
+            expectCatching { MongoConnectionStringBuilder().buildConnectionString(mongoUri, false) }
                     .failed()
-                    .isA<IllegalArgumentException>()
+                    .isA<DatamaintainMongoUriException>()
         }
 
         @Test
@@ -159,9 +159,9 @@ internal class ConnectionStringTest {
             // When
 
             // Then
-            expectCatching { ConnectionString.buildConnectionString(mongoUri) }
+            expectCatching { MongoConnectionStringBuilder().buildConnectionString(mongoUri, false) }
                     .failed()
-                    .isA<IllegalArgumentException>()
+                    .isA<DatamaintainMongoUriException>()
         }
 
         @Test
@@ -170,7 +170,7 @@ internal class ConnectionStringTest {
             val mongoUri = "mongodb://host1:8080/databasename"
 
             // When
-            val connectionString = ConnectionString.buildConnectionString(mongoUri)
+            val connectionString = MongoConnectionStringBuilder().buildConnectionString(mongoUri, false)
 
             // Then
             expectThat(connectionString).isEqualTo(mongoUri)
@@ -187,9 +187,9 @@ internal class ConnectionStringTest {
             // When
 
             // Then
-            expectCatching { ConnectionString.buildConnectionString(mongoUri) }
+            expectCatching { MongoConnectionStringBuilder().buildConnectionString(mongoUri, false) }
                     .failed()
-                    .isA<IllegalArgumentException>()
+                    .isA<DatamaintainMongoUriException>()
         }
 
         @Test
@@ -200,9 +200,9 @@ internal class ConnectionStringTest {
             // When
 
             // Then
-            expectCatching { ConnectionString.buildConnectionString(mongoUri) }
+            expectCatching { MongoConnectionStringBuilder().buildConnectionString(mongoUri, false) }
                     .failed()
-                    .isA<IllegalArgumentException>()
+                    .isA<DatamaintainMongoUriException>()
         }
 
         @Test
@@ -213,9 +213,9 @@ internal class ConnectionStringTest {
             // When
 
             // Then
-            expectCatching { ConnectionString.buildConnectionString(mongoUri) }
+            expectCatching { MongoConnectionStringBuilder().buildConnectionString(mongoUri, false) }
                     .failed()
-                    .isA<IllegalArgumentException>()
+                    .isA<DatamaintainMongoUriException>()
         }
 
         @Test
@@ -224,7 +224,7 @@ internal class ConnectionStringTest {
             val mongoUri = "mongodb://host1/databasename"
 
             // When
-            val connectionString = ConnectionString.buildConnectionString(mongoUri)
+            val connectionString = MongoConnectionStringBuilder().buildConnectionString(mongoUri, false)
 
             // Then
             expectThat(connectionString).isEqualTo(mongoUri)
@@ -242,9 +242,9 @@ internal class ConnectionStringTest {
             // When
 
             // Then
-            expectCatching { ConnectionString.buildConnectionString(mongoUri) }
+            expectCatching { MongoConnectionStringBuilder().buildConnectionString(mongoUri, false) }
                     .failed()
-                    .isA<IllegalArgumentException>()
+                    .isA<DatamaintainMongoUriException>()
         }
 
         @Test
@@ -255,9 +255,9 @@ internal class ConnectionStringTest {
             // When
 
             // Then
-            expectCatching { ConnectionString.buildConnectionString(mongoUri) }
+            expectCatching { MongoConnectionStringBuilder().buildConnectionString(mongoUri, false) }
                     .failed()
-                    .isA<IllegalArgumentException>()
+                    .isA<DatamaintainMongoUriException>()
         }
 
         @Test
@@ -266,7 +266,7 @@ internal class ConnectionStringTest {
             val mongoUri = "mongodb://host1/databasename?name=value"
 
             // When
-            val connectionString = ConnectionString.buildConnectionString(mongoUri)
+            val connectionString = MongoConnectionStringBuilder().buildConnectionString(mongoUri, false)
 
             // Then
             expectThat(connectionString).isEqualTo(mongoUri)

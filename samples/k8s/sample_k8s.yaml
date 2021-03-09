@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: busybox
+spec:
+  containers:
+    - name: busybox
+      image: busybox
+      command: ["/bin/sh"]
+      args:
+        - -c
+        - >
+          echo "Starting" &&
+          while true; do echo alive; sleep 60; done
+  initContainers:
+    - name: wait-mongo
+      image: mongo:4.2
+      env:
+        - name: MONGO_URI
+          value: "mongodb://mongo-mongodb-replicaset-0.mongo-mongodb-replicaset/test"
+      command:
+        - sh
+        - -c
+        - |
+          until mongo --host $(MONGO_URI) \
+                      --eval "db.adminCommand('ping')"; do
+            echo waiting for db
+            sleep 2
+          done
+    - name: datamaintain
+      image: datamaintain-sample
+      imagePullPolicy: Never
+      env:
+        - name: MONGO_URI
+          value: "mongodb://mongo-mongodb-replicaset-0.mongo-mongodb-replicaset/test"
+        - name: LOCK_EXPIRE_IN_MINUTES
+          value: "10"
+        - name: SLEEP_BEFORE_RETRY_MILLI
+          value: "5"

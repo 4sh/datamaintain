@@ -1,14 +1,16 @@
 package datamaintain.core.script
 
-import java.lang.IllegalStateException
 import java.math.BigInteger
+import datamaintain.core.config.DatamaintainConfig
+import datamaintain.core.exception.DatamaintainFileIdentifierPatternException
 import java.nio.file.Path
 import java.security.MessageDigest
 
 class FileScript @JvmOverloads constructor(
         val path: Path,
         identifierRegex: Regex,
-        override val tags: Set<Tag> = setOf()
+        override val tags: Set<Tag> = setOf(),
+        override var action: ScriptAction = DatamaintainConfig.defaultAction
 ) : ScriptWithContent {
 
     override val name: String
@@ -23,8 +25,8 @@ class FileScript @JvmOverloads constructor(
     }
 
     override val identifier: String by lazy(fun(): String {
-        val matchResult = identifierRegex.matchEntire(name) ?: throw IllegalStateException(
-                "The file $name doesn't match the pattern $identifierRegex " + "and so can't extract its identifier")
+        val matchResult =
+            identifierRegex.matchEntire(name) ?: throw DatamaintainFileIdentifierPatternException(name, identifierRegex)
 
         return matchResult.groupValues[1]
     })

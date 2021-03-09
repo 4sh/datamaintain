@@ -2,13 +2,14 @@ package datamaintain.core.script
 
 import datamaintain.core.step.executor.Execution
 
-import java.time.Duration
-import java.time.LocalDateTime
-
 interface Script {
     val name: String
     val checksum: String
     val identifier: String
+
+    fun fullName(): String {
+        return name + identifier
+    }
 }
 
 data class ExecutedScript @JvmOverloads constructor(
@@ -16,25 +17,21 @@ data class ExecutedScript @JvmOverloads constructor(
         override val checksum: String,
         override val identifier: String,
         val executionStatus: ExecutionStatus,
+        var action: ScriptAction,
         val executionDurationInMillis: Long? = null,
         val executionOutput: String? = null
 ) : Script {
     companion object {
-        fun forceMarkAsExecuted(script: ScriptWithContent) =
+        fun simulateExecuted(script: ScriptWithContent, executionStatus: ExecutionStatus) =
                 ExecutedScript(
                         script.name,
                         script.checksum,
                         script.identifier,
-                        ExecutionStatus.FORCE_MARKED_AS_EXECUTED
+                        executionStatus,
+                        script.action
                 )
 
-        fun shouldBeExecuted(script: ScriptWithContent) =
-                ExecutedScript(
-                        script.name,
-                        script.checksum,
-                        script.identifier,
-                        ExecutionStatus.SHOULD_BE_EXECUTED
-                )
+        fun build(script: ScriptWithContent, execution: Execution) = simulateExecuted(script, execution.executionStatus)
 
         fun build(script: ScriptWithContent, execution: Execution, executionDurationInMillis: Long) =
                 ExecutedScript(
@@ -42,6 +39,7 @@ data class ExecutedScript @JvmOverloads constructor(
                         script.checksum,
                         script.identifier,
                         execution.executionStatus,
+                        script.action,
                         executionDurationInMillis,
                         execution.executionOutput
                 )
@@ -51,6 +49,7 @@ data class ExecutedScript @JvmOverloads constructor(
 interface ScriptWithContent : Script {
     val content: String
     val tags: Set<Tag>
+    var action: ScriptAction
 }
 
 

@@ -1,5 +1,6 @@
 package datamaintain.core.script
 
+import datamaintain.core.exception.DatamaintainBaseException
 import java.nio.file.FileSystems
 import java.nio.file.Path
 import java.nio.file.PathMatcher
@@ -22,7 +23,7 @@ class TagMatcher(val tag: Tag, val globPaths: Iterable<String>) {
         other as TagMatcher
 
         if (tag != other.tag) return false
-        if (globPaths != other.globPaths) return false
+        if (globPaths.toList() != other.globPaths.toList()) return false
 
         return true
     }
@@ -40,19 +41,19 @@ class TagMatcher(val tag: Tag, val globPaths: Iterable<String>) {
         fun parse(name: String, pathMatchers: String): TagMatcher {
             return TagMatcher(Tag(name = name), pathMatchers.split(",")
                     .map { pathMatcher -> pathMatcher.trim('[', ']', ' ') }
-                    .onEach { if (isNotAbsolute(it)) { throw  NotAbsolutePathMatcherPathException(name, it)} }
+                    .onEach { if (containsEnvironmentVariables(it)) { throw  DatamaintainPathMatcherUsesEnvironmentVariablesException(name, it)} }
                     .toSet())
         }
 
         @JvmStatic
-        private fun isNotAbsolute(pathMatcher: String): Boolean {
-            return pathMatcher.startsWith("~") || pathMatcher.contains("../") || pathMatcher.startsWith("./")
+        private fun containsEnvironmentVariables(pathMatcher: String): Boolean {
+            return pathMatcher.startsWith("~") || pathMatcher.startsWith("\$HOME")
         }
     }
 }
 
-class NotAbsolutePathMatcherPathException(name: String, pathMatcher: String):
-        IllegalArgumentException("The path matcher '${pathMatcher}' given to match scripts for the tag named '${name}' is not absolute " +
-                "(it contains '../' or starts with a ~). " +
-                "Datamaintain only support absolute paths. You may find it using the command pwd" +
-                " in the concerned folder.")
+class DatamaintainPathMatcherUsesEnvironmentVariablesException(name: String, pathMatcher: String):
+        DatamaintainBaseException("The path matcher '${pathMatcher}' given to match scripts for the tag named '${name}' is not valid " +
+                "because it starts with a '~' or '\$HOME'. You can not use such environments variables in the settings.\n" +
+                "You may want to give the absolute path to your folder. If that is what you want, you can find it using " +
+                "the command `pwd` in the concerned folder.\n")

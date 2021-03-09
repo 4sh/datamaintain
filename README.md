@@ -22,7 +22,7 @@ Each time your launch your server, Datamaintain will check if you added new scri
 | Package | Description | 
 |---|---|
 | datamaintain-core | Core package, needed for all uses of Datamaintain |
-| datamaintain-mongo | Mongo driver package to run scripts on a mongo database |
+| datamaintain-driver-mongo | Mongo driver package to run scripts on a mongo database |
 
 ## Add Datamaintain as a dependency
 
@@ -51,8 +51,8 @@ Then, you may add the dependencies to ```datamaintain-core``` and the driver mod
     ```kotlin
     
     dependencies {
-		implementation("com.github.4sh.datamaintain:datamaintain-core:v1.0.0-rc14"),
-		implementation("com.github.4sh.datamaintain:datamaintain-mongo:v1.0.0-rc14")
+		implementation("com.github.4sh.datamaintain:datamaintain-core:v1.1.0"),
+		implementation("com.github.4sh.datamaintain:datamaintain-driver-mongo:v1.1.0")
 	} 
     ```
     
@@ -78,8 +78,8 @@ Then, you may add the dependencies to ```datamaintain-core``` and the driver mod
     ```groovy
     
     dependencies {
-	    implementation 'com.github.4sh.datamaintain:datamaintain-core:v1.0.0-rc14',
-        implementation 'com.github.4sh.datamaintain:datamaintain-mongo:v1.0.0-rc14',
+	    implementation 'com.github.4sh.datamaintain:datamaintain-core:v1.1.0',
+        implementation 'com.github.4sh.datamaintain:datamaintain-driver-mongo:v1.1.0',
 	} 
     ```
     
@@ -114,15 +114,18 @@ Then, you may add the dependencies to ```datamaintain-core``` and the driver mod
 
 | Key | Description | Default value | Mandatory? | Values examples |
 |---|---|---|---|---|
+| default.script.action | The default script action | ```RUN``` | no | ```RUN``` or ```MARK_AS_EXECUTED``` |
 | scan.path | Path to the folder containing all your scripts | ```./scripts/``` | yes |  |
 | scan.identifier.regex | Regex that will be used to determine an identifier for each file. It has to contain a capturing group. Identifiers are then used to sort the scripts before running them. | ```(.*)``` (with this regex, the script's whole name will be its identifier) | no | With the regex ```(.*?)_.*```, a script named ```1.23_my-script.js``` will have ```1.23``` as its identifier  |
 | scan.tags.createFromFolder | If true, scripts will have their parent folders names as tags. Relative path to ```scan.path``` is used.  | ```false``` | no | ```false``` or ```true``` |
 | tag.*your_tag* | Glob paths to your scripts that you want to apply the tag "your_tag" on. To declare multiple tags, you will have to add multiple properties in your settings. A tag ```my_tag``` will have as as property name ```tag.my_tag``` **WARNING:** ALWAYS declare your tags using absolute paths. Relative paths and even using a tilde (~) won't do the trick. |  | no | ```[data/*, script1.js, old/old_script1.js]``` |
 | filter.tags.whitelisted | Scripts that have these tags will be considered | None | no | ```DATA,tag``` |
 | filter.tags.blacklisted | Scripts that have these tags will be ignored. A script having a whitelisted tag and a blacklisted tag will be ignored | None | no | ```DATA,tag``` |
-| execution.mode | Execution mode. Possible values:<br />- ```NORMAL```: Regular execution: your scripts will be run on your database.<br />- ```DRY```: Scripts will not be executed. A full report of what would happen is you ran Datamaintain normally will be logged.<br />- ```FORCE_AS_EXECUTED```: Scripts will not be executed but their execution will be remembered by Datamaintain for later executions. | ```NORMAL``` | no | ```NORMAL```, ```DRY``` or ```FORCE_MARK_AS_EXECUTED``` |
+| execution.mode | Execution mode. Possible values:<br />- ```NORMAL```: Regular execution: the action for each script will be done.<br />- ```DRY```: No action will be done on script. A full report of what would happen is you ran Datamaintain normally will be logged.<br />- ```FORCE_AS_EXECUTED```: **Deprecated (will be removed in 2.0, use action) !** Scripts will not be executed but their execution will be remembered by Datamaintain for later executions. | ```NORMAL``` | no | ```NORMAL```, ```DRY``` ~~or FORCE_MARK_AS_EXECUTED~~ |
 | verbose | If true, more logs will be printed | ```false``` | no | ```true``` or ```false``` |
 | prune.tags.to.run.again | Scripts that have these tags will be run, even they were already executed  | None | no | ```tag,again``` |
+| prune.scripts.override.executed | Allow datamaintain to override a script if it detect a checksum change on a script already runned (assuming its filename) | ```false``` | no | ```true``` or ```false``` |
+| db.trust.uri | Bypass all checks that could be done on your URI because you are very sure of it and think our checks are just liars | ```false``` | no | ```true``` or ```false``` |
 ### Mongo driver configuration
 
 | Key | Description | Default value | Mandatory? | Values examples |
@@ -134,10 +137,40 @@ Then, you may add the dependencies to ```datamaintain-core``` and the driver mod
 | db.mongo.save.output | If true, mongo output will be saved in script execution report.  | ```false``` | no | ```true``` or ```false``` |
 
 ## Use the CLI
-
+### Download and execute
 You will find the CLI for each release in its assets in the [releases](https://github.com/4sh/datamaintain/releases). To launch Datamaintain using the CLI, you just have to execute the bash script you will find in the archive. To give values to the settings, you just have to add ```--setting $SETTING_VALUE``` after ```./datamaintain-cli```.
 
 ![](docs/img/release-page-cli.png)
+
+For example :
+```
+./cli --db-type mongo --mongo-uri mongodb://localhost:27017/sample update-db --path $script_path --identifier-regex "(.*)"
+```
+
+This command will start Datamaintain on a mongo db, the mongo is accessible with URI `mongodb://localhost:27017/sample`.
+The folder path containing scripts is `$script_path`. 
+
+### Use docker
+You can use the CLI via a docker image. You just need to mount the script path to the container :
+```
+docker run --rm --volume $script_path:/scripts docker.pkg.github.com/4sh/datamaintain/datamaintain:1.2-mongo-4.4 --db-type mongo --mongo-uri mongodb://localhost:27017/sample update-db --path /scripts --identifier-regex "(.*)"
+```
+
+In this example :
+* `$script_path` is a path to the script folder
+* `--rm` will remove the container once Datamaintain is finish
+* `--volume` mounts the script folder on your machine to the Datamaintain container with the path `/scripts`
+* After the image name `datamaintain` you can pass arguments to the cli normally.
+* On Mac OS you may need to replace `localhost` in the mongo URI 
+  by `host.docker.internal`. See [docker documentation](https://docs.docker.com/docker-for-mac/networking/).
+
+Datamaintain image use a mongo shell.
+
+Image tag has form `<datamaintain version>-<db type>-<db version>` for example 
+`docker.pkg.github.com/4sh/datamaintain/datamaintain:1.2-mongo-4.4` is a datamaintain 1.2 with a mongo shell 4.4.
+For now, datamaintain only support mongo database.
+You can see all images [here](https://github.com/orgs/4sh/packages?repo_name=datamaintain)
+
 
 ## Installation in a project with already executed scripts
 

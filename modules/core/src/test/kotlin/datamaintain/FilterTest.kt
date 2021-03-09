@@ -5,6 +5,7 @@ import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.db.driver.DatamaintainDriver
 import datamaintain.core.db.driver.FakeDriverConfig
 import datamaintain.core.script.FileScript
+import datamaintain.core.script.ScriptAction
 import datamaintain.core.script.Tag
 import datamaintain.core.step.Filter
 import datamaintain.core.step.executor.ExecutionMode
@@ -32,7 +33,11 @@ internal class FilterTest {
                         emptySet(),
                         setOf(blacklistedTag),
                         emptySet(),
-                        emptySet(),ExecutionMode.NORMAL,
+                        false,
+                        emptySet(),
+                        emptySequence(),
+                        ExecutionMode.NORMAL,
+                        ScriptAction.RUN,
                         FakeDriverConfig()),
                 dbDriver = dbDriver)
 
@@ -79,8 +84,11 @@ internal class FilterTest {
                         setOf(whitelistedTag),
                         setOf(),
                         emptySet(),
+                        false,
                         emptySet(),
+                        emptySequence(),
                         ExecutionMode.NORMAL,
+                        ScriptAction.RUN,
                         FakeDriverConfig()),
                 dbDriver = dbDriver)
 
@@ -133,8 +141,11 @@ internal class FilterTest {
                         whitelistedTags,
                         blacklistedTags,
                         emptySet(),
+                        false,
                         emptySet(),
+                        emptySequence(),
                         ExecutionMode.NORMAL,
+                        ScriptAction.RUN,
                         FakeDriverConfig()),
                 dbDriver = dbDriver)
 
