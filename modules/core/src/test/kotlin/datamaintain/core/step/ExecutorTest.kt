@@ -4,6 +4,7 @@ import datamaintain.core.Context
 import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.db.driver.DatamaintainDriver
 import datamaintain.core.db.driver.FakeDriverConfig
+import datamaintain.core.exception.DatamaintainException
 import datamaintain.core.report.Report
 import datamaintain.core.script.ExecutedScript
 import datamaintain.core.script.ExecutionStatus.KO
@@ -18,8 +19,10 @@ import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
+import strikt.api.expectThrows
 import strikt.assertions.containsExactly
 import strikt.assertions.hasSize
+import strikt.assertions.isEqualTo
 import strikt.assertions.map
 import java.nio.file.Paths
 
@@ -43,25 +46,25 @@ internal class ExecutorTest {
         every { dbDriverMock.executeScript(neq(script2)) }.answers { Execution(OK) }
         every { dbDriverMock.markAsExecuted(any()) }.returnsArgument(0)
 
-        // When
-        val report = executor.execute(listOf(script1, script2, script3))
-
-        // Then
-        verify(exactly = 2) { dbDriverMock.executeScript(any()) }
-        verify(exactly = 1) { dbDriverMock.markAsExecuted(any()) }
-
-        expectThat(report) {
-            get { executedScripts }
+        // WhenThen
+        expectThrows<DatamaintainException> { executor.execute(listOf(script1, script2, script3)) }
+            .and {
+                get { report }
+                    .get { executedScripts }
                     .hasSize(2)
                     .and {
                         map { it.name }
-                                .containsExactly(script1.name, script2.name)
+                            .containsExactly(script1.name, script2.name)
                     }
                     .and {
                         map { it.executionStatus }
-                                .containsExactly(OK, KO)
+                            .containsExactly(OK, KO)
                     }
-        }
+                get { message }.isEqualTo("${script2.name} has not been correctly executed")
+            }
+
+        verify(exactly = 2) { dbDriverMock.executeScript(any()) }
+        verify(exactly = 1) { dbDriverMock.markAsExecuted(any()) }
     }
 
     @Test
