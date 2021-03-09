@@ -17,7 +17,7 @@ data class MongoDriverConfig @JvmOverloads constructor(val mongoUri: String,
                                                        val printOutput: Boolean = MongoConfigKey.DB_MONGO_PRINT_OUTPUT.default!!.toBoolean(),
                                                        val saveOutput: Boolean = MongoConfigKey.DB_MONGO_SAVE_OUTPUT.default!!.toBoolean(),
                                                        val trustUri: Boolean
-) : DatamaintainDriverConfig(trustUri) {
+) : DatamaintainDriverConfig(trustUri, mongoUri, MongoConnectionStringBuilder()) {
     companion object {
         @JvmStatic
         fun buildConfig(props: Properties): MongoDriverConfig {
@@ -34,8 +34,8 @@ data class MongoDriverConfig @JvmOverloads constructor(val mongoUri: String,
         }
     }
 
-    override fun toDriver() = MongoDriver(
-            ConnectionString.buildConnectionString(mongoUri, trustUri),
+    override fun toDriver(connectionString: String) = MongoDriver(
+            connectionString,
             tmpFilePath,
             clientPath,
             printOutput,
