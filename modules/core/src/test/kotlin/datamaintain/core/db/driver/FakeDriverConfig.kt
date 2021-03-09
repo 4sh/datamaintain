@@ -1,6 +1,8 @@
 package datamaintain.core.db.driver
 
-class FakeDriverConfig : DatamaintainDriverConfig(true, "", ConnectionStringBuilder(".*", "")) {
+import datamaintain.core.exception.DatamaintainBaseException
+
+class FakeDriverConfig : DatamaintainDriverConfig(true, "", ConnectionStringBuilder(".*") { DatamaintainBaseException("") }) {
     override fun log() {
     }
 

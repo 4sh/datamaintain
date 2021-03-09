@@ -1,6 +1,6 @@
 package datamaintain.db.driver.mongo
 
-import datamaintain.core.exception.DatamaintainMongoUriException
+import datamaintain.db.driver.mongo.exception.DatamaintainMongoUriException
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
@@ -10,7 +10,6 @@ import strikt.api.expectThat
 import strikt.assertions.failed
 import strikt.assertions.isA
 import strikt.assertions.isEqualTo
-import java.lang.IllegalArgumentException
 
 internal class MongoConnectionStringBuilderTest {
     @Nested
