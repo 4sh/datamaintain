@@ -100,7 +100,7 @@ data class DatamaintainConfig @JvmOverloads constructor(val path: Path = Paths.g
         tagsToPlayAgain.let { logger.info { "- tags to play again -> $it" } }
         tagsMatchers.let { logger.info { "- tags -> $tagsMatchers" } }
         overrideExecutedScripts.let { logger.info { "- Allow override executed script -> ${it}" } }
-        checkRules.let { logger.info { "- rules -> $checkRules" } }
+        checkRules.let { logger.info { "- rules -> ${checkRules.toList()}" } }
         executionMode.let { logger.info { "- execution mode -> $it" } }
         verbose.let { logger.info { "- verbose -> $it" } }
         logger.info { "" }

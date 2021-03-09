@@ -3,10 +3,7 @@ package datamaintain.test
 import datamaintain.cli.main
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
-import strikt.assertions.containsExactly
-import strikt.assertions.hasSize
-import strikt.assertions.isEmpty
-import strikt.assertions.isEqualTo
+import strikt.assertions.*
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
 
@@ -199,7 +196,7 @@ class MongoIT : AbstractMongoDbTest() {
     @Test
     fun `should fail with invalid script`() {
         // Given
-        val args = arrayOf(
+        val args = listOf(
                 "--db-type", "mongo",
                 "--mongo-uri", mongoUri,
                 "update-db",
@@ -209,15 +206,24 @@ class MongoIT : AbstractMongoDbTest() {
         )
 
         // When
-        main(args)
+        val (exitCode, output) = execAppInSubprocess(args)
 
         // Then
+        expectThat(exitCode).isEqualTo(1)
+        expectThat(output)
+            .and {
+                contains("01_file.js executed")
+                not { contains("02_file.js executed") }
+                not { contains("03_file.js executed") }
+
+                contains("02_file.js has not been correctly executed")
+            }
+
         expectThat(database.getCollection("simple").countDocuments()).isEqualTo(1)
 
         expectThat(listExecutedFiles())
                 .hasSize(1)
-                .containsExactly(
-                        "01_file.js")
+                .containsExactly("01_file.js")
     }
 
     private fun listExecutedFiles(): List<String> {

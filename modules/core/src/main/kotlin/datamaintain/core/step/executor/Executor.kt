@@ -3,6 +3,7 @@ package datamaintain.core.step.executor
 import datamaintain.core.Context
 import datamaintain.core.exception.DatamaintainBaseException
 import datamaintain.core.exception.DatamaintainException
+import datamaintain.core.exception.DatamaintainScriptExecutionException
 import datamaintain.core.report.Report
 import datamaintain.core.script.ExecutedScript
 import datamaintain.core.script.ExecutionStatus
@@ -29,10 +30,9 @@ class Executor(private val context: Context) {
                     context.reportBuilder.addExecutedScript(executedScript)
 
                 if (executedScript.executionStatus == ExecutionStatus.KO) {
-                    context.reportBuilder.inError(executedScript)
-                    logger.info { "${executedScript.name} has not been correctly executed" }
+                    logger.info { "" }
                     // TODO handle interactive shell
-                    return context.reportBuilder.toReport()
+                    throw DatamaintainScriptExecutionException(executedScript)
                 }
             }
 
