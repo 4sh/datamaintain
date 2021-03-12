@@ -83,7 +83,16 @@ class JdbcDriver(jdbcUri: String,
     }
 
     override fun overrideScript(executedScript: ExecutedScript): ExecutedScript {
-        TODO("Not yet implemented")
+        connection.prepareStatement("""
+            UPDATE $EXECUTED_SCRIPTS_TABLE SET
+            action = '${ScriptAction.OVERRIDE_EXECUTED.name}',
+            checksum = '${executedScript.checksum}',
+            executionStatus = '${ExecutionStatus.OK.name}'
+            WHERE name = '${executedScript.name}'
+        """).execute()
+
+        executedScript.action = ScriptAction.OVERRIDE_EXECUTED
+        return executedScript
     }
 
     fun ResultSet.toExecutedScript() = ExecutedScript(
