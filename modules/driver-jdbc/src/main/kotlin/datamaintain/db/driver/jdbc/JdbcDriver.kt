@@ -1,18 +1,18 @@
 package datamaintain.db.driver.jdbc
 
 import datamaintain.core.db.driver.DatamaintainDriver
-import datamaintain.core.script.*
+import datamaintain.core.script.ExecutedScript
+import datamaintain.core.script.ExecutionStatus
+import datamaintain.core.script.ScriptAction
+import datamaintain.core.script.ScriptWithContent
 import datamaintain.core.step.executor.Execution
-import mu.KotlinLogging
-import java.nio.file.Path
-import java.sql.*
+import java.sql.Connection
+import java.sql.DriverManager
+import java.sql.ResultSet
+import java.sql.SQLException
 import java.util.*
 
-class JdbcDriver(jdbcUri: String,
-                 private val clientPath: Path,
-                 private val printOutput: Boolean,
-                 private val saveOutput: Boolean
-) : DatamaintainDriver(jdbcUri) {
+class JdbcDriver(jdbcUri: String) : DatamaintainDriver(jdbcUri) {
     private val connection: Connection = DriverManager.getConnection(jdbcUri)
 
     companion object {
