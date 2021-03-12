@@ -8,15 +8,12 @@ import java.nio.file.Path
 import java.sql.*
 import java.util.*
 
-
-private val logger = KotlinLogging.logger {}
-
 class JdbcDriver(jdbcUri: String,
                  private val tmpFilePath: Path,
                  private val clientPath: Path,
                  private val printOutput: Boolean,
                  private val saveOutput: Boolean
-) : DatamaintainDriver {
+) : DatamaintainDriver(jdbcUri) {
     private val connection: Connection = DriverManager.getConnection(jdbcUri)
 
     companion object {
