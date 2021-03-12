@@ -181,17 +181,6 @@ internal class JdbcDriverTest {
                     )
         }
 
-
-    private fun insertDataInDb() {
-        connection.prepareStatement("""
-            INSERT INTO ${JdbcDriver.EXECUTED_SCRIPTS_TABLE} (
-                id, `name`, checksum, identifier, executionStatus, `action`
-            ) VALUES 
-            ('id1', 'script1.sql', 'c4ca4238a0b923820dcc509a6f75849b', '', 'KO', 'RUN'), 
-            ('id2', 'script2.sql', 'c81e728d9d4c2f636f067f89cc14862c', '', 'OK', 'RUN')
-        """).execute()
-    }
-
     private val script1 = ExecutedScript(
             "script1.sql",
             "c4ca4238a0b923820dcc509a6f75849b",
@@ -209,5 +198,16 @@ internal class JdbcDriverTest {
             ScriptAction.RUN,
             0
     )
+
+    private fun insertDataInDb() {
+        connection.prepareStatement("""
+            INSERT INTO ${JdbcDriver.EXECUTED_SCRIPTS_TABLE} (
+                id, `name`, checksum, identifier, executionStatus, `action`
+            ) VALUES 
+            ('id1', '${script1.name}', '${script1.checksum}', '${script1.identifier}', '${script1.executionStatus}', '${script1.action}'), 
+            ('id2', '${script2.name}', '${script2.checksum}', '${script2.identifier}', '${script2.executionStatus}', '${script2.action}')
+        """).execute()
+    }
+
 }
 
