@@ -63,7 +63,8 @@ internal class JdbcDriverTest {
                 "d3d9446802a44259755d38e6d163e820",
                 "",
                 ExecutionStatus.OK,
-                ScriptAction.MARK_AS_EXECUTED
+                ScriptAction.MARK_AS_EXECUTED,
+                executionDurationInMillis = 0
         )
 
         // When
@@ -72,35 +73,7 @@ internal class JdbcDriverTest {
         // Then
 
         expectThat(jdbcDatamaintainDriver.listExecutedScripts().toList())
-                .hasSize(3).and {
-                    get(0).and {
-                        get { name }.isEqualTo("script1.sql")
-                        get { checksum }.isEqualTo("c4ca4238a0b923820dcc509a6f75849b")
-                        get { identifier }.isEqualTo("")
-                        get { executionStatus }.isEqualTo(ExecutionStatus.KO)
-                        get { executionOutput }.isNull()
-                        get { executionDurationInMillis }.isEqualTo(0)
-                        get { action }.isEqualTo(ScriptAction.RUN)
-                    }
-                    get(1).and {
-                        get { name }.isEqualTo("script2.sql")
-                        get { checksum }.isEqualTo("c81e728d9d4c2f636f067f89cc14862c")
-                        get { identifier }.isEqualTo("")
-                        get { executionStatus }.isEqualTo(ExecutionStatus.OK)
-                        get { executionOutput }.isNull()
-                        get { executionDurationInMillis }.isEqualTo(0)
-                        get { action }.isEqualTo(ScriptAction.RUN)
-                    }
-                    get(2).and {
-                        get { name }.isEqualTo("script3.sql")
-                        get { checksum }.isEqualTo("d3d9446802a44259755d38e6d163e820")
-                        get { identifier }.isEqualTo("")
-                        get { executionStatus }.isEqualTo(ExecutionStatus.OK)
-                        get { executionOutput }.isNull()
-                        get { executionDurationInMillis }.isEqualTo(0)
-                        get { action }.isEqualTo(ScriptAction.MARK_AS_EXECUTED)
-                    }
-                }
+                .containsExactlyInAnyOrder(script1, script2, script3)
     }
 
     @Nested
