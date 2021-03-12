@@ -80,7 +80,7 @@ internal class JdbcDriverTest {
                         get { name }.isEqualTo("script1.sql")
                         get { checksum }.isEqualTo("c4ca4238a0b923820dcc509a6f75849b")
                         get { identifier }.isEqualTo("")
-                        get { executionStatus }.isEqualTo(ExecutionStatus.OK)
+                        get { executionStatus }.isEqualTo(ExecutionStatus.KO)
                         get { executionOutput }.isNull()
                         get { executionDurationInMillis }.isEqualTo(0)
                         get { action }.isEqualTo(ScriptAction.RUN)
@@ -165,44 +165,24 @@ internal class JdbcDriverTest {
         }
     }
 
-    //@Test
-    //    fun `should override script`() {
-    //        // Given
-    //        insertDataInDb()
-    //        val script3 = ExecutedScript(
-    //                "script1.js",
-    //                "8747e564eb53cb2f1dcb9aae0779c2aa",
-    //                "",
-    //                ExecutionStatus.OK,
-    //                ScriptAction.OVERRIDE_EXECUTED
-    //        )
-    //
-    //        // When
-    //        mongoDatamaintainDriver.overrideScript(script3)
-    //
-    //        // Then
-    //        expectThat(collection.find().toList().map { documentToExecutedScript(it) })
-    //                .hasSize(2).and {
-    //                    get(0).and {
-    //                        get { name }.isEqualTo("script1.js")
-    //                        get { checksum }.isEqualTo("8747e564eb53cb2f1dcb9aae0779c2aa")
-    //                        get { identifier }.isEqualTo("")
-    //                        get { executionStatus }.isEqualTo(ExecutionStatus.OK)
-    //                        get { action }.isEqualTo(ScriptAction.OVERRIDE_EXECUTED)
-    //                        get { executionOutput }.isNull()
-    //                        get { executionDurationInMillis }.isNull()
-    //                    }
-    //                    get(1).and {
-    //                        get { name }.isEqualTo("script2.js")
-    //                        get { checksum }.isEqualTo("c81e728d9d4c2f636f067f89cc14862c")
-    //                        get { identifier }.isEqualTo("")
-    //                        get { executionStatus }.isEqualTo(ExecutionStatus.OK)
-    //                        get { action }.isEqualTo(ScriptAction.RUN)
-    //                        get { executionOutput }.isNull()
-    //                        get { executionDurationInMillis }.isNull()
-    //                    }
-    //                }
-    //    }
+    @Test
+        fun `should override script`() {
+            // Given
+            insertDataInDb()
+            val script3 = script1.copy(checksum = "8747e564eb53cb2f1dcb9aae0779c2aa",
+                    executionStatus = ExecutionStatus.OK,
+                    action = ScriptAction.OVERRIDE_EXECUTED)
+
+            // When
+            jdbcDatamaintainDriver.overrideScript(script3)
+
+            // Then
+            expectThat(jdbcDatamaintainDriver.listExecutedScripts().toList())
+                    .containsExactlyInAnyOrder(
+                            script3,
+                            script2
+                    )
+        }
 
 
     private fun insertDataInDb() {
@@ -210,7 +190,7 @@ internal class JdbcDriverTest {
             INSERT INTO ${JdbcDriver.EXECUTED_SCRIPTS_TABLE} (
                 id, `name`, checksum, identifier, executionStatus, `action`
             ) VALUES 
-            ('id1', 'script1.sql', 'c4ca4238a0b923820dcc509a6f75849b', '', 'OK', 'RUN'), 
+            ('id1', 'script1.sql', 'c4ca4238a0b923820dcc509a6f75849b', '', 'KO', 'RUN'), 
             ('id2', 'script2.sql', 'c81e728d9d4c2f636f067f89cc14862c', '', 'OK', 'RUN')
         """).execute()
     }
@@ -219,7 +199,7 @@ internal class JdbcDriverTest {
             "script1.sql",
             "c4ca4238a0b923820dcc509a6f75849b",
             "",
-            ExecutionStatus.OK,
+            ExecutionStatus.KO,
             ScriptAction.RUN,
             0
     )
