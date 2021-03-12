@@ -108,6 +108,11 @@ internal class JdbcDriverTest {
 
     @Nested
     inner class ExecuteScript {
+        @AfterEach()
+        fun dropTableIfExists() {
+            connection.prepareStatement("DROP TABLE IF EXISTS crystalDevs").execute()
+        }
+
         @Test
         fun `should execute correct file script`() {
             // Given
@@ -126,8 +131,6 @@ internal class JdbcDriverTest {
                 get { executionStatus }.isEqualTo(ExecutionStatus.OK)
                 get { executionOutput }.isNull()
             }
-
-            connection.prepareStatement("DROP TABLE crystalDevs").execute()
         }
 
         @Test

@@ -1,4 +1,4 @@
-CREATE TABLE crystalDevs (
+CREATE TABLE IF NOT EXISTS crystalDevs (
     firstName VARCHAR(12) NOT NULL
 );
 
