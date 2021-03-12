@@ -14,7 +14,7 @@ internal class JdbcDriverConfigTest {
         props.load(JdbcDriverConfigTest::class.java.getResourceAsStream("/config/default.properties"))
 
         expectThat(JdbcDriverConfig.buildConfig(props)).and {
-            get { jdbcUri }.isEqualTo("jdbc:postgresql://localhost:5432/test")
+            get { jdbcUri }.isEqualTo("jdbc:h2:mem:")
         }
     }
 
