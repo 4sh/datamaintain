@@ -9,7 +9,6 @@ import java.sql.*
 import java.util.*
 
 class JdbcDriver(jdbcUri: String,
-                 private val tmpFilePath: Path,
                  private val clientPath: Path,
                  private val printOutput: Boolean,
                  private val saveOutput: Boolean
