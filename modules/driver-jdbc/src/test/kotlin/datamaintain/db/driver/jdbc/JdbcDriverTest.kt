@@ -7,7 +7,10 @@ import datamaintain.core.script.ScriptAction
 import org.h2.tools.Server
 import org.junit.jupiter.api.*
 import strikt.api.expectThat
-import strikt.assertions.*
+import strikt.assertions.containsExactly
+import strikt.assertions.containsExactlyInAnyOrder
+import strikt.assertions.isEqualTo
+import strikt.assertions.isNull
 import java.nio.file.Paths
 import java.sql.Connection
 import java.sql.DriverManager
@@ -136,23 +139,23 @@ internal class JdbcDriverTest {
     }
 
     @Test
-        fun `should override script`() {
-            // Given
-            insertDataInDb()
-            val script3 = script1.copy(checksum = "8747e564eb53cb2f1dcb9aae0779c2aa",
-                    executionStatus = ExecutionStatus.OK,
-                    action = ScriptAction.OVERRIDE_EXECUTED)
+    fun `should override script`() {
+        // Given
+        insertDataInDb()
+        val script3 = script1.copy(checksum = "8747e564eb53cb2f1dcb9aae0779c2aa",
+                executionStatus = ExecutionStatus.OK,
+                action = ScriptAction.OVERRIDE_EXECUTED)
 
-            // When
-            jdbcDatamaintainDriver.overrideScript(script3)
+        // When
+        jdbcDatamaintainDriver.overrideScript(script3)
 
-            // Then
-            expectThat(jdbcDatamaintainDriver.listExecutedScripts().toList())
-                    .containsExactlyInAnyOrder(
-                            script3,
-                            script2
-                    )
-        }
+        // Then
+        expectThat(jdbcDatamaintainDriver.listExecutedScripts().toList())
+                .containsExactlyInAnyOrder(
+                        script3,
+                        script2
+                )
+    }
 
     private val script1 = ExecutedScript(
             "script1.sql",
