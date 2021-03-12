@@ -9,7 +9,6 @@ import strikt.api.expectThat
 import strikt.assertions.failed
 import strikt.assertions.isA
 import strikt.assertions.isEqualTo
-import java.lang.IllegalArgumentException
 
 internal class JdbcConnectionStringBuilderTest {
     @Nested
@@ -23,9 +22,9 @@ internal class JdbcConnectionStringBuilderTest {
             // When
 
             // Then
-            expectCatching { JdbcConnectionStringBuilder().buildConnectionString(jdbcUri, true) }
+            expectCatching { JdbcConnectionStringBuilder().buildConnectionString(jdbcUri, false) }
                     .failed()
-                    .isA<IllegalArgumentException>()
+                    .isA<DatamaintainJdbcUriException>()
         }
 
         @Test
@@ -35,7 +34,7 @@ internal class JdbcConnectionStringBuilderTest {
             val jdbcUri = "jdbc:postgres://host1/databasename"
 
             // When
-            val connectionString = JdbcConnectionStringBuilder().buildConnectionString(jdbcUri, true)
+            val connectionString = JdbcConnectionStringBuilder().buildConnectionString(jdbcUri, false)
 
             // Then
             expectThat(connectionString).isEqualTo(jdbcUri)
@@ -52,9 +51,9 @@ internal class JdbcConnectionStringBuilderTest {
             // When
 
             // Then
-            expectCatching { JdbcConnectionStringBuilder().buildConnectionString(jdbcUri, true) }
+            expectCatching { JdbcConnectionStringBuilder().buildConnectionString(jdbcUri, false) }
                     .failed()
-                    .isA<IllegalArgumentException>()
+                    .isA<DatamaintainJdbcUriException>()
         }
 
         @Test
@@ -64,7 +63,7 @@ internal class JdbcConnectionStringBuilderTest {
             val jdbcUri = "jdbc:postgres://username:password@host1/databasename"
 
             // When
-            val connectionString = JdbcConnectionStringBuilder().buildConnectionString(jdbcUri, true)
+            val connectionString = JdbcConnectionStringBuilder().buildConnectionString(jdbcUri, false)
 
             // Then
             expectThat(connectionString).isEqualTo(jdbcUri)
@@ -81,9 +80,9 @@ internal class JdbcConnectionStringBuilderTest {
             // When
 
             // Then
-            expectCatching { JdbcConnectionStringBuilder().buildConnectionString(jdbcUri, true) }
+            expectCatching { JdbcConnectionStringBuilder().buildConnectionString(jdbcUri, false) }
                     .failed()
-                    .isA<IllegalArgumentException>()
+                    .isA<DatamaintainJdbcUriException>()
         }
 
         @Test
@@ -92,7 +91,7 @@ internal class JdbcConnectionStringBuilderTest {
             val jdbcUri = "jdbc:postgres://host1/databasename"
 
             // When
-            val connectionString = JdbcConnectionStringBuilder().buildConnectionString(jdbcUri, true)
+            val connectionString = JdbcConnectionStringBuilder().buildConnectionString(jdbcUri, false)
 
             // Then
             expectThat(connectionString).isEqualTo(jdbcUri)
@@ -104,7 +103,7 @@ internal class JdbcConnectionStringBuilderTest {
             val jdbcUri = "jdbc:postgres://www.host.com/databasename"
 
             // When
-            val connectionString = JdbcConnectionStringBuilder().buildConnectionString(jdbcUri, true)
+            val connectionString = JdbcConnectionStringBuilder().buildConnectionString(jdbcUri, false)
 
             // Then
             expectThat(connectionString).isEqualTo(jdbcUri)
@@ -116,7 +115,7 @@ internal class JdbcConnectionStringBuilderTest {
             val jdbcUri = "jdbc:postgres://my-host/databasename"
 
             // When
-            val connectionString = JdbcConnectionStringBuilder().buildConnectionString(jdbcUri, true)
+            val connectionString = JdbcConnectionStringBuilder().buildConnectionString(jdbcUri, false)
 
             // Then
             expectThat(connectionString).isEqualTo(jdbcUri)
@@ -131,9 +130,9 @@ internal class JdbcConnectionStringBuilderTest {
             // When
 
             // Then
-            expectCatching { JdbcConnectionStringBuilder().buildConnectionString(jdbcUri, true) }
+            expectCatching { JdbcConnectionStringBuilder().buildConnectionString(jdbcUri, false) }
                     .failed()
-                    .isA<IllegalArgumentException>()
+                    .isA<DatamaintainJdbcUriException>()
         }
 
         @Test
@@ -145,9 +144,9 @@ internal class JdbcConnectionStringBuilderTest {
             // When
 
             // Then
-            expectCatching { JdbcConnectionStringBuilder().buildConnectionString(jdbcUri, true) }
+            expectCatching { JdbcConnectionStringBuilder().buildConnectionString(jdbcUri, false) }
                     .failed()
-                    .isA<IllegalArgumentException>()
+                    .isA<DatamaintainJdbcUriException>()
         }
 
         @Test
@@ -156,7 +155,7 @@ internal class JdbcConnectionStringBuilderTest {
             val jdbcUri = "jdbc:postgres://host1:8080/databasename"
 
             // When
-            val connectionString = JdbcConnectionStringBuilder().buildConnectionString(jdbcUri, true)
+            val connectionString = JdbcConnectionStringBuilder().buildConnectionString(jdbcUri, false)
 
             // Then
             expectThat(connectionString).isEqualTo(jdbcUri)
@@ -173,9 +172,9 @@ internal class JdbcConnectionStringBuilderTest {
             // When
 
             // Then
-            expectCatching { JdbcConnectionStringBuilder().buildConnectionString(jdbcUri, true) }
+            expectCatching { JdbcConnectionStringBuilder().buildConnectionString(jdbcUri, false) }
                     .failed()
-                    .isA<IllegalArgumentException>()
+                    .isA<DatamaintainJdbcUriException>()
         }
 
         @Test
@@ -186,9 +185,9 @@ internal class JdbcConnectionStringBuilderTest {
             // When
 
             // Then
-            expectCatching { JdbcConnectionStringBuilder().buildConnectionString(jdbcUri, true) }
+            expectCatching { JdbcConnectionStringBuilder().buildConnectionString(jdbcUri, false) }
                     .failed()
-                    .isA<IllegalArgumentException>()
+                    .isA<DatamaintainJdbcUriException>()
         }
 
         @Test
@@ -199,9 +198,9 @@ internal class JdbcConnectionStringBuilderTest {
             // When
 
             // Then
-            expectCatching { JdbcConnectionStringBuilder().buildConnectionString(jdbcUri, true) }
+            expectCatching { JdbcConnectionStringBuilder().buildConnectionString(jdbcUri, false) }
                     .failed()
-                    .isA<IllegalArgumentException>()
+                    .isA<DatamaintainJdbcUriException>()
         }
 
         @Test
@@ -210,7 +209,7 @@ internal class JdbcConnectionStringBuilderTest {
             val jdbcUri = "jdbc:postgres://host1/databasename"
 
             // When
-            val connectionString = JdbcConnectionStringBuilder().buildConnectionString(jdbcUri, true)
+            val connectionString = JdbcConnectionStringBuilder().buildConnectionString(jdbcUri, false)
 
             // Then
             expectThat(connectionString).isEqualTo(jdbcUri)
@@ -228,9 +227,9 @@ internal class JdbcConnectionStringBuilderTest {
             // When
 
             // Then
-            expectCatching { JdbcConnectionStringBuilder().buildConnectionString(jdbcUri, true) }
+            expectCatching { JdbcConnectionStringBuilder().buildConnectionString(jdbcUri, false) }
                     .failed()
-                    .isA<IllegalArgumentException>()
+                    .isA<DatamaintainJdbcUriException>()
         }
 
         @Test
@@ -241,9 +240,9 @@ internal class JdbcConnectionStringBuilderTest {
             // When
 
             // Then
-            expectCatching { JdbcConnectionStringBuilder().buildConnectionString(jdbcUri, true) }
+            expectCatching { JdbcConnectionStringBuilder().buildConnectionString(jdbcUri, false) }
                     .failed()
-                    .isA<IllegalArgumentException>()
+                    .isA<DatamaintainJdbcUriException>()
         }
 
         @Test
@@ -252,7 +251,7 @@ internal class JdbcConnectionStringBuilderTest {
             val jdbcUri = "jdbc:postgres://host1/databasename?name=value"
 
             // When
-            val connectionString = JdbcConnectionStringBuilder().buildConnectionString(jdbcUri, true)
+            val connectionString = JdbcConnectionStringBuilder().buildConnectionString(jdbcUri, false)
 
             // Then
             expectThat(connectionString).isEqualTo(jdbcUri)
