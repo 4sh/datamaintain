@@ -22,7 +22,9 @@ internal class JdbcDriverTest {
     private val jdbcDatamaintainDriver = JdbcDriver(
             jdbcUri,
             Paths.get(JdbcConfigKey.DB_JDBC_TMP_PATH.default!!),
-            Paths.get("jdbc")
+            Paths.get("jdbc"),
+            true,
+            true
     )
 
     @BeforeEach

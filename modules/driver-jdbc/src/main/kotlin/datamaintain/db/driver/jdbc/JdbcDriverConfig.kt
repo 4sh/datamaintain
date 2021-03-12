@@ -3,6 +3,7 @@ package datamaintain.db.driver.jdbc
 import datamaintain.core.config.ConfigKey
 import datamaintain.core.config.getProperty
 import datamaintain.core.db.driver.DatamaintainDriverConfig
+import datamaintain.core.db.driver.DriverConfigKey
 import mu.KotlinLogging
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -11,17 +12,19 @@ import java.util.*
 private val logger = KotlinLogging.logger {}
 
 data class JdbcDriverConfig @JvmOverloads constructor(
+        val trustUri: Boolean,
         val jdbcUri: String,
         val tmpFilePath: Path = Paths.get(JdbcConfigKey.DB_JDBC_TMP_PATH.default!!),
         val clientPath: Path = Paths.get(JdbcConfigKey.DB_JDBC_CLIENT_PATH.default!!),
         val printOutput: Boolean = JdbcConfigKey.DB_JDBC_PRINT_OUTPUT.default!!.toBoolean(),
         val saveOutput: Boolean = JdbcConfigKey.DB_JDBC_SAVE_OUTPUT.default!!.toBoolean()
-) : DatamaintainDriverConfig {
+) : DatamaintainDriverConfig(trustUri, jdbcUri, JdbcConnectionStringBuilder()) {
     companion object {
         @JvmStatic
         fun buildConfig(props: Properties): JdbcDriverConfig {
             ConfigKey.overrideBySystemProperties(props, JdbcConfigKey.values().asList())
             return JdbcDriverConfig(
+                    props.getProperty(DriverConfigKey.DB_TRUST_URI).toBoolean(),
                     props.getProperty(JdbcConfigKey.DB_JDBC_URI),
                     props.getProperty(JdbcConfigKey.DB_JDBC_TMP_PATH).let { Paths.get(it) },
                     props.getProperty(JdbcConfigKey.DB_JDBC_CLIENT_PATH).let { Paths.get(it) },
@@ -30,8 +33,8 @@ data class JdbcDriverConfig @JvmOverloads constructor(
         }
     }
 
-    override fun toDriver() = JdbcDriver(
-            ConnectionString.buildConnectionString(jdbcUri),
+    override fun toDriver(connectionString: String) = JdbcDriver(
+            connectionString,
             tmpFilePath,
             clientPath,
             printOutput,
