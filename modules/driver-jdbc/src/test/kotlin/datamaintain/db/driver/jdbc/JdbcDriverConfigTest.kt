@@ -15,7 +15,6 @@ internal class JdbcDriverConfigTest {
 
         expectThat(JdbcDriverConfig.buildConfig(props)).and {
             get { jdbcUri }.isEqualTo("jdbc:postgresql://localhost:5432/test")
-            get { tmpFilePath }.isEqualTo(Paths.get("/tmp/test"))
             get { printOutput }.isEqualTo(true)
             get { saveOutput }.isEqualTo(true)
         }
@@ -31,7 +30,6 @@ internal class JdbcDriverConfigTest {
 
         expectThat(JdbcDriverConfig.buildConfig(props)).and {
             get { jdbcUri }.isEqualTo(updatedURI)
-            get { tmpFilePath }.isEqualTo(Paths.get("/tmp/test"))
         }
     }
 }

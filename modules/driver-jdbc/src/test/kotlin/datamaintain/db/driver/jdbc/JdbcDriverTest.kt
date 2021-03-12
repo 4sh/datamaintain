@@ -24,7 +24,6 @@ internal class JdbcDriverTest {
     private val connection: Connection = DriverManager.getConnection(jdbcUri)
     private val jdbcDatamaintainDriver = JdbcDriver(
             jdbcUri,
-            Paths.get(JdbcConfigKey.DB_JDBC_TMP_PATH.default!!),
             Paths.get("jdbc"),
             true,
             true
