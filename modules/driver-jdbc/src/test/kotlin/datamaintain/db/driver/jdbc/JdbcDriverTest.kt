@@ -51,10 +51,7 @@ internal class JdbcDriverTest {
         val executedScripts = jdbcDatamaintainDriver.listExecutedScripts()
 
         // Then
-        expectThat(executedScripts.toList()) {
-            size.isEqualTo(2)
-            contains(script1, script2)
-        }
+        expectThat(executedScripts.toList()).containsExactlyInAnyOrder(script1, script2)
     }
 
     @Test
