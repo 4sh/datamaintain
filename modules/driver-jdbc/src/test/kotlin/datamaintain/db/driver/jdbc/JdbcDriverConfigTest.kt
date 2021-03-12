@@ -15,8 +15,6 @@ internal class JdbcDriverConfigTest {
 
         expectThat(JdbcDriverConfig.buildConfig(props)).and {
             get { jdbcUri }.isEqualTo("jdbc:postgresql://localhost:5432/test")
-            get { printOutput }.isEqualTo(true)
-            get { saveOutput }.isEqualTo(true)
         }
     }
 

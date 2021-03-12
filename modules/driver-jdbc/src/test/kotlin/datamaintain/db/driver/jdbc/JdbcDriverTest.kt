@@ -22,12 +22,7 @@ internal class JdbcDriverTest {
     private val server: Server = Server.createTcpServer().start()
     private val jdbcUri = "jdbc:h2:mem"
     private val connection: Connection = DriverManager.getConnection(jdbcUri)
-    private val jdbcDatamaintainDriver = JdbcDriver(
-            jdbcUri,
-            Paths.get("jdbc"),
-            true,
-            true
-    )
+    private val jdbcDatamaintainDriver = JdbcDriver(jdbcUri)
 
     @BeforeEach
     fun `create executed scripts table`() {
