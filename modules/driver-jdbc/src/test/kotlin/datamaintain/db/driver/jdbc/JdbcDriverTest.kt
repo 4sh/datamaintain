@@ -7,10 +7,7 @@ import datamaintain.core.script.ScriptAction
 import org.h2.tools.Server
 import org.junit.jupiter.api.*
 import strikt.api.expectThat
-import strikt.assertions.containsExactly
-import strikt.assertions.containsExactlyInAnyOrder
-import strikt.assertions.isEqualTo
-import strikt.assertions.isNull
+import strikt.assertions.*
 import java.nio.file.Paths
 import java.sql.Connection
 import java.sql.DriverManager
@@ -20,7 +17,7 @@ import java.sql.ResultSet
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class JdbcDriverTest {
     private val server: Server = Server.createTcpServer().start()
-    private val jdbcUri = "jdbc:h2:mem"
+    private val jdbcUri = "jdbc:h2:mem:test_mem"
     private val connection: Connection = DriverManager.getConnection(jdbcUri)
     private val jdbcDatamaintainDriver = JdbcDriver(jdbcUri)
 
@@ -113,8 +110,10 @@ internal class JdbcDriverTest {
             // Then
             expectThat(execution) {
                 get { executionStatus }.isEqualTo(ExecutionStatus.KO)
-                get { executionOutput }.isEqualTo("Table \"CRYSTALDEVSERROR\" not found; SQL statement:\n" +
-                        "INSERT INTO crystalDevsError VALUES ('Elise'), ('Tom'); [42102-148]")
+                get { executionOutput }.isEqualTo(
+                        "Table \"CRYSTALDEVSERROR\" not found; SQL statement:\n" +
+                        "INSERT INTO crystalDevsError VALUES ('Elise'), ('Tom'); [42102-200]"
+                )
             }
         }
 
