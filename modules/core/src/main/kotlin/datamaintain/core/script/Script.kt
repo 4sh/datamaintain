@@ -17,7 +17,7 @@ data class ExecutedScript @JvmOverloads constructor(
         override val checksum: String,
         override val identifier: String,
         val executionStatus: ExecutionStatus,
-        var action: ScriptAction?,
+        var action: ScriptAction? = null,
         val executionDurationInMillis: Long? = null,
         val executionOutput: String? = null
 ) : Script {
