@@ -331,7 +331,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
                     .append(SCRIPT_DOCUMENT_CHECKSUM, executedScript.checksum)
                     .append(SCRIPT_DOCUMENT_IDENTIFIER, executedScript.identifier)
                     .append(SCRIPT_DOCUMENT_EXECUTION_STATUS, executedScript.executionStatus.name)
-                    .append(SCRIPT_DOCUMENT_ACTION, executedScript.action.name)
+                    .append(SCRIPT_DOCUMENT_ACTION, executedScript.action!!.name)
                     .append(SCRIPT_DOCUMENT_EXECUTION_DURATION_IN_MILLIS, executedScript.executionDurationInMillis)
                     .append(SCRIPT_DOCUMENT_EXECUTION_OUTPUT, executedScript.executionOutput)
 
