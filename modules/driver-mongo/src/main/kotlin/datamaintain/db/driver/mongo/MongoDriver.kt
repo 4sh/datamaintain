@@ -102,7 +102,7 @@ class MongoDriver(mongoUri: String,
                   "$set" : {
                     "checksum" : "${executedScript.checksum}",
                     "executionStatus": "${executedScript.executionStatus.name}",
-                    "action": "${executedScript.action.name}"
+                    "action": "${executedScript.action!!.name}"
                   }
                 }, {})
                 """)
