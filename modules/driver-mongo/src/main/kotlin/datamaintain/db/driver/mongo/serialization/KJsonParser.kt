@@ -20,7 +20,7 @@ data class ExecutedScriptDb(@SerialName("_id") @ContextualSerialization val id: 
                             val checksum: String,
                             val identifier: String,
                             val executionStatus: ExecutionStatus,
-                            val action: ScriptAction?,
+                            val action: ScriptAction? = null,
                             val executionDurationInMillis: Long? = null,
                             val executionOutput: String? = null)
 
