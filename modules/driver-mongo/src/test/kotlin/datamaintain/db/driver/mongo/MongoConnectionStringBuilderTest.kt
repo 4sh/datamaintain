@@ -271,5 +271,17 @@ internal class MongoConnectionStringBuilderTest {
             // Then
             expectThat(connectionString).isEqualTo(mongoUri)
         }
+
+        @Test
+        fun `should accept mongo uri with multiple options correctly formatted`() {
+            // Given
+            val mongoUri = "mongodb://host1/databasename?name=value&otherName=otherValue"
+
+            // When
+            val connectionString = MongoConnectionStringBuilder().buildConnectionString(mongoUri, false)
+
+            // Then
+            expectThat(connectionString).isEqualTo(mongoUri)
+        }
     }
 }
