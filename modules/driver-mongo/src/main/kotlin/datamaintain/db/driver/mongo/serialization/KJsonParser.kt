@@ -46,7 +46,8 @@ fun ExecutedScript.toExecutedScriptDb() = ExecutedScriptDb(
 
 class KJsonParser: ExecutedScriptJsonParser {
     // Mapper between json and object
-    private val mapper = Json(JsonConfiguration.Stable.copy())
+    val configuration = JsonConfiguration.Stable.copy(ignoreUnknownKeys = true)
+    private val mapper = Json(configuration)
 
     override fun parseArrayOfExecutedScripts(executedScriptJsonArray: String): Sequence<ExecutedScript> {
 
