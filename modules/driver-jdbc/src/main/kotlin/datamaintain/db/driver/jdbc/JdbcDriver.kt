@@ -42,7 +42,7 @@ class JdbcDriver(jdbcUri: String) : DatamaintainDriver(jdbcUri) {
 
     override fun markAsExecuted(executedScript: ExecutedScript): ExecutedScript {
         val insertStmt = connection.prepareStatement("""
-            INSERT INTO $EXECUTED_SCRIPTS_TABLE (id, `name`, checksum, identifier, executionStatus, `action`) 
+            INSERT INTO $EXECUTED_SCRIPTS_TABLE (id, name, checksum, identifier, executionStatus, action) 
             VALUES (?, ?, ?, ?, ?, ?)"""
         )
 
