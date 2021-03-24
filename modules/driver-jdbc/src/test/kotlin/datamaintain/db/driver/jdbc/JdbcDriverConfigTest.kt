@@ -25,7 +25,7 @@ internal class JdbcDriverConfigTest {
         val props = Properties()
         props.load(JdbcDriverConfigTest::class.java.getResourceAsStream("/config/default.properties"))
 
-        val updatedURI = "mongodb://localhost:27017/newName"
+        val updatedURI = "jdbc://localhost/my-db"
         System.setProperty("db.jdbc.uri", updatedURI)
         System.setProperty("db.trust.uri", "false")
 
