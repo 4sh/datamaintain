@@ -110,9 +110,8 @@ internal class JdbcDriverTest {
             // Then
             expectThat(execution) {
                 get { executionStatus }.isEqualTo(ExecutionStatus.KO)
-                get { executionOutput }.isEqualTo(
-                        "Table \"CRYSTALDEVSERROR\" not found; SQL statement:\n" +
-                        "INSERT INTO crystalDevsError VALUES ('Elise'), ('Tom'); [42102-200]"
+                get { executionOutput!! }.contains(
+                        "Table \"CRYSTALDEVSERROR\" not found; SQL statement"
                 )
             }
         }
