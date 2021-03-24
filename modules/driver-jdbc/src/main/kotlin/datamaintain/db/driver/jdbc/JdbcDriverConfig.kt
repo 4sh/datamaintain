@@ -19,6 +19,7 @@ data class JdbcDriverConfig @JvmOverloads constructor(
         @JvmStatic
         fun buildConfig(props: Properties): JdbcDriverConfig {
             ConfigKey.overrideBySystemProperties(props, JdbcConfigKey.values().asList())
+            ConfigKey.overrideBySystemProperties(props, DriverConfigKey.values().asList())
             return JdbcDriverConfig(
                     props.getProperty(DriverConfigKey.DB_TRUST_URI).toBoolean(),
                     props.getProperty(JdbcConfigKey.DB_JDBC_URI))
