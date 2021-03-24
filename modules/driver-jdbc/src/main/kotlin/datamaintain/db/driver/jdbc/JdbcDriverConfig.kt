@@ -30,6 +30,7 @@ data class JdbcDriverConfig @JvmOverloads constructor(
     override fun log() {
         logger.info { "JDBC driver configuration: " }
         logger.info { "- jdbc uri -> $jdbcUri" }
+        logger.info { "- trust uri -> $trustUri" }
         logger.info { "" }
     }
 }
