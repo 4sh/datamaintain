@@ -3,7 +3,8 @@ package datamaintain.db.driver.jdbc
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
-import java.nio.file.Paths
+import strikt.assertions.isFalse
+import strikt.assertions.isTrue
 import java.util.*
 
 internal class JdbcDriverConfigTest {
@@ -15,6 +16,7 @@ internal class JdbcDriverConfigTest {
 
         expectThat(JdbcDriverConfig.buildConfig(props)).and {
             get { jdbcUri }.isEqualTo("jdbc:h2:mem:")
+            get { trustUri }.isTrue()
         }
     }
 
@@ -25,9 +27,11 @@ internal class JdbcDriverConfigTest {
 
         val updatedURI = "mongodb://localhost:27017/newName"
         System.setProperty("db.jdbc.uri", updatedURI)
+        System.setProperty("db.trust.uri", "false")
 
         expectThat(JdbcDriverConfig.buildConfig(props)).and {
             get { jdbcUri }.isEqualTo(updatedURI)
+            get { trustUri }.isFalse()
         }
     }
 }
