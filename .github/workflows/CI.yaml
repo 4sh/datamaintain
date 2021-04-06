@@ -18,8 +18,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Define Gradle cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
       - name: Build
-        run: ./gradlew build
+        run: ./gradlew build --build-cache
 
       - name: Upload Unit Test Results
         if: always()
