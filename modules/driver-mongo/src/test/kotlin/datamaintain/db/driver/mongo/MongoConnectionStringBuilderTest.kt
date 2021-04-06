@@ -261,7 +261,7 @@ internal class MongoConnectionStringBuilderTest {
         }
 
         @Test
-        fun `should accept mongo uri when options are correctly formatted` () {
+        fun `should accept mongo uri when one option correctly formatted` () {
             // Given
             val mongoUri = "mongodb://host1/databasename?name=value"
 
