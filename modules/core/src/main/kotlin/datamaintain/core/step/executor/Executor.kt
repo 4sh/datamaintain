@@ -51,6 +51,7 @@ class Executor(private val context: Context) {
     private fun doAction(script: ScriptWithContent): ExecutedScript {
         return when (script.action) {
             ScriptAction.RUN -> {
+                logger.info {"start execution of script ${script.name}"}
                 var execution = Execution(ExecutionStatus.KO)
 
                 val executionDurationInMillis = measureTimeMillis {
@@ -67,6 +68,7 @@ class Executor(private val context: Context) {
                 executedScript
             }
             ScriptAction.MARK_AS_EXECUTED -> {
+                logger.info {"start marking script ${script.name} as executed"}
                 val executedScript = ExecutedScript.build(script, Execution(ExecutionStatus.OK))
 
                 markAsExecuted(executedScript)
@@ -75,6 +77,7 @@ class Executor(private val context: Context) {
                 executedScript
             }
             ScriptAction.OVERRIDE_EXECUTED -> {
+                logger.info {"start overriding script ${script.name} execution"}
                 val executedScript = ExecutedScript.build(script, Execution(ExecutionStatus.OK))
 
                 overrideExecuted(executedScript)
