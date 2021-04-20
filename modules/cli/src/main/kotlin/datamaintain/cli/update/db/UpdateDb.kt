@@ -1,31 +1,22 @@
 package datamaintain.cli.update.db
 
-import com.github.ajalt.clikt.core.CliktCommand
-import com.github.ajalt.clikt.core.requireObject
 import com.github.ajalt.clikt.parameters.options.convert
 import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.multiple
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.types.choice
-import datamaintain.cli.utils.loadConfig
-import datamaintain.core.Datamaintain
 import datamaintain.core.config.CoreConfigKey
 import datamaintain.core.config.DatamaintainConfig
-import datamaintain.core.exception.DatamaintainBaseException
-import datamaintain.core.exception.DatamaintainException
 import datamaintain.core.script.ScriptAction
 import datamaintain.core.step.check.allCheckRuleNames
 import datamaintain.core.step.executor.ExecutionMode
 import datamaintain.db.driver.mongo.MongoConfigKey
 import java.util.*
-import kotlin.system.exitProcess
 
-private fun defaultUpdateDbRunner(config: DatamaintainConfig) {
-    Datamaintain(config).updateDatabase().print(config.verbose)
-}
-
-class UpdateDb(val runner: (DatamaintainConfig) -> Unit = ::defaultUpdateDbRunner) : CliktCommand(name = "update-db") {
-
+class UpdateDb(runner: (DatamaintainConfig) -> Unit = ::defaultUpdateDbRunner) : DatamaintainCliUpdateDbCommand(
+    name = "update-db",
+    runner = runner
+) {
     private val path: String? by option(help = "path to directory containing scripts")
 
     private val identifierRegex: String? by option(help = "regex to extract identifier part from scripts")
@@ -50,8 +41,6 @@ class UpdateDb(val runner: (DatamaintainConfig) -> Unit = ::defaultUpdateDbRunne
 
     private val mongoPrintOutput: Boolean? by option(help = "print mongo output").flag()
 
-    private val props by requireObject<Properties>()
-
     private val tagsMatchers: List<Pair<String, String>>? by option("--tag", help = "Tag defined using glob path matchers. " +
             "To define multiple tags, use option multiple times. " +
             "Syntax example: MYTAG1=[pathMatcher1, pathMatcher2]")
@@ -66,40 +55,7 @@ class UpdateDb(val runner: (DatamaintainConfig) -> Unit = ::defaultUpdateDbRunne
         .choice(allCheckRuleNames.map { it to it }.toMap())
         .multiple()
 
-    override fun run() {
-        var config: DatamaintainConfig? = null
-        try {
-            overloadPropsFromArgs(props)
-            config = loadConfig(props)
-            runner(config)
-        } catch (e: DatamaintainException) {
-            val verbose: Boolean = config?.verbose ?: false
-
-            echo("Error at step ${e.step}", err = true)
-            e.report.print(verbose)
-            echo("")
-            echo(e.message, err = true)
-
-            if (e.resolutionMessage.isNotEmpty()) {
-                echo(e.resolutionMessage)
-            }
-
-            exitProcess(1)
-        } catch (e: DatamaintainBaseException) {
-            echo(e.message, err = true)
-            echo(e.resolutionMessage)
-
-            exitProcess(1)
-        } catch (e: IllegalArgumentException) {
-            echo(e.message, err = true)
-            exitProcess(1)
-        } catch (e: Exception) {
-            echo(e.message ?: "unexpected error", err = true)
-            exitProcess(1)
-        }
-    }
-
-    private fun overloadPropsFromArgs(props: Properties) {
+    override fun overloadPropsFromArgs(props: Properties) {
         path?.let { props.put(CoreConfigKey.SCAN_PATH.key, it) }
         identifierRegex?.let { props.put(CoreConfigKey.SCAN_IDENTIFIER_REGEX.key, it) }
         whitelistedTags?.let { props.put(CoreConfigKey.TAGS_WHITELISTED.key, it) }
