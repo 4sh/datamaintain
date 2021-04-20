@@ -151,7 +151,8 @@ This command will start Datamaintain on a mongo db, the mongo is accessible with
 The folder path containing scripts is `$script_path`. 
 
 ### Use docker
-You can use the CLI via a docker image. You just need to mount the script path to the container :
+You can use the CLI via a docker image, the images are hosted on GitHub so you will need [docker to have access to GitHub](https://docs.github.com/en/packages/guides/configuring-docker-for-use-with-github-packages).
+You just need to mount the script path to the container :
 ```
 docker run --rm --volume $script_path:/scripts docker.pkg.github.com/4sh/datamaintain/datamaintain:1.2-mongo-4.4 --db-type mongo --mongo-uri mongodb://localhost:27017/sample update-db --path /scripts --identifier-regex "(.*)"
 ```
