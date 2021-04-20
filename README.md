@@ -51,8 +51,8 @@ Then, you may add the dependencies to ```datamaintain-core``` and the driver mod
     ```kotlin
     
     dependencies {
-		implementation("com.github.4sh.datamaintain:datamaintain-core:v1.1.0"),
-		implementation("com.github.4sh.datamaintain:datamaintain-driver-mongo:v1.1.0")
+		implementation("com.github.4sh.datamaintain:datamaintain-core:1.2.0"),
+		implementation("com.github.4sh.datamaintain:datamaintain-driver-mongo:1.2.0")
 	} 
     ```
     
@@ -78,8 +78,8 @@ Then, you may add the dependencies to ```datamaintain-core``` and the driver mod
     ```groovy
     
     dependencies {
-	    implementation 'com.github.4sh.datamaintain:datamaintain-core:v1.1.0',
-        implementation 'com.github.4sh.datamaintain:datamaintain-driver-mongo:v1.1.0',
+	    implementation 'com.github.4sh.datamaintain:datamaintain-core:1.2.0',
+        implementation 'com.github.4sh.datamaintain:datamaintain-driver-mongo:1.2.0',
 	} 
     ```
     
@@ -97,13 +97,13 @@ Then, you may add the dependencies to ```datamaintain-core``` and the driver mod
 <dependency>
     <groupId>com.github.4sh.datamaintain</groupId>
     <artifactId>datamaintain-core</artifactId>
-    <version>1.1.0</version>
+    <version>1.2.0</version>
 </dependency>
 
 <dependency>
     <groupId>com.github.4sh.datamaintain</groupId>
-    <artifactId>datamaintain-driver-mongo</artifactId>
-    <version>1.1.0</version>
+    <artifactId>datamaintain-mongo</artifactId>
+    <version>1.2.0</version>
 </dependency>
 
 ```
@@ -151,7 +151,8 @@ This command will start Datamaintain on a mongo db, the mongo is accessible with
 The folder path containing scripts is `$script_path`. 
 
 ### Use docker
-You can use the CLI via a docker image. You just need to mount the script path to the container :
+You can use the CLI via a docker image, the images are hosted on GitHub so you will need [docker to have access to GitHub](https://docs.github.com/en/packages/guides/configuring-docker-for-use-with-github-packages).
+You just need to mount the script path to the container :
 ```
 docker run --rm --volume $script_path:/scripts docker.pkg.github.com/4sh/datamaintain/datamaintain:1.2-mongo-4.4 --db-type mongo --mongo-uri mongodb://localhost:27017/sample update-db --path /scripts --identifier-regex "(.*)"
 ```

@@ -10,6 +10,7 @@ RUN test -n "$MONGO_MAJOR"
 ENV MONGO_MAJOR $MONGO_MAJOR
 
 RUN apt-get update \
+    && apt-get install -y wget gnupg \
     && wget -qO - https://www.mongodb.org/static/pgp/server-${MONGO_MAJOR}.asc | apt-key add - \
     && echo "deb http://repo.mongodb.org/apt/debian stretch/mongodb-org/3.6 main" | tee /etc/apt/sources.list.d/mongodb-org-3.6.list \
     && apt-get update \

@@ -18,7 +18,7 @@ fun execAppInSubprocess(args: List<String> = emptyList(), jvmArgs: List<String> 
     val javaHome = System.getProperty("java.home")
     val javaBin = javaHome + File.separator + "bin" + File.separator + "java"
     val classpath = System.getProperty("java.class.path")
-    val className = "datamaintain.cli.AppCli"
+    val className = "datamaintain.cli.AppKt"
 
     val command = ArrayList<String>()
     command.add(javaBin)

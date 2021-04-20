@@ -1,5 +1,3 @@
-@file:JvmName("AppCli")
-
 package datamaintain.cli
 
 import com.github.ajalt.clikt.core.CliktCommand
