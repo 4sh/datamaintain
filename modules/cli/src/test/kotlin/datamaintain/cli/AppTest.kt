@@ -1,6 +1,7 @@
 package datamaintain.cli
 
 import com.github.ajalt.clikt.core.subcommands
+import datamaintain.cli.update.db.UpdateDb
 import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.script.ScriptAction
 import datamaintain.core.script.Tag
