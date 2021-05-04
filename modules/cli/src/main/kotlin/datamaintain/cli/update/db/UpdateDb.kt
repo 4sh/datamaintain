@@ -55,7 +55,7 @@ class UpdateDb(runner: (DatamaintainConfig) -> Unit = ::defaultUpdateDbRunner) :
         .choice(allCheckRuleNames.map { it to it }.toMap())
         .multiple()
 
-    override fun overloadPropsFromArgs(props: Properties) {
+    override fun overloadProps(props: Properties) {
         path?.let { props.put(CoreConfigKey.SCAN_PATH.key, it) }
         identifierRegex?.let { props.put(CoreConfigKey.SCAN_IDENTIFIER_REGEX.key, it) }
         whitelistedTags?.let { props.put(CoreConfigKey.TAGS_WHITELISTED.key, it) }
