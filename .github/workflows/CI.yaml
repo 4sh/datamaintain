@@ -37,10 +37,7 @@ jobs:
         with:
           name: tests-results # Name artifact for storage in cache
           path: |
-            modules/cli/build/test-results/**/*.xml
-            modules/core/build/test-results/**/*.xml
-            modules/driver-mongo/build/test-results/**/*.xml
-            modules/test/build/test-results/**/*.xml
+            modules/**/build/test-results/**/*.xml
 
 
   publish-test-results:
