@@ -10,7 +10,8 @@ import java.util.*
 class MarkOneScriptAsExecuted(runner: (DatamaintainConfig) -> Unit = ::defaultUpdateDbRunner) :
     DatamaintainCliUpdateDbCommand(
         name = "mark-script-as-executed",
-        runner = runner
+        runner = runner,
+        help = "Mark one specified script as executed"
     ) {
     private val path: String? by option(help = "path to the script you want to mark as executed")
 
