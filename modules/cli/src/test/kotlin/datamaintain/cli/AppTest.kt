@@ -1,7 +1,5 @@
 package datamaintain.cli
 
-import com.github.ajalt.clikt.core.subcommands
-import datamaintain.cli.update.db.UpdateDb
 import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.script.ScriptAction
 import datamaintain.core.script.Tag
@@ -21,15 +19,7 @@ import strikt.assertions.*
 import java.nio.file.Paths
 import kotlin.reflect.KProperty1
 
-internal class AppTest {
-    data class ConfigWrapper(var datamaintainConfig: DatamaintainConfig? = null)
-
-    private val configWrapper = ConfigWrapper()
-
-    private fun runner(config: DatamaintainConfig) {
-        configWrapper.datamaintainConfig = config
-    }
-
+internal class AppTest : BaseCliTest() {
     @Nested
     inner class UpdateDb {
         @Nested
@@ -515,9 +505,5 @@ internal class AppTest {
                 }
             }
         }
-    }
-
-    private fun runApp(argv: List<String>) {
-        App().subcommands(UpdateDb(runner = ::runner), ListExecutedScripts()).main(argv)
     }
 }
