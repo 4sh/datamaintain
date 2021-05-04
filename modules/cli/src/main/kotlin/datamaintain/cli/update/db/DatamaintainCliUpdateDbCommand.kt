@@ -12,8 +12,9 @@ fun defaultUpdateDbRunner(config: DatamaintainConfig) {
 
 abstract class DatamaintainCliUpdateDbCommand(
     name: String,
-    val runner: (DatamaintainConfig) -> Unit
-): DatamaintainCliCommand(name) {
+    val runner: (DatamaintainConfig) -> Unit,
+    help: String = ""
+): DatamaintainCliCommand(name, help) {
     override fun executeCommand(config: DatamaintainConfig) {
         try {
             runner(config)

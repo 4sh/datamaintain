@@ -8,7 +8,7 @@ import datamaintain.core.exception.DatamaintainBaseException
 import java.util.*
 import kotlin.system.exitProcess
 
-abstract class DatamaintainCliCommand(name: String) : CliktCommand(name = name) {
+abstract class DatamaintainCliCommand(name: String, help: String = "") : CliktCommand(name = name, help = help) {
     private val props by findObject { Properties() }
 
     override fun run() {
