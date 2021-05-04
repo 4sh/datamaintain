@@ -4,6 +4,7 @@ import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.findObject
 import com.github.ajalt.clikt.core.subcommands
 import com.github.ajalt.clikt.parameters.options.*
+import datamaintain.cli.update.db.MarkOneScriptAsExecuted
 import datamaintain.cli.update.db.UpdateDb
 import datamaintain.core.db.driver.DriverConfigKey
 import datamaintain.core.exception.DatamaintainBaseException
@@ -51,7 +52,7 @@ enum class DbType(val value: String) {
 }
 
 fun main(args: Array<String>) {
-    App().subcommands(UpdateDb(), ListExecutedScripts()).main(args)
+    App().subcommands(UpdateDb(), ListExecutedScripts(), MarkOneScriptAsExecuted()).main(args)
 }
 
 class DbTypeNotFoundException(val dbType: String) : DatamaintainBaseException("dbType $dbType is unknown")
