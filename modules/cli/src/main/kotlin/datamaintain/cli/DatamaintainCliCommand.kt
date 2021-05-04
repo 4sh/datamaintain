@@ -13,7 +13,7 @@ abstract class DatamaintainCliCommand(name: String) : CliktCommand(name = name) 
 
     override fun run() {
         try {
-            overloadPropsFromArgs(props)
+            overloadProps(props)
             val config = loadConfig(props)
             executeCommand(config)
         } catch (e: DatamaintainBaseException) {
@@ -29,7 +29,7 @@ abstract class DatamaintainCliCommand(name: String) : CliktCommand(name = name) 
         }
     }
 
-    protected abstract fun overloadPropsFromArgs(props: Properties)
+    protected abstract fun overloadProps(props: Properties)
 
     protected abstract fun executeCommand(config: DatamaintainConfig)
 }
