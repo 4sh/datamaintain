@@ -14,6 +14,5 @@ dependencies {
     compileOnly(project(":modules:core"))
     testImplementation(project(":modules:core"))
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.20.0")
-    implementation("org.postgresql:postgresql:42.2.14")
     testImplementation("com.h2database:h2:1.4.200")
 }
