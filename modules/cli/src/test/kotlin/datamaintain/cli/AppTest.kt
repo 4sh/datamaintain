@@ -6,6 +6,8 @@ import datamaintain.core.script.ScriptAction
 import datamaintain.core.script.Tag
 import datamaintain.core.script.TagMatcher
 import datamaintain.core.step.check.rules.implementations.SameScriptsAsExecutedCheck
+import datamaintain.core.step.executor.ExecutionMode
+import datamaintain.db.driver.jdbc.JdbcDriverConfig
 import datamaintain.db.driver.mongo.MongoDriverConfig
 import datamaintain.test.execAppInSubprocess
 import org.junit.jupiter.api.DisplayName
@@ -432,6 +434,18 @@ internal class AppTest {
 
                 // Then
                 expectThat(configWrapper.datamaintainConfig!!.driverConfig).isA<MongoDriverConfig>()
+            }
+
+            @Test
+            fun `should build configuration with jdbc db type`() {
+                // Given
+                val argv = listOf("--db-type", datamaintain.cli.DbType.JDBC.value, "--jdbc-uri", "jdbcUri", "update-db")
+
+                // When
+                runApp(argv)
+
+                // Then
+                expectThat(configWrapper.datamaintainConfig!!.driverConfig).isA<JdbcDriverConfig>()
             }
 
             @Test
