@@ -19,8 +19,8 @@ public class Starter {
         this.hp = resultSet.getInt("hp");
         this.attack = resultSet.getInt("attack");
         this.defense = resultSet.getInt("defense");
-        this.specialAttack = resultSet.getInt("specialAttack");
-        this.specialDefense = resultSet.getInt("specialDefense");
+        this.specialAttack = resultSet.getInt("special");
+        this.specialDefense = resultSet.getInt("defense");
         this.speed = resultSet.getInt("speed");
     }
 
