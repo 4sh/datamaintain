@@ -28,6 +28,19 @@ graal {
     outputName("datamaintain")
 }
 
+tasks.startScripts {
+    doLast {
+        val scriptFile = File("${outputDir}/${applicationName}")
+        scriptFile.writeText(scriptFile.readText().replace("CLASSPATH=", "CLASSPATH=:\$APP_HOME/lib/drivers/*:"))
+    }
+}
+
+tasks.installDist {
+    doLast {
+        mkdir("$destinationDir/lib/drivers")
+    }
+}
+
 tasks.register<Exec>("graalCheckNative") {
     dependsOn("nativeImage")
 
