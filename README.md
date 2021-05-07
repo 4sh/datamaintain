@@ -162,6 +162,8 @@ You will find the CLI for each release in its assets in the [releases](https://g
 
 ![](docs/img/release-page-cli.png)
 
+If you are using a jdbc driver, please put your driver jar in the folder ```lib/drivers```.
+
 For example :
 ```
 ./cli --db-type mongo --db-uri mongodb://localhost:27017/sample update-db --path $script_path --identifier-regex "(.*)"
