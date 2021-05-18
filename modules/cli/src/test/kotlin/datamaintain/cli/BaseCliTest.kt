@@ -1,6 +1,7 @@
 package datamaintain.cli
 
 import com.github.ajalt.clikt.core.subcommands
+import datamaintain.cli.update.db.MarkOneScriptAsExecuted
 import datamaintain.cli.update.db.UpdateDb
 import datamaintain.core.config.DatamaintainConfig
 
@@ -14,6 +15,6 @@ open class BaseCliTest {
     }
 
     protected fun runApp(argv: List<String>) {
-        App().subcommands(UpdateDb(runner = ::runner), ListExecutedScripts()).main(argv)
+        App().subcommands(UpdateDb(runner = ::runner), ListExecutedScripts(), MarkOneScriptAsExecuted(runner = ::runner)).main(argv)
     }
 }
