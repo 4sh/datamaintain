@@ -1,6 +1,6 @@
-# How to - Install Datamaintain as a dependancy
+# How to - Install Datamaintain as a dependency
 
-Datamaintain can be used as a dependancy in your **Java** or **Kotlin server** : a handy solution to collaborate. 
+Datamaintain can be used as a dependency in your **Java** or **Kotlin server** : a handy solution to collaborate. 
 
 ## Available packages
 

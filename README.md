@@ -2,7 +2,7 @@
 [![CircleCI](https://circleci.com/gh/4sh/datamaintain.svg?style=shield)](https://circleci.com/gh/4sh/datamaintain) ![GitHub](https://img.shields.io/github/license/4sh/datamaintain)
 
 Your colleague added a column in the database without telling it to you and now nothing works ? Classic. To avoid this, use Datamaintain! This Kotlin library  helps maintaining consistency between data and code : it runs the new scripts added and tracks the scripts runned. According to your needs you may :
-- [Use it as a dependancy in your Java or Kotlin server](docs/asdependancy.md) : really handy to collaborate,
+- [Use it as a dependency in your Java or Kotlin server](docs/asdependency.md) : really handy to collaborate,
 - [And/or use the Command Line Interface (CLI)](docs/withcli.md) : enables more control when deploying.
 
 It is also a complete toolbox, [discover all the features !](README.md#Overview-of-the-features)
@@ -20,7 +20,7 @@ During a project lifetime, you will often have to run scripts to update your dat
 
 ## What is the best use for me ?
 
-### As a dependancy
+### As a dependency
 -  **👌 The simplest :**  The scripts are launched automatically when the server starts. This is simple and really handy to collaborate. You can also use it in a project with already executed scripts. 
 -  **👾 Enable personalisation :**  You can program it with Java. 
 
@@ -28,11 +28,11 @@ During a project lifetime, you will often have to run scripts to update your dat
 - **💪 Enables more control when deploying :**  You can master the order of your scripts and launch them independantly to the server thanks to executable file. You can also use Datamaintain in a project with already executed scripts. 
 
 ### Can I use both ? 
-Yes ! And that is often the case. You can develop your project with Datamaintain as a dependancy and then deploy in production with the Command Line Interface (CLI). 
+Yes ! And that is often the case. You can develop your project with Datamaintain as a dependency and then deploy in production with the Command Line Interface (CLI). 
 
 ## Quick links
 ### Getting started
-**1. Install :** you can [install it as a dependancy](docs/asdependancy.md) and/or [use the Command Line Interface](docs/withcli.md). If needed, you can [install in a a project with already executed scripts](docs/already-executed-scripts.md).
+**1. Install :** you can [install it as a dependency](docs/asdependency.md) and/or [use the Command Line Interface](docs/withcli.md). If needed, you can [install in a a project with already executed scripts](docs/already-executed-scripts.md).
 
 **2. Configure :** [How to configure Datamaintain](docs/configuration.md),
 
