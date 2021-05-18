@@ -14,7 +14,7 @@ During a project lifetime, you will often have to run scripts to update your dat
 
 - **Transparent**, thanks to the script execution reports.
 - **Light**, with few dependencies,
-- **Customizable**, it is possible to run the scripts in different manners : with the server or independantly, ordered with tags, with your own program...
+- **Customizable**, it is possible to run the scripts in different manners : with the server or independently, ordered with tags, with your own program...
 - **Idiot-proof**, Datamaintain has an identification based on the content that enables to manage homonyms scripts. You will never get angry with your colleagues again. We also have unit tests for the Datamaintain contributors. 
 - **Evolutive and open-source**, the architecture does not matter to the DBMS so that we can easily create new DBMS drivers and finally have a common framework between all our projects.  We are a team of developers that come mainly from the [4SH agency](https://www.4sh.fr/), where Datamaintain is  used in several big projects. We works regularly on it according to the feedbacks of the users (our colleagues). We would be really happy to work with other people. If you are interested in this project don't hesitate to contact us.
 
@@ -25,7 +25,7 @@ During a project lifetime, you will often have to run scripts to update your dat
 -  **👾 Enable personalisation :**  You can program it with Java. 
 
 ### With the Command Line Interface
-- **💪 Enables more control when deploying :**  You can master the order of your scripts and launch them independantly to the server thanks to executable file. You can also use Datamaintain in a project with already executed scripts. 
+- **💪 Enables more control when deploying :**  You can master the order of your scripts and launch them independently to the server thanks to executable file. You can also use Datamaintain in a project with already executed scripts. 
 
 ### Can I use both ? 
 Yes ! And that is often the case. You can develop your project with Datamaintain as a dependency and then deploy in production with the Command Line Interface (CLI). 
