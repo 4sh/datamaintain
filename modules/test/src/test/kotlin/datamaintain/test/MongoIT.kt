@@ -14,13 +14,13 @@ class MongoIT : AbstractMongoDbTest() {
         // Given
         val args = arrayOf(
                 "--db-type", "mongo",
-                "--mongo-uri", mongoUri,
+                "--db-uri", mongoUri,
                 "update-db",
                 "--verbose",
                 "--path", "src/test/resources/integration/ok",
                 "--identifier-regex", "(.*?)_.*",
-                "--mongo-print-output",
-                "--mongo-save-output"
+                "--print-db-output",
+                "--save-db-output"
         )
 
         // When
@@ -43,7 +43,7 @@ class MongoIT : AbstractMongoDbTest() {
         // Given
         main(arrayOf(
                 "--db-type", "mongo",
-                "--mongo-uri", mongoUri,
+                "--db-uri", mongoUri,
                 "update-db",
                 "--verbose",
                 "--path", "src/test/resources/integration/partial",
@@ -56,7 +56,7 @@ class MongoIT : AbstractMongoDbTest() {
 
         val args = arrayOf(
                 "--db-type", "mongo",
-                "--mongo-uri", mongoUri,
+                "--db-uri", mongoUri,
                 "update-db",
                 "--verbose",
                 "--path", "src/test/resources/integration/ok",
@@ -82,7 +82,7 @@ class MongoIT : AbstractMongoDbTest() {
         // Given
         val args = arrayOf(
                 "--db-type", "mongo",
-                "--mongo-uri", mongoUri,
+                "--db-uri", mongoUri,
                 "update-db",
                 "--path", "src/test/resources/integration/ok",
                 "--identifier-regex", "(.*?)_.*",
@@ -103,7 +103,7 @@ class MongoIT : AbstractMongoDbTest() {
         // Given
         val args = arrayOf(
                 "--db-type", "mongo",
-                "--mongo-uri", mongoUri,
+                "--db-uri", mongoUri,
                 "update-db",
                 "--verbose",
                 "--path", "src/test/resources/integration/ok",
@@ -131,7 +131,7 @@ class MongoIT : AbstractMongoDbTest() {
         // Given
         val args = arrayOf(
                 "--db-type", "mongo",
-                "--mongo-uri", mongoUri,
+                "--db-uri", mongoUri,
                 "update-db",
                 "--verbose",
                 "--path", "src/test/resources/integration/ok",
@@ -160,7 +160,7 @@ class MongoIT : AbstractMongoDbTest() {
         // Given
         main(arrayOf(
                 "--db-type", "mongo",
-                "--mongo-uri", mongoUri,
+                "--db-uri", mongoUri,
                 "update-db",
                 "--verbose",
                 "--path", "src/test/resources/integration/partial",
@@ -173,7 +173,7 @@ class MongoIT : AbstractMongoDbTest() {
 
         val args = arrayOf(
                 "--db-type", "mongo",
-                "--mongo-uri", mongoUri,
+                "--db-uri", mongoUri,
                 "update-db",
                 "--verbose",
                 "--path", "src/test/resources/integration/override",
@@ -198,7 +198,7 @@ class MongoIT : AbstractMongoDbTest() {
         // Given
         val args = listOf(
                 "--db-type", "mongo",
-                "--mongo-uri", mongoUri,
+                "--db-uri", mongoUri,
                 "update-db",
                 "--verbose",
                 "--path", "src/test/resources/integration/ko",
@@ -234,7 +234,7 @@ class MongoIT : AbstractMongoDbTest() {
 
         main(arrayOf(
                 "--db-type", "mongo",
-                "--mongo-uri", mongoUri,
+                "--db-uri", mongoUri,
                 "list"
         ))
 

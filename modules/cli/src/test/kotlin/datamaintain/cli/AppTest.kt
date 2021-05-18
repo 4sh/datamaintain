@@ -6,16 +6,13 @@ import datamaintain.core.script.ScriptAction
 import datamaintain.core.script.Tag
 import datamaintain.core.script.TagMatcher
 import datamaintain.core.step.check.rules.implementations.SameScriptsAsExecutedCheck
-import datamaintain.core.step.executor.ExecutionMode
 import datamaintain.db.driver.mongo.MongoDriverConfig
 import datamaintain.test.execAppInSubprocess
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
-import strikt.api.expectCatching
 import strikt.api.expectThat
 import strikt.assertions.*
 import java.nio.file.Paths
@@ -324,13 +321,13 @@ internal class AppTest {
                     @Test
                     fun `should build config with mongo save output set to true`() {
                         // Given
-                        val argv = updateMongoDbMinimumArguments().plus("--mongo-save-output")
+                        val argv = updateMongoDbMinimumArguments().plus("--save-db-output")
 
                         // When
                         runApp(argv)
 
                         // Then
-                        expectThat((configWrapper.datamaintainConfig!!.driverConfig) as MongoDriverConfig)
+                        expectThat(configWrapper.datamaintainConfig!!.driverConfig)
                                 .get { saveOutput }
                                 .isTrue()
                     }
@@ -344,7 +341,7 @@ internal class AppTest {
                         runApp(argv)
 
                         // Then
-                        expectThat((configWrapper.datamaintainConfig!!.driverConfig) as MongoDriverConfig)
+                        expectThat(configWrapper.datamaintainConfig!!.driverConfig)
                                 .get { saveOutput }
                                 .isFalse()
                     }
@@ -355,13 +352,13 @@ internal class AppTest {
                     @Test
                     fun `should build config with create tags from folder set to true`() {
                         // Given
-                        val argv = updateMongoDbMinimumArguments().plus("--mongo-print-output")
+                        val argv = updateMongoDbMinimumArguments().plus("--print-db-output")
 
                         // When
                         runApp(argv)
 
                         // Then
-                        expectThat((configWrapper.datamaintainConfig!!.driverConfig) as MongoDriverConfig)
+                        expectThat(configWrapper.datamaintainConfig!!.driverConfig)
                                 .get { printOutput }
                                 .isTrue()
                     }
@@ -375,7 +372,7 @@ internal class AppTest {
                         runApp(argv)
 
                         // Then
-                        expectThat((configWrapper.datamaintainConfig!!.driverConfig) as MongoDriverConfig)
+                        expectThat(configWrapper.datamaintainConfig!!.driverConfig)
                                 .get { printOutput }
                                 .isFalse()
                     }
@@ -385,7 +382,7 @@ internal class AppTest {
 
         private fun updateMongoDbMinimumArguments(): List<String> {
             return listOf(
-                    "--mongo-uri", "mongo-uri",
+                    "--db-uri", "mongo-uri",
                     "update-db"
             )
         }
@@ -405,7 +402,7 @@ internal class AppTest {
 
                 // Then
                 expectThat((configWrapper.datamaintainConfig!!.driverConfig) as MongoDriverConfig)
-                        .get { mongoUri }
+                        .get { uri }
                         .isEqualTo("mongo-uri")
             }
 
@@ -428,7 +425,7 @@ internal class AppTest {
             @Test
             fun `should build configuration with mongo db type`() {
                 // Given
-                val argv = listOf("--db-type", datamaintain.cli.DbType.MONGO.value, "--mongo-uri", "mongoUri", "update-db")
+                val argv = listOf("--db-type", datamaintain.cli.DbType.MONGO.value, "--db-uri", "mongoUri", "update-db")
 
                 // When
                 runApp(argv)
@@ -455,7 +452,7 @@ internal class AppTest {
         fun `should build configuration with mongo uri`() {
             // Given
             val mongoUri = "my great mongo uri"
-            val argv = listOf("--mongo-uri", mongoUri, "update-db")
+            val argv = listOf("--db-uri", mongoUri, "update-db")
 
             // When
             runApp(argv)
@@ -469,7 +466,7 @@ internal class AppTest {
         fun `should build configuration with mongo tmp path`() {
             // Given
             val mongoTmpPath = "my mongo tmp path"
-            val argv = listOf("--mongo-uri", "mongouri", "--mongo-tmp-path", mongoTmpPath, "update-db")
+            val argv = listOf("--db-uri", "mongouri", "--mongo-tmp-path", mongoTmpPath, "update-db")
 
             // When
             runApp(argv)
@@ -488,7 +485,7 @@ internal class AppTest {
                         "--trust-uri",
                         "--db-type",
                         datamaintain.cli.DbType.MONGO.value,
-                        "--mongo-uri",
+                        "--db-uri",
                         "mongoUri",
                         "update-db"
                 )
@@ -508,7 +505,7 @@ internal class AppTest {
                 val argv = listOf(
                         "--db-type",
                         datamaintain.cli.DbType.MONGO.value,
-                        "--mongo-uri",
+                        "--db-uri",
                         "mongoUri",
                         "update-db"
                 )

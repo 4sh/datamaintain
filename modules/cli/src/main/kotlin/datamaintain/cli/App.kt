@@ -10,9 +10,9 @@ import datamaintain.core.Datamaintain
 import datamaintain.core.config.CoreConfigKey
 import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.db.driver.DriverConfigKey
-import datamaintain.core.script.ScriptAction
 import datamaintain.core.exception.DatamaintainBaseException
 import datamaintain.core.exception.DatamaintainException
+import datamaintain.core.script.ScriptAction
 import datamaintain.core.step.check.allCheckRuleNames
 import datamaintain.core.step.executor.ExecutionMode
 import datamaintain.db.driver.mongo.MongoConfigKey
@@ -34,7 +34,7 @@ class App : CliktCommand() {
             .default("mongo")
             .validate { DbType.values().map { v -> v.value }.contains(it) }
 
-    private val mongoUri: String? by option(help = "mongo uri with at least database name. Ex: mongodb://localhost:27017/newName")
+    private val dbUri: String? by option(help = "mongo uri with at least database name. Ex: mongodb://localhost:27017/newName")
 
     private val trustUri: Boolean? by option(help = "Deactivate all controls on the URI you provide Datamaintain").flag()
 
@@ -51,7 +51,7 @@ class App : CliktCommand() {
     }
 
     private fun overloadPropsFromArgs(props: Properties) {
-        mongoUri?.let { props.put(MongoConfigKey.DB_MONGO_URI.key, it) }
+        dbUri?.let { props.put(DriverConfigKey.DB_URI.key, it) }
         mongoTmpPath?.let { props.put(MongoConfigKey.DB_MONGO_TMP_PATH.key, it) }
         trustUri?.let { props.put(DriverConfigKey.DB_TRUST_URI.key, it.toString()) }
     }
@@ -84,9 +84,9 @@ class UpdateDb(val runner: (DatamaintainConfig) -> Unit = ::defaultUpdateDbRunne
 
     private val verbose: Boolean? by option(help = "verbose").flag()
 
-    private val mongoSaveOutput: Boolean? by option(help = "save mongo output").flag()
+    private val saveDbOutput: Boolean? by option(help = "save db output").flag()
 
-    private val mongoPrintOutput: Boolean? by option(help = "print mongo output").flag()
+    private val printDbOutput: Boolean? by option(help = "print db output").flag()
 
     private val props by requireObject<Properties>()
 
@@ -145,8 +145,8 @@ class UpdateDb(val runner: (DatamaintainConfig) -> Unit = ::defaultUpdateDbRunne
         tagsToPlayAgain?.let { props.put(CoreConfigKey.PRUNE_TAGS_TO_RUN_AGAIN.key, it) }
         createTagsFromFolder?.let { props.put(CoreConfigKey.CREATE_TAGS_FROM_FOLDER.key, it.toString()) }
         verbose?.let { props.put(CoreConfigKey.VERBOSE.key, it.toString()) }
-        mongoSaveOutput?.let { props.put(MongoConfigKey.DB_MONGO_SAVE_OUTPUT.key, it.toString()) }
-        mongoPrintOutput?.let { props.put(MongoConfigKey.DB_MONGO_PRINT_OUTPUT.key, it.toString()) }
+        saveDbOutput?.let { props.put(DriverConfigKey.DB_SAVE_OUTPUT.key, it.toString()) }
+        printDbOutput?.let { props.put(DriverConfigKey.DB_PRINT_OUTPUT.key, it.toString()) }
         executionMode?.let { props.put(CoreConfigKey.EXECUTION_MODE.key, it) }
         action?.let { props.put(CoreConfigKey.DEFAULT_SCRIPT_ACTION.key, it) }
         tagsMatchers?.forEach {
