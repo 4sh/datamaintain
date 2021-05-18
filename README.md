@@ -125,16 +125,25 @@ Then, you may add the dependencies to ```datamaintain-core``` and the driver mod
 | verbose | If true, more logs will be printed | ```false``` | no | ```true``` or ```false``` |
 | prune.tags.to.run.again | Scripts that have these tags will be run, even they were already executed  | None | no | ```tag,again``` |
 | prune.scripts.override.executed | Allow datamaintain to override a script if it detect a checksum change on a script already runned (assuming its filename) | ```false``` | no | ```true``` or ```false``` |
-| db.trust.uri | Bypass all checks that could be done on your URI because you are very sure of it and think our checks are just liars | ```false``` | no | ```true``` or ```false``` |
-### Mongo driver configuration
+
+### Common driver configuration
 
 | Key | Description | Default value | Mandatory? | Values examples |
 |---|---|---|---|---|
-| db.mongo.uri | Mongo URI to your mongo server. **Database name is mandatory.** Please see the [mongo URI documentation](https://docs.mongodb.com/manual/reference/connection-string/) to learn about writing mongo URIs. |  | yes | ```mongodb://localhost/my-db```<br />```mongodb://localhost:8000/my-db```<br />```mongodb://username:password@localhost/my-db```<br />```mongodb+srv://server.example.com/my-db``` <br />```mongodb://my-db,my-db2:27018/my-db``` <br /> |
+| db.uri | URI to your db server. **Database name is mandatory.**  |  | yes | ```mongodb://localhost/my-db```<br />```mongodb://localhost:8000/my-db```<br />```mongodb://username:password@localhost/my-db```<br />```mongodb+srv://server.example.com/my-db``` <br />```mongodb://my-db,my-db2:27018/my-db``` <br /> |
+| db.trust.uri | Bypass all checks that could be done on your URI because you are very sure of it and think our checks are just liars | ```false``` | no | ```true``` or ```false``` |
+| db.mongo.print.output | If true, db output will be logged. | ```false``` | no | ```true``` or ```false``` |
+| db.mongo.save.output | If true, db output will be saved in script execution report.  | ```false``` | no | ```true``` or ```false``` |
+
+### Specific mongodb driver configuration
+
+See common driver configuration first.
+For ```db.uri```, please see the [mongo URI documentation](https://docs.mongodb.com/manual/reference/connection-string/) to learn about writing mongo URIs.
+
+| Key | Description | Default value | Mandatory? | Values examples |
+|---|---|---|---|---|
 | db.mongo.tmp.path | Path where the driver will write temporary files. | ```/tmp/datamaintain.tmp``` | no |  |
 | db.mongo.client.path | Path or alias to your mongo executable. | ```mongo``` | no |  |
-| db.mongo.print.output | If true, mongo output will be logged. | ```false``` | no | ```true``` or ```false``` |
-| db.mongo.save.output | If true, mongo output will be saved in script execution report.  | ```false``` | no | ```true``` or ```false``` |
 
 ## Use the CLI
 ### Download and execute
@@ -144,7 +153,7 @@ You will find the CLI for each release in its assets in the [releases](https://g
 
 For example :
 ```
-./cli --db-type mongo --mongo-uri mongodb://localhost:27017/sample update-db --path $script_path --identifier-regex "(.*)"
+./cli --db-type mongo --db-uri mongodb://localhost:27017/sample update-db --path $script_path --identifier-regex "(.*)"
 ```
 
 This command will start Datamaintain on a mongo db, the mongo is accessible with URI `mongodb://localhost:27017/sample`.
@@ -154,7 +163,7 @@ The folder path containing scripts is `$script_path`.
 You can use the CLI via a docker image, the images are hosted on GitHub so you will need [docker to have access to GitHub](https://docs.github.com/en/packages/guides/configuring-docker-for-use-with-github-packages).
 You just need to mount the script path to the container :
 ```
-docker run --rm --volume $script_path:/scripts docker.pkg.github.com/4sh/datamaintain/datamaintain:1.2-mongo-4.4 --db-type mongo --mongo-uri mongodb://localhost:27017/sample update-db --path /scripts --identifier-regex "(.*)"
+docker run --rm --volume $script_path:/scripts docker.pkg.github.com/4sh/datamaintain/datamaintain:1.2-mongo-4.4 --db-type mongo --db-uri mongodb://localhost:27017/sample update-db --path /scripts --identifier-regex "(.*)"
 ```
 
 In this example :
@@ -181,7 +190,7 @@ When you already have executed scripts on your project and you want to start usi
 - Execute the CLI using the following command replacing the arguments with the values you want. An explanation about each configuration key is provided here.
 ```bash
 
-./datamaintain-cli --db-type $DB_TYPE --mongo-uri $MONGO_URI update-db --path $PATH --identifier-regex $REGEX --execution-mode FORCE_MARK_AS_EXECUTED
+./datamaintain-cli --db-type $DB_TYPE --db-uri $MONGO_URI update-db --path $PATH --identifier-regex $REGEX --execution-mode FORCE_MARK_AS_EXECUTED
 ```
 
 ## Executed scripts in your database
