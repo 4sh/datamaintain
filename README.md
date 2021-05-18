@@ -38,8 +38,13 @@ Yes ! And that is often the case. You can develop your project with Datamaintain
 
 ### Overview of the features
 - [The execution reports](docs/executed-scripts.md)
-- The tag feature (work in progress),
-- How to enhance performances with a synthesis of the scripts ? (work in progress),
+- The tag feature,
+- Whitelist and blacklist (via tags)
+- Marks a script as executed
+- Override an executed script 
+- Dry run : allow to run datamaintain without performing action on db. It a way to ensure what datamaintain will do if you have doubts
+- Possibility to activate some check rules (work in progress) : the only one now is the one that detect that some executed scripts was removed.
+
 ### Contribute
 - How does Datamaintains work (work in progress),
 - [How to write a driver](docs/how-to-write-a-driver.md). 
