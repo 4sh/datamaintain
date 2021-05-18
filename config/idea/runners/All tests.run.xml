@@ -1,0 +1,9 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="All tests" type="CompoundRunConfigurationType">
+    <toRun name="Transversal tests" type="GradleRunConfiguration" />
+    <toRun name="Cli tests" type="GradleRunConfiguration" />
+    <toRun name="Core tests" type="GradleRunConfiguration" />
+    <toRun name="Driver Mongo tests" type="GradleRunConfiguration" />
+    <method v="2" />
+  </configuration>
+</component>
