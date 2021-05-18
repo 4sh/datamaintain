@@ -11,64 +11,66 @@ Datamaintain can be used as a dependency in your **Java** or **Kotlin server** :
 
 ## Add Datamaintain as a dependency
 
-To install Datamaintain in your project, you will have to add it as a dependency. Since the releases are available on [jitpack](https://jitpack.io/), you will first have to add the jitpack repository in your project.
+To install Datamaintain in your project, you will have to add it as a dependency. 
+Since the releases are available on [jitpack](https://jitpack.io/), you will first have to add the jitpack 
+repository in your project.
  
-Then, you may add the dependencies to ```datamaintain-core``` and the driver module you need. A list of all the available modules is available [here](./as-dependency.md#available-packages). Here is an example of the dependencies declaration for a project using mongo:
+Then, you may add the dependencies to ```datamaintain-core``` and the driver module you need.
 
-- gradle using kotlin DSL:
-    - In your root build.gradle, at the end of repositories:
-    ```kotlin
+### Sample with gradle using kotlin DSL
+- In your root build.gradle, at the end of repositories:
+```kotlin
+
+maven(url = "https://jitpack.io")
+```
+
+It should look like that:
+```kotlin
+
+allprojects {
+    repositories {
+        ...
+        maven(url = "https://jitpack.io")
+    }
+}
+```
+- Add the following dependency in your build.gradle:
+```kotlin
+
+dependencies {
+    implementation("com.github.4sh.datamaintain:datamaintain-core:v1.0.0-rc14"),
+    implementation("com.github.4sh.datamaintain:datamaintain-mongo:v1.0.0-rc14")
+} 
+```
     
-    maven(url = "https://jitpack.io")
-	```
+### Sample with gradle using groovy DSL
+- In your root build.gradle, at the end of repositories:
+```groovy
+
+maven { url 'https://jitpack.io' }
+```
+
+It should look like that:
+```groovy
+
+allprojects {
+    repositories {
+        ...
+        maven { url 'https://jitpack.io' }
+    }
+}
+```
+- Add the following dependency in your build.gradle:
+
+```groovy
+
+dependencies {
+    implementation 'com.github.4sh.datamaintain:datamaintain-core:v1.0.0-rc14',
+    implementation 'com.github.4sh.datamaintain:datamaintain-mongo:v1.0.0-rc14',
+} 
+```
     
-    It should look like that:
-    ```kotlin
-    
-    allprojects {
-		repositories {
-			...
-    		maven(url = "https://jitpack.io")
-		}
-	}
-    ```
-    - Add the following dependency in your build.gradle:
-    ```kotlin
-    
-    dependencies {
-		implementation("com.github.4sh.datamaintain:datamaintain-core:v1.0.0-rc14"),
-		implementation("com.github.4sh.datamaintain:datamaintain-mongo:v1.0.0-rc14")
-	} 
-    ```
-    
-- gradle using groovy DSL: 
-    - In your root build.gradle, at the end of repositories:
-    ```groovy
-    
-    maven { url 'https://jitpack.io' }
-	```
-    
-    It should look like that:
-    ```groovy
-    
-    allprojects {
-		repositories {
-			...
-			maven { url 'https://jitpack.io' }
-		}
-	}
-    ```
-    - Add the following dependency in your build.gradle:
-    
-    ```groovy
-    
-    dependencies {
-	    implementation 'com.github.4sh.datamaintain:datamaintain-core:v1.0.0-rc14',
-        implementation 'com.github.4sh.datamaintain:datamaintain-mongo:v1.0.0-rc14',
-	} 
-    ```
-    
-- maven:
+### Sample with maven
 
 ```xml
 

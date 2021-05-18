@@ -64,10 +64,14 @@ Your driver is what Datamaintain will use to communicate with your database mana
 
 ## Add a sample
 
-To test your sample in real conditions and help Datamaintain users understand how to use your driver, a sample is needed. Please write a sample in Java or Kotlin, at least one of the two. 
+To test your sample in real conditions and help Datamaintain users understand how to use your driver, a sample is needed. 
+Please write a sample in Java or Kotlin, at least one of the two. 
 
 Create a folder in the [samples folder](../samples), with a name containing the language your sample is written in (Java or Kotlin)
- and the name of your DBMS. Please base your sample architecture on the [mongo java sample](../samples/java-mongo). If you lack ideas on relevant scripts to include in your sample, feel free to write scripts that do the same operations as the ones in the mongo java sample. You may find a brief description of what they do in the [mongo java sample README](../samples/java-mongo/README.md).
+ and the name of your DBMS. Please base your sample architecture on the [mongo java sample](../samples/java-mongo). 
+If you lack ideas on relevant scripts to include in your sample, feel free to write scripts that do the same 
+operations as the ones in the mongo java sample. You may find a brief description of what they do in 
+the [mongo java sample README](../samples/java-mongo/README.md).
 
 Once you have created your sample, the tree view of the samples should look like that:
 
@@ -141,7 +145,12 @@ public class Java<DBMSName>SampleMain {
 ```
 ## Update the documentation
 
-Congratulations, your driver is ready for everyone to start using it! Now, tell the world that is has come to existence, you have to update the following files:
+Congratulations, your driver is ready for everyone to start using it! Now, tell the world that is has come to existence,
+you have to update the following files:
 
-- The guide to write a driver (this file): add your driver in the [list of available drivers](how-to-write-a-driver.md#write-a-driver-for-datamaintain).
-- The project README: add the package of your driver in the [list of available packages](../README.md#available-packages) and write a little description about it and add documentation about your driver configuration in the [Datatamaintain configuration section](../README.md#datamaintain-configuration).
+- The guide to write a driver (this file): add your driver in the 
+  [list of available drivers](how-to-write-a-driver.md#write-a-driver-for-datamaintain).
+- The project README: add the package of your driver in the 
+  [list of available packages](./as-dependency.md#available-packages) and write a little description about it and add 
+  documentation about your driver configuration in the 
+  [Datatamaintain configuration section](../README.md#datamaintain-configuration).
