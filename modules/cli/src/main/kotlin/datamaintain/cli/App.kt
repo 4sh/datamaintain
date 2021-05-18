@@ -16,7 +16,6 @@ import datamaintain.core.exception.DatamaintainException
 import datamaintain.core.script.ScriptAction
 import datamaintain.core.step.check.allCheckRuleNames
 import datamaintain.core.step.executor.ExecutionMode
-import datamaintain.db.driver.jdbc.JdbcConfigKey
 import datamaintain.db.driver.jdbc.JdbcDriverConfig
 import datamaintain.db.driver.mongo.MongoConfigKey
 import datamaintain.db.driver.mongo.MongoDriverConfig
@@ -39,8 +38,6 @@ class App : CliktCommand() {
 
     private val dbUri: String? by option(help = "mongo uri with at least database name. Ex: mongodb://localhost:27017/newName")
 
-    private val jdbcUri: String? by option(help = "jdbc uri with at least database name. Ex: jdbc://localhost:8000/my-db")
-
     private val trustUri: Boolean? by option(help = "Deactivate all controls on the URI you provide Datamaintain").flag()
 
     private val mongoTmpPath: String? by option(help = "mongo tmp file path")
@@ -57,7 +54,6 @@ class App : CliktCommand() {
 
     private fun overloadPropsFromArgs(props: Properties) {
         dbUri?.let { props.put(DriverConfigKey.DB_URI.key, it) }
-        jdbcUri?.let { props.put(JdbcConfigKey.DB_JDBC_URI.key, it) }
         mongoTmpPath?.let { props.put(MongoConfigKey.DB_MONGO_TMP_PATH.key, it) }
         trustUri?.let { props.put(DriverConfigKey.DB_TRUST_URI.key, it.toString()) }
     }

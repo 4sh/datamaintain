@@ -439,7 +439,7 @@ internal class AppTest {
             @Test
             fun `should build configuration with jdbc db type`() {
                 // Given
-                val argv = listOf("--db-type", datamaintain.cli.DbType.JDBC.value, "--jdbc-uri", "jdbcUri", "update-db")
+                val argv = listOf("--db-type", datamaintain.cli.DbType.JDBC.value, "--db-uri", "jdbcUri", "update-db")
 
                 // When
                 runApp(argv)

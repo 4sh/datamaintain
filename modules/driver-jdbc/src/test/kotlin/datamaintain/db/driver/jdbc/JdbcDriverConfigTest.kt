@@ -15,7 +15,7 @@ internal class JdbcDriverConfigTest {
         props.load(JdbcDriverConfigTest::class.java.getResourceAsStream("/config/default.properties"))
 
         expectThat(JdbcDriverConfig.buildConfig(props)).and {
-            get { jdbcUri }.isEqualTo("jdbc:h2:mem:")
+            get { uri }.isEqualTo("jdbc:h2:mem:")
             get { trustUri }.isTrue()
         }
     }
@@ -26,11 +26,11 @@ internal class JdbcDriverConfigTest {
         props.load(JdbcDriverConfigTest::class.java.getResourceAsStream("/config/default.properties"))
 
         val updatedURI = "jdbc://localhost/my-db"
-        System.setProperty("db.jdbc.uri", updatedURI)
+        System.setProperty("db.uri", updatedURI)
         System.setProperty("db.trust.uri", "false")
 
         expectThat(JdbcDriverConfig.buildConfig(props)).and {
-            get { jdbcUri }.isEqualTo(updatedURI)
+            get { uri }.isEqualTo(updatedURI)
             get { trustUri }.isFalse()
         }
     }
