@@ -84,9 +84,9 @@ class UpdateDb(val runner: (DatamaintainConfig) -> Unit = ::defaultUpdateDbRunne
 
     private val verbose: Boolean? by option(help = "verbose").flag()
 
-    private val saveDbOutput: Boolean? by option(help = "save db output").flag()
+    private val saveDbOutput: Boolean? by option(help = "save your script and db output").flag()
 
-    private val printDbOutput: Boolean? by option(help = "print db output").flag()
+    private val printDbOutput: Boolean? by option(help = "print your script and db output").flag()
 
     private val props by requireObject<Properties>()
 
