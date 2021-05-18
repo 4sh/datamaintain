@@ -2,8 +2,8 @@
 [![CircleCI](https://circleci.com/gh/4sh/datamaintain.svg?style=shield)](https://circleci.com/gh/4sh/datamaintain) ![GitHub](https://img.shields.io/github/license/4sh/datamaintain)
 
 Your colleague added a column in the database without telling it to you and now nothing works ? Classic. To avoid this, use Datamaintain! This Kotlin library  helps maintaining consistency between data and code : it runs the new scripts added and tracks the scripts runned. According to your needs you may :
-- [Use it as a dependency in your Java or Kotlin server](docs/asdependency.md) : really handy to collaborate,
-- [And/or use the Command Line Interface (CLI)](docs/withcli.md) : enables more control when deploying.
+- [Use it as a dependency in your Java or Kotlin server](docs/as-dependency.md) : really handy to collaborate,
+- [And/or use the Command Line Interface (CLI)](docs/with-cli.md) : enables more control when deploying.
 
 It is also a complete toolbox, [discover all the features !](README.md#Overview-of-the-features)
 
@@ -32,12 +32,12 @@ Yes ! And that is often the case. You can develop your project with Datamaintain
 
 ## Quick links
 ### Getting started
-**1. Install :** you can [install it as a dependency](docs/asdependency.md) and/or [use the Command Line Interface](docs/withcli.md). If needed, you can [install in a a project with already executed scripts](docs/already-executed-scripts.md).
+**1. Install :** you can [install it as a dependency](docs/as-dependency.md) and/or [use the Command Line Interface](docs/with-cli.md). If needed, you can [install in a a project with already executed scripts](docs/already-executed-scripts.md).
 
 **2. Configure :** [How to configure Datamaintain](docs/configuration.md),
 
 ### Overview of the features
-- [The execution reports](docs/executedscripts.md)
+- [The execution reports](docs/executed-scripts.md)
 - The tag feature (work in progress),
 - How to enhance performances with a synthesis of the scripts ? (work in progress),
 ### Contribute
