@@ -132,12 +132,12 @@ Then, you may add the dependencies to ```datamaintain-core``` and the driver mod
 |---|---|---|---|---|
 | db.uri | URI to your db server. **Database name is mandatory.**  |  | yes | ```mongodb://localhost/my-db```<br />```mongodb://localhost:8000/my-db```<br />```mongodb://username:password@localhost/my-db```<br />```mongodb+srv://server.example.com/my-db``` <br />```mongodb://my-db,my-db2:27018/my-db``` <br /> |
 | db.trust.uri | Bypass all checks that could be done on your URI because you are very sure of it and think our checks are just liars | ```false``` | no | ```true``` or ```false``` |
-| db.mongo.print.output | If true, db output will be logged. | ```false``` | no | ```true``` or ```false``` |
-| db.mongo.save.output | If true, db output will be saved in script execution report.  | ```false``` | no | ```true``` or ```false``` |
+| db.print.output | If true, db output will be logged. | ```false``` | no | ```true``` or ```false``` |
+| db.save.output | If true, db output will be saved in script execution report.  | ```false``` | no | ```true``` or ```false``` |
 
 ### Specific mongodb driver configuration
 
-See common driver configuration first.
+Please, before see : [Common driver configuration](README.md#common-driver-configuration)
 For ```db.uri```, please see the [mongo URI documentation](https://docs.mongodb.com/manual/reference/connection-string/) to learn about writing mongo URIs.
 
 | Key | Description | Default value | Mandatory? | Values examples |
