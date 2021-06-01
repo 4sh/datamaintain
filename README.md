@@ -14,21 +14,22 @@ You will have to ensure that all your scripts were executed and in the right ord
 - **Transparent**: Datamaintain lets you know what it is doing and stores scripts execution reports in your database
 - **Light**: with few dependencies
 - **Customizable**: you can embed Datamaintain in your server app or use the CLI. Many configuration options are available to meet your needs.
-- ****: you may rename or move your script at will, Datamaintain recognizes them using their MD5 
+- **Name independent**: you may rename or move your script at will, Datamaintain recognizes them using their MD5 
 - **Evolutive**: the core of Datamaintain is independent from any database management system thus it can be plugged with any database management system, if you write a driver for it
 - **Lasting**: this project is maintained by a team of developers from [4SH](https://www.4sh.fr/), a French software company, as part of our R&D.
 - **Reliable**: high code coverage by unit tests. Each version spends at least two weeks in beta test on one of our projects before release
 
 ## Overview of the features
-- Execution reports
-- Tag feature (like a set of files)
-- Whitelist and blacklist (via tags)
-- Mark script as executed
-- Override an executed script
-- Dry run : allow to run datamaintain without performing action on db. It a way to ensure what datamaintain will do if you have doubts
-- Possibility to activate some check rules (work in progress): the only one now is the one that detect that some executed scripts was removed.
+- Execution reports stored in your database
+- Scripts sorted depending on an identifier of your choice, extracted from their names
+- Whitelist or blacklist scripts
+- Run scripts again
+- Mark script(s) as executed
+- Override an executed script 
+- Dry run: run Datamaintain without performing action on your db as a way to ensure what Datamaintain will do
+- Check if executed scripts disappeared from your files
 
-## Db drivers
+## Available drivers
 
 For the moment Datamaintain supports only the DBMS MongoDB, but other configurations will soon be added (JDBC very soon)!
 
