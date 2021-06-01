@@ -33,7 +33,7 @@ You will have to ensure that all your scripts were executed and in the right ord
 
 - MongoDB
 
-Your DMBS is not in the list? Feel free to write a driver for it, following the [documentation](docs/how-to-write-a-driver.md).
+Your DMBS is not in that list? Feel free to write a driver for it, following the [documentation](docs/how-to-write-a-driver.md)!
 
 ## How to use Datamaintain?
 
@@ -43,16 +43,18 @@ Datamaintain can be used in 2 ways. Both are compatible and often used together.
 
 *This mode is particularly useful on dev, when you get changes from the team.*
 
--  **Simple:** The scripts are launched automatically when the server starts.
 -  **Embedded:** It is just a project dependency, so no installation needed.
+-  **Simple:** The scripts are launched automatically when the server starts once Datamaintain has been included in your project.
+
+Want to include Datamaintain as a dependency in your project? Here is some [documentation to help you](docs/as-dependency.md).
 
 ### With the Command Line Interface
 
-*This mode is particularly useful on deploy, when you want to control Datamaintain.*
+*This mode is particularly useful on deploy, when you want to have full control of Datamaintain.*
 
-- **Independent:** You can launch Datamaintain independently 
-  to the server thanks to executable file. 
+- **Flexible:** You can launch Datamaintain as you want, when you want and as many times as you want while your server is running or not.
 - **Powerful:** You also have access to specific actions like 'mark a script as executed'.
+
 
 ## FAQ
 
