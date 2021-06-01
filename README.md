@@ -1,5 +1,4 @@
 # Datamaintain
-[![CircleCI](https://circleci.com/gh/4sh/datamaintain.svg?style=shield)](https://circleci.com/gh/4sh/datamaintain)
 ![GitHub](https://img.shields.io/github/license/4sh/datamaintain)
 
 Your colleague added a column in the database without telling it to you and now nothing works ? Classic. 
