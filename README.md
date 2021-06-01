@@ -31,9 +31,9 @@ You will have to ensure that all your scripts were executed and in the right ord
 
 ## Available drivers
 
-For the moment Datamaintain supports only the DBMS MongoDB, but other configurations will soon be added (JDBC very soon)!
+- MongoDB
 
-You want to help us? Go [here](./README.md#contribute)
+Your DMBS is not in the list? Feel free to write a driver for it, following the [documentation](docs/how-to-write-a-driver.md).
 
 ## How to use Datamaintain?
 
