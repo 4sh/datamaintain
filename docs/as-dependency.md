@@ -7,7 +7,8 @@ Datamaintain can be used as a dependency in your **Java** or **Kotlin server** :
 | Package | Description | 
 |---|---|
 | datamaintain-core | Core package, needed for all uses of Datamaintain |
-| datamaintain-mongo | Mongo driver package to run scripts on a mongo database |
+| datamaintain-driver-mongo | Mongo driver package to run scripts on a mongo database |
+| datamaintain-driver-jdbc | JDBC driver package to run scripts on a database management system that has a JDBC driver |
 
 ## Add Datamaintain as a dependency
 
@@ -38,8 +39,8 @@ allprojects {
 ```kotlin
 
 dependencies {
-    implementation("com.github.4sh.datamaintain:datamaintain-core:v1.0.0-rc14"),
-    implementation("com.github.4sh.datamaintain:datamaintain-mongo:v1.0.0-rc14")
+    implementation("com.github.4sh.datamaintain:datamaintain-core:1.2.0"),
+    implementation("com.github.4sh.datamaintain:datamaintain-driver-mongo:1.2.0")
 } 
 ```
     
@@ -65,8 +66,8 @@ allprojects {
 ```groovy
 
 dependencies {
-    implementation 'com.github.4sh.datamaintain:datamaintain-core:v1.0.0-rc14',
-    implementation 'com.github.4sh.datamaintain:datamaintain-mongo:v1.0.0-rc14',
+    implementation 'com.github.4sh.datamaintain:datamaintain-core:1.2.0',
+    implementation 'com.github.4sh.datamaintain:datamaintain-driver-mongo:1.2.0',
 } 
 ```
     
@@ -84,13 +85,13 @@ dependencies {
 <dependency>
     <groupId>com.github.4sh.datamaintain</groupId>
     <artifactId>datamaintain-core</artifactId>
-    <version>v1.0.0-rc14</version>
+    <version>1.2.0</version>
 </dependency>
 
 <dependency>
     <groupId>com.github.4sh.datamaintain</groupId>
-    <artifactId>datamaintain-mongo</artifactId>
-    <version>v1.0.0-rc14</version>
+    <artifactId>datamaintain-driver-mongo</artifactId>
+    <version>1.2.0</version>
 </dependency>
 
 ```
