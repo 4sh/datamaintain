@@ -1,35 +1,23 @@
 # Datamaintain
 ![GitHub](https://img.shields.io/github/license/4sh/datamaintain)
 
-Your colleague added a column in the database without telling it to you and now nothing works ? Classic. 
-To avoid this, use ***Datamaintain***! 
+Your colleague added a column in the database without letting you know and now everything is broken? Classic. 
+To avoid this, use **Datamaintain**! 
 
-This Kotlin library helps maintaining consistency between data and code : it runs db scripts and tracks them. 
-
-[comment]: <> (According to your needs you may :)
-
-[comment]: <> (- [Use it as a dependency in your Java or Kotlin server]&#40;docs/as-dependency.md&#41; : really handy to collaborate,)
-
-[comment]: <> (- [And/or use the Command Line Interface &#40;CLI&#41;]&#40;docs/with-cli.md&#41; : enables more control when deploying.)
+This Kotlin library helps to maintain consistency between data and code: it runs scripts on your database and tracks them.
 
 ## Benefits
-During a project lifetime, you will often have to run scripts to update your database scheme or even add some data in it. 
-The hard part comes when you have to share it with your colleagues or to use another environment. 
-You will have to ensure that all your scripts were executed and in the right order, which is exactly what Datamaintain is for!
+As your project grows, you will often have to run scripts to update your database scheme or even add some data in it. 
+The hard part comes when you have to share it with your colleagues or deploy those changes on another environment. 
+You will have to ensure that all your scripts were executed and in the right order, *which is exactly what Datamaintain is for*!
 
-- **Transparent**: thanks to the script execution reports.
-- **Light**: with few dependencies,
-- **Customizable**: it is possible to run the scripts in different manners : with the server or independently, 
-  ordered with tags, with your own program...
-- **Idiot-proof**: Datamaintain has an identification based on the content that enables to manage homonyms scripts. 
-  You will never get angry with your colleagues again. We also have unit tests for the Datamaintain contributors. 
-- **Evolutive**: the architecture does not matter to the DBMS so that we can easily create new DBMS drivers and 
-  finally have a common framework between all our projects.
-- **Open source**: we are a team of developers that come mainly from the [4SH agency](https://www.4sh.fr/), 
-  where Datamaintain is used in several big projects. 
-  We works regularly on it according to the feedbacks of the users (our colleagues). 
-  We would be really happy to work with other people. 
-  If you are interested in this project don't hesitate to contact us. 
+- **Transparent**: Datamaintain lets you know what it is doing and stores scripts execution reports in your database
+- **Light**: with few dependencies
+- **Customizable**: you can embed Datamaintain in your server app or use the CLI. Many configuration options are available to meet your needs.
+- ****: you may rename or move your script at will, Datamaintain recognizes them using their MD5 
+- **Evolutive**: the core of Datamaintain is independent from any database management system thus it can be plugged with any database management system, if you write a driver for it
+- **Lasting**: this project is maintained by a team of developers from [4SH](https://www.4sh.fr/), a French software company, as part of our R&D.
+- **Reliable**: high code coverage by unit tests. Each version spends at least two weeks in beta test on one of our projects before release
 
 ## Overview of the features
 - Execution reports
@@ -38,15 +26,15 @@ You will have to ensure that all your scripts were executed and in the right ord
 - Mark script as executed
 - Override an executed script
 - Dry run : allow to run datamaintain without performing action on db. It a way to ensure what datamaintain will do if you have doubts
-- Possibility to activate some check rules (work in progress) : the only one now is the one that detect that some executed scripts was removed.
+- Possibility to activate some check rules (work in progress): the only one now is the one that detect that some executed scripts was removed.
 
 ## Db drivers
 
 For the moment Datamaintain supports only the DBMS MongoDB, but other configurations will soon be added (JDBC very soon)!
 
-You want to help us ? Go [here](./README.md#contribute)
+You want to help us? Go [here](./README.md#contribute)
 
-## How to ?
+## How to use Datamaintain?
 
 Datamaintain can be used in 2 ways. Both are compatible and often used together.
 
@@ -54,16 +42,16 @@ Datamaintain can be used in 2 ways. Both are compatible and often used together.
 
 *This mode is particularly useful on dev, when you get changes from the team.*
 
--  **Simple :** The scripts are launched automatically when the server starts.
--  **Embedded :** It is just a project dependency, so no installation needed.
+-  **Simple:** The scripts are launched automatically when the server starts.
+-  **Embedded:** It is just a project dependency, so no installation needed.
 
 ### With the Command Line Interface
 
 *This mode is particularly useful on deploy, when you want to control Datamaintain.*
 
-- **Independent :** You can launch Datamaintain independently 
+- **Independent:** You can launch Datamaintain independently 
   to the server thanks to executable file. 
-- **Powerful :** You also have access to specific actions like 'mark a script as executed'.
+- **Powerful:** You also have access to specific actions like 'mark a script as executed'.
 
 ## FAQ
 
