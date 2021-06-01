@@ -17,12 +17,29 @@
 | prune.scripts.override.executed | Allow datamaintain to override a script if it detect a checksum change on a script already runned (assuming its filename) | ```false``` | no | ```true``` or ```false``` |
 | db.trust.uri | Bypass all checks that could be done on your URI because you are very sure of it and think our checks are just liars | ```false``` | no | ```true``` or ```false``` |
 
-## Mongo driver configuration
+### Common driver configuration
 
 | Key | Description | Default value | Mandatory? | Values examples |
 |---|---|---|---|---|
-| db.mongo.uri | Mongo URI to your mongo server. **Database name is mandatory.** Please see the [mongo URI documentation](https://docs.mongodb.com/manual/reference/connection-string/) to learn about writing mongo URIs. |  | yes | ```mongodb://localhost/my-db```<br />```mongodb://localhost:8000/my-db```<br />```mongodb://username:password@localhost/my-db```<br />```mongodb+srv://server.example.com/my-db``` <br />```mongodb://my-db,my-db2:27018/my-db``` <br /> |
+| db.uri | URI to your db server. **Database name is mandatory.**  |  | yes | ```mongodb://localhost/my-db```<br />```mongodb://localhost:8000/my-db```<br />```mongodb://username:password@localhost/my-db```<br />```mongodb+srv://server.example.com/my-db``` <br />```mongodb://my-db,my-db2:27018/my-db``` <br /> |
+| db.trust.uri | Bypass all checks that could be done on your URI because you are very sure of it and think our checks are just liars | ```false``` | no | ```true``` or ```false``` |
+| db.print.output | If true, db output will be logged. | ```false``` | no | ```true``` or ```false``` |
+| db.save.output | If true, db output will be saved in script execution report.  | ```false``` | no | ```true``` or ```false``` |
+
+### Specific mongodb driver configuration
+
+Please, before see : [Common driver configuration](README.md#common-driver-configuration)
+For ```db.uri```, please see the [mongo URI documentation](https://docs.mongodb.com/manual/reference/connection-string/) to learn about writing mongo URIs.
+
+| Key | Description | Default value | Mandatory? | Values examples |
+|---|---|---|---|---|
 | db.mongo.tmp.path | Path where the driver will write temporary files. | ```/tmp/datamaintain.tmp``` | no |  |
 | db.mongo.client.path | Path or alias to your mongo executable. | ```mongo``` | no |  |
-| db.mongo.print.output | If true, mongo output will be logged. | ```false``` | no | ```true``` or ```false``` |
-| db.mongo.save.output | If true, mongo output will be saved in script execution report.  | ```false``` | no | ```true``` or ```false``` |
+
+
+### Specific JDBC driver configuration
+Please start by reading the [common driver configuration](README.md#common-driver-configuration)
+
+For ```db.uri```, Please see the [Oracle JDBC URI documentation](https://docs.oracle.com/cd/E17952_01/connector-j-8.0-en/connector-j-reference-jdbc-url-format.html) to learn about JDBC URIs.
+
+If you are using this driver with the CLI, make sure to put your driver jar in the folder ```drivers```.
