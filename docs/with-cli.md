@@ -10,7 +10,7 @@ To give values to [the settings](./cli-configuration.md), you just have to add `
 You can use the CLI via a docker image, the images are hosted on GitHub so you will need [docker to have access to GitHub](https://docs.github.com/en/packages/guides/configuring-docker-for-use-with-github-packages).
 You just need to mount the script path to the container :
 ```
-docker run --rm --volume $script_path:/scripts docker.pkg.github.com/4sh/datamaintain/datamaintain:1.2-mongo-4.4 --db-type mongo --db-uri mongodb://localhost:27017/sample update-db --path /scripts --identifier-regex "(.*)"
+docker run --rm --volume $script_path:/scripts docker.pkg.github.com/4sh/datamaintain/datamaintain:1.2.0-mongo-4.4 --db-type mongo --db-uri mongodb://localhost:27017/sample update-db --path /scripts --identifier-regex "(.*)"
 ```
 
 In this example :
@@ -24,7 +24,7 @@ In this example :
 Datamaintain image use a mongo shell.
 
 Image tag has form `<datamaintain version>-<db type>-<db version>` for example 
-`docker.pkg.github.com/4sh/datamaintain/datamaintain:1.2-mongo-4.4` is a datamaintain 1.2 with a mongo shell 4.4.
+`docker.pkg.github.com/4sh/datamaintain/datamaintain:1.2.0-mongo-4.4` is a datamaintain 1.2.0 with a mongo shell 4.4.
 For now, datamaintain only support mongo database.
 You can see all images [here](https://github.com/orgs/4sh/packages?repo_name=datamaintain)
 
