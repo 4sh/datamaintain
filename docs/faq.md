@@ -8,7 +8,7 @@ Yes of course you can :-). It is a very common use case we have.
 - Mark the script as executed :
 ```bash
 
-./datamaintain-cli --db-type $DB_TYPE --mongo-uri $MONGO_URI update-db --path $PATH --identifier-regex $REGEX --execution-mode FORCE_MARK_AS_EXECUTED
+./datamaintain-cli --db-type $DB_TYPE --mongo-uri $MONGO_URI update-db --path $PATH --identifier-regex $REGEX --action MARK_AS_EXECUTED
 ```
 
 An explanation about each CLI configuration key is provided [here](./cli-configuration.md).

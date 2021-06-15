@@ -70,9 +70,7 @@ internal class AppTest {
                 @Nested
                 inner class ExecutionMode {
                     @ParameterizedTest
-                    @EnumSource(datamaintain.core.step.executor.ExecutionMode::class,
-                            names = ["FORCE_MARK_AS_EXECUTED"],
-                            mode = EnumSource.Mode.EXCLUDE)
+                    @EnumSource(datamaintain.core.step.executor.ExecutionMode::class)
                     @DisplayName("Should build config with execution mode {0}")
                     fun `should build config with execution mode`(executionMode: datamaintain.core.step.executor.ExecutionMode) {
                         // Given
@@ -85,23 +83,6 @@ internal class AppTest {
 
                         // Then
                         expectThat(configWrapper.datamaintainConfig!!.executionMode).isEqualTo(executionMode)
-                    }
-
-                    @Test
-                    fun `should build config with FORCE_MARK_AS_EXECUTED as execution mode`() {
-                        // Given
-                        val argv = updateMongoDbMinimumArguments().plus(listOf(
-                                "--execution-mode", datamaintain.core.step.executor.ExecutionMode.FORCE_MARK_AS_EXECUTED.name
-                        ))
-
-                        // When
-                        runApp(argv)
-
-                        // Then
-                        expectThat(configWrapper.datamaintainConfig!!).and{
-                            get { executionMode }.isEqualTo(datamaintain.core.step.executor.ExecutionMode.NORMAL)
-                            get { defaultScriptAction }.isEqualTo(ScriptAction.MARK_AS_EXECUTED)
-                        }
                     }
                 }
 

@@ -47,14 +47,7 @@ data class DatamaintainConfig @JvmOverloads constructor(val path: Path = Paths.g
 
             var executionMode = ExecutionMode.fromNullable(props.getNullableProperty(EXECUTION_MODE), defaultExecutionMode)
 
-            val scriptAction = if (ExecutionMode.FORCE_MARK_AS_EXECUTED == executionMode) {
-                // To be compliant with previous version (and avoid breaking changes)
-                // we set script action from ExecutionMode.FORCE_MARK_AS_EXECUTED
-                executionMode = ExecutionMode.NORMAL
-                ScriptAction.MARK_AS_EXECUTED
-            } else {
-                ScriptAction.fromNullable(props.getNullableProperty(DEFAULT_SCRIPT_ACTION), defaultAction)
-            }
+            val scriptAction = ScriptAction.fromNullable(props.getNullableProperty(DEFAULT_SCRIPT_ACTION), defaultAction)
 
             return DatamaintainConfig(
                     Paths.get(props.getProperty(SCAN_PATH)),
