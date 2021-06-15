@@ -99,34 +99,6 @@ class MongoIT : AbstractMongoDbTest() {
     }
 
     @Test
-    fun `should force mark as executed (Deprecated)`() {
-        // Given
-        val args = arrayOf(
-                "--db-type", "mongo",
-                "--db-uri", mongoUri,
-                "update-db",
-                "--verbose",
-                "--path", "src/test/resources/integration/ok",
-                "--identifier-regex", "(.*?)_.*",
-                "--execution-mode", "FORCE_MARK_AS_EXECUTED"
-        )
-
-        // When
-        main(args)
-
-        // Then
-        expectThat(database.getCollection("simple").countDocuments()).isEqualTo(0)
-
-        expectThat(listExecutedFiles())
-                .hasSize(3)
-                .containsExactly(
-                        "01_file.js",
-                        "02_file.js",
-                        "03_file.js")
-
-    }
-
-    @Test
     fun `should force mark as executed`() {
         // Given
         val args = arrayOf(
