@@ -20,14 +20,13 @@ internal class MarkOneScriptAsExecutedTest : BaseCliTest() {
                 // Given
                 val path = "myPath"
 
-                val argv = updateMongoDbMinimumArguments().plus(
+                val markScriptAsExecutedArguments =
                     listOf(
                         "--path", path
                     )
-                )
 
                 // When
-                runApp(argv)
+                runMarkScriptAsExecuted(markScriptAsExecutedArguments)
 
                 // Then
                 expectThat(configWrapper.datamaintainConfig!!.path).isEqualTo(Paths.get(path))
@@ -38,10 +37,10 @@ internal class MarkOneScriptAsExecutedTest : BaseCliTest() {
                 @Test
                 fun `should build config with verbose set to true`() {
                     // Given
-                    val argv = updateMongoDbMinimumArguments().plus("--verbose")
+                    val markScriptAsExecutedArguments = listOf("--verbose")
 
                     // When
-                    runApp(argv)
+                    runMarkScriptAsExecuted(markScriptAsExecutedArguments)
 
                     // Then
                     expectThat(configWrapper.datamaintainConfig!!.verbose).isTrue()
@@ -50,10 +49,9 @@ internal class MarkOneScriptAsExecutedTest : BaseCliTest() {
                 @Test
                 fun `should build config with verbose set to false`() {
                     // Given
-                    val argv = updateMongoDbMinimumArguments()
 
                     // When
-                    runApp(argv)
+                    runMarkScriptAsExecuted()
 
                     // Then
                     expectThat(configWrapper.datamaintainConfig!!.verbose).isFalse()
@@ -63,10 +61,9 @@ internal class MarkOneScriptAsExecutedTest : BaseCliTest() {
             @Test
             fun `should build config with mark as executed for script action`() {
                 // Given
-                val argv = updateMongoDbMinimumArguments()
 
                 // When
-                runApp(argv)
+                runMarkScriptAsExecuted()
 
                 // Then
                 expectThat(configWrapper.datamaintainConfig!!.defaultScriptAction).isEqualTo(ScriptAction.MARK_AS_EXECUTED)
@@ -74,10 +71,11 @@ internal class MarkOneScriptAsExecutedTest : BaseCliTest() {
         }
     }
 
-    private fun updateMongoDbMinimumArguments(): List<String> {
-        return listOf(
-            "--mongo-uri", "mongo-uri",
-            "mark-script-as-executed"
+    private fun runMarkScriptAsExecuted(markScriptAsExecutedArguments: List<String> = listOf()) {
+        runAppWithMarkOneScriptAsExecuted(
+            listOf(
+                "--mongo-uri", "mongo-uri"
+            ), markScriptAsExecutedArguments
         )
     }
 }
