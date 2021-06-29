@@ -48,11 +48,11 @@ class App : CliktCommand() {
 
 enum class DbType(val value: String) {
     MONGO("mongo"),
-    JDBC("jdbc");
+    JDBC("jdbc")
 }
 
 fun main(args: Array<String>) {
     App().subcommands(UpdateDb(), ListExecutedScripts(), MarkOneScriptAsExecuted()).main(args)
 }
 
-class DbTypeNotFoundException(val dbType: String) : DatamaintainBaseException("dbType $dbType is unknown")
+class DbTypeNotFoundException(private val dbType: String) : DatamaintainBaseException("dbType $dbType is unknown")
