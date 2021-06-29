@@ -15,14 +15,14 @@ internal class AppTest : BaseCliTest() {
             @Test
             fun `should build configuration with existing config file path`() {
                 // Given
-                val argv = listOf("--config-file-path", "src/test/resources/config.properties", "update-db")
+                val argv = listOf("--config-file-path", "src/test/resources/config.properties")
 
                 // When
-                runApp(argv)
+                runAppWithUpdateDb(argv)
 
                 // Then
                 expectThat((configWrapper.datamaintainConfig!!.driverConfig) as MongoDriverConfig)
-                        .get { uri }
+                        .get { mongoUri }
                         .isEqualTo("mongo-uri")
             }
 
@@ -45,25 +45,13 @@ internal class AppTest : BaseCliTest() {
             @Test
             fun `should build configuration with mongo db type`() {
                 // Given
-                val argv = listOf("--db-type", datamaintain.cli.DbType.MONGO.value, "--db-uri", "mongoUri", "update-db")
+                val argv = listOf("--db-type", datamaintain.cli.DbType.MONGO.value, "--mongo-uri", "mongoUri")
 
                 // When
-                runApp(argv)
+                runAppWithUpdateDb(argv)
 
                 // Then
                 expectThat(configWrapper.datamaintainConfig!!.driverConfig).isA<MongoDriverConfig>()
-            }
-
-            @Test
-            fun `should build configuration with jdbc db type`() {
-                // Given
-                val argv = listOf("--db-type", datamaintain.cli.DbType.JDBC.value, "--db-uri", "jdbcUri", "update-db")
-
-                // When
-                runApp(argv)
-
-                // Then
-                expectThat(configWrapper.datamaintainConfig!!.driverConfig).isA<JdbcDriverConfig>()
             }
 
             @Test
@@ -84,10 +72,10 @@ internal class AppTest : BaseCliTest() {
         fun `should build configuration with mongo uri`() {
             // Given
             val mongoUri = "my great mongo uri"
-            val argv = listOf("--db-uri", mongoUri, "update-db")
+            val argv = listOf("--mongo-uri", mongoUri)
 
             // When
-            runApp(argv)
+            runAppWithUpdateDb(argv)
 
             // Then
             expectThat((configWrapper.datamaintainConfig!!.driverConfig) as MongoDriverConfig)
@@ -98,10 +86,10 @@ internal class AppTest : BaseCliTest() {
         fun `should build configuration with mongo tmp path`() {
             // Given
             val mongoTmpPath = "my mongo tmp path"
-            val argv = listOf("--db-uri", "mongouri", "--mongo-tmp-path", mongoTmpPath, "update-db")
+            val argv = listOf("--mongo-uri", "mongouri", "--mongo-tmp-path", mongoTmpPath)
 
             // When
-            runApp(argv)
+            runAppWithUpdateDb(argv)
 
             // Then
             expectThat((configWrapper.datamaintainConfig!!.driverConfig) as MongoDriverConfig)
@@ -117,13 +105,12 @@ internal class AppTest : BaseCliTest() {
                         "--trust-uri",
                         "--db-type",
                         datamaintain.cli.DbType.MONGO.value,
-                        "--db-uri",
-                        "mongoUri",
-                        "update-db"
+                        "--mongo-uri",
+                        "mongoUri"
                 )
 
                 // When
-                runApp(argv)
+                runAppWithUpdateDb(argv)
 
                 // Then
                 expectThat((configWrapper.datamaintainConfig!!.driverConfig as MongoDriverConfig).trustUri) {
@@ -137,13 +124,12 @@ internal class AppTest : BaseCliTest() {
                 val argv = listOf(
                         "--db-type",
                         datamaintain.cli.DbType.MONGO.value,
-                        "--db-uri",
-                        "mongoUri",
-                        "update-db"
+                        "--mongo-uri",
+                        "mongoUri"
                 )
 
                 // When
-                runApp(argv)
+                runAppWithUpdateDb(argv)
 
                 // Then
                 expectThat((configWrapper.datamaintainConfig!!.driverConfig as MongoDriverConfig).trustUri) {

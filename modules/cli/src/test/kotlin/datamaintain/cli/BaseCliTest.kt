@@ -14,7 +14,18 @@ open class BaseCliTest {
         configWrapper.datamaintainConfig = config
     }
 
-    protected fun runApp(argv: List<String>) {
-        App().subcommands(UpdateDb(runner = ::runner), ListExecutedScripts(), MarkOneScriptAsExecuted(runner = ::runner)).main(argv)
+    private fun runAppWithSubCommand(subCommand: DatamaintainCliCommand, argv: List<String>) {
+        App().subcommands(subCommand).main(argv)
+    }
+
+    protected fun runAppWithUpdateDb(baseArguments: List<String>, updateDbArguments: List<String> = listOf()) {
+        runAppWithSubCommand(UpdateDb(runner = ::runner), baseArguments + "update-db" + updateDbArguments)
+    }
+
+    protected fun runAppWithMarkOneScriptAsExecuted(baseArguments: List<String>, markScriptAsExecutedArguments: List<String> = listOf()) {
+        runAppWithSubCommand(
+            MarkOneScriptAsExecuted(runner = ::runner),
+            baseArguments + "mark-script-as-executed" + markScriptAsExecutedArguments
+        )
     }
 }

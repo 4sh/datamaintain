@@ -27,14 +27,12 @@ internal class UpdateDbTest : BaseCliTest() {
                 // Given
                 val path = "myPath"
 
-                val argv = updateMongoDbMinimumArguments().plus(
-                    listOf(
-                        "--path", path
-                    )
+                val updateDbArguments = listOf(
+                    "--path", path
                 )
 
                 // When
-                runApp(argv)
+                runUpdateDb(updateDbArguments)
 
                 // Then
                 expectThat(configWrapper.datamaintainConfig!!.path).isEqualTo(Paths.get(path))
@@ -45,14 +43,12 @@ internal class UpdateDbTest : BaseCliTest() {
                 // Given
                 val identifierRegex = "myIdentifierRegex"
 
-                val argv = updateMongoDbMinimumArguments().plus(
-                    listOf(
+                val updateDbArguments = listOf(
                         "--identifier-regex", identifierRegex
                     )
-                )
 
                 // When
-                runApp(argv)
+                runUpdateDb(updateDbArguments)
 
                 // Then
                 expectThat(configWrapper.datamaintainConfig!!.identifierRegex.pattern).isEqualTo(identifierRegex)
@@ -69,14 +65,12 @@ internal class UpdateDbTest : BaseCliTest() {
                 @DisplayName("Should build config with execution mode {0}")
                 fun `should build config with execution mode`(executionMode: datamaintain.core.step.executor.ExecutionMode) {
                     // Given
-                    val argv = updateMongoDbMinimumArguments().plus(
-                        listOf(
+                    val updateDbArguments = listOf(
                             "--execution-mode", executionMode.name
                         )
-                    )
 
                     // When
-                    runApp(argv)
+                    runUpdateDb(updateDbArguments)
 
                     // Then
                     expectThat(configWrapper.datamaintainConfig!!.executionMode).isEqualTo(executionMode)
@@ -85,15 +79,14 @@ internal class UpdateDbTest : BaseCliTest() {
                 @Test
                 fun `should build config with FORCE_MARK_AS_EXECUTED as execution mode`() {
                     // Given
-                    val argv = updateMongoDbMinimumArguments().plus(
+                    val updateDbArguments = 
                         listOf(
                             "--execution-mode",
                             datamaintain.core.step.executor.ExecutionMode.FORCE_MARK_AS_EXECUTED.name
                         )
-                    )
 
                     // When
-                    runApp(argv)
+                    runUpdateDb(updateDbArguments)
 
                     // Then
                     expectThat(configWrapper.datamaintainConfig!!).and {
@@ -108,10 +101,10 @@ internal class UpdateDbTest : BaseCliTest() {
                 @Test
                 fun `should build config with verbose set to true`() {
                     // Given
-                    val argv = updateMongoDbMinimumArguments().plus("--verbose")
+                    val updateDbArguments = listOf("--verbose")
 
                     // When
-                    runApp(argv)
+                    runUpdateDb(updateDbArguments)
 
                     // Then
                     expectThat(configWrapper.datamaintainConfig!!.verbose).isTrue()
@@ -120,10 +113,9 @@ internal class UpdateDbTest : BaseCliTest() {
                 @Test
                 fun `should build config with verbose set to false`() {
                     // Given
-                    val argv = updateMongoDbMinimumArguments()
 
                     // When
-                    runApp(argv)
+                    runUpdateDb()
 
                     // Then
                     expectThat(configWrapper.datamaintainConfig!!.verbose).isFalse()
@@ -135,10 +127,10 @@ internal class UpdateDbTest : BaseCliTest() {
                 @Test
                 fun `should build config with create tags from folder set to true`() {
                     // Given
-                    val argv = updateMongoDbMinimumArguments().plus("--create-tags-from-folder")
+                    val updateDbArguments = listOf("--create-tags-from-folder")
 
                     // When
-                    runApp(argv)
+                    runUpdateDb(updateDbArguments)
 
                     // Then
                     expectThat(configWrapper.datamaintainConfig!!.doesCreateTagsFromFolder).isTrue()
@@ -147,10 +139,9 @@ internal class UpdateDbTest : BaseCliTest() {
                 @Test
                 fun `should build config with create tags from folder set to false`() {
                     // Given
-                    val argv = updateMongoDbMinimumArguments()
 
                     // When
-                    runApp(argv)
+                    runUpdateDb()
 
                     // Then
                     expectThat(configWrapper.datamaintainConfig!!.doesCreateTagsFromFolder).isFalse()
@@ -165,14 +156,13 @@ internal class UpdateDbTest : BaseCliTest() {
                     val tagMatcher1 = TagMatcher(Tag("MYTAG1"), listOf("pathMatcher1", "pathMatcher2"))
                     val tagMatcher2 = TagMatcher(Tag("MYTAG2"), listOf("pathMatcher3", "pathMatcher4"))
 
-                    val argv = updateMongoDbMinimumArguments().plus(
+                    val updateDbArguments = 
                         listOf(
                             "--tag", tagMatcher1.toArgument(), "--tag", tagMatcher2.toArgument()
                         )
-                    )
 
                     // When
-                    runApp(argv)
+                    runUpdateDb(updateDbArguments)
 
                     // Then
                     expectThat(configWrapper.datamaintainConfig!!.tagsMatchers)
@@ -203,14 +193,13 @@ internal class UpdateDbTest : BaseCliTest() {
                     // Given
                     val tagsList = setOf("MYTAG", "MYOTHERTAG")
 
-                    val argv = updateMongoDbMinimumArguments().plus(
+                    val updateDbArguments = 
                         listOf(
                             key, tagsList.joinToString(",")
                         )
-                    )
 
                     // When
-                    runApp(argv)
+                    runUpdateDb(updateDbArguments)
 
                     // Then
                     expectThat(getter.get(configWrapper.datamaintainConfig!!))
@@ -224,14 +213,13 @@ internal class UpdateDbTest : BaseCliTest() {
                 @Test
                 fun `should build config with one rule`() {
                     // Given
-                    val argv = updateMongoDbMinimumArguments().plus(
+                    val updateDbArguments = 
                         listOf(
                             "--rule", SameScriptsAsExecutedCheck.NAME
                         )
-                    )
 
                     // When
-                    runApp(argv)
+                    runUpdateDb(updateDbArguments)
 
                     // Then
                     expectThat(configWrapper) {
@@ -246,15 +234,14 @@ internal class UpdateDbTest : BaseCliTest() {
                 @Test
                 fun `should build config with 2 rules`() {
                     // Given
-                    val argv = updateMongoDbMinimumArguments().plus(
+                    val updateDbArguments = 
                         listOf(
                             "--rule", SameScriptsAsExecutedCheck.NAME,
                             "--rule", SameScriptsAsExecutedCheck.NAME
                         )
-                    )
 
                     // When
-                    runApp(argv)
+                    runUpdateDb(updateDbArguments)
 
                     // Then
                     expectThat(configWrapper) {
@@ -273,10 +260,9 @@ internal class UpdateDbTest : BaseCliTest() {
                 @Test
                 fun `should build default config without auto override`() {
                     // Given
-                    val argv = updateMongoDbMinimumArguments()
 
                     // When
-                    runApp(argv)
+                    runUpdateDb()
 
                     // Then
                     expectThat(configWrapper) {
@@ -290,10 +276,10 @@ internal class UpdateDbTest : BaseCliTest() {
                 @Test
                 fun `should build config with auto override`() {
                     // Given
-                    val argv = updateMongoDbMinimumArguments().plus("--allow-auto-override")
+                    val updateDbArguments = listOf("--allow-auto-override")
 
                     // When
-                    runApp(argv)
+                    runUpdateDb(updateDbArguments)
 
                     // Then
                     expectThat(configWrapper) {
@@ -310,14 +296,13 @@ internal class UpdateDbTest : BaseCliTest() {
             @DisplayName("Should build config with default script action {0}")
             fun `should build config with script action`(scriptAction: ScriptAction) {
                 // Given
-                val argv = updateMongoDbMinimumArguments().plus(
+                val updateDbArguments = 
                     listOf(
                         "--action", scriptAction.name
                     )
-                )
 
                 // When
-                runApp(argv)
+                runUpdateDb(updateDbArguments)
 
                 // Then
                 expectThat(configWrapper.datamaintainConfig!!.defaultScriptAction).isEqualTo(scriptAction)
@@ -331,10 +316,10 @@ internal class UpdateDbTest : BaseCliTest() {
                 @Test
                 fun `should build config with mongo save output set to true`() {
                     // Given
-                    val argv = updateMongoDbMinimumArguments().plus("--mongo-save-output")
+                    val updateDbArguments = listOf("--mongo-save-output")
 
                     // When
-                    runApp(argv)
+                    runUpdateDb(updateDbArguments)
 
                     // Then
                     expectThat((configWrapper.datamaintainConfig!!.driverConfig) as MongoDriverConfig)
@@ -345,10 +330,9 @@ internal class UpdateDbTest : BaseCliTest() {
                 @Test
                 fun `should build config with mongo save output set to false`() {
                     // Given
-                    val argv = updateMongoDbMinimumArguments()
 
                     // When
-                    runApp(argv)
+                    runUpdateDb()
 
                     // Then
                     expectThat((configWrapper.datamaintainConfig!!.driverConfig) as MongoDriverConfig)
@@ -362,10 +346,10 @@ internal class UpdateDbTest : BaseCliTest() {
                 @Test
                 fun `should build config with create tags from folder set to true`() {
                     // Given
-                    val argv = updateMongoDbMinimumArguments().plus("--mongo-print-output")
+                    val updateDbArguments = listOf("--mongo-print-output")
 
                     // When
-                    runApp(argv)
+                    runUpdateDb(updateDbArguments)
 
                     // Then
                     expectThat((configWrapper.datamaintainConfig!!.driverConfig) as MongoDriverConfig)
@@ -376,10 +360,9 @@ internal class UpdateDbTest : BaseCliTest() {
                 @Test
                 fun `should build config with create tags from folder set to false`() {
                     // Given
-                    val argv = updateMongoDbMinimumArguments()
 
                     // When
-                    runApp(argv)
+                    runUpdateDb()
 
                     // Then
                     expectThat((configWrapper.datamaintainConfig!!.driverConfig) as MongoDriverConfig)
@@ -390,10 +373,7 @@ internal class UpdateDbTest : BaseCliTest() {
         }
     }
 
-    private fun updateMongoDbMinimumArguments(): List<String> {
-        return listOf(
-            "--mongo-uri", "mongo-uri",
-            "update-db"
-        )
+    private fun runUpdateDb(updateDbArguments: List<String> = listOf()) {
+        runAppWithUpdateDb(listOf("--mongo-uri", "mongo-uri"), updateDbArguments)
     }
 }
