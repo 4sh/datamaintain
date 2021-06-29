@@ -13,3 +13,6 @@ Yes of course you can :-). It is a very common use case we have.
 
 An explanation about each CLI configuration key is provided [here](./cli-configuration.md).
 
+## Where can I found samples ?
+
+You can find samples [here](../samples)
