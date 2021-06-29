@@ -7,10 +7,10 @@ import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.types.choice
 import datamaintain.core.config.CoreConfigKey
 import datamaintain.core.config.DatamaintainConfig
+import datamaintain.core.db.driver.DriverConfigKey
 import datamaintain.core.script.ScriptAction
 import datamaintain.core.step.check.allCheckRuleNames
 import datamaintain.core.step.executor.ExecutionMode
-import datamaintain.db.driver.mongo.MongoConfigKey
 import java.util.*
 
 class UpdateDb(runner: (DatamaintainConfig) -> Unit = ::defaultUpdateDbRunner) : DatamaintainCliUpdateDbCommand(
@@ -37,9 +37,9 @@ class UpdateDb(runner: (DatamaintainConfig) -> Unit = ::defaultUpdateDbRunner) :
 
     private val verbose: Boolean? by option(help = "verbose").flag()
 
-    private val mongoSaveOutput: Boolean? by option(help = "save mongo output").flag()
+    private val saveDbOutput: Boolean? by option(help = "save your script and db output").flag()
 
-    private val mongoPrintOutput: Boolean? by option(help = "print mongo output").flag()
+    private val printDbOutput: Boolean? by option(help = "print your script and db output").flag()
 
     private val tagsMatchers: List<Pair<String, String>>? by option("--tag", help = "Tag defined using glob path matchers. " +
             "To define multiple tags, use option multiple times. " +
@@ -63,8 +63,8 @@ class UpdateDb(runner: (DatamaintainConfig) -> Unit = ::defaultUpdateDbRunner) :
         tagsToPlayAgain?.let { props.put(CoreConfigKey.PRUNE_TAGS_TO_RUN_AGAIN.key, it) }
         createTagsFromFolder?.let { props.put(CoreConfigKey.CREATE_TAGS_FROM_FOLDER.key, it.toString()) }
         verbose?.let { props.put(CoreConfigKey.VERBOSE.key, it.toString()) }
-        mongoSaveOutput?.let { props.put(MongoConfigKey.DB_MONGO_SAVE_OUTPUT.key, it.toString()) }
-        mongoPrintOutput?.let { props.put(MongoConfigKey.DB_MONGO_PRINT_OUTPUT.key, it.toString()) }
+        saveDbOutput?.let { props.put(DriverConfigKey.DB_SAVE_OUTPUT.key, it.toString()) }
+        printDbOutput?.let { props.put(DriverConfigKey.DB_PRINT_OUTPUT.key, it.toString()) }
         executionMode?.let { props.put(CoreConfigKey.EXECUTION_MODE.key, it) }
         action?.let { props.put(CoreConfigKey.DEFAULT_SCRIPT_ACTION.key, it) }
         tagsMatchers?.forEach {

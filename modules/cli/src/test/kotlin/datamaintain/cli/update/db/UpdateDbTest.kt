@@ -316,7 +316,7 @@ internal class UpdateDbTest : BaseCliTest() {
                 @Test
                 fun `should build config with mongo save output set to true`() {
                     // Given
-                    val updateDbArguments = listOf("--mongo-save-output")
+                    val updateDbArguments = listOf("--save-db-output")
 
                     // When
                     runUpdateDb(updateDbArguments)
@@ -346,7 +346,7 @@ internal class UpdateDbTest : BaseCliTest() {
                 @Test
                 fun `should build config with create tags from folder set to true`() {
                     // Given
-                    val updateDbArguments = listOf("--mongo-print-output")
+                    val updateDbArguments = listOf("--print-db-output")
 
                     // When
                     runUpdateDb(updateDbArguments)
@@ -374,6 +374,6 @@ internal class UpdateDbTest : BaseCliTest() {
     }
 
     private fun runUpdateDb(updateDbArguments: List<String> = listOf()) {
-        runAppWithUpdateDb(listOf("--mongo-uri", "mongo-uri"), updateDbArguments)
+        runAppWithUpdateDb(listOf("--db-uri", "mongo-uri"), updateDbArguments)
     }
 }

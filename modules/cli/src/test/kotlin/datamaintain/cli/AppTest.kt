@@ -1,5 +1,6 @@
 package datamaintain.cli
 
+import datamaintain.db.driver.jdbc.JdbcDriverConfig
 import datamaintain.db.driver.mongo.MongoDriverConfig
 import datamaintain.test.execAppInSubprocess
 import org.junit.jupiter.api.Nested
@@ -22,7 +23,7 @@ internal class AppTest : BaseCliTest() {
 
                 // Then
                 expectThat((configWrapper.datamaintainConfig!!.driverConfig) as MongoDriverConfig)
-                        .get { mongoUri }
+                        .get { uri }
                         .isEqualTo("mongo-uri")
             }
 
@@ -45,13 +46,25 @@ internal class AppTest : BaseCliTest() {
             @Test
             fun `should build configuration with mongo db type`() {
                 // Given
-                val argv = listOf("--db-type", datamaintain.cli.DbType.MONGO.value, "--mongo-uri", "mongoUri")
+                val argv = listOf("--db-type", datamaintain.cli.DbType.MONGO.value, "--db-uri", "mongoUri")
 
                 // When
                 runAppWithUpdateDb(argv)
 
                 // Then
                 expectThat(configWrapper.datamaintainConfig!!.driverConfig).isA<MongoDriverConfig>()
+            }
+
+            @Test
+            fun `should build configuration with jdbc db type`() {
+                // Given
+                val argv = listOf("--db-type", datamaintain.cli.DbType.JDBC.value, "--db-uri", "jdbcUri")
+
+                // When
+                runAppWithUpdateDb(argv)
+
+                // Then
+                expectThat(configWrapper.datamaintainConfig!!.driverConfig).isA<JdbcDriverConfig>()
             }
 
             @Test
@@ -72,7 +85,7 @@ internal class AppTest : BaseCliTest() {
         fun `should build configuration with mongo uri`() {
             // Given
             val mongoUri = "my great mongo uri"
-            val argv = listOf("--mongo-uri", mongoUri)
+            val argv = listOf("--db-uri", mongoUri)
 
             // When
             runAppWithUpdateDb(argv)
@@ -86,7 +99,7 @@ internal class AppTest : BaseCliTest() {
         fun `should build configuration with mongo tmp path`() {
             // Given
             val mongoTmpPath = "my mongo tmp path"
-            val argv = listOf("--mongo-uri", "mongouri", "--mongo-tmp-path", mongoTmpPath)
+            val argv = listOf("--db-uri", "mongouri", "--mongo-tmp-path", mongoTmpPath)
 
             // When
             runAppWithUpdateDb(argv)
@@ -105,7 +118,7 @@ internal class AppTest : BaseCliTest() {
                         "--trust-uri",
                         "--db-type",
                         datamaintain.cli.DbType.MONGO.value,
-                        "--mongo-uri",
+                        "--db-uri",
                         "mongoUri"
                 )
 
@@ -124,7 +137,7 @@ internal class AppTest : BaseCliTest() {
                 val argv = listOf(
                         "--db-type",
                         datamaintain.cli.DbType.MONGO.value,
-                        "--mongo-uri",
+                        "--db-uri",
                         "mongoUri"
                 )
 
