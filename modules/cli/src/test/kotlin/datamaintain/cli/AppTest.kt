@@ -442,6 +442,18 @@ internal class AppTest {
             }
 
             @Test
+            fun `should build configuration with mongo db type from file config`() {
+                // Given
+                val argv = listOf("--config-file-path", configFilePath, "update-db")
+
+                // When
+                runApp(argv)
+
+                // Then
+                expectThat(configWrapper.datamaintainConfig!!.driverConfig).isA<MongoDriverConfig>()
+            }
+
+            @Test
             fun `should throw error when given db type is not valid`() {
                 // Given
                 val argv = listOf("--db-type", "invalid db type", "update-db")
