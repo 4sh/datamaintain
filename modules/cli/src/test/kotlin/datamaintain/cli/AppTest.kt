@@ -511,8 +511,6 @@ internal class AppTest {
                     .get { mongoTmpPath }.isEqualTo(mongoTmpPath)
         }
 
-        private fun buildPathToConfigFile(fileName: String): String = "src/test/resources/${fileName}.properties"
-
         @Nested
         inner class TrustUri {
             @Test
