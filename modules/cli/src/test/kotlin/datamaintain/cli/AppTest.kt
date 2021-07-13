@@ -391,6 +391,7 @@ internal class AppTest {
 
         private fun updateMongoDbMinimumArguments(): List<String> {
             return listOf(
+                    "--db-type", "mongo",
                     "--mongo-uri", "mongo-uri",
                     "update-db"
             )
@@ -486,7 +487,7 @@ internal class AppTest {
         fun `should build configuration with mongo uri`() {
             // Given
             val mongoUri = "my great mongo uri"
-            val argv = listOf("--mongo-uri", mongoUri, "update-db")
+            val argv = listOf("--db-type", "mongo","--mongo-uri", mongoUri, "update-db")
 
             // When
             runApp(argv)
@@ -500,7 +501,7 @@ internal class AppTest {
         fun `should build configuration with mongo tmp path`() {
             // Given
             val mongoTmpPath = "my mongo tmp path"
-            val argv = listOf("--mongo-uri", "mongouri", "--mongo-tmp-path", mongoTmpPath, "update-db")
+            val argv = listOf("--db-type", "mongo", "--mongo-uri", "mongouri", "--mongo-tmp-path", mongoTmpPath, "update-db")
 
             // When
             runApp(argv)
