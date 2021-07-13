@@ -9,10 +9,18 @@ import datamaintain.db.driver.mongo.MongoDriverConfig
 import java.util.*
 
 private fun loadDriverConfig(props: Properties): DatamaintainDriverConfig {
-    return when (props.getProperty("dbType")) {
+    var dbType: String? = null
+
+    if (props.containsKey("db.type")) {
+        dbType = props.getProperty("db.type")
+    } else if (props.containsKey("dbType")) { // Old key to set database type. Keep it to avoid breaking changes
+        dbType = props.getProperty("dbType")
+    }
+
+    return when (dbType) {
         DbType.MONGO.value -> MongoDriverConfig.buildConfig(props)
         DbType.JDBC.value -> JdbcDriverConfig.buildConfig(props)
-        else -> throw DbTypeNotFoundException(props.getProperty("dbType"))
+        else -> throw DbTypeNotFoundException(props.getProperty("db.type"))
     }
 }
 

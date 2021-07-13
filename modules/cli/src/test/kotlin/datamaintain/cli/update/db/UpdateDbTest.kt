@@ -353,6 +353,6 @@ internal class UpdateDbTest : BaseCliTest() {
     }
 
     private fun runUpdateDb(updateDbArguments: List<String> = listOf()) {
-        runAppWithUpdateDb(listOf("--db-uri", "mongo-uri"), updateDbArguments)
+        runAppWithUpdateDb(listOf("--db-type", "mongo", "--db-uri", "mongo-uri"), updateDbArguments)
     }
 }
