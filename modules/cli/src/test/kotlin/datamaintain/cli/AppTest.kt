@@ -398,7 +398,7 @@ internal class AppTest {
             @Test
             fun `should build configuration with existing config file path`() {
                 // Given
-                val argv = listOf("--config-file-path", "src/test/resources/config.properties", "update-db")
+                val argv = listOf("--config-file-path", buildPathToConfigFile("config"), "update-db")
 
                 // When
                 runApp(argv)
@@ -478,6 +478,8 @@ internal class AppTest {
             expectThat((configWrapper.datamaintainConfig!!.driverConfig) as MongoDriverConfig)
                     .get { mongoTmpPath }.isEqualTo(mongoTmpPath)
         }
+
+        private fun buildPathToConfigFile(fileName: String): String = "src/test/resources/${fileName}.properties"
 
         @Nested
         inner class TrustUri {
