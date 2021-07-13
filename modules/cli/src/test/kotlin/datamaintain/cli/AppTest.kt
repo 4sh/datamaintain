@@ -30,6 +30,12 @@ internal class AppTest {
         configWrapper.datamaintainConfig = config
     }
 
+    private fun buildPathToConfigFile(fileName: String): String = "src/test/resources/${fileName}.properties"
+
+    private val configFilePath = buildPathToConfigFile("config")
+
+    private val configWithoutDbTypePath = buildPathToConfigFile("config-without-db-type")
+
     @Nested
     inner class UpdateDb {
         @Nested
@@ -385,6 +391,7 @@ internal class AppTest {
 
         private fun updateMongoDbMinimumArguments(): List<String> {
             return listOf(
+                    "--db-type", "mongo",
                     "--mongo-uri", "mongo-uri",
                     "update-db"
             )
@@ -398,7 +405,7 @@ internal class AppTest {
             @Test
             fun `should build configuration with existing config file path`() {
                 // Given
-                val argv = listOf("--config-file-path", "src/test/resources/config.properties", "update-db")
+                val argv = listOf("--config-file-path", configFilePath, "update-db")
 
                 // When
                 runApp(argv)
@@ -438,6 +445,18 @@ internal class AppTest {
             }
 
             @Test
+            fun `should build configuration with mongo db type from file config`() {
+                // Given
+                val argv = listOf("--config-file-path", configFilePath, "update-db")
+
+                // When
+                runApp(argv)
+
+                // Then
+                expectThat(configWrapper.datamaintainConfig!!.driverConfig).isA<MongoDriverConfig>()
+            }
+
+            @Test
             fun `should throw error when given db type is not valid`() {
                 // Given
                 val argv = listOf("--db-type", "invalid db type", "update-db")
@@ -449,13 +468,26 @@ internal class AppTest {
                 expectThat(exitCode).isEqualTo(1)
                 expectThat(output).contains("dbType invalid db type is unknown")
             }
+
+            @Test
+            fun `should throw error when no db type was provided`() {
+                // Given
+                val argv = listOf("--config-file-path", configWithoutDbTypePath, "update-db")
+
+                // When
+                val (exitCode, output) = execAppInSubprocess(argv)
+
+                // Then
+                expectThat(exitCode).isEqualTo(1)
+                expectThat(output).contains("dbType must not be null")
+            }
         }
 
         @Test
         fun `should build configuration with mongo uri`() {
             // Given
             val mongoUri = "my great mongo uri"
-            val argv = listOf("--mongo-uri", mongoUri, "update-db")
+            val argv = listOf("--db-type", "mongo","--mongo-uri", mongoUri, "update-db")
 
             // When
             runApp(argv)
@@ -469,7 +501,7 @@ internal class AppTest {
         fun `should build configuration with mongo tmp path`() {
             // Given
             val mongoTmpPath = "my mongo tmp path"
-            val argv = listOf("--mongo-uri", "mongouri", "--mongo-tmp-path", mongoTmpPath, "update-db")
+            val argv = listOf("--db-type", "mongo", "--mongo-uri", "mongouri", "--mongo-tmp-path", mongoTmpPath, "update-db")
 
             // When
             runApp(argv)
