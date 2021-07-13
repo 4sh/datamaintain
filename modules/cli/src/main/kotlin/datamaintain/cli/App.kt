@@ -202,4 +202,4 @@ fun main(args: Array<String>) {
     App().subcommands(UpdateDb(), ListExecutedScripts()).main(args)
 }
 
-class DbTypeNotFoundException(val dbType: String) : DatamaintainBaseException("dbType $dbType is unknown")
+class DbTypeNotFoundException(dbType: String) : DatamaintainBaseException("dbType $dbType is unknown")
