@@ -34,6 +34,8 @@ internal class AppTest {
 
     private val configFilePath = buildPathToConfigFile("config")
 
+    private val configWithoutDbTypePath = buildPathToConfigFile("config-without-db-type")
+
     @Nested
     inner class UpdateDb {
         @Nested
@@ -464,6 +466,19 @@ internal class AppTest {
                 // Then
                 expectThat(exitCode).isEqualTo(1)
                 expectThat(output).contains("dbType invalid db type is unknown")
+            }
+
+            @Test
+            fun `should throw error when no db type was provided`() {
+                // Given
+                val argv = listOf("--config-file-path", configWithoutDbTypePath, "update-db")
+
+                // When
+                val (exitCode, output) = execAppInSubprocess(argv)
+
+                // Then
+                expectThat(exitCode).isEqualTo(1)
+                expectThat(output).contains("dbType must not be null")
             }
         }
 
