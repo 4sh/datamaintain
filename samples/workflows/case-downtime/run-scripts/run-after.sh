@@ -1,9 +1,5 @@
-docker run --rm --volume $PATH_TO_DATAMAINTAIN_PROJECT/samples/workflows/case-downtime/db-scripts:/scripts --network=host docker.pkg.github.com/4sh/datamaintain/datamaintain:1.2.0-mongo-4.4 \
---db-type mongo \
---db-uri mongodb://localhost:27017/case-downtime \
+docker run --rm --volume $PATH_TO_DATAMAINTAIN_PROJECT/samples/workflows/case-downtime:/case-downtime --network=host docker.pkg.github.com/4sh/datamaintain/datamaintain:2.0-mongo-4.4 \
+--config-file-path /case-downtime/datamaintain.properties \
 update-db \
---path /scripts \
---identifier-regex "(v\d*).*" \
 --tag AFTER=/scripts/*_AFTER.js \
 --whitelisted-tags AFTER \
---verbose
