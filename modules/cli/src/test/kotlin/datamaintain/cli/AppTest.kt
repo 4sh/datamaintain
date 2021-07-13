@@ -30,6 +30,10 @@ internal class AppTest {
         configWrapper.datamaintainConfig = config
     }
 
+    private fun buildPathToConfigFile(fileName: String): String = "src/test/resources/${fileName}.properties"
+
+    private val configFilePath = buildPathToConfigFile("config")
+
     @Nested
     inner class UpdateDb {
         @Nested
@@ -398,7 +402,7 @@ internal class AppTest {
             @Test
             fun `should build configuration with existing config file path`() {
                 // Given
-                val argv = listOf("--config-file-path", buildPathToConfigFile("config"), "update-db")
+                val argv = listOf("--config-file-path", configFilePath, "update-db")
 
                 // When
                 runApp(argv)
