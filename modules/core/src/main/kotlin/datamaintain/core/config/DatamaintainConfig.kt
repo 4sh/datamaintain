@@ -27,7 +27,8 @@ data class DatamaintainConfig @JvmOverloads constructor(val path: Path = Paths.g
                                                         val executionMode: ExecutionMode = defaultExecutionMode,
                                                         val defaultScriptAction: ScriptAction = defaultAction,
                                                         val driverConfig: DatamaintainDriverConfig,
-                                                        val verbose: Boolean = VERBOSE.default!!.toBoolean()) {
+                                                        val verbose: Boolean = VERBOSE.default!!.toBoolean(),
+                                                        val porcelain: Boolean = PRINT_RELATIVE_PATH_OF_SCRIPT.default!!.toBoolean()) {
 
     companion object {
         private val defaultExecutionMode = ExecutionMode.NORMAL
@@ -71,7 +72,8 @@ data class DatamaintainConfig @JvmOverloads constructor(val path: Path = Paths.g
                     executionMode,
                     scriptAction,
                     driverConfig,
-                    props.getProperty(VERBOSE).toBoolean()
+                    props.getProperty(VERBOSE).toBoolean(),
+                    props.getProperty(PRINT_RELATIVE_PATH_OF_SCRIPT).toBoolean()
             )
         }
 
@@ -103,6 +105,7 @@ data class DatamaintainConfig @JvmOverloads constructor(val path: Path = Paths.g
         checkRules.let { logger.info { "- rules -> ${checkRules.toList()}" } }
         executionMode.let { logger.info { "- execution mode -> $it" } }
         verbose.let { logger.info { "- verbose -> $it" } }
+        porcelain.let { logger.info { "- porcelain -> $it" } }
         logger.info { "" }
     }
 
@@ -129,6 +132,7 @@ enum class CoreConfigKey(override val key: String,
     DB_TYPE("db.type", "mongo"),
     VERBOSE("verbose", "false"),
     DEFAULT_SCRIPT_ACTION("default.script.action", "RUN"),
+    PRINT_RELATIVE_PATH_OF_SCRIPT("porcelain", "false"),
 
     // SCAN
     SCAN_PATH("scan.path", "./scripts/"),
