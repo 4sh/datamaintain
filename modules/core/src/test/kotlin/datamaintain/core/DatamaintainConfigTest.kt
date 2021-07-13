@@ -41,6 +41,7 @@ class DatamaintainConfigTest {
                     ))
             )
             get { verbose }.isTrue()
+            get { porcelain }.isTrue()
         }
     }
 
@@ -53,6 +54,7 @@ class DatamaintainConfigTest {
             get { doesCreateTagsFromFolder }.isEqualTo(CoreConfigKey.CREATE_TAGS_FROM_FOLDER.default!!.toBoolean())
             get { executionMode }.isEqualTo(ExecutionMode.NORMAL)
             get { verbose }.isFalse()
+            get { porcelain }.isFalse()
         }
     }
 
