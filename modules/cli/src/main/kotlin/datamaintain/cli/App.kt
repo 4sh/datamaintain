@@ -30,9 +30,8 @@ class App : CliktCommand() {
             .convert { File(it) }
             .validate { it.exists() }
 
-    private val dbType: String by option(help = "db type : ${DbType.values().joinToString(",") { v -> v.value }}")
-            .default("mongo")
-            .validate { DbType.values().map { v -> v.value }.contains(it) }
+    private val dbType: String? by option(help = "db type : ${DbType.values().joinToString(",") { v -> v.value }}")
+        .validate { DbType.values().map { v -> v.value }.contains(it) }
 
     private val mongoUri: String? by option(help = "mongo uri with at least database name. Ex: mongodb://localhost:27017/newName")
 
@@ -47,10 +46,10 @@ class App : CliktCommand() {
             props.load(it.inputStream())
         }
         overloadPropsFromArgs(props)
-        props.put("dbType", dbType)
     }
 
     private fun overloadPropsFromArgs(props: Properties) {
+        dbType?.let { props[CoreConfigKey.DB_TYPE.key] = it }
         mongoUri?.let { props.put(MongoConfigKey.DB_MONGO_URI.key, it) }
         mongoTmpPath?.let { props.put(MongoConfigKey.DB_MONGO_TMP_PATH.key, it) }
         trustUri?.let { props.put(DriverConfigKey.DB_TRUST_URI.key, it.toString()) }
@@ -189,9 +188,9 @@ private fun loadConfig(props: Properties): DatamaintainConfig {
 }
 
 private fun loadDriverConfig(props: Properties): MongoDriverConfig {
-    return when (props.getProperty("dbType")) {
+    return when (val dbType = props.getProperty(CoreConfigKey.DB_TYPE.key)) {
         DbType.MONGO.value -> MongoDriverConfig.buildConfig(props)
-        else -> throw DbTypeNotFoundException(props.getProperty("dbType"))
+        else -> throw DbTypeNotFoundException(dbType)
     }
 }
 
