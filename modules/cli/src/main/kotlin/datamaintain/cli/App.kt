@@ -3,7 +3,10 @@ package datamaintain.cli
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.findObject
 import com.github.ajalt.clikt.core.subcommands
-import com.github.ajalt.clikt.parameters.options.*
+import com.github.ajalt.clikt.parameters.options.convert
+import com.github.ajalt.clikt.parameters.options.flag
+import com.github.ajalt.clikt.parameters.options.option
+import com.github.ajalt.clikt.parameters.options.validate
 import datamaintain.cli.update.db.MarkOneScriptAsExecuted
 import datamaintain.cli.update.db.UpdateDb
 import datamaintain.core.db.driver.DriverConfigKey
@@ -18,8 +21,7 @@ class App : CliktCommand() {
             .convert { File(it) }
             .validate { it.exists() }
 
-    private val dbType: String by option(help = "db type : ${DbType.values().joinToString(",") { v -> v.value }}")
-            .default("mongo")
+    private val dbType: String? by option(help = "db type : ${DbType.values().joinToString(",") { v -> v.value }}")
             .validate { DbType.values().map { v -> v.value }.contains(it) }
 
     private val dbUri: String? by option(help = "mongo uri with at least database name. Ex: mongodb://localhost:27017/newName")
@@ -35,10 +37,16 @@ class App : CliktCommand() {
             props.load(it.inputStream())
         }
         overloadPropsFromArgs(props)
-        props.put("dbType", dbType)
     }
 
     private fun overloadPropsFromArgs(props: Properties) {
+        dbType?.let { props.put("db.type", it) }
+
+        // db type was mongo by default. To be backward compatible, set mongo as default is no type configured anywhere.
+        if (!props.containsKey("db.type")) {
+            props.put("db.type", "mongo")
+        }
+
         dbUri?.let { props.put(DriverConfigKey.DB_URI.key, it) }
         mongoTmpPath?.let { props.put(MongoConfigKey.DB_MONGO_TMP_PATH.key, it) }
         trustUri?.let { props.put(DriverConfigKey.DB_TRUST_URI.key, it.toString()) }
