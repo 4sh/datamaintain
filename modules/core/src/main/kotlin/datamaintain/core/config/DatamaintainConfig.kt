@@ -126,6 +126,7 @@ interface ConfigKey {
 enum class CoreConfigKey(override val key: String,
                          override val default: String? = null) : ConfigKey {
     // GLOBAL
+    DB_TYPE("db.type", "mongo"),
     VERBOSE("verbose", "false"),
     DEFAULT_SCRIPT_ACTION("default.script.action", "RUN"),
 
