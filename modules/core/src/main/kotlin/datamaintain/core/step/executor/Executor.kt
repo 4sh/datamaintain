@@ -5,10 +5,7 @@ import datamaintain.core.exception.DatamaintainBaseException
 import datamaintain.core.exception.DatamaintainException
 import datamaintain.core.exception.DatamaintainScriptExecutionException
 import datamaintain.core.report.Report
-import datamaintain.core.script.ExecutedScript
-import datamaintain.core.script.ExecutionStatus
-import datamaintain.core.script.ScriptAction
-import datamaintain.core.script.ScriptWithContent
+import datamaintain.core.script.*
 import datamaintain.core.step.Step
 import mu.KotlinLogging
 import kotlin.system.measureTimeMillis
@@ -27,7 +24,18 @@ class Executor(private val context: Context) {
                     else -> throw IllegalStateException("Should not be in that case")
                 }
 
-                    context.reportBuilder.addExecutedScript(executedScript)
+                    context.reportBuilder.addReportExecutedScript(
+                        ReportExecutedScript(
+                            executedScript.name,
+                            executedScript.checksum,
+                            executedScript.identifier,
+                            executedScript.executionStatus,
+                            executedScript.action,
+                            executedScript.executionDurationInMillis,
+                            executedScript.executionOutput,
+                            scripts.first { it.checksum == executedScript.checksum }.porcelainName
+                        )
+                    )
 
                 if (executedScript.executionStatus == ExecutionStatus.KO) {
                     logger.info { "" }
