@@ -50,6 +50,7 @@ interface ScriptWithContent : Script {
     val content: String
     val tags: Set<Tag>
     var action: ScriptAction
+    val porcelainName: String
 }
 
 

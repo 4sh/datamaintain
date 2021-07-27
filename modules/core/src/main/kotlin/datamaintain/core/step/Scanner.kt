@@ -7,6 +7,7 @@ import datamaintain.core.exception.DatamaintainException
 import datamaintain.core.script.FileScript
 import datamaintain.core.script.ScriptWithContent
 import datamaintain.core.script.Tag
+import datamaintain.core.util.extractRelativePath
 import mu.KotlinLogging
 import java.io.File
 import java.nio.file.Path
@@ -24,7 +25,8 @@ class Scanner(private val context: Context) {
                             it.toPath(),
                             context.config.identifierRegex,
                             buildTags(context.config, rootFolder, it).toSet(),
-                            context.config.defaultScriptAction
+                            context.config.defaultScriptAction,
+                            extractRelativePath(context.config.path, it.toPath())
                     ) }
                     .sortedBy { it.name }
                     .onEach { context.reportBuilder.addScannedScript(it) }
