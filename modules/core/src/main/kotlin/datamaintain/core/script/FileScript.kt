@@ -10,7 +10,8 @@ class FileScript @JvmOverloads constructor(
         val path: Path,
         identifierRegex: Regex,
         override val tags: Set<Tag> = setOf(),
-        override var action: ScriptAction = DatamaintainConfig.defaultAction
+        override var action: ScriptAction = DatamaintainConfig.defaultAction,
+        override val porcelainName: String = ""
 ) : ScriptWithContent {
 
     override val name: String
