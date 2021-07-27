@@ -15,12 +15,12 @@ class Report @JvmOverloads constructor(
         val executedScripts: List<ReportExecutedScript> = listOf(),
         val validatedCheckRules: List<CheckRule> = listOf()
 ) {
-    fun print(verbose: Boolean) {
+    fun print(verbose: Boolean, porcelain: Boolean) {
         val stepWithMaxExecutionOrder: Step = Step.values().asSequence().maxBy { step -> step.executionOrder }!!
-        print(verbose, stepWithMaxExecutionOrder)
+        print(verbose, porcelain, stepWithMaxExecutionOrder)
     }
 
-    fun print(verbose: Boolean, maxStepToShow: Step) {
+    fun print(verbose: Boolean, porcelain: Boolean, maxStepToShow: Step) {
         logger.info { "Summary => " }
 
         // Scanner
@@ -52,7 +52,11 @@ class Report @JvmOverloads constructor(
 
         if (Step.EXECUTE.isSameStepOrExecutedBefore(maxStepToShow)) {
             logger.info { "- ${executedScripts.size} files executed" }
-            executedScripts.forEach { logger.info { " -> ${it.name}" } }
+            executedScripts.forEach {
+                logger.info {
+                    " -> ${it.name}" + if (porcelain) { " - ${it.porcelainName}" } else { "" }
+                }
+            }
         }
     }
 }
