@@ -1,6 +1,6 @@
 package datamaintain.core.report
 
-import datamaintain.core.script.ExecutedScript
+import datamaintain.core.script.ReportExecutedScript
 import datamaintain.core.script.ScriptWithContent
 import datamaintain.core.step.Step
 import datamaintain.core.step.check.rules.CheckRule
@@ -12,7 +12,7 @@ class Report @JvmOverloads constructor(
         val scannedScripts: List<ScriptWithContent> = listOf(),
         val filteredScripts: List<ScriptWithContent> = listOf(),
         val prunedScripts: List<ScriptWithContent> = listOf(),
-        val executedScripts: List<ExecutedScript> = listOf(),
+        val executedScripts: List<ReportExecutedScript> = listOf(),
         val validatedCheckRules: List<CheckRule> = listOf()
 ) {
     fun print(verbose: Boolean) {
@@ -62,7 +62,7 @@ class ReportBuilder @JvmOverloads constructor(
         private val scannedScripts: MutableList<ScriptWithContent> = mutableListOf(),
         private val filteredScripts: MutableList<ScriptWithContent> = mutableListOf(),
         private val prunedScripts: MutableList<ScriptWithContent> = mutableListOf(),
-        private val executedScripts: MutableList<ExecutedScript> = mutableListOf(),
+        private val executedScripts: MutableList<ReportExecutedScript> = mutableListOf(),
         private val validatedCheckRules: MutableList<CheckRule> = mutableListOf()
 ) {
 
@@ -78,7 +78,7 @@ class ReportBuilder @JvmOverloads constructor(
         prunedScripts.add(script)
     }
 
-    fun addExecutedScript(script: ExecutedScript) {
+    fun addReportExecutedScript(script: ReportExecutedScript) {
         executedScripts.add(script)
     }
 
