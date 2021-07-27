@@ -50,6 +50,12 @@ class App : CliktCommand() {
 
     private fun overloadPropsFromArgs(props: Properties) {
         dbType?.let { props[CoreConfigKey.DB_TYPE.key] = it }
+
+        // db type was mongo by default. To be backward compatible, set mongo as default is no type configured anywhere.
+        if (!props.containsKey(CoreConfigKey.DB_TYPE.key)) {
+            props[CoreConfigKey.DB_TYPE.key] = DbType.MONGO.value
+        }
+
         mongoUri?.let { props.put(MongoConfigKey.DB_MONGO_URI.key, it) }
         mongoTmpPath?.let { props.put(MongoConfigKey.DB_MONGO_TMP_PATH.key, it) }
         trustUri?.let { props.put(DriverConfigKey.DB_TRUST_URI.key, it.toString()) }
@@ -188,7 +194,16 @@ private fun loadConfig(props: Properties): DatamaintainConfig {
 }
 
 private fun loadDriverConfig(props: Properties): MongoDriverConfig {
-    return when (val dbType = props.getProperty(CoreConfigKey.DB_TYPE.key)) {
+    val dbTypeOldKey = "dbType"
+
+    val dbType = when {
+        props.containsKey(dbTypeOldKey) -> { // Old key to set database type. Keep it to avoid breaking changes
+            props.getProperty(dbTypeOldKey)
+        }
+        else -> props.getProperty(CoreConfigKey.DB_TYPE.key)
+    }
+
+    return when (dbType) {
         DbType.MONGO.value -> MongoDriverConfig.buildConfig(props)
         else -> throw DbTypeNotFoundException(dbType)
     }
