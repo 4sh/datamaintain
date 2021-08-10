@@ -64,6 +64,7 @@ class DatamaintainConfigTest {
         System.setProperty(CoreConfigKey.CREATE_TAGS_FROM_FOLDER.key, "false")
         System.setProperty(CoreConfigKey.EXECUTION_MODE.key, "NORMAL")
         System.setProperty(CoreConfigKey.VERBOSE.key, "FALSE")
+        System.setProperty(CoreConfigKey.PRINT_RELATIVE_PATH_OF_SCRIPT.key, "false")
 
         val config = DatamaintainConfig.buildConfig(DatamaintainConfigTest::class.java.getResourceAsStream("/config/default.properties"),
                 FakeDriverConfig())
@@ -75,6 +76,7 @@ class DatamaintainConfigTest {
             get { tagsToPlayAgain }.isEqualTo(setOf(Tag("again")))
             get { executionMode }.isEqualTo(ExecutionMode.NORMAL)
             get { verbose }.isFalse()
+            get { porcelain }.isFalse()
         }
     }
 }
