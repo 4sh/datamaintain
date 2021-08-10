@@ -109,6 +109,8 @@ class UpdateDb(val runner: (DatamaintainConfig) -> Unit = ::defaultUpdateDbRunne
             .choice(allCheckRuleNames.map { it to it }.toMap())
             .multiple()
 
+    private val porcelain: Boolean? by option(help = "for each executed script, display relative path to scan path").flag()
+
     override fun run() {
         var config: DatamaintainConfig? = null
         try {
@@ -160,6 +162,7 @@ class UpdateDb(val runner: (DatamaintainConfig) -> Unit = ::defaultUpdateDbRunne
         }
         checkRules?.let { props.put(CoreConfigKey.CHECK_RULES.key, it.joinToString(",")) }
         allowAutoOverride?.let { props.put(CoreConfigKey.PRUNE_OVERRIDE_UPDATED_SCRIPTS.key, it.toString()) }
+        porcelain?.let { props.put(CoreConfigKey.PRINT_RELATIVE_PATH_OF_SCRIPT.key, it.toString()) }
     }
 }
 

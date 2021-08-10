@@ -28,7 +28,7 @@ data class DatamaintainConfig @JvmOverloads constructor(val path: Path = Paths.g
                                                         val defaultScriptAction: ScriptAction = defaultAction,
                                                         val driverConfig: DatamaintainDriverConfig,
                                                         val verbose: Boolean = VERBOSE.default!!.toBoolean(),
-                                                        val porcelain: Boolean = PRINT_RELATIVE_PATH_OF_SCRIPT.default!!.toBoolean()) {
+                                                        val porcelain: Boolean = PRINT_RELATIVE_PATH_OF_SCRIPT.default!!.toBoolean()){
 
     companion object {
         private val defaultExecutionMode = ExecutionMode.NORMAL
