@@ -25,14 +25,8 @@ class Executor(private val context: Context) {
                 }
 
                     context.reportBuilder.addReportExecutedScript(
-                        ReportExecutedScript(
-                            executedScript.name,
-                            executedScript.checksum,
-                            executedScript.identifier,
-                            executedScript.executionStatus,
-                            executedScript.action,
-                            executedScript.executionDurationInMillis,
-                            executedScript.executionOutput,
+                        ReportExecutedScript.from(
+                            executedScript,
                             scripts.first { it.checksum == executedScript.checksum }.porcelainName
                         )
                     )
