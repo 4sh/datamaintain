@@ -137,6 +137,25 @@ internal class ScannerTest {
         }
     }
 
+    @Test
+    fun `should collect script porcelain names`() {
+        // Given
+
+        // When
+        val scripts = scanner.scan()
+
+        // Then
+        expectThat(scripts) {
+            size.isEqualTo(6)
+            get(0).get { this.porcelainName }.isEqualTo("01_file1")
+            get(1).get { this.porcelainName }.isEqualTo("02_file2")
+            get(2).get { this.porcelainName }.isEqualTo("subfolder/03_file3")
+            get(3).get { this.porcelainName }.isEqualTo("subfolder/04_file4")
+            get(4).get { this.porcelainName }.isEqualTo("10_file10")
+            get(5).get { this.porcelainName }.isEqualTo("subfolder/old/11_file11")
+        }
+    }
+
     @Nested
     inner class TagsFromParents {
         @Test
