@@ -95,7 +95,20 @@ data class ReportExecutedScript(
         action,
         executionDurationInMillis,
         executionOutput
-)
+) {
+    companion object {
+        fun from(executedScript: ExecutedScript, porcelainName: String) = ReportExecutedScript(
+            executedScript.name,
+            executedScript.checksum,
+            executedScript.identifier,
+            executedScript.executionStatus,
+            executedScript.action,
+            executedScript.executionDurationInMillis,
+            executedScript.executionOutput,
+            porcelainName
+        )
+    }
+}
 
 interface ScriptWithContent : Script {
     val content: String
