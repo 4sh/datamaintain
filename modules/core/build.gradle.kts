@@ -11,5 +11,6 @@ repositories {
 baseProject()
 
 dependencies {
+    "testImplementation"("ch.qos.logback:logback-classic:${Versions.logbackClassic}")
 }
 
