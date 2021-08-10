@@ -457,6 +457,30 @@ internal class AppTest {
             }
 
             @Test
+            fun `should read config from key "dbType" when provided`() {
+                // Given
+                val argv = listOf("--config-file-path", configWithoutDbTypePath, "update-db", "--dbType", "mongo")
+
+                // When
+                runApp(argv)
+
+                // Then
+                expectThat(configWrapper.datamaintainConfig!!.driverConfig).isA<MongoDriverConfig>()
+            }
+
+            @Test
+            fun `should set mongo as db type when no db type was provided`() {
+                // Given
+                val argv = listOf("--config-file-path", configWithoutDbTypePath, "update-db")
+
+                // When
+                runApp(argv)
+
+                // Then
+                expectThat(configWrapper.datamaintainConfig!!.driverConfig).isA<MongoDriverConfig>()
+            }
+
+            @Test
             fun `should throw error when given db type is not valid`() {
                 // Given
                 val argv = listOf("--db-type", "invalid db type", "update-db")
@@ -470,6 +494,10 @@ internal class AppTest {
             }
 
             @Test
+            @Disabled(
+                "To ensure backward compatibility, mongo is provided as db type when no type is provided. " +
+                        "Please reactivate this test when it is no longer the case"
+            )
             fun `should throw error when no db type was provided`() {
                 // Given
                 val argv = listOf("--config-file-path", configWithoutDbTypePath, "update-db")
