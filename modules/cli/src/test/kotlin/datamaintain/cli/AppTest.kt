@@ -315,6 +315,43 @@ internal class AppTest {
                     // Then
                     expectThat(configWrapper.datamaintainConfig!!.defaultScriptAction).isEqualTo(scriptAction)
                 }
+
+                @Nested
+                inner class Porcelain {
+                    @Test
+                    fun `should build default config without auto override`() {
+                        // Given
+                        val argv = updateMongoDbMinimumArguments()
+
+                        // When
+                        runApp(argv)
+
+                        // Then
+                        expectThat(configWrapper) {
+                            get { datamaintainConfig }.isNotNull()
+                        }
+                        expectThat(configWrapper.datamaintainConfig!!.porcelain) {
+                            isFalse()
+                        }
+                    }
+
+                    @Test
+                    fun `should build config with auto override`() {
+                        // Given
+                        val argv = updateMongoDbMinimumArguments().plus("--porcelain")
+
+                        // When
+                        runApp(argv)
+
+                        // Then
+                        expectThat(configWrapper) {
+                            get { datamaintainConfig }.isNotNull()
+                        }
+                        expectThat(configWrapper.datamaintainConfig!!.porcelain) {
+                            isTrue()
+                        }
+                    }
+                }
             }
 
             @Nested
