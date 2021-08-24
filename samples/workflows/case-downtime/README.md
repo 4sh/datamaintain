@@ -16,7 +16,7 @@ Because you have a downtime, you want it to be the smallest as possible.
 
 So consider these 3 steps :
 - BEFORE : represents all the time before your deployment.
-- DURING : represents all the downtime during the deployment.
+- DOWNTIME : represents all the downtime during the deployment.
 - AFTER : represents all the time after the deployment.
 
 Now imagine you will have an execution of Datamaintain for each step. So to minimise your downtime you have to 
@@ -27,7 +27,7 @@ Basically, some tips :
 - BEFORE : all actions that don't break the current version db requirements
   - adding a new property on document
   - adding index
-- DURING : all actions that break the requirements of the previous version and are needed for the new version.
+- DOWNTIME : all actions that break the requirements of the previous version and are needed for the new version.
   - updating the name of a property
   - update the value of a property (i.e. an enum renamed)
 - AFTER : all actions that don't break the new version db requirements
@@ -66,9 +66,9 @@ Launch the bash script `run-before.sh` that will execute Datamaintain with scrip
 
 In real world, you will be stopping your server in order to deploy the v2.
 
-### Launch DURING scripts
+### Launch DOWNTIME scripts
 
-Now the server is down, you can launch the bash script `run-during.sh` that will execute Datamaintain with scripts suffixed with `_DURING`.
+Now the server is down, you can launch the bash script `run-downtime.sh` that will execute Datamaintain with scripts suffixed with `_DOWNTIME`.
 
 ### Deployment done
 
