@@ -3,6 +3,8 @@ package datamaintain.core.script
 import java.math.BigInteger
 import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.exception.DatamaintainFileIdentifierPatternException
+import datamaintain.core.util.extractRelativePath
+import java.io.File
 import java.nio.file.Path
 import java.security.MessageDigest
 
@@ -13,6 +15,19 @@ class FileScript @JvmOverloads constructor(
         override var action: ScriptAction = DatamaintainConfig.defaultAction,
         override val porcelainName: String = ""
 ) : ScriptWithContent {
+
+    companion object {
+        fun from(config: DatamaintainConfig, tags: Set<Tag>, scriptFile: File): FileScript {
+            val path = scriptFile.toPath()
+            return FileScript(
+                path,
+                config.identifierRegex,
+                tags,
+                config.defaultScriptAction,
+                extractRelativePath(config.path, path)
+            )
+        }
+    }
 
     override val name: String
         get() = path.fileName.toString()

@@ -21,13 +21,7 @@ class Scanner(private val context: Context) {
             logger.info { "Scan ${rootFolder.absolutePath}..." }
             val scannedFiles = rootFolder.walk()
                     .filter { it.isFile }
-                    .map { FileScript(
-                            it.toPath(),
-                            context.config.identifierRegex,
-                            buildTags(context.config, rootFolder, it).toSet(),
-                            context.config.defaultScriptAction,
-                            extractRelativePath(context.config.path, it.toPath())
-                    ) }
+                    .map { FileScript.from(context.config, buildTags(context.config, rootFolder, it).toSet(), it) }
                     .sortedBy { it.name }
                     .onEach { context.reportBuilder.addScannedScript(it) }
                     .onEach {
