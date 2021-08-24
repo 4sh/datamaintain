@@ -1,0 +1,22 @@
+name: Rebuild CLI documentation
+
+on: push
+jobs:
+  rebuild-cli-documentation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Define Gradle cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Rebuild CLI documentation
+        run: ./gradlew :modules:cli:rebuildCliDocumentation --build-cache
