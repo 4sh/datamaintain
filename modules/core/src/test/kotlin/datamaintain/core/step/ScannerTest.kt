@@ -22,7 +22,8 @@ internal class ScannerTest {
                         Regex("(.*?)_.*"),
                         driverConfig = FakeDriverConfig(),
                         tagsMatchers = tagsMatchers,
-                        doesCreateTagsFromFolder = doesCreateTagsFromFolder
+                        doesCreateTagsFromFolder = doesCreateTagsFromFolder,
+                        porcelain = true
                 ),
                 dbDriver = FakeDatamaintainDriver()))
     }

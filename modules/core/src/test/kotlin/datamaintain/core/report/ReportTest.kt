@@ -40,7 +40,7 @@ internal class ReportTest {
             )
 
             // When
-            report.print(verbose = true, porcelain = true)
+            report.print(verbose = true)
 
             // Then
             expectThat(testAppender.events) {
@@ -54,22 +54,22 @@ internal class ReportTest {
         }
 
         @Test
-        fun `should not display relative paths when porcelain is false`() {
+        fun `should not display relative paths when porcelain name is null`() {
             // Given
             val report = Report(
                 executedScripts = listOf(
                     buildReportExecutedScript(
                         "script1",
-                        "porcelainName1"
+                        null
                     ), buildReportExecutedScript(
                         "script2",
-                        "porcelainName2"
+                        null
                     )
                 )
             )
 
             // When
-            report.print(verbose = true, porcelain = false)
+            report.print(verbose = true)
 
             // Then
             expectThat(testAppender.events) {
