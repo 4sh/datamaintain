@@ -13,7 +13,7 @@ class FileScript @JvmOverloads constructor(
         identifierRegex: Regex,
         override val tags: Set<Tag> = setOf(),
         override var action: ScriptAction = DatamaintainConfig.defaultAction,
-        override val porcelainName: String = ""
+        override val porcelainName: String? = null
 ) : ScriptWithContent {
 
     companion object {
@@ -24,9 +24,16 @@ class FileScript @JvmOverloads constructor(
                 config.identifierRegex,
                 tags,
                 config.defaultScriptAction,
-                extractRelativePath(config.path, path)
+                computePorcelainName(config, path)
             )
         }
+
+        private fun computePorcelainName(config: DatamaintainConfig, path: Path): String? =
+            if(!config.porcelain) {
+                null
+            } else {
+                extractRelativePath(config.path, path)
+            }
     }
 
     override val name: String
