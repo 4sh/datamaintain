@@ -4,6 +4,7 @@ import datamaintain.core.exception.DatamaintainBaseException
 import java.nio.file.FileSystems
 import java.nio.file.Path
 import java.nio.file.PathMatcher
+import java.nio.file.Paths
 
 class TagMatcher(val tag: Tag, val globPaths: Iterable<String>) {
     private val pathMatchers: Set<PathMatcher>
@@ -42,16 +43,28 @@ class TagMatcher(val tag: Tag, val globPaths: Iterable<String>) {
 
     companion object {
         @JvmStatic
-        fun parse(name: String, pathMatchers: String): TagMatcher {
+        fun parse(name: String, pathMatchers: String, scanPath: Path): TagMatcher {
             return TagMatcher(Tag(name = name), pathMatchers.split(",")
                     .map { pathMatcher -> pathMatcher.trim('[', ']', ' ') }
                     .onEach { if (containsEnvironmentVariables(it)) { throw  DatamaintainPathMatcherUsesEnvironmentVariablesException(name, it)} }
+                    .map { toAbsolutePath(it, scanPath) }
                     .toSet())
         }
 
         @JvmStatic
         private fun containsEnvironmentVariables(pathMatcher: String): Boolean {
             return pathMatcher.startsWith("~") || pathMatcher.startsWith("\$HOME")
+        }
+
+        @JvmStatic
+        private fun toAbsolutePath(tagPathMatcher: String, scanPath: Path): String {
+            val path: Path = if (Paths.get(tagPathMatcher).isAbsolute) {
+                Paths.get(tagPathMatcher)
+            } else {
+                scanPath.resolve(tagPathMatcher).toAbsolutePath()
+            }
+
+            return path.normalize().toString()
         }
     }
 }
