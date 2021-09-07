@@ -1,11 +1,11 @@
 package datamaintain.core.step
 
 import datamaintain.core.Context
-import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.db.driver.FakeDatamaintainDriver
 import datamaintain.core.db.driver.FakeDriverConfig
 import datamaintain.core.script.Tag
 import datamaintain.core.script.TagMatcher
+import datamaintain.test.buildDatamaintainConfig
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
@@ -15,15 +15,14 @@ import java.nio.file.Paths
 internal class ScannerTest {
     private val scanner = prepareScanner()
 
-    fun prepareScanner(tagsMatchers: Set<TagMatcher> = emptySet(), doesCreateTagsFromFolder: Boolean = false): Scanner {
+    fun prepareScanner(tagsMatchers: Set<TagMatcher> = emptySet(), doesCreateTagsFromFolder: Boolean = false, porcelain: Boolean = true): Scanner {
         return Scanner(Context(
-                DatamaintainConfig(
-                        Paths.get("src/test/resources/scanner_test_files"),
-                        Regex("(.*?)_.*"),
-                        driverConfig = FakeDriverConfig(),
-                        tagsMatchers = tagsMatchers,
-                        doesCreateTagsFromFolder = doesCreateTagsFromFolder,
-                        porcelain = true
+                buildDatamaintainConfig(
+                    Paths.get("src/test/resources/scanner_test_files"),
+                    Regex("(.*?)_.*"),
+                    tagsMatchers = tagsMatchers,
+                    doesCreateTagsFromFolder = doesCreateTagsFromFolder,
+                    porcelain = porcelain
                 ),
                 dbDriver = FakeDatamaintainDriver()))
     }
