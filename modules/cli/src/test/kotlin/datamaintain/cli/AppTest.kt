@@ -1,6 +1,7 @@
 package datamaintain.cli
 
 import com.github.ajalt.clikt.core.subcommands
+import datamaintain.core.config.CoreConfigKey
 import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.script.ScriptAction
 import datamaintain.core.script.Tag
@@ -55,7 +56,7 @@ internal class AppTest {
                     runApp(argv)
 
                     // Then
-                    expectThat(configWrapper.datamaintainConfig!!.path).isEqualTo(Paths.get(path))
+                    expectThat(configWrapper.datamaintainConfig!!.path).isEqualTo(Paths.get(path).toAbsolutePath())
                 }
 
                 @Test
@@ -174,16 +175,29 @@ internal class AppTest {
                         val tagMatcher1 = TagMatcher(Tag("MYTAG1"), listOf("pathMatcher1", "pathMatcher2"))
                         val tagMatcher2 = TagMatcher(Tag("MYTAG2"), listOf("pathMatcher3", "pathMatcher4"))
 
-                        val argv = updateMongoDbMinimumArguments().plus(listOf(
+                        val argv = updateMongoDbMinimumArguments().plus(
+                            listOf(
                                 "--tag", tagMatcher1.toArgument(), "--tag", tagMatcher2.toArgument()
-                        ))
+                            )
+                        )
+
+                        val scanPathString = CoreConfigKey.SCAN_PATH.default!!
+                        val scanPath = Paths.get(scanPathString).toAbsolutePath().normalize()
+
+                        val tagMatcher1FullPath = TagMatcher(
+                            Tag("MYTAG1"),
+                            tagMatcher1.globPaths.map { scanPath.resolve(it).toString() })
+
+                        val tagMatcher2FullPath = TagMatcher(
+                            Tag("MYTAG2"),
+                            tagMatcher2.globPaths.map { scanPath.resolve(it).toString() })
 
                         // When
                         runApp(argv)
 
                         // Then
                         expectThat(configWrapper.datamaintainConfig!!.tagsMatchers)
-                                .containsExactlyInAnyOrder(tagMatcher1, tagMatcher2)
+                            .containsExactlyInAnyOrder(tagMatcher1FullPath, tagMatcher2FullPath)
                     }
 
                     private fun TagMatcher.toArgument(): String = "${this.tag.name}=[${this.globPaths.joinToString(", ")}]"
