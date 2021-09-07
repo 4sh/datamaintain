@@ -35,6 +35,10 @@ class TagMatcher(val tag: Tag, val globPaths: Iterable<String>) {
         return result
     }
 
+    override fun toString(): String {
+        return "TagMatcher(tag=$tag, globPaths=$globPaths)"
+    }
+
 
     companion object {
         @JvmStatic
