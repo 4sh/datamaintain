@@ -1,12 +1,12 @@
 package datamaintain.core.script
 
 import datamaintain.core.exception.DatamaintainFileIdentifierPatternException
+import datamaintain.test.buildDatamaintainConfig
 import org.junit.jupiter.api.Test
 import strikt.api.expectCatching
 import strikt.api.expectThat
-import strikt.assertions.failed
-import strikt.assertions.isA
-import strikt.assertions.isEqualTo
+import strikt.assertions.*
+import java.io.File
 import java.nio.file.Paths
 
 internal class FileScriptTest {
@@ -38,5 +38,34 @@ internal class FileScriptTest {
         expectCatching { fileScript.identifier }
                 .failed()
                 .isA<DatamaintainFileIdentifierPatternException>()
+    }
+
+    @Test
+    fun `should not compute the porcelainName when porcelain is set to false`() {
+        //Given
+        val config = buildDatamaintainConfig(path = Paths.get("/scan/path"), porcelain = false)
+        val scriptFile = File("/scan/path/files/my_file")
+
+        //WHEN
+        val fileScript = FileScript.from(config = config, tags = setOf(), scriptFile = scriptFile)
+
+        //THEN
+        expectThat(fileScript.porcelainName)
+            .isNull()
+    }
+
+    @Test
+    fun `should compute the porcelainName when porcelain is set to true`() {
+        //Given
+        val config = buildDatamaintainConfig(path = Paths.get("/scan/path"), porcelain = true)
+        val scriptFile = File("/scan/path/files/my_file")
+
+        //WHEN
+        val fileScript = FileScript.from(config = config, tags = setOf(), scriptFile = scriptFile)
+
+        //THEN
+        expectThat(fileScript.porcelainName)
+            .isNotNull()
+            .isEqualTo("files/my_file")
     }
 }
