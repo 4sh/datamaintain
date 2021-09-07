@@ -32,12 +32,12 @@ class DatamaintainConfigTest {
             get { executionMode }.isEqualTo(ExecutionMode.DRY)
             get { tagsMatchers }.containsExactlyInAnyOrder(
                     TagMatcher( Tag("TOTO"), setOf(
-                            "src/test/resources/scanner_test_files/01_file1",
-                            "src/test/resources/scanner_test_files/subfolder/*"
+                        expectedPath.resolve(Paths.get("src/test/resources/scanner_test_files/01_file1")).toString(),
+                        expectedPath.resolve(Paths.get("src/test/resources/scanner_test_files/subfolder/*")).toString()
                     )),
                     TagMatcher(Tag("potato"), setOf(
-                            "src/test/resources/scanner_test_files/*",
-                            "src/test/resources/scanner_test_files/subfolder/03_file3"
+                            expectedPath.resolve(Paths.get("src/test/resources/scanner_test_files/*")).toString(),
+                            expectedPath.resolve(Paths.get("src/test/resources/scanner_test_files/subfolder/03_file3")).toString()
                     ))
             )
             get { verbose }.isTrue()

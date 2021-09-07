@@ -57,8 +57,9 @@ data class DatamaintainConfig @JvmOverloads constructor(val path: Path = Paths.g
                 ScriptAction.fromNullable(props.getNullableProperty(DEFAULT_SCRIPT_ACTION), defaultAction)
             }
 
+            val scanPath = Paths.get(props.getProperty(SCAN_PATH)).toAbsolutePath().normalize()
             return DatamaintainConfig(
-                    Paths.get(props.getProperty(SCAN_PATH)),
+                    scanPath,
                     Regex(props.getProperty(SCAN_IDENTIFIER_REGEX)),
                     props.getProperty(CREATE_TAGS_FROM_FOLDER).toBoolean(),
                     extractTags(props.getNullableProperty(TAGS_WHITELISTED)),
@@ -66,7 +67,7 @@ data class DatamaintainConfig @JvmOverloads constructor(val path: Path = Paths.g
                     extractTags(props.getNullableProperty(PRUNE_TAGS_TO_RUN_AGAIN)),
                     props.getProperty(PRUNE_OVERRIDE_UPDATED_SCRIPTS).toBoolean(),
                     props.getStringPropertiesByPrefix(TAG.key)
-                            .map { TagMatcher.parse(it.first.replace("${TAG.key}.", ""), it.second) }
+                            .map { TagMatcher.parse(it.first.replace("${TAG.key}.", ""), it.second, scanPath) }
                             .toSet(),
                     extractCheckRules(props.getNullableProperty(CHECK_RULES)),
                     executionMode,
