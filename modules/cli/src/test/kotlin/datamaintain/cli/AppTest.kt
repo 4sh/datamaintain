@@ -459,7 +459,7 @@ internal class AppTest {
             @Test
             fun `should read config from key "dbType" when provided`() {
                 // Given
-                val argv = listOf("--config-file-path", configWithoutDbTypePath, "update-db", "--dbType", "mongo")
+                val argv = listOf("--config-file-path", configWithoutDbTypePath, "--db-type", "mongo", "update-db")
 
                 // When
                 runApp(argv)
