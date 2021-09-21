@@ -1,9 +1,6 @@
 package datamaintain.db.driver.jdbc
 
-import datamaintain.core.script.ExecutedScript
-import datamaintain.core.script.ExecutionStatus
-import datamaintain.core.script.FileScript
-import datamaintain.core.script.ScriptAction
+import datamaintain.core.script.*
 import org.h2.tools.Server
 import org.junit.jupiter.api.*
 import strikt.api.expectThat
@@ -45,7 +42,7 @@ internal class JdbcDriverTest {
         val executedScripts = jdbcDatamaintainDriver.listExecutedScripts()
 
         // Then
-        expectThat(executedScripts.toList()).containsExactlyInAnyOrder(script1, script2)
+        expectThat(executedScripts.toList()).containsExactlyInAnyOrder(lightScript1, lightScript2)
     }
 
     @Test
@@ -61,13 +58,19 @@ internal class JdbcDriverTest {
                 executionDurationInMillis = 0
         )
 
+        val lightScript3 = LightExecutedScript(
+            script3.name,
+            script3.checksum,
+            script3.identifier
+        )
+
         // When
         jdbcDatamaintainDriver.markAsExecuted(script3)
 
         // Then
 
         expectThat(jdbcDatamaintainDriver.listExecutedScripts().toList())
-                .containsExactlyInAnyOrder(script1, script2, script3)
+                .containsExactlyInAnyOrder(lightScript1, lightScript2, lightScript3)
     }
 
     @Nested
@@ -138,14 +141,16 @@ internal class JdbcDriverTest {
                 executionStatus = ExecutionStatus.OK,
                 action = ScriptAction.OVERRIDE_EXECUTED)
 
+        val lightScript3 = LightExecutedScript(script3.name, script3.checksum, script3.identifier)
+
         // When
         jdbcDatamaintainDriver.overrideScript(script3)
 
         // Then
         expectThat(jdbcDatamaintainDriver.listExecutedScripts().toList())
                 .containsExactlyInAnyOrder(
-                        script3,
-                        script2
+                        lightScript3,
+                        lightScript2
                 )
     }
 
@@ -165,6 +170,18 @@ internal class JdbcDriverTest {
             ExecutionStatus.OK,
             ScriptAction.RUN,
             0
+    )
+
+    private val lightScript1 = LightExecutedScript(
+        script1.name,
+        script1.checksum,
+        script1.identifier
+    )
+
+    private val lightScript2 = LightExecutedScript(
+        script2.name,
+        script2.checksum,
+        script2.identifier
     )
 
     private fun insertDataInDb() {

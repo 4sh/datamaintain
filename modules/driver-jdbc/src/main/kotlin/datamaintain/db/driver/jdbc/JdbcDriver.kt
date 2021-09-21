@@ -1,10 +1,7 @@
 package datamaintain.db.driver.jdbc
 
 import datamaintain.core.db.driver.DatamaintainDriver
-import datamaintain.core.script.ExecutedScript
-import datamaintain.core.script.ExecutionStatus
-import datamaintain.core.script.ScriptAction
-import datamaintain.core.script.ScriptWithContent
+import datamaintain.core.script.*
 import datamaintain.core.step.executor.Execution
 import java.sql.Connection
 import java.sql.DriverManager
@@ -28,14 +25,14 @@ class JdbcDriver(jdbcUri: String) : DatamaintainDriver(jdbcUri) {
         }
     }
 
-    override fun listExecutedScripts(): Sequence<ExecutedScript> {
+    override fun listExecutedScripts(): Sequence<LightExecutedScript> {
         createExecutedScriptsTableIfNotExists()
 
         val statement = connection.createStatement()
-        val executionOutput: ResultSet = statement.executeQuery("SELECT * from $EXECUTED_SCRIPTS_TABLE")
-        val executedScript = mutableListOf<ExecutedScript>()
+        val executionOutput: ResultSet = statement.executeQuery("SELECT name, checksum, identifier from $EXECUTED_SCRIPTS_TABLE")
+        val executedScript = mutableListOf<LightExecutedScript>()
         while (executionOutput.next()) {
-            executedScript.add(executionOutput.toExecutedScript())
+            executedScript.add(executionOutput.toLightExecutedScript())
         }
         return executedScript.asSequence()
     }
@@ -94,13 +91,9 @@ class JdbcDriver(jdbcUri: String) : DatamaintainDriver(jdbcUri) {
         return executedScript
     }
 
-    fun ResultSet.toExecutedScript() = ExecutedScript(
-            name = this.getString("name"),
-            checksum = this.getString("checksum"),
-            executionDurationInMillis = this.getLong("executionDurationInMillis"),
-            executionOutput = this.getString("executionOutput"),
-            executionStatus = ExecutionStatus.valueOf(this.getString("executionStatus")),
-            identifier = this.getString("identifier"),
-            action = ScriptAction.valueOf(this.getString("action"))
+    private fun ResultSet.toLightExecutedScript() = LightExecutedScript(
+        name = this.getString("name"),
+        checksum = this.getString("checksum"),
+        identifier = this.getString("identifier")
     )
 }
