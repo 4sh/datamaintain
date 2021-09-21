@@ -12,6 +12,36 @@ interface Script {
     }
 }
 
+open class LightExecutedScript(
+    override val name: String,
+    override val checksum: String,
+    override val identifier: String
+) : Script {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as LightExecutedScript
+
+        if (name != other.name) return false
+        if (checksum != other.checksum) return false
+        if (identifier != other.identifier) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = name.hashCode()
+        result = 31 * result + checksum.hashCode()
+        result = 31 * result + identifier.hashCode()
+        return result
+    }
+
+    override fun toString(): String {
+        return "LightExecutedScript(name='$name', checksum='$checksum', identifier='$identifier')"
+    }
+}
+
 data class ExecutedScript @JvmOverloads constructor(
         override val name: String,
         override val checksum: String,
@@ -20,7 +50,7 @@ data class ExecutedScript @JvmOverloads constructor(
         var action: ScriptAction? = null,
         val executionDurationInMillis: Long? = null,
         val executionOutput: String? = null
-) : Script {
+) : LightExecutedScript(name, checksum, identifier) {
     companion object {
         fun simulateExecuted(script: ScriptWithContent, executionStatus: ExecutionStatus) =
                 ExecutedScript(
