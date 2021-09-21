@@ -2,10 +2,7 @@ package datamaintain.db.driver.mongo
 
 import datamaintain.core.db.driver.DatamaintainDriver
 import datamaintain.core.exception.DatamaintainMongoQueryException
-import datamaintain.core.script.ExecutedScript
-import datamaintain.core.script.ExecutionStatus
-import datamaintain.core.script.FileScript
-import datamaintain.core.script.ScriptWithContent
+import datamaintain.core.script.*
 import datamaintain.core.step.executor.Execution
 import datamaintain.core.util.runProcess
 import datamaintain.db.driver.mongo.serialization.KJsonParser
@@ -80,9 +77,9 @@ class MongoDriver(mongoUri: String,
         return null
     }
 
-    override fun listExecutedScripts(): Sequence<ExecutedScript> {
-        val executionOutput: String = executeMongoQuery("db.$EXECUTED_SCRIPTS_COLLECTION.find().toArray()")
-        return if (executionOutput.isNotBlank()) jsonParser.parseArrayOfExecutedScripts(executionOutput) else emptySequence()
+    override fun listExecutedScripts(): Sequence<LightExecutedScript> {
+        val executionOutput: String = executeMongoQuery("db.$EXECUTED_SCRIPTS_COLLECTION.find({}, { \"name\": 1, \"checksum\": 1, \"identifier\": 1}).toArray()")
+        return if (executionOutput.isNotBlank()) jsonParser.parseArrayOfLightExecutedScripts(executionOutput) else emptySequence()
     }
 
     override fun markAsExecuted(executedScript: ExecutedScript): ExecutedScript {

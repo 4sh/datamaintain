@@ -1,10 +1,7 @@
 package datamaintain.db.driver.mongo
 
 import com.mongodb.client.model.Filters
-import datamaintain.core.script.ExecutedScript
-import datamaintain.core.script.ExecutionStatus
-import datamaintain.core.script.FileScript
-import datamaintain.core.script.ScriptAction
+import datamaintain.core.script.*
 import datamaintain.db.driver.mongo.serialization.ExecutedScriptDb
 import datamaintain.db.driver.mongo.serialization.toExecutedScriptDb
 import datamaintain.db.driver.mongo.test.AbstractMongoDbTest
@@ -36,7 +33,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
         // Then
         expectThat(executedScripts.toList()) {
             size.isEqualTo(2)
-            contains(script1, script2)
+            contains(lightExecutedScript1, lightExecutedScript2)
         }
     }
 
@@ -362,6 +359,18 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
             "",
             ExecutionStatus.OK,
             ScriptAction.RUN
+    )
+
+    private val lightExecutedScript1 = LightExecutedScript(
+        script1.name,
+        script1.checksum,
+        script1.identifier
+    )
+
+    private val lightExecutedScript2 = LightExecutedScript(
+        script2.name,
+        script2.checksum,
+        script2.identifier
     )
 }
 
