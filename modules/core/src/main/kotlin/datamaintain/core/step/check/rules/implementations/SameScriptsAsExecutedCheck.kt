@@ -1,13 +1,13 @@
 package datamaintain.core.step.check.rules.implementations
 
 import datamaintain.core.exception.DatamaintainCheckException
-import datamaintain.core.script.ExecutedScript
+import datamaintain.core.script.LightExecutedScript
 import datamaintain.core.script.ScriptWithContent
 import datamaintain.core.step.check.rules.ScriptType
 import datamaintain.core.step.check.rules.contracts.FullContextCheckRule
 
 class SameScriptsAsExecutedCheck(
-        executedScripts: Sequence<ExecutedScript>
+        executedScripts: Sequence<LightExecutedScript>
 ) : FullContextCheckRule(executedScripts) {
     override fun check(scripts: Sequence<ScriptWithContent>) {
         val executedScriptChecksumsNotFoundInScannedScripts = executedScripts

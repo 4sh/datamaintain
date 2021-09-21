@@ -1,6 +1,7 @@
 package datamaintain.core.db.driver
 
 import datamaintain.core.script.ExecutedScript
+import datamaintain.core.script.LightExecutedScript
 import datamaintain.core.script.ScriptWithContent
 import datamaintain.core.step.executor.Execution
 
@@ -9,7 +10,7 @@ abstract class DatamaintainDriver(protected val uri: String) {
     /**
      * Reads the executed scripts from the database and returns them
      */
-    abstract fun listExecutedScripts(): Sequence<ExecutedScript>
+    abstract fun listExecutedScripts(): Sequence<LightExecutedScript>
 
     /**
      * Executes the given script and inserts its execution in the database
