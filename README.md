@@ -133,7 +133,8 @@ Then, you may add the dependencies to ```datamaintain-core``` and the driver mod
 |---|---|---|---|---|
 | db.mongo.uri | Mongo URI to your mongo server. **Database name is mandatory.** Please see the [mongo URI documentation](https://docs.mongodb.com/manual/reference/connection-string/) to learn about writing mongo URIs. |  | yes | ```mongodb://localhost/my-db```<br />```mongodb://localhost:8000/my-db```<br />```mongodb://username:password@localhost/my-db```<br />```mongodb+srv://server.example.com/my-db``` <br />```mongodb://my-db,my-db2:27018/my-db``` <br /> |
 | db.mongo.tmp.path | Path where the driver will write temporary files. | ```/tmp/datamaintain.tmp``` | no |  |
-| db.mongo.client.path | Path or alias to your mongo executable. | ```mongo``` | no |  |
+| db.mongo.client.shell | Set if Datamaintain must use `mongo` or `mongosh` CLI. | ```mongo``` | no |  |
+| db.mongo.client.path | Path or alias to your mongo executable. | ```db.mongo.client.shell value``` | no |  |
 | db.mongo.print.output | If true, mongo output will be logged. | ```false``` | no | ```true``` or ```false``` |
 | db.mongo.save.output | If true, mongo output will be saved in script execution report.  | ```false``` | no | ```true``` or ```false``` |
 
