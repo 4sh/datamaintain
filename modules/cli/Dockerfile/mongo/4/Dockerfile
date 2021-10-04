@@ -15,6 +15,7 @@ RUN apt-get update \
     && echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/${MONGO_MAJOR} multiverse" | tee /etc/apt/sources.list.d/mongodb-org-${MONGO_MAJOR}.list \
     && apt-get update \
     && apt-get install -y ${MONGO_PACKAGE}-shell \
+    && apt-get install -y mongosh \
     && apt-get autoremove --purge -y wget gnupg \
     && rm -rf /var/lib/apt/lists/*
 
