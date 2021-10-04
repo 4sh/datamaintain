@@ -21,7 +21,8 @@ class MongoDriver(mongoUri: String,
                   private val tmpFilePath: Path,
                   private val clientPath: Path,
                   private val printOutput: Boolean,
-                  private val saveOutput: Boolean
+                  private val saveOutput: Boolean,
+                  private val mongoShell: MongoShell
 ) : DatamaintainDriver(mongoUri) {
     private val jsonParser = KJsonParser()
 
@@ -111,9 +112,22 @@ class MongoDriver(mongoUri: String,
 
     private fun executeMongoQuery(query: String): String {
         var executionOutput: String? = null
-        val exitCode = listOf(clientPath.toString(), uri, "--quiet", "--eval", query).runProcess { inputStream ->
+
+        // If Shell is mongosh we must use stringify function for obtain a correct JSON result
+        val evalQuery = if (mongoShell == MongoShell.MONGOSH) {
+            "EJSON.stringify($query)"
+        } else {
+            query
+        }
+
+        // Execute
+        val exitCode = listOf(clientPath.toString(), uri, "--quiet", "--eval", evalQuery).runProcess { inputStream ->
+            var lines = inputStream.bufferedReader().lines().toList()
+
             // Dropwhile is a workaround to fix this issue: https://jira.mongodb.org/browse/SERVER-27159
-            val lines = inputStream.bufferedReader().lines().toList().dropWhile { !(it.startsWith("[").or(it.startsWith("{"))) }
+            if (mongoShell == MongoShell.MONGO) {
+                lines = lines.dropWhile { !(it.startsWith("[").or(it.startsWith("{"))) }
+            }
 
             executionOutput = lines.joinToString("\n")
         }

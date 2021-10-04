@@ -1,7 +1,6 @@
 package datamaintain.db.driver.mongo
 
-import datamaintain.core.config.ConfigKey
-import datamaintain.core.config.getProperty
+import datamaintain.core.config.*
 import datamaintain.core.db.driver.DatamaintainDriverConfig
 import datamaintain.core.db.driver.DriverConfigKey
 import mu.KotlinLogging
@@ -13,22 +12,39 @@ private val logger = KotlinLogging.logger {}
 
 data class MongoDriverConfig @JvmOverloads constructor(val mongoUri: String,
                                                        val tmpFilePath: Path = Paths.get(MongoConfigKey.DB_MONGO_TMP_PATH.default!!),
-                                                       val clientPath: Path = Paths.get(MongoConfigKey.DB_MONGO_CLIENT_PATH.default!!),
+                                                       var clientPath: Path? = null,
                                                        val printOutput: Boolean = MongoConfigKey.DB_MONGO_PRINT_OUTPUT.default!!.toBoolean(),
                                                        val saveOutput: Boolean = MongoConfigKey.DB_MONGO_SAVE_OUTPUT.default!!.toBoolean(),
+                                                       val mongoShell: MongoShell = defaultMongoShell,
                                                        val trustUri: Boolean
 ) : DatamaintainDriverConfig(trustUri, mongoUri, MongoConnectionStringBuilder()) {
+    init {
+        if (clientPath == null) {
+            clientPath = Paths.get(mongoShell.defaultBinaryName())
+        }
+    }
+
     companion object {
+        private val defaultMongoShell = MongoShell.MONGO
+
         @JvmStatic
         fun buildConfig(props: Properties): MongoDriverConfig {
             ConfigKey.overrideBySystemProperties(props, MongoConfigKey.values().asList())
             ConfigKey.overrideBySystemProperties(props, DriverConfigKey.values().asList())
+
+            val mongoShell =
+                MongoShell.fromNullable(props.getNullableProperty(MongoConfigKey.DB_MONGO_SHELL), defaultMongoShell)
+
+            // default mongo path is mongo or mongosh (depends of mongo shell variable)
+            val mongoPath = props.getProperty(MongoConfigKey.DB_MONGO_CLIENT_PATH, mongoShell.defaultBinaryName()).let { Paths.get(it) }
+
             return MongoDriverConfig(
                     props.getProperty(MongoConfigKey.DB_MONGO_URI),
                     props.getProperty(MongoConfigKey.DB_MONGO_TMP_PATH).let { Paths.get(it) },
-                    props.getProperty(MongoConfigKey.DB_MONGO_CLIENT_PATH).let { Paths.get(it) },
+                    mongoPath,
                     props.getProperty(MongoConfigKey.DB_MONGO_PRINT_OUTPUT).toBoolean(),
                     props.getProperty(MongoConfigKey.DB_MONGO_SAVE_OUTPUT).toBoolean(),
+                    mongoShell,
                     props.getProperty(DriverConfigKey.DB_TRUST_URI).toBoolean()
             )
         }
@@ -37,9 +53,10 @@ data class MongoDriverConfig @JvmOverloads constructor(val mongoUri: String,
     override fun toDriver(connectionString: String) = MongoDriver(
             connectionString,
             tmpFilePath,
-            clientPath,
+            clientPath!!,
             printOutput,
-            saveOutput)
+            saveOutput,
+            mongoShell)
 
     override fun log() {
         logger.info { "Mongo driver configuration: " }
@@ -58,7 +75,8 @@ enum class MongoConfigKey(
 ) : ConfigKey {
     DB_MONGO_URI("db.mongo.uri"),
     DB_MONGO_TMP_PATH("db.mongo.tmp.path", "/tmp/datamaintain.tmp"),
-    DB_MONGO_CLIENT_PATH("db.mongo.client.path", "mongo"),
+    DB_MONGO_CLIENT_PATH("db.mongo.client.path"),
+    DB_MONGO_SHELL("db.mongo.client.shell", MongoShell.MONGO.name),
     DB_MONGO_PRINT_OUTPUT("db.mongo.print.output", "false"),
     DB_MONGO_SAVE_OUTPUT("db.mongo.save.output", "false"),
 }

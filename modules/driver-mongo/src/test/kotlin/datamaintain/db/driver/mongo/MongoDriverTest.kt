@@ -10,28 +10,43 @@ import datamaintain.db.driver.mongo.serialization.toExecutedScriptDb
 import datamaintain.db.driver.mongo.test.AbstractMongoDbTest
 import org.bson.Document
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.EnumSource
 import strikt.api.expectCatching
 import strikt.api.expectThat
 import strikt.assertions.*
+import java.lang.IllegalStateException
 import java.nio.file.Paths
 
 
 internal class MongoDriverTest : AbstractMongoDbTest() {
     private val mongoDatamaintainDriver = MongoDriver(
-            mongoUri,
-            Paths.get(MongoConfigKey.DB_MONGO_TMP_PATH.default!!),
-            Paths.get("mongo"),
-            printOutput = false,
-            saveOutput = false
+        mongoUri,
+        Paths.get(MongoConfigKey.DB_MONGO_TMP_PATH.default!!),
+        Paths.get("mongo"),
+        printOutput = false,
+        saveOutput = false,
+        mongoShell = MongoShell.MONGO
     )
 
-    @Test
-    fun `should list scripts in db`() {
+    private val mongoshDatamaintainDriver = MongoDriver(
+        mongoUri,
+        Paths.get(MongoConfigKey.DB_MONGO_TMP_PATH.default!!),
+        Paths.get("mongosh"),
+        printOutput = false,
+        saveOutput = false,
+        mongoShell = MongoShell.MONGOSH
+    )
+
+    @ParameterizedTest
+    @EnumSource(value = MongoShell::class)
+    fun `should list scripts in db`(mongoShell: MongoShell) {
         // Given
+        val mongoDriver: MongoDriver = mongoShellToDriver(mongoShell)
         insertDataInDb()
 
         // When
-        val executedScripts = mongoDatamaintainDriver.listExecutedScripts()
+        val executedScripts = mongoDriver.listExecutedScripts()
 
         // Then
         expectThat(executedScripts.toList()) {
@@ -40,9 +55,11 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
         }
     }
 
-    @Test
-    fun `should mark script as executed`() {
+    @ParameterizedTest
+    @EnumSource(value = MongoShell::class)
+    fun `should mark script as executed`(mongoShell: MongoShell) {
         // Given
+        val mongoDriver: MongoDriver = mongoShellToDriver(mongoShell)
         insertDataInDb()
         val script3 = ExecutedScript(
                 "script3.js",
@@ -88,9 +105,11 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
                 }
     }
 
-    @Test
-    fun `should override script`() {
+    @ParameterizedTest
+    @EnumSource(value = MongoShell::class)
+    fun `should override script`(mongoShell: MongoShell) {
         // Given
+        val mongoDriver: MongoDriver = mongoShellToDriver(mongoShell)
         insertDataInDb()
         val script3 = ExecutedScript(
                 "script1.js",
@@ -127,9 +146,11 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
                 }
     }
 
-    @Test
-    fun `should execute correct file script`() {
+    @ParameterizedTest
+    @EnumSource(value = MongoShell::class)
+    fun `should execute correct file script`(mongoShell: MongoShell) {
         // Given
+        val mongoDriver: MongoDriver = mongoShellToDriver(mongoShell)
         database.getCollection("simple").drop()
         val fileScript = FileScript(
                 Paths.get("src/test/resources/executor_test_files/mongo/mongo_simple_insert.js"),
@@ -168,7 +189,8 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
                 Paths.get(MongoConfigKey.DB_MONGO_TMP_PATH.default!!),
                 Paths.get("mongo"),
                 printOutput = true,
-                saveOutput = true
+                saveOutput = true,
+                mongoShell = MongoShell.MONGO
         )
 
         // When
@@ -188,7 +210,8 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
                 Paths.get(MongoConfigKey.DB_MONGO_TMP_PATH.default!!),
                 Paths.get("mongo"),
                 printOutput = false,
-                saveOutput = true
+                saveOutput = true,
+                mongoShell = MongoShell.MONGO
         )
         val script3 = ExecutedScript(
                 "script3.js",
@@ -270,7 +293,8 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
                 Paths.get(MongoConfigKey.DB_MONGO_TMP_PATH.default!!),
                 Paths.get("mongo"),
                 printOutput = false,
-                saveOutput = true
+                saveOutput = true,
+                mongoShell = MongoShell.MONGO
         )
         val fileScript = FileScript(Paths.get("src/test/resources/executor_test_files/mongo/mongo_print_too_many_logs.js"),
                 Regex("(.*)"))
@@ -291,11 +315,12 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
     fun `should not throw exception when inserting in database execution of a scripts that logs too much`() {
         // Given
         val mongoDatamaintainDriver = MongoDriver(
-                mongoUri,
-                Paths.get(MongoConfigKey.DB_MONGO_TMP_PATH.default!!),
-                Paths.get("mongo"),
-                printOutput = false,
-                saveOutput = true
+            mongoUri,
+            Paths.get(MongoConfigKey.DB_MONGO_TMP_PATH.default!!),
+            Paths.get("mongo"),
+            printOutput = false,
+            saveOutput = true,
+            mongoShell = MongoShell.MONGO
         )
         val fileScript = FileScript(Paths.get("src/test/resources/executor_test_files/mongo/mongo_print_too_many_logs.js"),
                 Regex("(.*)"))
@@ -363,5 +388,13 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
             ExecutionStatus.OK,
             ScriptAction.RUN
     )
+
+    private fun mongoShellToDriver(mongoShell: MongoShell): MongoDriver {
+        return when(mongoShell) {
+            MongoShell.MONGO -> mongoDatamaintainDriver
+            MongoShell.MONGOSH -> mongoshDatamaintainDriver
+            else -> throw IllegalStateException("Cannot found driver for ${mongoShell.name}")
+        }
+    }
 }
 
