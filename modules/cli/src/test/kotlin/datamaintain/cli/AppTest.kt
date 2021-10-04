@@ -9,6 +9,7 @@ import datamaintain.core.script.TagMatcher
 import datamaintain.core.step.check.rules.implementations.SameScriptsAsExecutedCheck
 import datamaintain.core.step.executor.ExecutionMode
 import datamaintain.db.driver.mongo.MongoDriverConfig
+import datamaintain.db.driver.mongo.MongoShell
 import datamaintain.test.execAppInSubprocess
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
@@ -435,6 +436,25 @@ internal class AppTest {
                         expectThat((configWrapper.datamaintainConfig!!.driverConfig) as MongoDriverConfig)
                                 .get { printOutput }
                                 .isFalse()
+                    }
+                }
+
+                @Nested
+                inner class MongoSh {
+                    @Test
+                    fun `should build config with mongosh`() {
+                        // Given
+                        val argv = updateMongoDbMinimumArguments().plus("--mongo-shell").plus("mongosh")
+
+                        // When
+                        runApp(argv)
+
+                        // Then
+                        expectThat((configWrapper.datamaintainConfig!!.driverConfig) as MongoDriverConfig)
+                            .and {
+                                get { mongoShell }.isEqualTo(MongoShell.MONGOSH)
+                                get { clientPath }.isEqualTo(Paths.get("mongosh"))
+                            }
                     }
                 }
             }

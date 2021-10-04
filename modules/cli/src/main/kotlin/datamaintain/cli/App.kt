@@ -17,6 +17,7 @@ import datamaintain.core.step.check.allCheckRuleNames
 import datamaintain.core.step.executor.ExecutionMode
 import datamaintain.db.driver.mongo.MongoConfigKey
 import datamaintain.db.driver.mongo.MongoDriverConfig
+import datamaintain.db.driver.mongo.MongoShell
 import mu.KotlinLogging
 import java.io.File
 import java.util.*
@@ -93,6 +94,8 @@ class UpdateDb(val runner: (DatamaintainConfig) -> Unit = ::defaultUpdateDbRunne
 
     private val mongoPrintOutput: Boolean? by option(help = "print mongo output").flag()
 
+    private val mongoShell: String? by option(help = "mongo binary, can be mongo or mongosh. mongo by default").choice(MongoShell.values().map { it.name }.map{ it.toLowerCase() }.map { it to it }.toMap())
+
     private val props by requireObject<Properties>()
 
     private val tagsMatchers: List<Pair<String, String>>? by option("--tag", help = "Tag defined using glob path matchers. " +
@@ -155,6 +158,7 @@ class UpdateDb(val runner: (DatamaintainConfig) -> Unit = ::defaultUpdateDbRunne
         verbose?.let { props.put(CoreConfigKey.VERBOSE.key, it.toString()) }
         mongoSaveOutput?.let { props.put(MongoConfigKey.DB_MONGO_SAVE_OUTPUT.key, it.toString()) }
         mongoPrintOutput?.let { props.put(MongoConfigKey.DB_MONGO_PRINT_OUTPUT.key, it.toString()) }
+        mongoShell?.let { props.put(MongoConfigKey.DB_MONGO_SHELL.key, it.toUpperCase()) }
         executionMode?.let { props.put(CoreConfigKey.EXECUTION_MODE.key, it) }
         action?.let { props.put(CoreConfigKey.DEFAULT_SCRIPT_ACTION.key, it) }
         tagsMatchers?.forEach {
