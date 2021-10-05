@@ -1,43 +1,40 @@
 # How to ensure safe update ?
 
-To manage update you need to split this operation in two. An update is a composition of an adding and a deletion.
+To manage update you need to split this operation in two. An update is a composition of an add and a deletion.
 
 ## Rename property/column
 
-Here the scenario if you want to rename property/column `name` into `lastname` :
+Say you want to rename the property/column `name` `lastname`
 - In V+1 :
-  - create a BEFORE script that add a property/column `lastname` with null value/constraint.
-  - update the code to write both on `name` and `lastname`.
-    - do not read the new property/column `lastname`. Keep reading for `name`.
+  - create a BEFORE script that adds a property/column `lastname` with null value/constraint.
+  - update the code to **write** to also update `lastname` everytime `name` is updated.
+    :warning: do not read the new property/column `lastname`. Keep reading `name`.
 - In V+2 :
-  - create a BEFORE script that copy `name` value on `lastname` for entries having `lastName` null.
-  - update the code to read and write only `lastname`.
-    - so `name` becomes unnecessary.
-  - create an AFTER script that remove the property/column `name`.
+  - create a BEFORE script that copies `name` value in `lastname` for entries that have a null `lastName`.
+  - update the code to read and write only `lastname`. `name` now becomes unnecessary
+  - create an AFTER script that removes the property/column `name`.
   - if your db has schema and `lastname` is mandatory, create an AFTER script to add non-null constraint.
   
 **Note :** if your db manages triggers, you can use them to ensure both column are synchronized.
 
-## Rename value
+## Rename enum value
 
-Here the scenario if you want to rename possible value from `ENDED` into `DONE` :
+Say you want to rename enum value `ENDED` `DONE` :
 - In V+1 :
-  - create a BEFORE script that add `DONE` as value in your schema.
-  - add the value `DONE` as a possible value in your code (you maybe have an enum to manage these possible values).
-    - do not use the `DONE` value for now.
+  - create a BEFORE script that adds `DONE` as a possible value in your schema.
+  - add the value `DONE` as a possible value in your code (you maybe have an enum to manage these possible values). :warning: Do not use the `DONE` value for now.
 - In V+2 :
-  - Update your code to write only `DONE` in db
-    - you need to continue to manage `ENDED` as possible value on read
+  - Update your code to write `DONE` instead of `ENDED` in db. :warning: You need to continue to consider `ENDED` as a possible value
 - In V+3 :
-  - create a BEFORE script to update all entries using `ENDED` to replace it with `DONE`.
+  - create a BEFORE script to replace `ENDED` with `DONE` everywhere
   - update the code to remove `ENDED` value.
   - if your db has schema, create an AFTER script to remove `ENDED` as possible value.
   
 
-## Update type
+## Update type or format
 
-To proceed to an update type we can perform :
-- add a new temporary property from the one we want to rename
+To change a property type or format:
+- add a new temporary property with the value corresponding to the new type or format
 - remove the original property
 - rename the temporary property with the good name 
 
