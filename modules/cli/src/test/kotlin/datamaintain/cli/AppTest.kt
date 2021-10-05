@@ -440,7 +440,23 @@ internal class AppTest {
                 }
 
                 @Nested
-                inner class MongoSh {
+                inner class MongoShellConfig {
+                    @Test
+                    fun `should build config with mongo`() {
+                        // Given
+                        val argv = updateMongoDbMinimumArguments().plus("--mongo-shell").plus("mongo")
+
+                        // When
+                        runApp(argv)
+
+                        // Then
+                        expectThat((configWrapper.datamaintainConfig!!.driverConfig) as MongoDriverConfig)
+                            .and {
+                                get { mongoShell }.isEqualTo(MongoShell.MONGO)
+                                get { clientPath }.isEqualTo(Paths.get("mongo"))
+                            }
+                    }
+
                     @Test
                     fun `should build config with mongosh`() {
                         // Given
