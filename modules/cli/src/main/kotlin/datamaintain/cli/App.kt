@@ -65,7 +65,7 @@ class App : CliktCommand() {
 }
 
 private fun defaultUpdateDbRunner(config: DatamaintainConfig) {
-    Datamaintain(config).updateDatabase().print(config.verbose)
+    Datamaintain(config).updateDatabase().print(config.verbose, config.porcelain)
 }
 
 class UpdateDb(val runner: (DatamaintainConfig) -> Unit = ::defaultUpdateDbRunner) : CliktCommand(name = "update-db") {
@@ -126,7 +126,7 @@ class UpdateDb(val runner: (DatamaintainConfig) -> Unit = ::defaultUpdateDbRunne
             val porcelain: Boolean = config?.porcelain ?: false
 
             echo("Error at step ${e.step}", err = true)
-            e.report.print(verbose)
+            e.report.print(verbose, porcelain)
             echo("")
             echo(e.message, err = true)
 

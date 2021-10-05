@@ -40,15 +40,15 @@ internal class ReportTest {
             )
 
             // When
-            report.print(verbose = true)
+            report.print(verbose = true, porcelain = true)
 
             // Then
             expectThat(testAppender.events) {
-                get { get(6).message }.isEqualTo(
-                    " -> script1 - porcelainName1"
+                get { get(0).message }.isEqualTo(
+                    "porcelainName1"
                 )
-                get { get(7).message }.isEqualTo(
-                    " -> script2 - porcelainName2"
+                get { get(1).message }.isEqualTo(
+                    "porcelainName2"
                 )
             }
         }

@@ -15,46 +15,48 @@ class Report @JvmOverloads constructor(
         val executedScripts: List<ReportExecutedScript> = listOf(),
         val validatedCheckRules: List<CheckRule> = listOf()
 ) {
-    fun print(verbose: Boolean) {
+    fun print(verbose: Boolean, porcelain: Boolean = false) {
         val stepWithMaxExecutionOrder: Step = Step.values().asSequence().maxBy { step -> step.executionOrder }!!
-        print(verbose, stepWithMaxExecutionOrder)
+        print(verbose, porcelain, stepWithMaxExecutionOrder)
     }
 
-    fun print(verbose: Boolean, maxStepToShow: Step) {
-        logger.info { "Summary => " }
+    fun print(verbose: Boolean, porcelain: Boolean, maxStepToShow: Step) {
+        if (!porcelain) {
+            logger.info { "Summary => " }
 
-        // Scanner
-        logger.info { "- ${scannedScripts.size} files scanned" }
-        if (verbose) {
-            scannedScripts.forEach {logger.info { " -> ${it.name}" }}
-        }
-
-        if (Step.FILTER.isSameStepOrExecutedBefore(maxStepToShow)) {
-            logger.info { "- ${filteredScripts.size} files filtered" }
+            // Scanner
+            logger.info { "- ${scannedScripts.size} files scanned" }
             if (verbose) {
-                filteredScripts.forEach { logger.info { " -> ${it.name}" } }
+                scannedScripts.forEach {logger.info { " -> ${it.name}" }}
             }
-        }
 
-        if (Step.PRUNE.isSameStepOrExecutedBefore(maxStepToShow)) {
-            logger.info { "- ${prunedScripts.size} files pruned" }
-            if (verbose) {
-                prunedScripts.forEach { logger.info { " -> ${it.name}" } }
+            if (Step.FILTER.isSameStepOrExecutedBefore(maxStepToShow)) {
+                logger.info { "- ${filteredScripts.size} files filtered" }
+                if (verbose) {
+                    filteredScripts.forEach { logger.info { " -> ${it.name}" } }
+                }
             }
-        }
 
-        if (Step.CHECK.isSameStepOrExecutedBefore(maxStepToShow)) {
-            logger.info { "- ${validatedCheckRules.size} check rules validated" }
-            if (verbose) {
-                validatedCheckRules.forEach { logger.info { " -> ${it.getName()}" } }
+            if (Step.PRUNE.isSameStepOrExecutedBefore(maxStepToShow)) {
+                logger.info { "- ${prunedScripts.size} files pruned" }
+                if (verbose) {
+                    prunedScripts.forEach { logger.info { " -> ${it.name}" } }
+                }
+            }
+
+            if (Step.CHECK.isSameStepOrExecutedBefore(maxStepToShow)) {
+                logger.info { "- ${validatedCheckRules.size} check rules validated" }
+                if (verbose) {
+                    validatedCheckRules.forEach { logger.info { " -> ${it.getName()}" } }
+                }
             }
         }
 
         if (Step.EXECUTE.isSameStepOrExecutedBefore(maxStepToShow)) {
-            logger.info { "- ${executedScripts.size} files executed" }
+            if (!porcelain) { logger.info { "- ${executedScripts.size} files executed" } }
             executedScripts.forEach {
                 logger.info {
-                    " -> ${it.name}" + if (it.porcelainName != null) { " - ${it.porcelainName}" } else { "" }
+                    if (!porcelain) { " -> ${it.name}" } else { "${it.porcelainName}" }
                 }
             }
         }
