@@ -33,7 +33,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
         // Then
         expectThat(executedScripts.toList()) {
             size.isEqualTo(2)
-            contains(lightExecutedScript1, lightExecutedScript2)
+            contains(script1.toLightExecutedScript(), script2.toLightExecutedScript())
         }
     }
 
@@ -360,17 +360,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
             ExecutionStatus.OK,
             ScriptAction.RUN
     )
-
-    private val lightExecutedScript1 = LightExecutedScript(
-        script1.name,
-        script1.checksum,
-        script1.identifier
-    )
-
-    private val lightExecutedScript2 = LightExecutedScript(
-        script2.name,
-        script2.checksum,
-        script2.identifier
-    )
 }
+
+private fun ExecutedScript.toLightExecutedScript(): LightExecutedScript = LightExecutedScript(name, checksum, identifier)
 

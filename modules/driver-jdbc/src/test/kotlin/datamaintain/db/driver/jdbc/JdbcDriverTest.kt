@@ -42,7 +42,7 @@ internal class JdbcDriverTest {
         val executedScripts = jdbcDatamaintainDriver.listExecutedScripts()
 
         // Then
-        expectThat(executedScripts.toList()).containsExactlyInAnyOrder(lightScript1, lightScript2)
+        expectThat(executedScripts.toList()).containsExactlyInAnyOrder(script1.toLightExecutedScript(), script2.toLightExecutedScript())
     }
 
     @Test
@@ -58,19 +58,13 @@ internal class JdbcDriverTest {
                 executionDurationInMillis = 0
         )
 
-        val lightScript3 = LightExecutedScript(
-            script3.name,
-            script3.checksum,
-            script3.identifier
-        )
-
         // When
         jdbcDatamaintainDriver.markAsExecuted(script3)
 
         // Then
 
         expectThat(jdbcDatamaintainDriver.listExecutedScripts().toList())
-                .containsExactlyInAnyOrder(lightScript1, lightScript2, lightScript3)
+                .containsExactlyInAnyOrder(script1.toLightExecutedScript(), script2.toLightExecutedScript(), script3.toLightExecutedScript())
     }
 
     @Nested
@@ -141,16 +135,14 @@ internal class JdbcDriverTest {
                 executionStatus = ExecutionStatus.OK,
                 action = ScriptAction.OVERRIDE_EXECUTED)
 
-        val lightScript3 = LightExecutedScript(script3.name, script3.checksum, script3.identifier)
-
         // When
         jdbcDatamaintainDriver.overrideScript(script3)
 
         // Then
         expectThat(jdbcDatamaintainDriver.listExecutedScripts().toList())
                 .containsExactlyInAnyOrder(
-                        lightScript3,
-                        lightScript2
+                        script3.toLightExecutedScript(),
+                        script2.toLightExecutedScript()
                 )
     }
 
@@ -172,18 +164,6 @@ internal class JdbcDriverTest {
             0
     )
 
-    private val lightScript1 = LightExecutedScript(
-        script1.name,
-        script1.checksum,
-        script1.identifier
-    )
-
-    private val lightScript2 = LightExecutedScript(
-        script2.name,
-        script2.checksum,
-        script2.identifier
-    )
-
     private fun insertDataInDb() {
         connection.prepareStatement("""
             INSERT INTO ${JdbcDriver.EXECUTED_SCRIPTS_TABLE} (
@@ -195,4 +175,6 @@ internal class JdbcDriverTest {
     }
 
 }
+
+private fun ExecutedScript.toLightExecutedScript(): LightExecutedScript = LightExecutedScript(name, checksum, identifier)
 
