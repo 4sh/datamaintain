@@ -16,7 +16,7 @@ In V+1 :
 - In V+1 :
   - update the code to mark this property/column as deprecated.
   - update the code to stop the reads on this property/column.
-    - no code must use this property/column for treatment.
+    - no code must use this property/column value.
     - keep writing this property/column for backward compatibility with version **V**
 - In V+2, the property is no longer used because you made sure of it in version **V+1**. You may then follow the [deletion process for an unused property/column](delete.md/#unused-property-or-column)
 
