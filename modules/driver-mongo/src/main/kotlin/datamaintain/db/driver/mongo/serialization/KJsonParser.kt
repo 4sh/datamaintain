@@ -28,11 +28,6 @@ fun LightExecutedScriptDb.toLightExecutedScript() = LightExecutedScript(
     checksum,
     identifier
 )
-fun LightExecutedScript.toLightExecutedScriptDb() = LightExecutedScriptDb(
-    name = name,
-    checksum = checksum,
-    identifier = identifier
-)
 
 // Copy of ExecutedScript, this is aim for add the Serializable annotation
 // Annotation allow to serialize/deserialize this object to/from a bson document (support json only)
@@ -71,13 +66,6 @@ class KJsonParser: ExecutedScriptJsonParser, LightExecutedScriptJsonParser {
     val configuration = JsonConfiguration.Stable.copy(ignoreUnknownKeys = true)
     private val mapper = Json(configuration)
 
-    override fun parseArrayOfExecutedScripts(executedScriptJsonArray: String): Sequence<ExecutedScript> {
-
-        return mapper.parse(ExecutedScriptDb.serializer().list, executedScriptJsonArray)
-                .map { it.toExecutedScript() }
-                .asSequence()
-    }
-
     override fun serializeExecutedScript(executedScript: ExecutedScript): String {
         val executedScriptDb = executedScript.toExecutedScriptDb()
 
@@ -88,11 +76,5 @@ class KJsonParser: ExecutedScriptJsonParser, LightExecutedScriptJsonParser {
         return mapper.parse(LightExecutedScriptDb.serializer().list, lightExecutedScriptJsonArray)
             .map { it.toLightExecutedScript() }
             .asSequence()
-    }
-
-    override fun serializeLightExecutedScript(lightExecutedScript: LightExecutedScript): String {
-        val lightExecutedScriptDb = lightExecutedScript.toLightExecutedScriptDb()
-
-        return mapper.stringify(LightExecutedScriptDb.serializer(), lightExecutedScriptDb)
     }
 }
