@@ -38,40 +38,37 @@ To change a property type or format:
 - remove the original property
 - rename the temporary property with the good name 
 
-Here the scenario if you want to change type of property `age` from A to B :
+Say you want to change of property `age` to store it as a number instead of a string:
 - In V+1 :
-  - create a BEFORE script that add a new field `ageTmp` (choose the name you want) of type B.
-  - update the code to write both on `age` and `ageTmp`.
-    - do not read the new property/column `ageTmp`. Keep reading for `age`.
+  - create a BEFORE script that adds a new field, for example `ageTmp`, of type `int`.
+  - update the code to write both `age`, with the string value, and `ageTmp`, with the number value. :warning: Do not read the new property/column `ageTmp`. Keep reading `age`.
 - In V+2 :
-  - create a BEFORE script that copy `age` value on `ageTmp` for entries having `ageTmp` null.
+  - create a BEFORE script that copies `age` value as a number in `ageTmp` for entries with null `ageTmp`.
   - update the code to read and write only `ageTmp`.
-    - so `age` becomes unnecessary.
-  - create an AFTER script that remove the property/column `age`.
+    `age` now becomes unnecessary.
+  - create an AFTER script that removes the property/column `age`.
 - In V+3 :
-  - create a BEFORE script that add a new field `age` of type B.
-  - update the code to write both on `age` and `ageTmp`.
-    - do not read the new property/column `age`. Keep reading for `ageTmp`.
+  - create a BEFORE script that adds a new nullable field `age` of type `int`.
+  - update the code to write both `age` and `ageTmp` with the number value. :warning: Do not read the new property/column `age`. Keep reading `ageTmp`.
 - In V+4 :
-  - create a BEFORE script that copy `ageTmp` value on `age` for entries having `age` null.
+  - create a BEFORE script that copies `ageTmp` value in `age` for entries having `age` null.
   - update the code to read and write only `age`.
-    - so `ageTmp` becomes unnecessary.
-  - create an AFTER script that remove the property/column `ageTmp`.
+    `ageTmp` now becomes unnecessary.
+  - create an AFTER script that removes the property/column `ageTmp`.
   - if your db has schema and `age` is mandatory, create an AFTER script to add non-null constraint.
 
 This scenario can be simplified if you have a schema-less database :
 - In V+1 :
-  - create a BEFORE script that add a new field `ageTmp` (choose the name you want) of type B.
-  - update the code to write both on `age` and `ageTmp`.
-    - do not read the new property/column `ageTmp`. Keep reading for `age`.
+  - create a BEFORE script that adds a new field, for example `ageTmp`.
+  - update the code to write both `age`, with the string value, and `ageTmp`, with the int value. :warning: Do not read the new property/column `ageTmp`. Keep reading `age`.
 - In V+2 :
-  - create a BEFORE script that copy `age` value on `ageTmp` for entries having `ageTmp` null.
-  - update the code to read only `ageTmp`. Keep writing both `ageTmp` and `age`.
-  - create an AFTER script that copy `ageTmp` onto `age`.
+  - create a BEFORE script that copies `age` value as a number in `ageTmp` for entries having null `ageTmp`.
+  - update the code to only read `ageTmp`. Keep writing both `ageTmp` and `age` to ensure backward compatibility with **V+1**
+  - create an AFTER script that copies `ageTmp` onto `age`.
 - In V+3 :
   - Update the code to read and write only `age`.
-    - so `ageTmp` becomes unnecessary.
-  - create an AFTER script that remove the property/column `ageTmp`.
+    `ageTmp` now becomes unnecessary.
+  - create an AFTER script that removes the property/column `ageTmp`.
   - if your db has schema and `age` is mandatory, create an AFTER script to add non-null constraint.
   
 ## Rename collection/table
