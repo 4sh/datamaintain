@@ -94,7 +94,8 @@ class UpdateDb(val runner: (DatamaintainConfig) -> Unit = ::defaultUpdateDbRunne
 
     private val mongoPrintOutput: Boolean? by option(help = "print mongo output").flag()
 
-    private val mongoShell: String? by option(help = "mongo binary, can be mongo or mongosh. mongo by default").choice(MongoShell.values().map { it.name }.map{ it.toLowerCase() }.map { it to it }.toMap())
+    private val mongoShell: String? by option(help = "mongo binary, can be mongo or mongosh. mongo by default")
+        .choice(MongoShell.values().map { it.name }.map { it.toLowerCase() }.associateWith { it })
 
     private val props by requireObject<Properties>()
 
