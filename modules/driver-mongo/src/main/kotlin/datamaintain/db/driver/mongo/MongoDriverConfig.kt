@@ -15,7 +15,7 @@ data class MongoDriverConfig @JvmOverloads constructor(val mongoUri: String,
                                                        var clientPath: Path? = null,
                                                        val printOutput: Boolean = MongoConfigKey.DB_MONGO_PRINT_OUTPUT.default!!.toBoolean(),
                                                        val saveOutput: Boolean = MongoConfigKey.DB_MONGO_SAVE_OUTPUT.default!!.toBoolean(),
-                                                       val mongoShell: MongoShell = defaultMongoShell,
+                                                       val mongoShell: MongoShell = DEFAULT_MONGO_SHELL,
                                                        val trustUri: Boolean
 ) : DatamaintainDriverConfig(trustUri, mongoUri, MongoConnectionStringBuilder()) {
     init {
@@ -25,7 +25,7 @@ data class MongoDriverConfig @JvmOverloads constructor(val mongoUri: String,
     }
 
     companion object {
-        private val defaultMongoShell = MongoShell.MONGO
+        val DEFAULT_MONGO_SHELL = MongoShell.MONGO
 
         @JvmStatic
         fun buildConfig(props: Properties): MongoDriverConfig {
@@ -33,7 +33,7 @@ data class MongoDriverConfig @JvmOverloads constructor(val mongoUri: String,
             ConfigKey.overrideBySystemProperties(props, DriverConfigKey.values().asList())
 
             val mongoShell =
-                MongoShell.fromNullable(props.getNullableProperty(MongoConfigKey.DB_MONGO_SHELL), defaultMongoShell)
+                MongoShell.fromNullable(props.getNullableProperty(MongoConfigKey.DB_MONGO_SHELL), DEFAULT_MONGO_SHELL)
 
             // default mongo path is mongo or mongosh (depends of mongo shell variable)
             val mongoPath = props.getProperty(MongoConfigKey.DB_MONGO_CLIENT_PATH, mongoShell.defaultBinaryName()).let { Paths.get(it) }
@@ -76,7 +76,7 @@ enum class MongoConfigKey(
     DB_MONGO_URI("db.mongo.uri"),
     DB_MONGO_TMP_PATH("db.mongo.tmp.path", "/tmp/datamaintain.tmp"),
     DB_MONGO_CLIENT_PATH("db.mongo.client.path"),
-    DB_MONGO_SHELL("db.mongo.client.shell", MongoShell.MONGO.name),
+    DB_MONGO_SHELL("db.mongo.client.shell", MongoDriverConfig.DEFAULT_MONGO_SHELL.name),
     DB_MONGO_PRINT_OUTPUT("db.mongo.print.output", "false"),
     DB_MONGO_SAVE_OUTPUT("db.mongo.save.output", "false"),
 }
