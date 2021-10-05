@@ -76,14 +76,14 @@ This scenario can be simplified if you have a schema-less database :
   
 ## Rename collection/table
 
-Here the scenario if you want to rename collection/table/view `users` into `persons` :
+Say you want to rename collection/table/view `users` into `persons` :
 - In V+1 :
-  - create a BEFORE script that add a collection/table `persons`.
-  - update the code to write both on `users` and `persons`.
-    - keep reading from `users` only.
+  - create a BEFORE script that adds a collection/table `persons`.
+  - update the code to write both on `users` and `persons`. 
+    keep reading from `users` only.
 - In V+2 :
-  - create a BEFORE script that copy all none existing entries from `users` into `persons`.
+  - create a BEFORE script that copies in `persons` all missing entries from `users`
   - update the code to read and write to `persons` and remove all code relative to `users`.
-  - create an AFTER script that remove the collection/table `users`.
+  - create an AFTER script that removes the collection/table `users`.
 
 **Note :** if your db manages triggers, you can use them to ensure both column are synchronized.
