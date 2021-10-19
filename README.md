@@ -127,6 +127,8 @@ Then, you may add the dependencies to ```datamaintain-core``` and the driver mod
 | prune.scripts.override.executed | Allow datamaintain to override a script if it detect a checksum change on a script already runned (assuming its filename) | ```false``` | no | ```true``` or ```false``` |
 | db.trust.uri | Bypass all checks that could be done on your URI because you are very sure of it and think our checks are just liars | ```false``` | no | ```true``` or ```false``` |
 | porcelain | For each executed script, print path relative to scan path | ```false``` | no | ```true``` or ```false``` |
+
+Remarque : verbose et porcelain ne sont pas censées être utilisées en même temps. Dans le cas contraire, porcelain prend la priorité sur verbose.
 ### Mongo driver configuration
 
 | Key | Description | Default value | Mandatory? | Values examples |
