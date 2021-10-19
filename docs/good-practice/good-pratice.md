@@ -89,15 +89,24 @@ by knowing it explicitly.
 
 ### Common
 
+#### Performances
+A BEFORE script taking a while to be executed can delay the delivery, so try to anticipate that.
+
+#### Replayability
+Try to have scripts that can be played many times. Indeed, even if you have taken all the precautions, the execution 
+of your script can fail (for many reasons). So it is more comfortable to have a replayable script.
+
 ### SQL
 
-**Avoid SELECT * because of prepared statement**: 
+####Avoid SELECT * in your code 
+If requests having `SELECT *` use prepare statement then when the schema will change your request will fail. 
+See [presentation by Nelson Dionisi](#nelson_dionisi_pres) for more details.
 
 ### NoSQL
 
 ## References
 
-- https://www.youtube.com/watch?v=OKT2GSUg3dk : Excellent presentation by Nelson Dionisi from Mirakl that explains how 
+- <a name="nelson_dionisi_pres">https://www.youtube.com/watch?v=OKT2GSUg3dk</a> : Excellent presentation by Nelson Dionisi from Mirakl that explains how 
 Mirakl manage this problem.
   
 - https://www.youtube.com/watch?v=zpM-lIRscXM : Thorben Janssen summarises strategies for each operation
