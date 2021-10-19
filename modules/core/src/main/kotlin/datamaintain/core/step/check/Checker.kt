@@ -2,7 +2,6 @@ package datamaintain.core.step.check
 
 import datamaintain.core.Context
 import datamaintain.core.exception.DatamaintainBaseException
-import datamaintain.core.exception.DatamaintainCheckException
 import datamaintain.core.exception.DatamaintainCheckRuleNotFoundException
 import datamaintain.core.exception.DatamaintainException
 import datamaintain.core.script.ScriptWithContent
@@ -26,7 +25,7 @@ val allCheckRuleNames: Sequence<String> = sequenceOf(
 class Checker(private val context: Context) {
     fun check(checkedData: CheckerData): List<ScriptWithContent> {
         try {
-            logger.info { "Check scripts..." }
+            if (!context.config.porcelain) { logger.info { "Check scripts..." } }
 
             // we want to ensure all rule can be built before to launch the first check,
             // so end the sequence stream by building a list.
@@ -38,9 +37,10 @@ class Checker(private val context: Context) {
             rules.onEach { executeRule(it, checkedData) }
                 .forEach { context.reportBuilder.addValidatedCheckRules(it) }
 
-            logger.info { "All check rules were executed!" }
-            logger.info { "" }
-
+            if (!context.config.porcelain) {
+                logger.info { "All check rules were executed!" }
+                logger.info { "" }
+            }
             // Checker doesn't have responsability to add or remove script.
             // So if all checks passed then return the prunedScripts
             return checkedData.prunedScripts.toList()
@@ -68,7 +68,7 @@ class Checker(private val context: Context) {
     }
 
      private fun executeRule(checkRule: CheckRule, checkerData: CheckerData) {
-         logger.info { "Execute ${checkRule.getName()}" }
+         if (!context.config.porcelain) { logger.info { "Execute ${checkRule.getName()}" } }
 
          val scripts = getScriptsFromCheckerDataByType(checkerData, checkRule.scriptType())
 
@@ -84,7 +84,7 @@ class Checker(private val context: Context) {
              }
          }
 
-         logger.info { "${checkRule.getName()} executed" }
+         if (!context.config.porcelain) { logger.info { "${checkRule.getName()} executed" } }
      }
 
     private fun getScriptsFromCheckerDataByType(checkerData: CheckerData, scriptType: ScriptType): Sequence<ScriptWithContent> {

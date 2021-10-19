@@ -7,7 +7,6 @@ import datamaintain.core.exception.DatamaintainException
 import datamaintain.core.script.FileScript
 import datamaintain.core.script.ScriptWithContent
 import datamaintain.core.script.Tag
-import datamaintain.core.util.extractRelativePath
 import mu.KotlinLogging
 import java.io.File
 import java.nio.file.Path
@@ -18,25 +17,25 @@ class Scanner(private val context: Context) {
     fun scan(): List<ScriptWithContent> {
         try {
             val rootFolder: File = context.config.path.toFile()
-            logger.info { "Scan ${rootFolder.absolutePath}..." }
+            if (!context.config.porcelain) { logger.info { "Scan ${rootFolder.absolutePath}..." } }
             val scannedFiles = rootFolder.walk()
                     .filter { it.isFile }
                     .map { FileScript.from(context.config, buildTags(context.config, rootFolder, it).toSet(), it) }
                     .sortedBy { it.name }
                     .onEach { context.reportBuilder.addScannedScript(it) }
                     .onEach {
-                        if (context.config.verbose) {
+                        if (context.config.verbose && !context.config.porcelain) {
                             logger.info { "${it.name} is scanned" }
                         }
                     }
                     .toList()
-            logger.info { "${scannedFiles.size} files scanned" }
+            if (!context.config.porcelain) { logger.info { "${scannedFiles.size} files scanned" } }
             context.config.tagsMatchers.onEach { tagMatcher ->
                 if (scannedFiles.none { it.tags.contains(tagMatcher.tag) }) {
-                    logger.warn {"WARNING: ${tagMatcher.tag} did not match any scripts"}
+                    if (!context.config.porcelain) { logger.warn {"WARNING: ${tagMatcher.tag} did not match any scripts"} }
                 }
             }
-            logger.info { "" }
+            if (!context.config.porcelain) { logger.info { "" } }
             return scannedFiles
         } catch (datamaintainException: DatamaintainBaseException) {
             throw DatamaintainException(

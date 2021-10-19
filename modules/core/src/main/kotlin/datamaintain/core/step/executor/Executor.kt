@@ -15,7 +15,7 @@ private val logger = KotlinLogging.logger {}
 class Executor(private val context: Context) {
 
     fun execute(scripts: List<ScriptWithContent>): Report {
-        logger.info { "Executes scripts.." }
+        if (!context.config.porcelain) { logger.info { "Executes scripts.." } }
         try {
             for (script in scripts) {
                 val executedScript = when (context.config.executionMode) {
@@ -32,13 +32,13 @@ class Executor(private val context: Context) {
                     )
 
                 if (executedScript.executionStatus == ExecutionStatus.KO) {
-                    logger.info { "" }
+                    if (!context.config.porcelain) { logger.info { "" } }
                     // TODO handle interactive shell
                     throw DatamaintainScriptExecutionException(executedScript)
                 }
             }
 
-            logger.info { "" }
+            if (!context.config.porcelain) { logger.info { "" } }
             return context.reportBuilder.toReport()
         } catch (datamaintainException: DatamaintainBaseException) {
             throw DatamaintainException(
@@ -63,7 +63,7 @@ class Executor(private val context: Context) {
 
                 if (executedScript.executionStatus == ExecutionStatus.OK) {
                     markAsExecuted(executedScript)
-                    logger.info { "${executedScript.name} executed" }
+                    if (!context.config.porcelain) { logger.info { "${executedScript.name} executed" } }
                 }
 
                 executedScript
@@ -72,7 +72,7 @@ class Executor(private val context: Context) {
                 val executedScript = ExecutedScript.build(script, Execution(ExecutionStatus.OK))
 
                 markAsExecuted(executedScript)
-                logger.info { "${executedScript.name} only marked as executed (so not executed)" }
+                if (!context.config.porcelain) { logger.info { "${executedScript.name} only marked as executed (so not executed)" } }
 
                 executedScript
             }
@@ -80,7 +80,7 @@ class Executor(private val context: Context) {
                 val executedScript = ExecutedScript.build(script, Execution(ExecutionStatus.OK))
 
                 overrideExecuted(executedScript)
-                logger.info { "${executedScript.name} only marked as executed (so not executed)" }
+                if (!context.config.porcelain) { logger.info { "${executedScript.name} only marked as executed (so not executed)" } }
 
                 executedScript
             }
@@ -90,9 +90,9 @@ class Executor(private val context: Context) {
     private fun simulateAction(script: ScriptWithContent): ExecutedScript {
         when (script.action) {
             ScriptAction.RUN ->
-                logger.info { "${script.name} would have been executed" }
+                if (!context.config.porcelain) { logger.info { "${script.name} would have been executed" } }
             ScriptAction.MARK_AS_EXECUTED ->
-                logger.info { "${script.name} would have been only marked as executed (so not executed)" }
+                if (!context.config.porcelain) { logger.info { "${script.name} would have been only marked as executed (so not executed)" } }
         }
 
         return ExecutedScript.simulateExecuted(script, ExecutionStatus.OK)
@@ -102,7 +102,7 @@ class Executor(private val context: Context) {
         try {
             context.dbDriver.markAsExecuted(it)
         } catch (e: Exception) {
-            logger.error { "error during mark execution of ${it.name} " }
+            if (!context.config.porcelain) { logger.error { "error during mark execution of ${it.name} " } }
             throw e
             // TODO handle interactive shell
         }
@@ -112,7 +112,7 @@ class Executor(private val context: Context) {
         try {
             context.dbDriver.overrideScript(it)
         } catch (e: Exception) {
-            logger.error { "error during override of ${it.fullName()} " }
+            if (!context.config.porcelain) { logger.error { "error during override of ${it.fullName()} " } }
             throw e
         }
     }
