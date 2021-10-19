@@ -110,3 +110,5 @@ See [presentation by Nelson Dionisi](#nelson_dionisi_pres) for more details.
 Mirakl manage this problem.
   
 - https://www.youtube.com/watch?v=zpM-lIRscXM : Thorben Janssen summarises strategies for each operation
+
+- https://cloud.google.com/architecture/devops/devops-tech-database-change-management : article from Google related to this issue
