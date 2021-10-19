@@ -39,23 +39,23 @@ Various operations may endanger your database scheme safety. Here is a detail of
 
 ### Add
 
-| Operation                            | Safe change |
-|---                                   |---          |
-| Add nullable property/column            | :heavy_check_mark: |
-| Add mandatory property/column            | :x: |
-| Add new value in an enum                  | :heavy_check_mark: |
-| Add collection/table/view      | :heavy_check_mark: |
+| Operation                     | Safe change        |
+|---                            |---                 |
+| Add nullable property/column  | :heavy_check_mark: |
+| Add mandatory property/column | :x:                |
+| Add new value in an enum      | :heavy_check_mark: |
+| Add collection/table/view     | :heavy_check_mark: |
 
 See [add operations documentation](./add/add.md) for advice on how to handle these operations.
 
 ### Update
 
-| Operation                            | Safe change |
-|---                                   |---          |
-Rename property/column         | :x: |
-Rename value                   | :x: |
-Update type                    | :x: |
-Rename collection/table/view   | :x: |
+| Operation                    | Safe change |
+|---                           |---          |
+| Rename property/column       | :x:         |
+| Rename value                 | :x:         |
+| Update type                  | :x:         |
+| Rename collection/table/view | :x:         |
 
 As you see, operations of type `update` always cause a breaking change.
 **Never do operations of type `update` or `rename`.**
@@ -64,14 +64,14 @@ See [update operations documentation](./update/update.md) for advice on how to h
 
 ### Delete
 
-| Operation                            | Safe change |
-|---                                   |---          |
-Delete used property/column    | :x: |
-Delete unused property/column  | :heavy_check_mark: |
-Delete used enum value              | :x: |
-Delete unused enum value            | :heavy_check_mark: |
-Delete used collection/table   | :x: |
-Delete unused collection/table | :heavy_check_mark: |
+| Operation                      | Safe change        |
+|---                             |---                 |
+| Delete used property/column    | :x:                |
+| Delete unused property/column  | :heavy_check_mark: |
+| Delete used enum value         | :x:                |
+| Delete unused enum value       | :heavy_check_mark: |
+| Delete used collection/table   | :x:                |
+| Delete unused collection/table | :heavy_check_mark: |
 
 This array shows operations of type `delete` can be problematic. The only case where this operation is safe 
 is when what you want to remove is unused/useless (in your code and/or in your data).
