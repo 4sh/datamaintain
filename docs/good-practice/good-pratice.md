@@ -98,7 +98,7 @@ of your script can fail (for many reasons). So it is more comfortable to have a 
 
 ### SQL
 
-####Avoid SELECT * in your code 
+#### Avoid SELECT * in your code 
 If requests having `SELECT *` use prepare statement then when the schema will change your request will fail. 
 See [presentation by Nelson Dionisi](#nelson_dionisi_pres) for more details.
 
