@@ -102,8 +102,6 @@ of your script can fail (for many reasons). So it is more comfortable to have a 
 If requests having `SELECT *` use prepare statement then when the schema will change your request will fail. 
 See [presentation by Nelson Dionisi](#nelson_dionisi_pres) for more details.
 
-### NoSQL
-
 ## References
 
 - <a name="nelson_dionisi_pres">https://www.youtube.com/watch?v=OKT2GSUg3dk</a> : Excellent presentation by Nelson Dionisi from Mirakl that explains how 
