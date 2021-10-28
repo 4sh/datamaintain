@@ -14,5 +14,5 @@ dependencies {
     implementation(project(":modules:core"))
     implementation(project(":modules:driver-mongo"))
     implementation("org.mongodb:mongodb-driver:${Versions.mongoDriver}")
-    implementation("org.jongo:jongo:1.4.1")
+    implementation("org.jongo:jongo:${Versions.jongo}")
 }

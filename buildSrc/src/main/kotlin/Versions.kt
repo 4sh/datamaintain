@@ -8,4 +8,8 @@ object Versions {
     const val mongo = "4.0.13"
     const val mongoDriver = "3.11.2"
     const val clikt = "2.3.0"
+    const val h2Database = "1.4.200"
+    const val kotlinxSerializationRuntime = "0.20.0"
+    const val jongo = "1.4.1"
+    const val postgresql = "42.1.4"
 }
