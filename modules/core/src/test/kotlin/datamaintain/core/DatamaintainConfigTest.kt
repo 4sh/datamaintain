@@ -32,15 +32,16 @@ class DatamaintainConfigTest {
             get { executionMode }.isEqualTo(ExecutionMode.DRY)
             get { tagsMatchers }.containsExactlyInAnyOrder(
                     TagMatcher( Tag("TOTO"), setOf(
-                            "src/test/resources/scanner_test_files/01_file1",
-                            "src/test/resources/scanner_test_files/subfolder/*"
+                        expectedPath.resolve(Paths.get("src/test/resources/scanner_test_files/01_file1")).toString(),
+                        expectedPath.resolve(Paths.get("src/test/resources/scanner_test_files/subfolder/*")).toString()
                     )),
                     TagMatcher(Tag("potato"), setOf(
-                            "src/test/resources/scanner_test_files/*",
-                            "src/test/resources/scanner_test_files/subfolder/03_file3"
+                            expectedPath.resolve(Paths.get("src/test/resources/scanner_test_files/*")).toString(),
+                            expectedPath.resolve(Paths.get("src/test/resources/scanner_test_files/subfolder/03_file3")).toString()
                     ))
             )
             get { verbose }.isTrue()
+            get { porcelain }.isTrue()
         }
     }
 
@@ -53,6 +54,7 @@ class DatamaintainConfigTest {
             get { doesCreateTagsFromFolder }.isEqualTo(CoreConfigKey.CREATE_TAGS_FROM_FOLDER.default!!.toBoolean())
             get { executionMode }.isEqualTo(ExecutionMode.NORMAL)
             get { verbose }.isFalse()
+            get { porcelain }.isFalse()
         }
     }
 
@@ -62,6 +64,7 @@ class DatamaintainConfigTest {
         System.setProperty(CoreConfigKey.CREATE_TAGS_FROM_FOLDER.key, "false")
         System.setProperty(CoreConfigKey.EXECUTION_MODE.key, "NORMAL")
         System.setProperty(CoreConfigKey.VERBOSE.key, "FALSE")
+        System.setProperty(CoreConfigKey.PRINT_RELATIVE_PATH_OF_SCRIPT.key, "false")
 
         val config = DatamaintainConfig.buildConfig(DatamaintainConfigTest::class.java.getResourceAsStream("/config/default.properties"),
                 FakeDriverConfig())
@@ -73,6 +76,7 @@ class DatamaintainConfigTest {
             get { tagsToPlayAgain }.isEqualTo(setOf(Tag("again")))
             get { executionMode }.isEqualTo(ExecutionMode.NORMAL)
             get { verbose }.isFalse()
+            get { porcelain }.isFalse()
         }
     }
 }

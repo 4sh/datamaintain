@@ -11,7 +11,7 @@ private val logger = KotlinLogging.logger {}
 
 class Pruner(private val context: Context) {
     fun prune(scripts: List<ScriptWithContent>): List<ScriptWithContent> {
-        logger.info { "Prune scripts..." }
+        if (!context.config.porcelain) { logger.info { "Prune scripts..." } }
         try {
             val listExecutedScripts = context.dbDriver.listExecutedScripts()
     
@@ -33,9 +33,11 @@ class Pruner(private val context: Context) {
             }
     
             prunedScripts = prunedScripts.onEach { context.reportBuilder.addPrunedScript(it) }
-    
-            logger.info { "${prunedScripts.size} scripts pruned (${executedChecksums.size} skipped)" }
-            logger.info { "" }
+
+            if (!context.config.porcelain) {
+                logger.info { "${prunedScripts.size} scripts pruned (${executedChecksums.size} skipped)" }
+                logger.info { "" }
+            }
     
             return prunedScripts
         } catch (datamaintainException: DatamaintainBaseException) {
@@ -51,7 +53,7 @@ class Pruner(private val context: Context) {
     private fun doesScriptAlreadyExecuted(script: ScriptWithContent, executedChecksums: List<String>): Boolean {
         val skipped = executedChecksums.contains(script.checksum) &&
                 script.tags.intersect(context.config.tagsToPlayAgain).isEmpty()
-        if (context.config.verbose && skipped) {
+        if (context.config.verbose && skipped && !context.config.porcelain) {
             logger.info {
                 "${script.name} is skipped because it was already executed " +
                         "and it does not have a tag to play again."

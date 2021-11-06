@@ -12,10 +12,11 @@
 | filter.tags.whitelisted | Scripts that have these tags will be considered | None | no | ```DATA,tag``` |
 | filter.tags.blacklisted | Scripts that have these tags will be ignored. A script having a whitelisted tag and a blacklisted tag will be ignored | None | no | ```DATA,tag``` |
 | execution.mode | Execution mode. Possible values:<br />- ```NORMAL```: Regular execution: your scripts will be run on your database.<br />- ```DRY```: Scripts will not be executed. A full report of what would happen is you ran Datamaintain normally will be logged.<br /> | ```NORMAL``` | no | ```NORMAL```, ```DRY``` |
-| verbose | If true, more logs will be printed | ```false``` | no | ```true``` or ```false``` |
+| verbose | If true, more logs will be printed. **WARNING:** Can't be used alongside with porcelain. If both are set, porcelain will prevail | ```false``` | no | ```true``` or ```false``` |
 | prune.tags.to.run.again | Scripts that have these tags will be run, even they were already executed  | None | no | ```tag,again``` |
 | prune.scripts.override.executed | Allow datamaintain to override a script if it detect a checksum change on a script already runned (assuming its filename) | ```false``` | no | ```true``` or ```false``` |
 | db.trust.uri | Bypass all checks that could be done on your URI because you are very sure of it and think our checks are just liars | ```false``` | no | ```true``` or ```false``` |
+| porcelain | For each executed script, print path relative to scan path **WARNING:** Can't be used alongside with verbose. If both are set, porcelain will prevail | ```false``` | no | ```true``` or ```false``` |
 
 ### Common driver configuration
 
@@ -35,6 +36,7 @@ For ```db.uri```, please see the [mongo URI documentation](https://docs.mongodb.
 |---|---|---|---|---|
 | db.mongo.tmp.path | Path where the driver will write temporary files. | ```/tmp/datamaintain.tmp``` | no |  |
 | db.mongo.client.path | Path or alias to your mongo executable. | ```mongo``` | no |  |
+| db.mongo.client.shell | Set if Datamaintain must use `mongo` or `mongosh` CLI. | ```mongo``` | no |  |
 
 
 ### Specific JDBC driver configuration

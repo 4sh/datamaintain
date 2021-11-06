@@ -63,7 +63,7 @@ fun ExecutedScript.toExecutedScriptDb() = ExecutedScriptDb(
 
 class KJsonParser: ExecutedScriptJsonParser, LightExecutedScriptJsonParser {
     // Mapper between json and object
-    val configuration = JsonConfiguration.Stable.copy(ignoreUnknownKeys = true)
+    val configuration = JsonConfiguration.Stable.copy(ignoreUnknownKeys = true, isLenient = true)
     private val mapper = Json(configuration)
 
     override fun serializeExecutedScript(executedScript: ExecutedScript): String {

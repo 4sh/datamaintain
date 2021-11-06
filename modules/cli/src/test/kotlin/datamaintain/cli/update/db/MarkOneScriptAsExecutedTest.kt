@@ -16,9 +16,9 @@ internal class MarkOneScriptAsExecutedTest : BaseCliTest() {
         @Nested
         inner class GenericConfiguration {
             @Test
-            fun `should build config with path`() {
+            fun `should build config with absolute path`() {
                 // Given
-                val path = "myPath"
+                val path = "/myPath"
 
                 val markScriptAsExecutedArguments =
                     listOf(

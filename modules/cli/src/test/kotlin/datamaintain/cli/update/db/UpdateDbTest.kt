@@ -7,6 +7,7 @@ import datamaintain.core.script.Tag
 import datamaintain.core.script.TagMatcher
 import datamaintain.core.step.check.rules.implementations.SameScriptsAsExecutedCheck
 import datamaintain.db.driver.mongo.MongoDriverConfig
+import datamaintain.db.driver.mongo.MongoShell
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -23,9 +24,9 @@ internal class UpdateDbTest : BaseCliTest() {
         @Nested
         inner class GenericConfiguration {
             @Test
-            fun `should build config with path`() {
+            fun `should build config with absolute path`() {
                 // Given
-                val path = "myPath"
+                val path = "/myPath"
 
                 val updateDbArguments = listOf(
                     "--path", path
@@ -130,10 +131,10 @@ internal class UpdateDbTest : BaseCliTest() {
             @Nested
             inner class TagMatchers {
                 @Test
-                fun `should build config with path matchers`() {
+                fun `should build config with absolute path matchers`() {
                     // Given
-                    val tagMatcher1 = TagMatcher(Tag("MYTAG1"), listOf("pathMatcher1", "pathMatcher2"))
-                    val tagMatcher2 = TagMatcher(Tag("MYTAG2"), listOf("pathMatcher3", "pathMatcher4"))
+                    val tagMatcher1 = TagMatcher(Tag("MYTAG1"), listOf("/pathMatcher1", "/pathMatcher2"))
+                    val tagMatcher2 = TagMatcher(Tag("MYTAG2"), listOf("/pathMatcher3", "/pathMatcher4"))
 
                     val updateDbArguments = 
                         listOf(
@@ -270,6 +271,42 @@ internal class UpdateDbTest : BaseCliTest() {
                 }
             }
 
+            @Nested
+            inner class Porcelain {
+                @Test
+                fun `should build default config without auto override`() {
+                    // Given
+
+                    // When
+                    runUpdateDb()
+
+                    // Then
+                    expectThat(configWrapper) {
+                        get { datamaintainConfig }.isNotNull()
+                    }
+                    expectThat(configWrapper.datamaintainConfig!!.porcelain) {
+                        isFalse()
+                    }
+                }
+
+                @Test
+                fun `should build config with auto override`() {
+                    // Given
+                    val updateDbArguments = listOf("--porcelain")
+
+                    // When
+                    runUpdateDb(updateDbArguments)
+
+                    // Then
+                    expectThat(configWrapper) {
+                        get { datamaintainConfig }.isNotNull()
+                    }
+                    expectThat(configWrapper.datamaintainConfig!!.porcelain) {
+                        isTrue()
+                    }
+                }
+            }
+
             @ParameterizedTest
             @EnumSource(ScriptAction::class)
             @DisplayName("Should build config with default script action {0}")
@@ -347,6 +384,41 @@ internal class UpdateDbTest : BaseCliTest() {
                     expectThat((configWrapper.datamaintainConfig!!.driverConfig) as MongoDriverConfig)
                         .get { printOutput }
                         .isFalse()
+                }
+            }
+
+            @Nested
+            inner class MongoShellConfig {
+                @Test
+                fun `should build config with mongo`() {
+                    // Given
+                    val updateDbArguments = listOf("--mongo-shell").plus("mongo")
+
+                    // When
+                    runUpdateDb(updateDbArguments)
+
+                    // Then
+                    expectThat((configWrapper.datamaintainConfig!!.driverConfig) as MongoDriverConfig)
+                        .and {
+                            get { mongoShell }.isEqualTo(MongoShell.MONGO)
+                            get { clientPath }.isEqualTo(Paths.get("mongo"))
+                        }
+                }
+
+                @Test
+                fun `should build config with mongosh`() {
+                    // Given
+                    val updateDbArguments = listOf("--mongo-shell").plus("mongosh")
+
+                    // When
+                    runUpdateDb(updateDbArguments)
+
+                    // Then
+                    expectThat((configWrapper.datamaintainConfig!!.driverConfig) as MongoDriverConfig)
+                        .and {
+                            get { mongoShell }.isEqualTo(MongoShell.MONGOSH)
+                            get { clientPath }.isEqualTo(Paths.get("mongosh"))
+                        }
                 }
             }
         }

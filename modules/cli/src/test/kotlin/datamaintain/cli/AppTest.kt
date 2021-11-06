@@ -3,12 +3,19 @@ package datamaintain.cli
 import datamaintain.db.driver.jdbc.JdbcDriverConfig
 import datamaintain.db.driver.mongo.MongoDriverConfig
 import datamaintain.test.execAppInSubprocess
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.*
 
 internal class AppTest : BaseCliTest() {
+    private fun buildPathToConfigFile(fileName: String): String = "src/test/resources/${fileName}.properties"
+
+    private val configFilePath = buildPathToConfigFile("config")
+
+    private val configWithoutDbTypePath = buildPathToConfigFile("config-without-db-type")
+
     @Nested
     inner class BaseConfiguration {
         @Nested
@@ -16,7 +23,7 @@ internal class AppTest : BaseCliTest() {
             @Test
             fun `should build configuration with existing config file path`() {
                 // Given
-                val argv = listOf("--config-file-path", "src/test/resources/config.properties")
+                val argv = listOf("--config-file-path", configFilePath)
 
                 // When
                 runAppWithUpdateDb(argv)
@@ -78,6 +85,23 @@ internal class AppTest : BaseCliTest() {
                 // Then
                 expectThat(exitCode).isEqualTo(1)
                 expectThat(output).contains("dbType invalid db type is unknown")
+            }
+
+            @Test
+            @Disabled(
+                "To ensure backward compatibility, mongo is provided as db type when no type is provided. " +
+                        "Please reactivate this test when it is no longer the case"
+            )
+            fun `should throw error when no db type was provided`() {
+                // Given
+                val argv = listOf("--config-file-path", configWithoutDbTypePath, "update-db")
+
+                // When
+                val (exitCode, output) = execAppInSubprocess(argv)
+
+                // Then
+                expectThat(exitCode).isEqualTo(1)
+                expectThat(output).contains("dbType must not be null")
             }
         }
 

@@ -27,7 +27,8 @@ data class DatamaintainConfig @JvmOverloads constructor(val path: Path = Paths.g
                                                         val executionMode: ExecutionMode = defaultExecutionMode,
                                                         val defaultScriptAction: ScriptAction = defaultAction,
                                                         val driverConfig: DatamaintainDriverConfig,
-                                                        val verbose: Boolean = VERBOSE.default!!.toBoolean()) {
+                                                        val verbose: Boolean = VERBOSE.default!!.toBoolean(),
+                                                        val porcelain: Boolean = PRINT_RELATIVE_PATH_OF_SCRIPT.default!!.toBoolean()){
 
     companion object {
         private val defaultExecutionMode = ExecutionMode.NORMAL
@@ -49,8 +50,9 @@ data class DatamaintainConfig @JvmOverloads constructor(val path: Path = Paths.g
 
             val scriptAction = ScriptAction.fromNullable(props.getNullableProperty(DEFAULT_SCRIPT_ACTION), defaultAction)
 
+            val scanPath = Paths.get(props.getProperty(SCAN_PATH)).toAbsolutePath().normalize()
             return DatamaintainConfig(
-                    Paths.get(props.getProperty(SCAN_PATH)),
+                    scanPath,
                     Regex(props.getProperty(SCAN_IDENTIFIER_REGEX)),
                     props.getProperty(CREATE_TAGS_FROM_FOLDER).toBoolean(),
                     extractTags(props.getNullableProperty(TAGS_WHITELISTED)),
@@ -58,13 +60,14 @@ data class DatamaintainConfig @JvmOverloads constructor(val path: Path = Paths.g
                     extractTags(props.getNullableProperty(PRUNE_TAGS_TO_RUN_AGAIN)),
                     props.getProperty(PRUNE_OVERRIDE_UPDATED_SCRIPTS).toBoolean(),
                     props.getStringPropertiesByPrefix(TAG.key)
-                            .map { TagMatcher.parse(it.first.replace("${TAG.key}.", ""), it.second) }
+                            .map { TagMatcher.parse(it.first.replace("${TAG.key}.", ""), it.second, scanPath) }
                             .toSet(),
                     extractCheckRules(props.getNullableProperty(CHECK_RULES)),
                     executionMode,
                     scriptAction,
                     driverConfig,
-                    props.getProperty(VERBOSE).toBoolean()
+                    props.getProperty(VERBOSE).toBoolean(),
+                    props.getProperty(PRINT_RELATIVE_PATH_OF_SCRIPT).toBoolean()
             )
         }
 
@@ -96,6 +99,7 @@ data class DatamaintainConfig @JvmOverloads constructor(val path: Path = Paths.g
         checkRules.let { logger.info { "- rules -> ${checkRules.toList()}" } }
         executionMode.let { logger.info { "- execution mode -> $it" } }
         verbose.let { logger.info { "- verbose -> $it" } }
+        porcelain.let { logger.info { "- porcelain -> $it" } }
         logger.info { "" }
     }
 
@@ -119,8 +123,10 @@ interface ConfigKey {
 enum class CoreConfigKey(override val key: String,
                          override val default: String? = null) : ConfigKey {
     // GLOBAL
+    DB_TYPE("db.type", "mongo"),
     VERBOSE("verbose", "false"),
     DEFAULT_SCRIPT_ACTION("default.script.action", "RUN"),
+    PRINT_RELATIVE_PATH_OF_SCRIPT("porcelain", "false"),
 
     // SCAN
     SCAN_PATH("scan.path", "./scripts/"),

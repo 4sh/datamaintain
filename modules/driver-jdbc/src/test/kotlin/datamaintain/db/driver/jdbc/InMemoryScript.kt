@@ -8,11 +8,13 @@ import java.math.BigInteger
 import java.security.MessageDigest
 
 data class InMemoryScript(
-        override val name: String,
-        override val content: String,
-        override val identifier: String,
-        override val tags: Set<Tag> = setOf(),
-        override var action: ScriptAction = DatamaintainConfig.defaultAction) : ScriptWithContent {
+    override val name: String,
+    override val content: String,
+    override val identifier: String,
+    override val tags: Set<Tag> = setOf(),
+    override var action: ScriptAction = DatamaintainConfig.defaultAction,
+    override val porcelainName: String?
+) : ScriptWithContent {
 
     override val checksum: String by lazy {
         content.hash()

@@ -11,6 +11,8 @@ import datamaintain.core.db.driver.DriverConfigKey
 import datamaintain.core.script.ScriptAction
 import datamaintain.core.step.check.allCheckRuleNames
 import datamaintain.core.step.executor.ExecutionMode
+import datamaintain.db.driver.mongo.MongoConfigKey
+import datamaintain.db.driver.mongo.MongoShell
 import java.util.*
 
 class UpdateDb(runner: (DatamaintainConfig) -> Unit = ::defaultUpdateDbRunner) : DatamaintainCliUpdateDbCommand(
@@ -55,6 +57,11 @@ class UpdateDb(runner: (DatamaintainConfig) -> Unit = ::defaultUpdateDbRunner) :
         .choice(allCheckRuleNames.map { it to it }.toMap())
         .multiple()
 
+    private val mongoShell: String? by option(help = "mongo binary, can be mongo or mongosh. mongo by default")
+        .choice(MongoShell.values().map { it.name }.map { it.toLowerCase() }.associateWith { it })
+
+    private val porcelain: Boolean? by option(help = "for each executed script, display relative path to scan path").flag()
+
     override fun overloadProps(props: Properties) {
         path?.let { props.put(CoreConfigKey.SCAN_PATH.key, it) }
         identifierRegex?.let { props.put(CoreConfigKey.SCAN_IDENTIFIER_REGEX.key, it) }
@@ -72,5 +79,7 @@ class UpdateDb(runner: (DatamaintainConfig) -> Unit = ::defaultUpdateDbRunner) :
         }
         checkRules?.let { props.put(CoreConfigKey.CHECK_RULES.key, it.joinToString(",")) }
         allowAutoOverride?.let { props.put(CoreConfigKey.PRUNE_OVERRIDE_UPDATED_SCRIPTS.key, it.toString()) }
+        porcelain?.let { props.put(CoreConfigKey.PRINT_RELATIVE_PATH_OF_SCRIPT.key, it.toString()) }
+        mongoShell?.let { props.put(MongoConfigKey.DB_MONGO_SHELL.key, it.toUpperCase()) }
     }
 }

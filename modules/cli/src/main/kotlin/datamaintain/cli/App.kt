@@ -9,6 +9,7 @@ import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.validate
 import datamaintain.cli.update.db.MarkOneScriptAsExecuted
 import datamaintain.cli.update.db.UpdateDb
+import datamaintain.core.config.CoreConfigKey
 import datamaintain.core.db.driver.DriverConfigKey
 import datamaintain.core.exception.DatamaintainBaseException
 import datamaintain.db.driver.mongo.MongoConfigKey
@@ -18,11 +19,11 @@ import java.util.*
 class App : CliktCommand() {
 
     private val configFilePath: File? by option(help = "path to config file")
-            .convert { File(it) }
-            .validate { it.exists() }
+        .convert { File(it) }
+        .validate { it.exists() }
 
     private val dbType: String? by option(help = "db type : ${DbType.values().joinToString(",") { v -> v.value }}")
-            .validate { DbType.values().map { v -> v.value }.contains(it) }
+        .validate { DbType.values().map { v -> v.value }.contains(it) }
 
     private val dbUri: String? by option(help = "mongo uri with at least database name. Ex: mongodb://localhost:27017/newName")
 
@@ -30,7 +31,7 @@ class App : CliktCommand() {
 
     private val mongoTmpPath: String? by option(help = "mongo tmp file path")
 
-    private val props by findObject() { Properties() }
+    private val props by findObject { Properties() }
 
     override fun run() {
         configFilePath?.let {
@@ -40,14 +41,14 @@ class App : CliktCommand() {
     }
 
     private fun overloadPropsFromArgs(props: Properties) {
-        dbType?.let { props.put("db.type", it) }
+        dbUri?.let { props.put(DriverConfigKey.DB_URI.key, it) }
+        dbType?.let { props[CoreConfigKey.DB_TYPE.key] = it }
 
         // db type was mongo by default. To be backward compatible, set mongo as default is no type configured anywhere.
-        if (!props.containsKey("db.type")) {
-            props.put("db.type", "mongo")
+        if (!props.containsKey(CoreConfigKey.DB_TYPE.key)) {
+            props[CoreConfigKey.DB_TYPE.key] = DbType.MONGO.value
         }
 
-        dbUri?.let { props.put(DriverConfigKey.DB_URI.key, it) }
         mongoTmpPath?.let { props.put(MongoConfigKey.DB_MONGO_TMP_PATH.key, it) }
         trustUri?.let { props.put(DriverConfigKey.DB_TRUST_URI.key, it.toString()) }
     }
