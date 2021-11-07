@@ -9,8 +9,8 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.slf4j.LoggerFactory
 import strikt.api.expectThat
+import strikt.assertions.hasSize
 import strikt.assertions.isEqualTo
-
 
 internal class ReportTest {
     private val logger = LoggerFactory.getLogger("datamaintain.core.report.Report") as Logger
