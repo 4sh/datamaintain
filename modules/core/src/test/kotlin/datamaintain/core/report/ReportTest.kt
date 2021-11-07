@@ -81,6 +81,33 @@ internal class ReportTest {
                 )
             }
         }
+
+        @Test
+        fun `should do it`() {
+            // Given
+            val report = Report(
+                    executedScripts = listOf(
+                            buildReportExecutedScript(
+                                    "script1",
+                                    null
+                            ), buildReportExecutedScript(
+                            "script2",
+                            null
+                    )
+                    )
+            )
+
+            // When
+            report.print(verbose = true)
+
+            // Then
+            expectThat(testAppender.events) {
+                get{ get(0).message }.isEqualTo("abc")
+                /*get { get(7).message }.isEqualTo(
+                        " -> script2"
+                )*/
+            }
+        }
     }
 
     @AfterEach
