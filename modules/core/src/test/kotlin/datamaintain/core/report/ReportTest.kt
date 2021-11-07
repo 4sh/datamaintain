@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test
 import org.slf4j.LoggerFactory
 import strikt.api.expectThat
 import strikt.assertions.containsExactly
-import strikt.assertions.hasSize
 import strikt.assertions.isEqualTo
 import strikt.assertions.map
 
@@ -78,16 +77,16 @@ internal class ReportTest {
         }
 
         @Test
-        fun `should not display relative paths when porcelain name is null`() {
+        fun `should not display relative paths when porcelain is false`() {
             // Given
             val report = Report(
                 executedScripts = listOf(
                     buildReportExecutedScript(
                         "script1",
-                        null
+                        "porcelainName1"
                     ), buildReportExecutedScript(
                         "script2",
-                        null
+                        "porcelainName2"
                     )
                 )
             )
