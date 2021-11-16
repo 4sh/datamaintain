@@ -4,7 +4,6 @@ plugins {
     id("org.jetbrains.kotlin.jvm")
     application
     maven
-    id("com.sourcemuse.mongo")
     id("com.palantir.graal")
 }
 
