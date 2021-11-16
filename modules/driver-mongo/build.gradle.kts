@@ -1,7 +1,7 @@
 plugins {
     id("org.jetbrains.kotlin.jvm")
     id("com.sourcemuse.mongo")
-    kotlin("plugin.serialization") version "1.3.70"
+    kotlin("plugin.serialization") version Versions.kotlin
     maven // Needed for Jitpack
 }
 
