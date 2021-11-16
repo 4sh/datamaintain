@@ -17,10 +17,12 @@ fun Project.baseProject() {
 
         "testImplementation"("org.junit.jupiter:junit-jupiter-api:${Versions.junit}")
         "testImplementation"("org.junit.jupiter:junit-jupiter-params:${ Versions.junit }")
+        "testRuntimeOnly"("org.junit.jupiter:junit-jupiter-engine:${Versions.junit}")
         "testImplementation"("io.strikt:strikt-core:${ Versions.strikt }")
         "testImplementation"("io.mockk:mockk:${ Versions.mockk }")
-
-        "testRuntimeOnly"("org.junit.jupiter:junit-jupiter-engine:${ Versions.junit }")
+        "testImplementation"("org.testcontainers:testcontainers:${Versions.testcontainers}")
+        "testImplementation"("org.testcontainers:junit-jupiter:${Versions.testcontainers}")
+        "testImplementation"("org.testcontainers:mongodb:${Versions.testcontainers}")
     }
 
     tasks.getByPath("test").doFirst({
