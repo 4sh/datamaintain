@@ -8,7 +8,7 @@ object Versions {
     const val clikt = "2.3.0"
 
     const val mongo = "4.0.13"
-    const val mongoDriver = "3.11.2"
+    const val mongoDriver = "4.3.0"
     const val jongo = "1.4.1"
     const val kotlinxSerialization = "1.3.1"
 
