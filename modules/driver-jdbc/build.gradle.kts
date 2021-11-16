@@ -13,8 +13,5 @@ repositories {
 dependencies {
     compileOnly(project(":modules:core"))
     testImplementation(project(":modules:core"))
-    implementation(
-        "org.jetbrains.kotlinx:kotlinx-serialization-runtime:${Versions.kotlinxSerializationRuntime}"
-    )
     testImplementation("com.h2database:h2:${Versions.h2Database}")
 }
