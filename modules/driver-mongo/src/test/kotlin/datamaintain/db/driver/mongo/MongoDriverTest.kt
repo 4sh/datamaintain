@@ -7,7 +7,7 @@ import datamaintain.db.driver.mongo.serialization.toExecutedScriptDb
 import datamaintain.db.driver.mongo.test.AbstractMongoDbTest
 import org.bson.Document
 import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.EnumSource
+import org.junit.jupiter.params.provider.MethodSource
 import strikt.api.expectCatching
 import strikt.api.expectThat
 import strikt.assertions.*
@@ -17,10 +17,10 @@ import java.nio.file.Paths
 
 internal class MongoDriverTest : AbstractMongoDbTest() {
     @ParameterizedTest
-    @EnumSource(value = MongoShell::class)
-    fun `should list scripts in db`(mongoShell: MongoShell) {
+    @MethodSource("provideMongoVersions")
+    fun `should list scripts in db`(tag: String, mongoShell: MongoShell) {
         // Given
-        val mongoDriver: MongoDriver = buildMongoDriver(mongoShell)
+        val mongoDriver: MongoDriver = initMongoConnectionAndBuildDriver(tag, mongoShell)
         insertDataInDb()
 
         // When
@@ -34,10 +34,10 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
     }
 
     @ParameterizedTest
-    @EnumSource(value = MongoShell::class)
-    fun `should mark script as executed`(mongoShell: MongoShell) {
+    @MethodSource("provideMongoVersions")
+    fun `should mark script as executed`(tag: String, mongoShell: MongoShell) {
         // Given
-        val mongoDriver: MongoDriver = buildMongoDriver(mongoShell)
+        val mongoDriver: MongoDriver = initMongoConnectionAndBuildDriver(tag, mongoShell)
         insertDataInDb()
         val script3 = ExecutedScript(
                 "script3.js",
@@ -51,7 +51,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
         mongoDriver.markAsExecuted(script3)
 
         // Then
-        expectThat(collection.find().toList().map { documentToExecutedScript(it) })
+        expectThat(collection().find().toList().map { documentToExecutedScript(it) })
                 .hasSize(3).and {
                     get(0).and {
                         get { name }.isEqualTo("script1.js")
@@ -84,10 +84,10 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
     }
 
     @ParameterizedTest
-    @EnumSource(value = MongoShell::class)
-    fun `should override script`(mongoShell: MongoShell) {
+    @MethodSource("provideMongoVersions")
+    fun `should override script`(tag: String, mongoShell: MongoShell) {
         // Given
-        val mongoDriver: MongoDriver = buildMongoDriver(mongoShell)
+        val mongoDriver: MongoDriver = initMongoConnectionAndBuildDriver(tag, mongoShell)
         insertDataInDb()
         val script3 = ExecutedScript(
                 "script1.js",
@@ -101,7 +101,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
         mongoDriver.overrideScript(script3)
 
         // Then
-        expectThat(collection.find().toList().map { documentToExecutedScript(it) })
+        expectThat(collection().find().toList().map { documentToExecutedScript(it) })
                 .hasSize(2).and {
                     get(0).and {
                         get { name }.isEqualTo("script1.js")
@@ -125,7 +125,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
     }
 
     @ParameterizedTest
-    @EnumSource(value = MongoShell::class)
+    @MethodSource("provideMongoVersions")
     fun `should mark script as executed with flags`(mongoShell: MongoShell) {
         // Given
         val mongoDriver: MongoDriver = buildMongoDriver(mongoShell)
@@ -160,11 +160,11 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
     }
 
     @ParameterizedTest
-    @EnumSource(value = MongoShell::class)
-    fun `should execute correct file script`(mongoShell: MongoShell) {
+    @MethodSource("provideMongoVersions")
+    fun `should execute correct file script`(tag: String, mongoShell: MongoShell) {
         // Given
-        val mongoDriver: MongoDriver = buildMongoDriver(mongoShell)
-        database.getCollection("simple").drop()
+        val mongoDriver: MongoDriver = initMongoConnectionAndBuildDriver(tag, mongoShell)
+        database().getCollection("simple").drop()
         val fileScript = FileScript(
                 Paths.get("src/test/resources/executor_test_files/mongo/mongo_simple_insert.js"),
                 Regex("(.*)")
@@ -174,7 +174,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
         val execution = mongoDriver.executeScript(fileScript)
 
         // Then
-        val coll = database.getCollection("simple")
+        val coll = database().getCollection("simple")
         val cursor = coll.find(Filters.eq("find", "me"))
         expectThat(cursor.toList())
                 .hasSize(1).and {
@@ -190,15 +190,15 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
     }
 
     @ParameterizedTest
-    @EnumSource(value = MongoShell::class)
-    fun `should print output`(mongoShell: MongoShell) {
+    @MethodSource("provideMongoVersions")
+    fun `should print output`(tag: String, mongoShell: MongoShell) {
         // Given
-        val mongoDriver: MongoDriver = buildMongoDriver(
+        val mongoDriver: MongoDriver = initMongoConnectionAndBuildDriver(tag,
             mongoShell,
             printOutput = true,
             saveOutput = true
         )
-        database.getCollection("simple").drop()
+        database().getCollection("simple").drop()
         val fileScript = FileScript(
                 Paths.get("src/test/resources/executor_test_files/mongo/mongo_simple_insert.js"),
                 Regex("(.*)")
@@ -214,10 +214,10 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
     }
 
     @ParameterizedTest
-    @EnumSource(value = MongoShell::class)
-    fun `should save output`(mongoShell: MongoShell) {
+    @MethodSource("provideMongoVersions")
+    fun `should save output`(tag: String, mongoShell: MongoShell) {
         // Given
-        val mongoDriver: MongoDriver = buildMongoDriver(
+        val mongoDriver: MongoDriver = initMongoConnectionAndBuildDriver(tag,
             mongoShell,
             printOutput = false,
             saveOutput = true
@@ -240,7 +240,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
             get { executionOutput }.isEqualTo("test")
         }
 
-        expectThat(collection.find().toList().map { documentToExecutedScript(it) })
+        expectThat(collection().find().toList().map { documentToExecutedScript(it) })
                 .hasSize(1).and {
                     get(0).and {
                         get { executionOutput }.isEqualTo("test")
@@ -249,11 +249,11 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
     }
 
     @ParameterizedTest
-    @EnumSource(value = MongoShell::class)
-    fun `should execute correct in memory script`(mongoShell: MongoShell) {
+    @MethodSource("provideMongoVersions")
+    fun `should execute correct in memory script`(tag: String, mongoShell: MongoShell) {
         // Given
-        val mongoDriver: MongoDriver = buildMongoDriver(mongoShell)
-        database.getCollection("simple").drop()
+        val mongoDriver: MongoDriver = initMongoConnectionAndBuildDriver(tag, mongoShell)
+        database().getCollection("simple").drop()
         val content = Paths.get("src/test/resources/executor_test_files/mongo/mongo_simple_insert.js").toFile().readText()
         val inMemoryScript = InMemoryScript("test", content, "")
 
@@ -261,7 +261,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
         val execution = mongoDriver.executeScript(inMemoryScript)
 
         // Then
-        val coll = database.getCollection("simple")
+        val coll = database().getCollection("simple")
         val cursor = coll.find(Filters.eq("find", "me"))
         expectThat(cursor.toList())
                 .hasSize(1).and {
@@ -277,18 +277,18 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
     }
 
     @ParameterizedTest
-    @EnumSource(value = MongoShell::class)
-    fun `should execute incorrect file script`(mongoShell: MongoShell) {
+    @MethodSource("provideMongoVersions")
+    fun `should execute incorrect file script`(tag: String, mongoShell: MongoShell) {
         // Given
-        val mongoDriver: MongoDriver = buildMongoDriver(mongoShell)
-        database.getCollection("simple").drop()
+        val mongoDriver: MongoDriver = initMongoConnectionAndBuildDriver(tag, mongoShell)
+        database().getCollection("simple").drop()
         val fileScript = FileScript(Paths.get("src/test/resources/executor_test_files/mongo/mongo_error_insert.js"), Regex("(.*)"))
 
         // When
         val execution = mongoDriver.executeScript(fileScript)
 
         // Then
-        val coll = database.getCollection("simple")
+        val coll = database().getCollection("simple")
         val cursor = coll.find(Filters.eq("find", "me"))
         expectThat(cursor.toList()).hasSize(0)
 
@@ -299,10 +299,10 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
     }
 
     @ParameterizedTest
-    @EnumSource(value = MongoShell::class)
-    fun `should truncate execution output when it is too big`(mongoShell: MongoShell) {
+    @MethodSource("provideMongoVersions")
+    fun `should truncate execution output when it is too big`(tag: String, mongoShell: MongoShell) {
         // Given
-        val mongoDriver: MongoDriver = buildMongoDriver(mongoShell, saveOutput = true)
+        val mongoDriver: MongoDriver = initMongoConnectionAndBuildDriver(tag, mongoShell, saveOutput = true)
         val fileScript = FileScript(Paths.get("src/test/resources/executor_test_files/mongo/mongo_print_too_many_logs.js"),
                 Regex("(.*)"))
 
@@ -319,10 +319,11 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
     }
 
     @ParameterizedTest
-    @EnumSource(value = MongoShell::class)
-    fun `should not throw exception when inserting in database execution of a scripts that logs too much`(mongoShell: MongoShell) {
+    @MethodSource("provideMongoVersions")
+    fun `should not throw exception when inserting in database() execution of a scripts that logs too much`(tag: String,
+                                                                                                            mongoShell: MongoShell) {
         // Given
-        val mongoDriver: MongoDriver = buildMongoDriver(mongoShell, saveOutput = true)
+        val mongoDriver: MongoDriver = initMongoConnectionAndBuildDriver(tag, mongoShell, saveOutput = true)
         val fileScript = FileScript(Paths.get("src/test/resources/executor_test_files/mongo/mongo_print_too_many_logs.js"),
                 Regex("(.*)"))
 
@@ -335,7 +336,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
     }
 
     private fun insertDataInDb() {
-        collection.insertMany(listOf(
+        collection().insertMany(listOf(
                 executedScriptToDocument(script1.toExecutedScriptDb()),
                 executedScriptToDocument(script2.toExecutedScriptDb())
         ))
@@ -402,6 +403,15 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
             ScriptAction.RUN
     )
 
+    private fun initMongoConnectionAndBuildDriver(tag: String,
+                                                  mongoShell: MongoShell,
+                                                  printOutput: Boolean = false,
+                                                  saveOutput: Boolean = false,
+                                                  clientPath: Path? = null): MongoDriver {
+        initMongoConnection(tag)
+        return buildMongoDriver(mongoShell, printOutput, saveOutput, clientPath)
+    }
+
     private fun buildMongoDriver(mongoShell: MongoShell,
                                  printOutput: Boolean = false,
                                  saveOutput: Boolean = false,
@@ -409,7 +419,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
         val mongoClientPath = clientPath ?: Paths.get(mongoShell.defaultBinaryName())
 
         return MongoDriver(
-            mongoUri,
+            mongoUri(),
             tmpFilePath = Paths.get(MongoConfigKey.DB_MONGO_TMP_PATH.default!!),
             clientPath = mongoClientPath,
             saveOutput = saveOutput,
