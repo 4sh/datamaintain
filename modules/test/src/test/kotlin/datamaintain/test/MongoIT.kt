@@ -14,7 +14,7 @@ class MongoIT : AbstractMongoDbTest() {
         // Given
         val args = arrayOf(
                 "--db-type", "mongo",
-                "--db-uri", mongoUri,
+                "--db-uri", mongoUri(),
                 "update-db",
                 "--verbose",
                 "--path", "src/test/resources/integration/ok",
@@ -27,7 +27,7 @@ class MongoIT : AbstractMongoDbTest() {
         main(args)
 
         // Then
-        val coll = database.getCollection("simple")
+        val coll = database().getCollection("simple")
         expectThat(coll.countDocuments()).isEqualTo(3)
 
         expectThat(listExecutedFiles())
@@ -43,7 +43,7 @@ class MongoIT : AbstractMongoDbTest() {
         // Given
         main(arrayOf(
                 "--db-type", "mongo",
-                "--db-uri", mongoUri,
+                "--db-uri", mongoUri(),
                 "update-db",
                 "--verbose",
                 "--path", "src/test/resources/integration/partial",
@@ -51,12 +51,12 @@ class MongoIT : AbstractMongoDbTest() {
 
         ))
 
-        expectThat(database.getCollection("simple").countDocuments()).isEqualTo(2)
-        expectThat(collection.countDocuments()).isEqualTo(2)
+        expectThat(database().getCollection("simple").countDocuments()).isEqualTo(2)
+        expectThat(collection().countDocuments()).isEqualTo(2)
 
         val args = arrayOf(
                 "--db-type", "mongo",
-                "--db-uri", mongoUri,
+                "--db-uri", mongoUri(),
                 "update-db",
                 "--verbose",
                 "--path", "src/test/resources/integration/ok",
@@ -67,7 +67,7 @@ class MongoIT : AbstractMongoDbTest() {
         main(args)
 
         // Then
-        expectThat(database.getCollection("simple").countDocuments()).isEqualTo(3)
+        expectThat(database().getCollection("simple").countDocuments()).isEqualTo(3)
 
         expectThat(listExecutedFiles())
                 .hasSize(3)
@@ -82,7 +82,7 @@ class MongoIT : AbstractMongoDbTest() {
         // Given
         val args = arrayOf(
                 "--db-type", "mongo",
-                "--db-uri", mongoUri,
+                "--db-uri", mongoUri(),
                 "update-db",
                 "--path", "src/test/resources/integration/ok",
                 "--identifier-regex", "(.*?)_.*",
@@ -93,7 +93,7 @@ class MongoIT : AbstractMongoDbTest() {
         main(args)
 
         // Then
-        expectThat(database.getCollection("simple").countDocuments()).isEqualTo(0)
+        expectThat(database().getCollection("simple").countDocuments()).isEqualTo(0)
 
         expectThat(listExecutedFiles()).isEmpty()
     }
@@ -103,7 +103,7 @@ class MongoIT : AbstractMongoDbTest() {
         // Given
         val args = arrayOf(
                 "--db-type", "mongo",
-                "--db-uri", mongoUri,
+                "--db-uri", mongoUri(),
                 "update-db",
                 "--verbose",
                 "--path", "src/test/resources/integration/ok",
@@ -116,7 +116,7 @@ class MongoIT : AbstractMongoDbTest() {
         main(args)
 
         // Then
-        expectThat(database.getCollection("simple").countDocuments()).isEqualTo(0)
+        expectThat(database().getCollection("simple").countDocuments()).isEqualTo(0)
 
         expectThat(listExecutedFiles())
                 .hasSize(3)
@@ -132,7 +132,7 @@ class MongoIT : AbstractMongoDbTest() {
         // Given
         main(arrayOf(
                 "--db-type", "mongo",
-                "--db-uri", mongoUri,
+                "--db-uri", mongoUri(),
                 "update-db",
                 "--verbose",
                 "--path", "src/test/resources/integration/partial",
@@ -140,12 +140,12 @@ class MongoIT : AbstractMongoDbTest() {
 
         ))
 
-        expectThat(database.getCollection("simple").countDocuments()).isEqualTo(2)
-        expectThat(collection.countDocuments()).isEqualTo(2)
+        expectThat(database().getCollection("simple").countDocuments()).isEqualTo(2)
+        expectThat(collection().countDocuments()).isEqualTo(2)
 
         val args = arrayOf(
                 "--db-type", "mongo",
-                "--db-uri", mongoUri,
+                "--db-uri", mongoUri(),
                 "update-db",
                 "--verbose",
                 "--path", "src/test/resources/integration/override",
@@ -170,7 +170,7 @@ class MongoIT : AbstractMongoDbTest() {
         // Given
         val args = listOf(
                 "--db-type", "mongo",
-                "--db-uri", mongoUri,
+                "--db-uri", mongoUri(),
                 "update-db",
                 "--verbose",
                 "--path", "src/test/resources/integration/ko",
@@ -191,7 +191,7 @@ class MongoIT : AbstractMongoDbTest() {
                 contains("02_file.js has not been correctly executed")
             }
 
-        expectThat(database.getCollection("simple").countDocuments()).isEqualTo(1)
+        expectThat(database().getCollection("simple").countDocuments()).isEqualTo(1)
 
         expectThat(listExecutedFiles())
                 .hasSize(1)
@@ -206,7 +206,7 @@ class MongoIT : AbstractMongoDbTest() {
 
         main(arrayOf(
                 "--db-type", "mongo",
-                "--db-uri", mongoUri,
+                "--db-uri", mongoUri(),
                 "list"
         ))
 
