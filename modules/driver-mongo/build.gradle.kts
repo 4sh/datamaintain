@@ -8,7 +8,7 @@ plugins {
 baseProject()
 
 repositories {
-    jcenter()
+    mavenCentral()
 }
 
 dependencies {

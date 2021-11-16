@@ -15,10 +15,6 @@ fun Task.generatePom() {
           <version>${project.version}</version>
           <repositories>
                 <repository>
-                  <id>jcenter</id>
-                  <url>https://jcenter.bintray.com</url>
-                </repository>
-                <repository>
                     <id>jitpack.io</id>
                     <url>https://jitpack.io</url>
                 </repository>

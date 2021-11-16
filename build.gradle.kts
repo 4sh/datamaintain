@@ -23,7 +23,7 @@ allprojects {
     version = computedVersion
 
     repositories {
-        jcenter()
+        mavenCentral()
     }
 }
 
