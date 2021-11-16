@@ -16,7 +16,7 @@ class Report @JvmOverloads constructor(
         val validatedCheckRules: List<CheckRule> = listOf()
 ) {
     fun print(verbose: Boolean, porcelain: Boolean = false) {
-        val stepWithMaxExecutionOrder: Step = Step.values().asSequence().maxBy { step -> step.executionOrder }!!
+        val stepWithMaxExecutionOrder: Step = Step.values().asSequence().maxByOrNull { step -> step.executionOrder }!!
         print(verbose, porcelain, stepWithMaxExecutionOrder)
     }
 
