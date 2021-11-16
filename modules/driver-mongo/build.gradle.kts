@@ -15,7 +15,7 @@ dependencies {
     compileOnly(project(":modules:core"))
     testImplementation(project(":modules:core"))
     implementation(
-        "org.jetbrains.kotlinx:kotlinx-serialization-runtime:${Versions.kotlinxSerializationRuntime}"
+        "org.jetbrains.kotlinx:kotlinx-serialization-json:${Versions.kotlinxSerialization}"
     )
     testImplementation("org.mongodb:mongodb-driver-sync:${Versions.mongoDriver}")
 }
