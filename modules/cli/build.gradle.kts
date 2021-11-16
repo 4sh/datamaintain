@@ -3,7 +3,7 @@ import java.io.ByteArrayOutputStream
 plugins {
     id("org.jetbrains.kotlin.jvm")
     application
-    maven
+    `maven-publish`
     id("com.palantir.graal")
 }
 

@@ -1,6 +1,6 @@
 plugins {
     id("org.jetbrains.kotlin.jvm")
-    maven // Needed for Jitpack
+    `maven-publish` // Needed for Jitpack
 }
 
 baseProject()
