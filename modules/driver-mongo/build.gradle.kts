@@ -1,7 +1,7 @@
 plugins {
     id("org.jetbrains.kotlin.jvm")
     kotlin("plugin.serialization") version Versions.kotlin
-    maven // Needed for Jitpack
+    `maven-publish` // Needed for Jitpack
 }
 
 baseProject()
