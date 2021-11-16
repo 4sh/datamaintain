@@ -36,7 +36,7 @@ plugins {
 baseProject()
 
 repositories {
-    jcenter()
+    mavenCentral()
 }
 
 dependencies {
@@ -107,7 +107,7 @@ plugins {
 baseProject()
 
 repositories {
-    jcenter()
+    mavenCentral()
 }
 
 dependencies {
