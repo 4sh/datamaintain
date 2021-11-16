@@ -100,7 +100,6 @@ Your ```build.gradle.kts``` should contain at least:
 ```kotlin
 plugins {
     id("org.jetbrains.kotlin.jvm")
-    id("com.sourcemuse.mongo")
     maven // Needed for Jitpack
 }
 

@@ -1,6 +1,5 @@
 plugins {
     id("org.jetbrains.kotlin.jvm")
-    id("com.sourcemuse.mongo")
     kotlin("plugin.serialization") version Versions.kotlin
     maven // Needed for Jitpack
 }
@@ -19,10 +18,3 @@ dependencies {
     )
     testImplementation("org.mongodb:mongodb-driver-sync:${Versions.mongoDriver}")
 }
-
-mongo {
-    setPort(Globals.mongoPort)
-    mongoVersion = Versions.mongo
-}
-
-tasks.getByPath("test").dependsOn("startManagedMongoDb")
