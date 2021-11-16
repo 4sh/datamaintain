@@ -3,6 +3,7 @@ object Versions {
     const val kotlinLogging = "1.7.7"
     const val logbackClassic = "1.2.3"
     const val junit = "5.7.0"
+    const val testcontainers = "1.16.2"
     const val strikt = "0.32.0"
     const val mockk = "1.9.3"
     const val clikt = "2.3.0"
