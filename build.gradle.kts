@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile
 
 plugins {
     id("org.jetbrains.kotlin.jvm") version Versions.kotlin apply false
-    id("com.palantir.graal") version "0.4.0" apply false
+    id("com.palantir.graal") version "0.10.0" apply false
     id("com.palantir.git-version") version "0.12.3"
 }
 
