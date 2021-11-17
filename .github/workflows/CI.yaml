@@ -23,7 +23,7 @@ jobs:
             ${{ runner.os }}-gradle-
 
       - name: Build
-        run: ./gradlew build --build-cache
+        run: ./gradlew build --build-cache --console plain
 
       - name: Upload Unit Test Results
         if: always()
