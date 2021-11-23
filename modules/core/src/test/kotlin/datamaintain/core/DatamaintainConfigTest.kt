@@ -78,5 +78,11 @@ class DatamaintainConfigTest {
             get { verbose }.isFalse()
             get { porcelain }.isFalse()
         }
+
+        System.clearProperty("scan.path")
+        System.clearProperty(CoreConfigKey.CREATE_TAGS_FROM_FOLDER.key)
+        System.clearProperty(CoreConfigKey.EXECUTION_MODE.key)
+        System.clearProperty(CoreConfigKey.VERBOSE.key)
+        System.clearProperty(CoreConfigKey.PRINT_RELATIVE_PATH_OF_SCRIPT.key)
     }
 }
