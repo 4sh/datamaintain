@@ -29,7 +29,10 @@ import java.nio.file.Paths
 internal class ExecutorTest {
     private val dbDriverMock = mockk<DatamaintainDriver>()
     private val context = Context(
-            DatamaintainConfig(Paths.get(""), Regex(""), driverConfig = FakeDriverConfig()),
+            DatamaintainConfig(
+                    path = Paths.get(""),
+                    identifierRegex = Regex(""),
+                    driverConfig = FakeDriverConfig()),
             dbDriver = dbDriverMock
     )
 
@@ -100,8 +103,8 @@ internal class ExecutorTest {
         every { dbDriverMock.markAsExecuted(any()) }.returnsArgument(0)
 
         val context = Context(DatamaintainConfig(
-                Paths.get(""),
-                Regex(""),
+                path = Paths.get(""),
+                identifierRegex = Regex(""),
                 driverConfig = FakeDriverConfig(),
                 executionMode = ExecutionMode.NORMAL
         ), dbDriver = dbDriverMock)
@@ -159,7 +162,9 @@ internal class ExecutorTest {
     fun `should not call executeScript when execution mode is dry`() {
         // Given
         val context = Context(
-                DatamaintainConfig(Paths.get(""), Regex(""),
+                DatamaintainConfig(
+                        path = Paths.get(""),
+                        identifierRegex = Regex(""),
                         driverConfig = FakeDriverConfig(),
                         executionMode = ExecutionMode.DRY),
                 dbDriver = dbDriverMock)

@@ -27,18 +27,18 @@ fun buildDatamaintainConfig(
     verbose: Boolean = CoreConfigKey.VERBOSE.default!!.toBoolean(),
     porcelain: Boolean = CoreConfigKey.PRINT_RELATIVE_PATH_OF_SCRIPT.default!!.toBoolean()
 ) = DatamaintainConfig(
-    path,
-    identifierRegex,
-    doesCreateTagsFromFolder,
-    whitelistedTags,
-    blacklistedTags,
-    tagsToPlayAgain,
-    overrideExecutedScripts,
-    tagsMatchers,
-    checkRules,
-    executionMode,
-    defaultScriptAction,
-    driverConfig,
-    verbose,
-    porcelain
+    path = path,
+    identifierRegex = identifierRegex,
+    doesCreateTagsFromFolder = doesCreateTagsFromFolder,
+    whitelistedTags = whitelistedTags,
+    blacklistedTags = blacklistedTags,
+    tagsToPlayAgain = tagsToPlayAgain,
+    overrideExecutedScripts = overrideExecutedScripts,
+    tagsMatchers = tagsMatchers,
+    checkRules = checkRules,
+    executionMode = executionMode,
+    defaultScriptAction = defaultScriptAction,
+    driverConfig = driverConfig,
+    verbose = verbose,
+    porcelain = porcelain
 )

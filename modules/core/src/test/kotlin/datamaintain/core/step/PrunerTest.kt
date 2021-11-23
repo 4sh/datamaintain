@@ -19,8 +19,8 @@ internal class PrunerTest {
     private val dbDriver = mockk<DatamaintainDriver>()
     private val tagToPlayAgain = Tag("again")
     private val context = Context(DatamaintainConfig(
-            Paths.get(""),
-            Regex(""),
+            path = Paths.get(""),
+            identifierRegex = Regex(""),
             tagsToPlayAgain = setOf(tagToPlayAgain),
             driverConfig = FakeDriverConfig()),
             dbDriver = dbDriver)
