@@ -13,6 +13,7 @@ import strikt.assertions.isEqualTo
 import strikt.assertions.isFalse
 import strikt.assertions.isTrue
 import java.nio.file.Paths
+import java.util.*
 
 class DatamaintainConfigTest {
 
@@ -84,5 +85,29 @@ class DatamaintainConfigTest {
         System.clearProperty(CoreConfigKey.EXECUTION_MODE.key)
         System.clearProperty(CoreConfigKey.VERBOSE.key)
         System.clearProperty(CoreConfigKey.PRINT_RELATIVE_PATH_OF_SCRIPT.key)
+    }
+
+    @Test
+    fun `should construct scan path from user_dir`() {
+        val properties = Properties()
+        properties.setProperty(CoreConfigKey.SCAN_PATH.key, "./scanPath")
+
+        val config = DatamaintainConfig.buildConfig(FakeDriverConfig(), properties)
+
+        expectThat(config).and {
+            get { path }.isEqualTo(Paths.get(System.getProperty("user.dir"),"scanPath"))
+        }
+    }
+
+    @Test
+    fun `should not alter scan path because absolute`() {
+        val properties = Properties()
+        properties.setProperty(CoreConfigKey.SCAN_PATH.key, "/var/scanPath")
+
+        val config = DatamaintainConfig.buildConfig(FakeDriverConfig(), properties)
+
+        expectThat(config).and {
+            get { path }.isEqualTo(Paths.get("/var/scanPath"))
+        }
     }
 }
