@@ -15,7 +15,8 @@ import java.util.*
 
 private val logger = KotlinLogging.logger {}
 
-data class DatamaintainConfig @JvmOverloads constructor(val path: Path = Paths.get(SCAN_PATH.default!!),
+data class DatamaintainConfig @JvmOverloads constructor(val workingDirectory: Path = Paths.get(System.getProperty("user.dir")),
+                                                        val path: Path = Paths.get(SCAN_PATH.default!!),
                                                         val identifierRegex: Regex = Regex(SCAN_IDENTIFIER_REGEX.default!!),
                                                         val doesCreateTagsFromFolder: Boolean = CREATE_TAGS_FROM_FOLDER.default!!.toBoolean(),
                                                         val whitelistedTags: Set<Tag> = setOf(),
@@ -50,8 +51,11 @@ data class DatamaintainConfig @JvmOverloads constructor(val path: Path = Paths.g
 
             val scriptAction = ScriptAction.fromNullable(props.getNullableProperty(DEFAULT_SCRIPT_ACTION), defaultAction)
 
-            val scanPath = Paths.get(props.getProperty(SCAN_PATH)).toAbsolutePath().normalize()
+            val workingDirectoryPath = buildWorkingDirectoryPath(props)
+            val scanPath = buildAbsoluteScanPath(workingDirectoryPath, props)
+
             return DatamaintainConfig(
+                    workingDirectoryPath,
                     scanPath,
                     Regex(props.getProperty(SCAN_IDENTIFIER_REGEX)),
                     props.getProperty(CREATE_TAGS_FROM_FOLDER).toBoolean(),
@@ -69,6 +73,22 @@ data class DatamaintainConfig @JvmOverloads constructor(val path: Path = Paths.g
                     props.getProperty(VERBOSE).toBoolean(),
                     props.getProperty(PRINT_RELATIVE_PATH_OF_SCRIPT).toBoolean()
             )
+        }
+
+        private fun buildWorkingDirectoryPath(props: Properties): Path {
+            return props.getProperty(WORKING_DIRECTORY_PATH)
+                    .let { Paths.get(it) }
+                    .also { it.toAbsolutePath().normalize() }
+        }
+
+        private fun buildAbsoluteScanPath(workingDirectoryPath: Path, props: Properties): Path {
+            var scanPath = Paths.get(props.getProperty(SCAN_PATH))
+
+            if (!scanPath.isAbsolute) {
+                scanPath = workingDirectoryPath.resolve(scanPath)
+            }
+
+            return scanPath.toAbsolutePath().normalize()
         }
 
         private fun extractTags(tags: String?): Set<Tag> {
@@ -123,6 +143,7 @@ interface ConfigKey {
 enum class CoreConfigKey(override val key: String,
                          override val default: String? = null) : ConfigKey {
     // GLOBAL
+    WORKING_DIRECTORY_PATH("working.directory.path", System.getProperty("user.dir")),
     DB_TYPE("db.type", "mongo"),
     VERBOSE("verbose", "false"),
     DEFAULT_SCRIPT_ACTION("default.script.action", "RUN"),
