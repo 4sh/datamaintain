@@ -102,12 +102,26 @@ class DatamaintainConfigTest {
     @Test
     fun `should not alter scan path because absolute`() {
         val properties = Properties()
+        properties.setProperty(CoreConfigKey.WORKING_DIRECTORY_PATH.key, "/tmp")
         properties.setProperty(CoreConfigKey.SCAN_PATH.key, "/var/scanPath")
 
         val config = DatamaintainConfig.buildConfig(FakeDriverConfig(), properties)
 
         expectThat(config).and {
             get { path }.isEqualTo(Paths.get("/var/scanPath"))
+        }
+    }
+
+    @Test
+    fun `should construct scan path from working directory`() {
+        val properties = Properties()
+        properties.setProperty(CoreConfigKey.WORKING_DIRECTORY_PATH.key, "/tmp")
+        properties.setProperty(CoreConfigKey.SCAN_PATH.key, "./scanPath")
+
+        val config = DatamaintainConfig.buildConfig(FakeDriverConfig(), properties)
+
+        expectThat(config).and {
+            get { path }.isEqualTo(Paths.get("/tmp/scanPath"))
         }
     }
 }
