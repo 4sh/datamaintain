@@ -14,9 +14,14 @@ import datamaintain.core.db.driver.DriverConfigKey
 import datamaintain.core.exception.DatamaintainBaseException
 import datamaintain.db.driver.mongo.MongoConfigKey
 import java.io.File
+import java.nio.file.Path
+import java.nio.file.Paths
 import java.util.*
 
 class App : CliktCommand() {
+    private val workingDirectoryPath: Path? by option("--working-directory-path", "--wd", help = "path to the working directory. Can be relative but prefer absolute path. All relative paths configured will be relative to this path if set.")
+            .convert { Paths.get(it) }
+            .validate { it.toFile().exists() }
 
     private val configFilePath: File? by option(help = "path to config file")
         .convert { File(it) }
@@ -35,12 +40,25 @@ class App : CliktCommand() {
 
     override fun run() {
         configFilePath?.let {
-            props.load(it.inputStream())
+            val file = workingDirectoryPath?.resolve(it.toPath())?.toFile() ?: it
+
+            props.load(file.inputStream())
         }
+
         overloadPropsFromArgs(props)
     }
 
     private fun overloadPropsFromArgs(props: Properties) {
+        if (workingDirectoryPath != null) {
+            props.put(CoreConfigKey.WORKING_DIRECTORY_PATH.key, workingDirectoryPath)
+        } else {
+            // The default working path is the parent of the config file
+            configFilePath?.also {
+                props.put(CoreConfigKey.WORKING_DIRECTORY_PATH.key, it.toPath().parent.toAbsolutePath().normalize().toString())
+            }
+        }
+
+
         dbUri?.let { props.put(DriverConfigKey.DB_URI.key, it) }
         dbType?.let { props[CoreConfigKey.DB_TYPE.key] = it }
 
