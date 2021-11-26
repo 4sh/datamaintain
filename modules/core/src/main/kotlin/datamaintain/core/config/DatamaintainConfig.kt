@@ -8,6 +8,7 @@ import datamaintain.core.script.Tag
 import datamaintain.core.script.TagMatcher
 import datamaintain.core.step.executor.ExecutionMode
 import mu.KotlinLogging
+import java.io.File
 import java.io.InputStream
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -47,6 +48,9 @@ data class DatamaintainConfig @JvmOverloads constructor(val name: String? = null
         @JvmOverloads
         fun buildConfig(driverConfig: DatamaintainDriverConfig, props: Properties = Properties()): DatamaintainConfig {
             overrideBySystemProperties(props, values().asList())
+
+            val workingDirectoryPath = buildWorkingDirectoryPath(props)
+            enrichFromParentConfig(workingDirectoryPath, props)
 
             var executionMode = ExecutionMode.fromNullable(props.getNullableProperty(EXECUTION_MODE), defaultExecutionMode)
 
@@ -93,6 +97,42 @@ data class DatamaintainConfig @JvmOverloads constructor(val name: String? = null
             return scanPath.toAbsolutePath().normalize()
         }
 
+        private fun enrichFromParentConfig(workingDirectoryPath: Path, props: Properties) {
+            getParentConfigFile(workingDirectoryPath, props)?.also {
+                enrichFromParentProperties(workingDirectoryPath, props, it)
+            }
+        }
+
+        private fun enrichFromParentProperties(workingDirectoryPath: Path, props: Properties, file: File) {
+            val parentProps = Properties()
+
+            file.inputStream().use {
+                parentProps.load(it)
+            }
+
+            logger.info { ("Load new config keys from parent config located at" +
+                    " ${file.toPath().toAbsolutePath().normalize()}").trimMargin() }
+
+            parentProps.forEach {
+                props.putIfAbsent(it.key, it.value)
+            }
+
+            getParentConfigFile(workingDirectoryPath, parentProps)?.also {
+                enrichFromParentProperties(workingDirectoryPath, props, it)
+            }
+        }
+
+        private fun getParentConfigFile(workingDirectoryPath: Path, props: Properties): File? {
+            return props.getProperty(PARENT_CONFIG_PATH.key)
+                    ?.let { Paths.get(it) }
+                    ?.let {
+                        if (!it.isAbsolute) workingDirectoryPath.resolve(it) else it
+                    }
+                    ?.toAbsolutePath()
+                    ?.normalize()
+                    ?.toFile()
+        }
+
         private fun extractTags(tags: String?): Set<Tag> {
             return tags?.split(",")
                     ?.map { Tag(it) }
@@ -112,6 +152,7 @@ data class DatamaintainConfig @JvmOverloads constructor(val name: String? = null
     fun log() {
         logger.info { "Configuration: " }
 
+        workingDirectory.also { logger.info { "- working directory -> $it" } }
         name?.also { logger.info { "- name -> $it" } }
         path.let { logger.info { "- path -> $it" } }
         defaultScriptAction.let { logger.info { "- script action -> ${it}" } }
@@ -149,6 +190,7 @@ enum class CoreConfigKey(override val key: String,
     // GLOBAL
     CONFIG_NAME("name"),
     WORKING_DIRECTORY_PATH("working.directory.path", System.getProperty("user.dir")),
+    PARENT_CONFIG_PATH("parent.config.path"),
     DB_TYPE("db.type", "mongo"),
     VERBOSE("verbose", "false"),
     DEFAULT_SCRIPT_ACTION("default.script.action", "RUN"),

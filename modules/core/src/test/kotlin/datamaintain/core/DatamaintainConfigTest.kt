@@ -16,32 +16,10 @@ class DatamaintainConfigTest {
 
     @Test
     fun `should build config from resource`() {
-        val expectedPath = Paths.get("/tmp/test")
-
         val config = DatamaintainConfig.buildConfig(DatamaintainConfigTest::class.java.getResourceAsStream("/config/default.properties"),
                 FakeDriverConfig())
-        expectThat(config).and {
-            get { path }.isEqualTo(expectedPath)
-            get { identifierRegex.pattern }.isEqualTo("(.*?)_.*")
-            get { whitelistedTags }.isEqualTo(setOf(Tag("trois"), Tag("quatre")))
-            get { blacklistedTags }.isEqualTo(setOf(Tag("un"), Tag("deux")))
-            get { tagsToPlayAgain }.isEqualTo(setOf(Tag("again")))
-            get { doesCreateTagsFromFolder }.isTrue()
-            get { executionMode }.isEqualTo(ExecutionMode.DRY)
-            get { tagsMatchers }.containsExactlyInAnyOrder(
-                    TagMatcher( Tag("TOTO"), setOf(
-                        expectedPath.resolve(Paths.get("src/test/resources/scanner_test_files/01_file1")).toString(),
-                        expectedPath.resolve(Paths.get("src/test/resources/scanner_test_files/subfolder/*")).toString()
-                    )),
-                    TagMatcher(Tag("potato"), setOf(
-                            expectedPath.resolve(Paths.get("src/test/resources/scanner_test_files/*")).toString(),
-                            expectedPath.resolve(Paths.get("src/test/resources/scanner_test_files/subfolder/03_file3")).toString()
-                    ))
-            )
-            get { verbose }.isTrue()
-            get { porcelain }.isTrue()
-            get { name }.isEqualTo("myDefaultConfig")
-        }
+
+        assertMyDefaultConfig(config)
     }
 
     @Test
@@ -121,6 +99,45 @@ class DatamaintainConfigTest {
 
         expectThat(config).and {
             get { path }.isEqualTo(Paths.get("/tmp/scanPath"))
+        }
+    }
+
+    @Test
+    fun `should load minimal properties as parent config`() {
+        val configFilePath = DatamaintainConfigTest::class.java.getResource("/config/default.properties")?.file
+
+        val props = Properties()
+        props.put(CoreConfigKey.PARENT_CONFIG_PATH.key, configFilePath)
+
+        val config = DatamaintainConfig.buildConfig(FakeDriverConfig(), props)
+
+        assertMyDefaultConfig(config)
+    }
+
+    private fun assertMyDefaultConfig(config: DatamaintainConfig) {
+        val expectedPath = Paths.get("/tmp/test")
+
+        expectThat(config).and {
+            get { path }.isEqualTo(expectedPath)
+            get { identifierRegex.pattern }.isEqualTo("(.*?)_.*")
+            get { whitelistedTags }.isEqualTo(setOf(Tag("trois"), Tag("quatre")))
+            get { blacklistedTags }.isEqualTo(setOf(Tag("un"), Tag("deux")))
+            get { tagsToPlayAgain }.isEqualTo(setOf(Tag("again")))
+            get { doesCreateTagsFromFolder }.isTrue()
+            get { executionMode }.isEqualTo(ExecutionMode.DRY)
+            get { tagsMatchers }.containsExactlyInAnyOrder(
+                    TagMatcher(Tag("TOTO"), setOf(
+                            expectedPath.resolve(Paths.get("src/test/resources/scanner_test_files/01_file1")).toString(),
+                            expectedPath.resolve(Paths.get("src/test/resources/scanner_test_files/subfolder/*")).toString()
+                    )),
+                    TagMatcher(Tag("potato"), setOf(
+                            expectedPath.resolve(Paths.get("src/test/resources/scanner_test_files/*")).toString(),
+                            expectedPath.resolve(Paths.get("src/test/resources/scanner_test_files/subfolder/03_file3")).toString()
+                    ))
+            )
+            get { verbose }.isTrue()
+            get { porcelain }.isTrue()
+            get { name }.isEqualTo("myDefaultConfig")
         }
     }
 }
