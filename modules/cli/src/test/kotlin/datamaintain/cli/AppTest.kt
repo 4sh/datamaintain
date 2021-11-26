@@ -46,6 +46,38 @@ internal class AppTest : BaseCliTest() {
                 expectThat(exitCode).isEqualTo(1)
                 expectThat(output).contains("java.io.FileNotFoundException: non-existing-file.properties (No such file or directory)")
             }
+
+            @Test
+            fun `should build configuration from absolute working directory`() {
+                // Given
+                val argv = listOf(
+                        "--working-directory-path", System.getProperty("user.dir") + "/src/test/resources/",
+                        "--config-file-path", "config.properties")
+
+                // When
+                runAppWithUpdateDb(argv)
+
+                // Then
+                expectThat((configWrapper.datamaintainConfig!!.driverConfig) as MongoDriverConfig)
+                        .get { uri }
+                        .isEqualTo("mongo-uri")
+            }
+
+            @Test
+            fun `should build configuration from relative working directory`() {
+                // Given
+                val argv = listOf(
+                        "--working-directory-path", "src/test/resources/",
+                        "--config-file-path", "config.properties")
+
+                // When
+                runAppWithUpdateDb(argv)
+
+                // Then
+                expectThat((configWrapper.datamaintainConfig!!.driverConfig) as MongoDriverConfig)
+                        .get { uri }
+                        .isEqualTo("mongo-uri")
+            }
         }
 
         @Nested
