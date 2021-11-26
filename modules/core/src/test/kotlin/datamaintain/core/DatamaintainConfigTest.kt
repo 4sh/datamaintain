@@ -8,10 +8,7 @@ import datamaintain.core.script.TagMatcher
 import datamaintain.core.step.executor.ExecutionMode
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
-import strikt.assertions.containsExactlyInAnyOrder
-import strikt.assertions.isEqualTo
-import strikt.assertions.isFalse
-import strikt.assertions.isTrue
+import strikt.assertions.*
 import java.nio.file.Paths
 import java.util.*
 
@@ -43,6 +40,7 @@ class DatamaintainConfigTest {
             )
             get { verbose }.isTrue()
             get { porcelain }.isTrue()
+            get { name }.isEqualTo("myDefaultConfig")
         }
     }
 
@@ -56,6 +54,7 @@ class DatamaintainConfigTest {
             get { executionMode }.isEqualTo(ExecutionMode.NORMAL)
             get { verbose }.isFalse()
             get { porcelain }.isFalse()
+            get { name }.isNull()
         }
     }
 

@@ -15,7 +15,8 @@ import java.util.*
 
 private val logger = KotlinLogging.logger {}
 
-data class DatamaintainConfig @JvmOverloads constructor(val workingDirectory: Path = Paths.get(System.getProperty("user.dir")),
+data class DatamaintainConfig @JvmOverloads constructor(val name: String? = null,
+                                                        val workingDirectory: Path = Paths.get(System.getProperty("user.dir")),
                                                         val path: Path = Paths.get(SCAN_PATH.default!!),
                                                         val identifierRegex: Regex = Regex(SCAN_IDENTIFIER_REGEX.default!!),
                                                         val doesCreateTagsFromFolder: Boolean = CREATE_TAGS_FROM_FOLDER.default!!.toBoolean(),
@@ -55,6 +56,7 @@ data class DatamaintainConfig @JvmOverloads constructor(val workingDirectory: Pa
             val scanPath = buildAbsoluteScanPath(workingDirectoryPath, props)
 
             return DatamaintainConfig(
+                    props.getProperty(CONFIG_NAME.key),
                     workingDirectoryPath,
                     scanPath,
                     Regex(props.getProperty(SCAN_IDENTIFIER_REGEX)),
@@ -109,6 +111,8 @@ data class DatamaintainConfig @JvmOverloads constructor(val workingDirectory: Pa
 
     fun log() {
         logger.info { "Configuration: " }
+
+        name?.also { logger.info { "- name -> $it" } }
         path.let { logger.info { "- path -> $it" } }
         defaultScriptAction.let { logger.info { "- script action -> ${it}" } }
         identifierRegex.let { logger.info { "- identifier regex -> ${it.pattern}" } }
@@ -143,6 +147,7 @@ interface ConfigKey {
 enum class CoreConfigKey(override val key: String,
                          override val default: String? = null) : ConfigKey {
     // GLOBAL
+    CONFIG_NAME("name"),
     WORKING_DIRECTORY_PATH("working.directory.path", System.getProperty("user.dir")),
     DB_TYPE("db.type", "mongo"),
     VERBOSE("verbose", "false"),
