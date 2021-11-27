@@ -278,3 +278,4 @@ internal class ReportTest {
         testAppender.clearEvents()
     }
 }
+
