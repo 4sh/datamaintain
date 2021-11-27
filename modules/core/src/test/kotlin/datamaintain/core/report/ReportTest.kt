@@ -27,8 +27,8 @@ internal class ReportTest {
         testAppender.start()
     }
 
-    /// Report fixture, containining everything
-    private fun reportFixture(): Report =
+    /// builds an example report containining everything
+    private fun buildReport(): Report =
      Report(
              scannedScripts = listOf(ScriptWithContentWithFixedChecksum("Scanned Script 1", "Scan Identifier 1", "CHKSCAN1")),
              filteredScripts = listOf(ScriptWithContentWithFixedChecksum("Filtered Script 1", "Filter Identifier 1", "CHKFIL2")),
@@ -92,7 +92,7 @@ internal class ReportTest {
             )
 
             // When
-            report.print(verbose = true)
+            report.print(verbose = true, porcelain = false)
 
             // Then
             expectThat(testAppender.events) {
@@ -108,7 +108,7 @@ internal class ReportTest {
         @Test
         fun `should print only summary if neither verbose nor porcelain are set`() {
             // Given
-            val report = reportFixture()
+            val report = buildReport()
 
             // When
             report.print(verbose = false, porcelain = false)
@@ -130,7 +130,7 @@ internal class ReportTest {
         @Test
         fun `should print details if verbose is set`() {
             // Given
-            val report = reportFixture()
+            val report = buildReport()
 
             // When
             report.print(verbose = true, porcelain = false)
@@ -153,9 +153,61 @@ internal class ReportTest {
         }
 
         @Test
-        fun `should print only up to max step`() {
+        fun `should print only up to SCAN step if configured`() {
             // Given
-            val report = reportFixture()
+            val report = buildReport()
+
+            // When
+            report.print(verbose = true, porcelain = false, maxStepToShow = Step.SCAN)
+
+            // Then
+            expectThat(testAppender.events).map { it.message }.containsExactly(listOf(
+                    "Summary => ",
+                    "- 1 files scanned",
+                    " -> Scanned Script 1"
+            ))
+        }
+
+        @Test
+        fun `should print only up to FILTER step if configured`() {
+            // Given
+            val report = buildReport()
+
+            // When
+            report.print(verbose = true, porcelain = false, maxStepToShow = Step.FILTER)
+
+            // Then
+            expectThat(testAppender.events).map { it.message }.containsExactly(listOf(
+                    "Summary => ",
+                    "- 1 files scanned",
+                    " -> Scanned Script 1",
+                    "- 1 files filtered",
+                    " -> Filtered Script 1"
+            ))
+        }
+
+        @Test
+        fun `should print only up to SORT step if configured`() {
+            // Given
+            val report = buildReport()
+
+            // When
+            report.print(verbose = true, porcelain = false, maxStepToShow = Step.SORT)
+
+            // Then
+            expectThat(testAppender.events).map { it.message }.containsExactly(listOf(
+                    "Summary => ",
+                    "- 1 files scanned",
+                    " -> Scanned Script 1",
+                    "- 1 files filtered",
+                    " -> Filtered Script 1"
+            ))
+        }
+
+        @Test
+        fun `should print only up to PRUNE step if configured`() {
+            // Given
+            val report = buildReport()
 
             // When
             report.print(verbose = true, porcelain = false, maxStepToShow = Step.PRUNE)
@@ -169,6 +221,53 @@ internal class ReportTest {
                     " -> Filtered Script 1",
                     "- 1 files pruned",
                     " -> Pruned Script 1"
+            ))
+        }
+
+        @Test
+        fun `should print only up to CHECK step if configured`() {
+            // Given
+            val report = buildReport()
+
+            // When
+            report.print(verbose = true, porcelain = false, maxStepToShow = Step.CHECK)
+
+            // Then
+            expectThat(testAppender.events).map { it.message }.containsExactly(listOf(
+                    "Summary => ",
+                    "- 1 files scanned",
+                    " -> Scanned Script 1",
+                    "- 1 files filtered",
+                    " -> Filtered Script 1",
+                    "- 1 files pruned",
+                    " -> Pruned Script 1",
+                    "- 1 check rules validated",
+                    " -> AlwaysSucceed"
+            ))
+        }
+
+        @Test
+        fun `should print only up to EXECUTE step if configured`() {
+            // Given
+            val report = buildReport()
+
+            // When
+            report.print(verbose = true, porcelain = false, maxStepToShow = Step.EXECUTE)
+
+            // Then
+            expectThat(testAppender.events).map { it.message }.containsExactly(listOf(
+                    "Summary => ",
+                    "- 1 files scanned",
+                    " -> Scanned Script 1",
+                    "- 1 files filtered",
+                    " -> Filtered Script 1",
+                    "- 1 files pruned",
+                    " -> Pruned Script 1",
+                    "- 1 check rules validated",
+                    " -> AlwaysSucceed",
+                    "- 2 files executed",
+                    " -> script1",
+                    " -> script2"
             ))
         }
 
