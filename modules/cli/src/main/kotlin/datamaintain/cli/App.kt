@@ -78,8 +78,10 @@ enum class DbType(val value: String) {
     JDBC("jdbc")
 }
 
+val datamaintainApp = App().subcommands(UpdateDb(), ListExecutedScripts(), MarkOneScriptAsExecuted())
+
 fun main(args: Array<String>) {
-    App().subcommands(UpdateDb(), ListExecutedScripts(), MarkOneScriptAsExecuted()).main(args)
+    datamaintainApp.main(args)
 }
 
 class DbTypeNotFoundException(private val dbType: String) : DatamaintainBaseException("db.type $dbType is unknown")
