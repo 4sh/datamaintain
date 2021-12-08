@@ -25,7 +25,10 @@ This scenario is more complex :
 
 In V+1 :
   - if your db has schema, create a BEFORE script that adds the new value as possible value.
-  - update the code to manage this new value.
+  - update the code to only read the new value
+
+In V+2 :
+  - update the code to write the new value
 
 
 ## Add a new collection/table/view
