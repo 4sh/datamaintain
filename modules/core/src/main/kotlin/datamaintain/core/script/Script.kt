@@ -49,21 +49,23 @@ open class ExecutedScript @JvmOverloads constructor(
         open val executionStatus: ExecutionStatus,
         open var action: ScriptAction? = null,
         open val executionDurationInMillis: Long? = null,
-        open val executionOutput: String? = null
+        open val executionOutput: String? = null,
+        open val flags: List<String> = listOf()
 ) : LightExecutedScript(name, checksum, identifier) {
     companion object {
-        fun simulateExecuted(script: ScriptWithContent, executionStatus: ExecutionStatus) =
+        fun simulateExecuted(script: ScriptWithContent, executionStatus: ExecutionStatus, flags: List<String>) =
                 ExecutedScript(
                         script.name,
                         script.checksum,
                         script.identifier,
                         executionStatus,
-                        script.action
+                        script.action,
+                        flags = flags
                 )
 
-        fun build(script: ScriptWithContent, execution: Execution) = simulateExecuted(script, execution.executionStatus)
+        fun build(script: ScriptWithContent, execution: Execution, flags: List<String>) = simulateExecuted(script, execution.executionStatus, flags)
 
-        fun build(script: ScriptWithContent, execution: Execution, executionDurationInMillis: Long) =
+        fun build(script: ScriptWithContent, execution: Execution, executionDurationInMillis: Long, flags: List<String>) =
                 ExecutedScript(
                         script.name,
                         script.checksum,
@@ -71,7 +73,8 @@ open class ExecutedScript @JvmOverloads constructor(
                         execution.executionStatus,
                         script.action,
                         executionDurationInMillis,
-                        execution.executionOutput
+                        execution.executionOutput,
+                        flags
                 )
     }
 

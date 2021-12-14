@@ -20,10 +20,7 @@ import io.mockk.verify
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.api.expectThrows
-import strikt.assertions.containsExactly
-import strikt.assertions.hasSize
-import strikt.assertions.isEqualTo
-import strikt.assertions.map
+import strikt.assertions.*
 import java.nio.file.Paths
 
 internal class ExecutorTest {
@@ -187,6 +184,57 @@ internal class ExecutorTest {
                         map { it.executionDurationInMillis }
                                 .containsExactly(null, null, null)
                     }
+        }
+    }
+
+    @Test
+    fun `should execute and produce executed scripts with flags`() {
+        // Given
+        val context = Context(
+            DatamaintainConfig(Paths.get(""), Regex(""), driverConfig = FakeDriverConfig(), flags = listOf("FLAG1", "FLAG2", "FLAG3")),
+            dbDriver = dbDriverMock
+        )
+
+        val executor = Executor(context)
+
+        every { dbDriverMock.executeScript(any()) }.answers { Execution(OK) }
+        every { dbDriverMock.markAsExecuted(any()) }.answers { it.invocation.args.first() as ExecutedScript }
+
+        // When
+        val report = executor.execute(listOf(script1, script2, script3))
+
+        // Then
+        verify(exactly = 3) { dbDriverMock.executeScript(any()) }
+        verify(exactly = 3) { dbDriverMock.markAsExecuted(any()) }
+
+        expectThat(report) {
+            get { executedScripts }.and {
+                hasSize(3)
+                get(0).and {
+                    get { name }.isEqualTo(script1.name)
+                    get { executionStatus }.isEqualTo(OK)
+                    get { flags }.and {
+                        hasSize(3)
+                        containsExactly("FLAG1", "FLAG2", "FLAG3")
+                    }
+                }
+                get(1).and {
+                    get { name }.isEqualTo(script2.name)
+                    get { executionStatus }.isEqualTo(OK)
+                    get { flags }.and {
+                        hasSize(3)
+                        containsExactly("FLAG1", "FLAG2", "FLAG3")
+                    }
+                }
+                get(2).and {
+                    get { name }.isEqualTo(script3.name)
+                    get { executionStatus }.isEqualTo(OK)
+                    get { flags }.and {
+                        hasSize(3)
+                        containsExactly("FLAG1", "FLAG2", "FLAG3")
+                    }
+                }
+            }
         }
     }
 }
