@@ -39,7 +39,9 @@ data class ExecutedScriptDb(@SerialName("_id") @ContextualSerialization val id: 
                             val executionStatus: ExecutionStatus,
                             val action: ScriptAction? = null,
                             val executionDurationInMillis: Long? = null,
-                            val executionOutput: String? = null)
+                            val executionOutput: String? = null,
+                            val flags: List<String> = listOf()
+)
 
 // Mapping function
 fun ExecutedScriptDb.toExecutedScript() = ExecutedScript(
@@ -49,7 +51,8 @@ fun ExecutedScriptDb.toExecutedScript() = ExecutedScript(
     executionStatus,
     action,
     executionDurationInMillis,
-    executionOutput
+    executionOutput,
+    flags
 )
 fun ExecutedScript.toExecutedScriptDb() = ExecutedScriptDb(
     name = name,
@@ -58,7 +61,8 @@ fun ExecutedScript.toExecutedScriptDb() = ExecutedScriptDb(
     executionStatus = executionStatus,
     action = action,
     executionDurationInMillis = executionDurationInMillis,
-    executionOutput = executionOutput
+    executionOutput = executionOutput,
+    flags = flags
 )
 
 class KJsonParser: ExecutedScriptJsonParser, LightExecutedScriptJsonParser {
