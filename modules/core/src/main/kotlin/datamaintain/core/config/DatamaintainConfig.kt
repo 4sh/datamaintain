@@ -28,7 +28,8 @@ data class DatamaintainConfig @JvmOverloads constructor(val path: Path = Paths.g
                                                         val defaultScriptAction: ScriptAction = defaultAction,
                                                         val driverConfig: DatamaintainDriverConfig,
                                                         val verbose: Boolean = VERBOSE.default!!.toBoolean(),
-                                                        val porcelain: Boolean = PRINT_RELATIVE_PATH_OF_SCRIPT.default!!.toBoolean()){
+                                                        val porcelain: Boolean = PRINT_RELATIVE_PATH_OF_SCRIPT.default!!.toBoolean(),
+                                                        val flags: List<String> = emptyList()) {
 
     companion object {
         private val defaultExecutionMode = ExecutionMode.NORMAL
@@ -67,8 +68,17 @@ data class DatamaintainConfig @JvmOverloads constructor(val path: Path = Paths.g
                     scriptAction,
                     driverConfig,
                     props.getProperty(VERBOSE).toBoolean(),
-                    props.getProperty(PRINT_RELATIVE_PATH_OF_SCRIPT).toBoolean()
+                    props.getProperty(PRINT_RELATIVE_PATH_OF_SCRIPT).toBoolean(),
+                    extractFlags(props.getNullableProperty(FLAGS))
             )
+        }
+
+        private fun extractFlags(flags: String?): List<String> {
+            return if (flags.isNullOrEmpty()) {
+                listOf()
+            } else {
+                flags.split(",")
+            }
         }
 
         private fun extractTags(tags: String?): Set<Tag> {
@@ -100,6 +110,7 @@ data class DatamaintainConfig @JvmOverloads constructor(val path: Path = Paths.g
         executionMode.let { logger.info { "- execution mode -> $it" } }
         verbose.let { logger.info { "- verbose -> $it" } }
         porcelain.let { logger.info { "- porcelain -> $it" } }
+        flags.let { logger.info { "- flags -> $it" } }
         logger.info { "" }
     }
 
@@ -127,6 +138,7 @@ enum class CoreConfigKey(override val key: String,
     VERBOSE("verbose", "false"),
     DEFAULT_SCRIPT_ACTION("default.script.action", "RUN"),
     PRINT_RELATIVE_PATH_OF_SCRIPT("porcelain", "false"),
+    FLAGS("flags"),
 
     // SCAN
     SCAN_PATH("scan.path", "./scripts/"),
