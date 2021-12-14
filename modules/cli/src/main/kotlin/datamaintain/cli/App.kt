@@ -9,6 +9,7 @@ import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.validate
 import datamaintain.cli.update.db.MarkOneScriptAsExecuted
 import datamaintain.cli.update.db.UpdateDb
+import datamaintain.cli.utils.CliSpecificKey
 import datamaintain.core.config.CoreConfigKey
 import datamaintain.core.db.driver.DriverConfigKey
 import datamaintain.core.exception.DatamaintainBaseException
@@ -35,6 +36,8 @@ class App : CliktCommand() {
     private val trustUri: Boolean? by option(help = "Deactivate all controls on the URI you provide Datamaintain").flag()
 
     private val mongoTmpPath: String? by option(help = "mongo tmp file path")
+
+    private val config: Boolean? by option(help = "Print the configuration without executing the subcommand").flag()
 
     private val props by findObject { Properties() }
 
@@ -69,6 +72,8 @@ class App : CliktCommand() {
 
         mongoTmpPath?.let { props.put(MongoConfigKey.DB_MONGO_TMP_PATH.key, it) }
         trustUri?.let { props.put(DriverConfigKey.DB_TRUST_URI.key, it.toString()) }
+
+        config?.let { props.put(CliSpecificKey.__PRINT_CONFIG_ONLY.name, it.toString()) }
     }
 
 }
