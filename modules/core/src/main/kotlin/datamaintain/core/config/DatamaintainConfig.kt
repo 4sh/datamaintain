@@ -56,7 +56,6 @@ data class DatamaintainConfig @JvmOverloads constructor(val name: String? = null
 
             val scriptAction = ScriptAction.fromNullable(props.getNullableProperty(DEFAULT_SCRIPT_ACTION), defaultAction)
 
-            val workingDirectoryPath = buildWorkingDirectoryPath(props)
             val scanPath = buildAbsoluteScanPath(workingDirectoryPath, props)
 
             return DatamaintainConfig(
@@ -155,14 +154,15 @@ data class DatamaintainConfig @JvmOverloads constructor(val name: String? = null
         workingDirectory.also { logger.info { "- working directory -> $it" } }
         name?.also { logger.info { "- name -> $it" } }
         path.let { logger.info { "- path -> $it" } }
-        defaultScriptAction.let { logger.info { "- script action -> ${it}" } }
         identifierRegex.let { logger.info { "- identifier regex -> ${it.pattern}" } }
+        defaultScriptAction.let { logger.info { "- script action -> ${it}" } }
+        executionMode.let { logger.info { "- execution mode -> $it" } }
+        tagsMatchers.let { logger.info { "- tags -> $tagsMatchers" } }
+        whitelistedTags.let { logger.info { "- whitelisted tags -> $it" } }
         blacklistedTags.let { logger.info { "- blacklisted tags -> $it" } }
         tagsToPlayAgain.let { logger.info { "- tags to play again -> $it" } }
-        tagsMatchers.let { logger.info { "- tags -> $tagsMatchers" } }
         overrideExecutedScripts.let { logger.info { "- Allow override executed script -> ${it}" } }
         checkRules.let { logger.info { "- rules -> ${checkRules.toList()}" } }
-        executionMode.let { logger.info { "- execution mode -> $it" } }
         verbose.let { logger.info { "- verbose -> $it" } }
         porcelain.let { logger.info { "- porcelain -> $it" } }
         logger.info { "" }
