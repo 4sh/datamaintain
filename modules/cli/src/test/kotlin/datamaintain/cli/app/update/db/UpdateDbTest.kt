@@ -1,6 +1,6 @@
-package datamaintain.cli.update.db
+package datamaintain.cli.app.update.db
 
-import datamaintain.cli.BaseCliTest
+import datamaintain.cli.app.BaseCliTest
 import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.script.ScriptAction
 import datamaintain.core.script.Tag

@@ -19,11 +19,11 @@ dependencies {
 }
 
 application {
-    mainClass.set("datamaintain.cli.AppKt")
+    mainClass.set("datamaintain.cli.app.AppKt")
 }
 
 graal {
-    mainClass("datamaintain.cli.AppKt")
+    mainClass("datamaintain.cli.app.AppKt")
     outputName("datamaintain")
 }
 

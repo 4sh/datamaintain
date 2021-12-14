@@ -1,4 +1,4 @@
-package datamaintain.cli
+package datamaintain.cli.app
 
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.findObject
@@ -7,8 +7,8 @@ import com.github.ajalt.clikt.parameters.options.convert
 import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.validate
-import datamaintain.cli.update.db.MarkOneScriptAsExecuted
-import datamaintain.cli.update.db.UpdateDb
+import datamaintain.cli.app.update.db.MarkOneScriptAsExecuted
+import datamaintain.cli.app.update.db.UpdateDb
 import datamaintain.cli.utils.CliSpecificKey
 import datamaintain.core.config.CoreConfigKey
 import datamaintain.core.db.driver.DriverConfigKey

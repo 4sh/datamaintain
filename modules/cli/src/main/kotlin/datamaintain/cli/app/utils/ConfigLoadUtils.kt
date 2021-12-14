@@ -1,7 +1,7 @@
-package datamaintain.cli.utils
+package datamaintain.cli.app.utils
 
-import datamaintain.cli.DbType
-import datamaintain.cli.DbTypeNotFoundException
+import datamaintain.cli.app.DbType
+import datamaintain.cli.app.DbTypeNotFoundException
 import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.db.driver.DatamaintainDriverConfig
 import datamaintain.db.driver.jdbc.JdbcDriverConfig

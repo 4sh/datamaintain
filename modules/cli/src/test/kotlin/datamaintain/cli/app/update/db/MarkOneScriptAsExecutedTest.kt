@@ -1,6 +1,6 @@
-package datamaintain.cli.update.db
+package datamaintain.cli.app.update.db
 
-import datamaintain.cli.BaseCliTest
+import datamaintain.cli.app.BaseCliTest
 import datamaintain.core.script.ScriptAction
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
