@@ -6,6 +6,7 @@ import datamaintain.db.driver.mongo.serialization.ExecutedScriptDb
 import datamaintain.db.driver.mongo.serialization.toExecutedScriptDb
 import datamaintain.db.driver.mongo.test.AbstractMongoDbTest
 import org.bson.Document
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
 import strikt.api.expectCatching
@@ -126,6 +127,63 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
 
     @ParameterizedTest
     @EnumSource(value = MongoShell::class)
+    fun `should mark script as executed with flags`() {
+        // Given
+        val mongoDriver: MongoDriver = buildMongoDriver(mongoShell)
+        insertDataInDb()
+        val script3 = ExecutedScript(
+            "script3.js",
+            "d3d9446802a44259755d38e6d163e820",
+            "",
+            ExecutionStatus.OK,
+            ScriptAction.MARK_AS_EXECUTED,
+            flags = listOf("FLAG1", "FLAG1", "FLAG1")
+        )
+
+        // When
+        mongoDriver.markAsExecuted(script3)
+
+        // Then
+        expectThat(collection.find().toList().map { documentToExecutedScript(it) })
+            .hasSize(3).and {
+                get(0).and {
+                    get { name }.isEqualTo("script1.js")
+                    get { checksum }.isEqualTo("c4ca4238a0b923820dcc509a6f75849b")
+                    get { identifier }.isEqualTo("")
+                    get { executionStatus }.isEqualTo(ExecutionStatus.OK)
+                    get { action }.isEqualTo(ScriptAction.RUN)
+                    get { executionOutput }.isNull()
+                    get { executionDurationInMillis }.isNull()
+                    get { flags }.isEmpty()
+                }
+                get(1).and {
+                    get { name }.isEqualTo("script2.js")
+                    get { checksum }.isEqualTo("c81e728d9d4c2f636f067f89cc14862c")
+                    get { identifier }.isEqualTo("")
+                    get { executionStatus }.isEqualTo(ExecutionStatus.OK)
+                    get { action }.isEqualTo(ScriptAction.RUN)
+                    get { executionOutput }.isNull()
+                    get { executionDurationInMillis }.isNull()
+                    get { flags }.isEmpty()
+                }
+                get(2).and {
+                    get { name }.isEqualTo("script3.js")
+                    get { checksum }.isEqualTo("d3d9446802a44259755d38e6d163e820")
+                    get { identifier }.isEqualTo("")
+                    get { executionStatus }.isEqualTo(ExecutionStatus.OK)
+                    get { action }.isEqualTo(ScriptAction.MARK_AS_EXECUTED)
+                    get { executionOutput }.isNull()
+                    get { executionDurationInMillis }.isNull()
+                    get { flags }.and {
+                        hasSize(3)
+                        containsExactly("FLAG1", "FLAG1", "FLAG1")
+                    }
+                }
+            }
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = MongoShell::class)
     fun `should execute correct file script`(mongoShell: MongoShell) {
         // Given
         val mongoDriver: MongoDriver = buildMongoDriver(mongoShell)
@@ -222,7 +280,6 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
         val content = Paths.get("src/test/resources/executor_test_files/mongo/mongo_simple_insert.js").toFile().readText()
         val inMemoryScript = InMemoryScript("test", content, "")
 
-
         // When
         val execution = mongoDriver.executeScript(inMemoryScript)
 
@@ -296,7 +353,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
         val execution = mongoDriver.executeScript(fileScript)
 
         // Then
-        expectCatching { mongoDriver.markAsExecuted(ExecutedScript.build(fileScript, execution, 0)) }
+        expectCatching { mongoDriver.markAsExecuted(ExecutedScript.build(fileScript, execution, 0, listOf())) }
                 .succeeded()
     }
 
@@ -315,6 +372,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
     private val SCRIPT_DOCUMENT_ACTION = "action"
     private val SCRIPT_DOCUMENT_EXECUTION_DURATION_IN_MILLIS = "executionDurationInMillis"
     private val SCRIPT_DOCUMENT_EXECUTION_OUTPUT = "executionOutput"
+    private val SCRIPT_DOCUMENT_FLAGS = "flags"
 
     private fun executedScriptToDocument(executedScript: ExecutedScriptDb): Document =
             Document()
@@ -326,6 +384,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
                     .append(SCRIPT_DOCUMENT_ACTION, executedScript.action!!.name)
                     .append(SCRIPT_DOCUMENT_EXECUTION_DURATION_IN_MILLIS, executedScript.executionDurationInMillis)
                     .append(SCRIPT_DOCUMENT_EXECUTION_OUTPUT, executedScript.executionOutput)
+                    .append(SCRIPT_DOCUMENT_FLAGS, executedScript.flags)
 
     private fun documentToExecutedScript(document: Document): ExecutedScript {
         val executionDurationInMillis: Long? =
@@ -345,7 +404,8 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
             ExecutionStatus.valueOf(document.getString(SCRIPT_DOCUMENT_EXECUTION_STATUS)),
             ScriptAction.valueOf(document.getString(SCRIPT_DOCUMENT_ACTION)),
             executionDurationInMillis,
-            document.getString(SCRIPT_DOCUMENT_EXECUTION_OUTPUT)
+            document.getString(SCRIPT_DOCUMENT_EXECUTION_OUTPUT),
+            document.getList(SCRIPT_DOCUMENT_FLAGS, String::class.java)
         )
     }
 
