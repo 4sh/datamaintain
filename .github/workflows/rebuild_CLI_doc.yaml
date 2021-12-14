@@ -1,6 +1,11 @@
 name: Rebuild CLI documentation
 
-on: push
+on:
+  push:
+    paths:
+      - modules/cli/src/main/kotlin/datamaintain/cli/documentation/*
+      - modules/cli/src/main/kotlin/datamaintain/cli/app/*
+      - modules/cli/src/main/kotlin/datamaintain/cli/app/update/db/*
 jobs:
   rebuild-cli-documentation:
     runs-on: ubuntu-latest
