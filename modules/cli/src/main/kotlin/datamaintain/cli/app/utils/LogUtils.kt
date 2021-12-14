@@ -1,4 +1,4 @@
-package datamaintain.cli.utils
+package datamaintain.cli.app.utils
 
 import mu.KotlinLogging
 

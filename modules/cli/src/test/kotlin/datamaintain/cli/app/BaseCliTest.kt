@@ -1,8 +1,8 @@
-package datamaintain.cli
+package datamaintain.cli.app
 
 import com.github.ajalt.clikt.core.subcommands
-import datamaintain.cli.update.db.MarkOneScriptAsExecuted
-import datamaintain.cli.update.db.UpdateDb
+import datamaintain.cli.app.update.db.MarkOneScriptAsExecuted
+import datamaintain.cli.app.update.db.UpdateDb
 import datamaintain.core.config.DatamaintainConfig
 
 open class BaseCliTest {

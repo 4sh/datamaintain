@@ -1,4 +1,4 @@
-package datamaintain.cli.update.db
+package datamaintain.cli.app.update.db
 
 import com.github.ajalt.clikt.parameters.options.convert
 import com.github.ajalt.clikt.parameters.options.flag

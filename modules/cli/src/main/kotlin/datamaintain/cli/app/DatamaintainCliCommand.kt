@@ -1,9 +1,9 @@
-package datamaintain.cli
+package datamaintain.cli.app
 
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.findObject
 import datamaintain.cli.utils.CliSpecificKey
-import datamaintain.cli.utils.loadConfig
+import datamaintain.cli.app.utils.loadConfig
 import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.exception.DatamaintainBaseException
 import java.util.*

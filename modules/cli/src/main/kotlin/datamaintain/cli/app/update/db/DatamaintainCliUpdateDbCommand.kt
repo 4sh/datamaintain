@@ -1,6 +1,6 @@
-package datamaintain.cli.update.db
+package datamaintain.cli.app.update.db
 
-import datamaintain.cli.DatamaintainCliCommand
+import datamaintain.cli.app.DatamaintainCliCommand
 import datamaintain.core.Datamaintain
 import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.exception.DatamaintainException

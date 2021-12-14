@@ -1,4 +1,4 @@
-package datamaintain.cli
+package datamaintain.cli.app
 
 import datamaintain.db.driver.jdbc.JdbcDriverConfig
 import datamaintain.db.driver.mongo.MongoDriverConfig
@@ -84,7 +84,7 @@ internal class AppTest : BaseCliTest() {
             @Test
             fun `should build configuration with mongo db type`() {
                 // Given
-                val argv = listOf("--db-type", datamaintain.cli.DbType.MONGO.value, "--db-uri", "mongoUri")
+                val argv = listOf("--db-type", datamaintain.cli.app.DbType.MONGO.value, "--db-uri", "mongoUri")
 
                 // When
                 runAppWithUpdateDb(argv)
@@ -96,7 +96,7 @@ internal class AppTest : BaseCliTest() {
             @Test
             fun `should build configuration with jdbc db type`() {
                 // Given
-                val argv = listOf("--db-type", datamaintain.cli.DbType.JDBC.value, "--db-uri", "jdbcUri")
+                val argv = listOf("--db-type", datamaintain.cli.app.DbType.JDBC.value, "--db-uri", "jdbcUri")
 
                 // When
                 runAppWithUpdateDb(argv)
@@ -168,7 +168,7 @@ internal class AppTest : BaseCliTest() {
                 val argv = listOf(
                         "--trust-uri",
                         "--db-type",
-                        datamaintain.cli.DbType.MONGO.value,
+                        datamaintain.cli.app.DbType.MONGO.value,
                         "--db-uri",
                         "mongoUri"
                 )
@@ -187,7 +187,7 @@ internal class AppTest : BaseCliTest() {
                 // Given
                 val argv = listOf(
                         "--db-type",
-                        datamaintain.cli.DbType.MONGO.value,
+                        datamaintain.cli.app.DbType.MONGO.value,
                         "--db-uri",
                         "mongoUri"
                 )
