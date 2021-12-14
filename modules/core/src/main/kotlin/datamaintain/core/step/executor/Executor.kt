@@ -60,7 +60,7 @@ class Executor(private val context: Context) {
                     execution = context.dbDriver.executeScript(script)
                 }
 
-                val executedScript = ExecutedScript.build(script, execution, executionDurationInMillis)
+                val executedScript = ExecutedScript.build(script, execution, executionDurationInMillis, context.config.flags)
 
                 if (executedScript.executionStatus == ExecutionStatus.OK) {
                     markAsExecuted(executedScript)
@@ -71,7 +71,7 @@ class Executor(private val context: Context) {
             }
             ScriptAction.MARK_AS_EXECUTED -> {
                 logger.info {"start marking script ${script.name} as executed"}
-                val executedScript = ExecutedScript.build(script, Execution(ExecutionStatus.OK))
+                val executedScript = ExecutedScript.build(script, Execution(ExecutionStatus.OK), context.config.flags)
 
                 markAsExecuted(executedScript)
                 if (!context.config.porcelain) { logger.info { "${executedScript.name} only marked as executed (so not executed)" } }
@@ -80,7 +80,7 @@ class Executor(private val context: Context) {
             }
             ScriptAction.OVERRIDE_EXECUTED -> {
                 logger.info {"start overriding script ${script.name} execution"}
-                val executedScript = ExecutedScript.build(script, Execution(ExecutionStatus.OK))
+                val executedScript = ExecutedScript.build(script, Execution(ExecutionStatus.OK), context.config.flags)
 
                 overrideExecuted(executedScript)
                 if (!context.config.porcelain) { logger.info { "${executedScript.name} only marked as executed (so not executed)" } }
@@ -98,7 +98,7 @@ class Executor(private val context: Context) {
                 if (!context.config.porcelain) { logger.info { "${script.name} would have been only marked as executed (so not executed)" } }
         }
 
-        return ExecutedScript.simulateExecuted(script, ExecutionStatus.OK)
+        return ExecutedScript.simulateExecuted(script, ExecutionStatus.OK, context.config.flags)
     }
 
     private fun markAsExecuted(it: ExecutedScript) {
