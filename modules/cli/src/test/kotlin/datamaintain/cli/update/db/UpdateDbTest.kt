@@ -422,6 +422,40 @@ internal class UpdateDbTest : BaseCliTest() {
                 }
             }
         }
+
+        @Nested
+        inner class Flags {
+            @Test
+            fun `should build config with one flag`() {
+                // Given
+                val updateDbArguments = listOf("--flags=MY_TEST_FLAG")
+
+                // When
+                runUpdateDb(updateDbArguments)
+
+                // Then
+                expectThat(configWrapper.datamaintainConfig!!.flags.toList()) {
+                    hasSize(1)
+                    first().isEqualTo("MY_TEST_FLAG")
+                }
+            }
+
+            @Test
+            fun `should build config with two flags`() {
+                // Given
+                val updateDbArguments = listOf("--flags=MY_TEST_FLAG1,MY_TEST_FLAG2")
+
+                // When
+                runUpdateDb(updateDbArguments)
+
+                // Then
+                expectThat(configWrapper.datamaintainConfig!!.flags) {
+                    hasSize(2)
+                    first().isEqualTo("MY_TEST_FLAG1")
+                    last().isEqualTo("MY_TEST_FLAG2")
+                }
+            }
+        }
     }
 
     private fun runUpdateDb(updateDbArguments: List<String> = listOf()) {

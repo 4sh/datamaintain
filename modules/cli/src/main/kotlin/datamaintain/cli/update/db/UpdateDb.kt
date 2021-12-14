@@ -62,6 +62,10 @@ class UpdateDb(runner: (DatamaintainConfig) -> Unit = ::defaultUpdateDbRunner) :
 
     private val porcelain: Boolean? by option(help = "for each executed script, display relative path to scan path").flag()
 
+    private val flags: List<String>? by option(help = "add a flag on the executed scripts. " +
+            "To define multiple rules, use option multiple times.")
+        .multiple()
+
     override fun overloadProps(props: Properties) {
         path?.let { props.put(CoreConfigKey.SCAN_PATH.key, it) }
         identifierRegex?.let { props.put(CoreConfigKey.SCAN_IDENTIFIER_REGEX.key, it) }
@@ -81,5 +85,6 @@ class UpdateDb(runner: (DatamaintainConfig) -> Unit = ::defaultUpdateDbRunner) :
         allowAutoOverride?.let { props.put(CoreConfigKey.PRUNE_OVERRIDE_UPDATED_SCRIPTS.key, it.toString()) }
         porcelain?.let { props.put(CoreConfigKey.PRINT_RELATIVE_PATH_OF_SCRIPT.key, it.toString()) }
         mongoShell?.let { props.put(MongoConfigKey.DB_MONGO_SHELL.key, it.toUpperCase()) }
+        flags?.let { props.put(CoreConfigKey.FLAGS.key, it.joinToString(",")) }
     }
 }
