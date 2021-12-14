@@ -2,6 +2,7 @@ package datamaintain.cli
 
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.findObject
+import datamaintain.cli.utils.CliSpecificKey
 import datamaintain.cli.utils.loadConfig
 import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.exception.DatamaintainBaseException
@@ -15,7 +16,12 @@ abstract class DatamaintainCliCommand(name: String, help: String = "") : CliktCo
         try {
             overloadProps(props)
             val config = loadConfig(props)
-            executeCommand(config)
+
+            if (props.getProperty(CliSpecificKey.__PRINT_CONFIG_ONLY.name, "false")!!.toBoolean()) {
+                config.log()
+            } else {
+                executeCommand(config)
+            }
         } catch (e: DatamaintainBaseException) {
             echo(e.message, err = true)
             echo(e.resolutionMessage)
