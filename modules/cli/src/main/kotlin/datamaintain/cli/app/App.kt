@@ -7,6 +7,7 @@ import com.github.ajalt.clikt.parameters.options.convert
 import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.validate
+import com.github.ajalt.clikt.parameters.types.choice
 import datamaintain.cli.app.update.db.MarkOneScriptAsExecuted
 import datamaintain.cli.app.update.db.UpdateDb
 import datamaintain.cli.utils.CliSpecificKey
@@ -28,8 +29,8 @@ class App : CliktCommand() {
         .convert { File(it) }
         .validate { it.exists() }
 
-    private val dbType: String? by option(help = "db type : ${DbType.values().joinToString(",") { v -> v.value }}")
-        .validate { DbType.values().map { v -> v.value }.contains(it) }
+    private val dbType: String? by option(help = "db type")
+        .choice(DbType.values().associate { v -> v.value to v.value })
 
     private val dbUri: String? by option(help = "mongo uri with at least database name. Ex: mongodb://localhost:27017/newName")
 
