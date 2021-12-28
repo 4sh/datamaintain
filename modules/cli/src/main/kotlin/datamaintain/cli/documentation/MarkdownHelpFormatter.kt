@@ -26,7 +26,7 @@ class MarkdownHelpFormatter(private val optionsTitle: String) : HelpFormatter {
                 it.names.joinToString(", "),
                 it.secondaryNames.takeUnless { it.isEmpty() }?.joinToString(", ") ?: " ",
                 it.possibleValues(),
-                it.help
+                it.customizedHelp()
             )
         }
     }
@@ -43,4 +43,14 @@ private fun HelpFormatter.ParameterHelp.Option.possibleValues(): String {
     }
 
     return metavar
+}
+
+const val helpCommandDescription = "Display command help and exit"
+
+private fun HelpFormatter.ParameterHelp.Option.customizedHelp(): String {
+    if(this.names.contains("-h")) {
+        return helpCommandDescription
+    }
+
+    return this.help
 }
