@@ -12,8 +12,10 @@ import datamaintain.cli.app.update.db.MarkOneScriptAsExecuted
 import datamaintain.cli.app.update.db.UpdateDb
 import datamaintain.cli.app.utils.optionWithExample
 import datamaintain.cli.app.utils.optionWithExamples
-import datamaintain.cli.utils.CliSpecificKey
+import datamaintain.cli.app.utils.CliSpecificKey
+import datamaintain.cli.app.utils.detailedOption
 import datamaintain.core.config.CoreConfigKey
+import datamaintain.core.db.driver.DatamaintainDriverConfig
 import datamaintain.core.db.driver.DriverConfigKey
 import datamaintain.core.exception.DatamaintainBaseException
 import datamaintain.db.driver.mongo.MongoConfigKey
@@ -27,20 +29,34 @@ class App : CliktCommand() {
             .convert { Paths.get(it) }
             .validate { it.toFile().exists() }
 
-    private val configFilePath: File? by optionWithExample(
-        help = "path to config file",
-        example = "myProject/src/main/resources/config/datamaintain.properties")
+    private val configFilePath: File? by detailedOption(
+        help = "Path to config file. File must exist.",
+        example = "myProject/src/main/resources/config/datamaintain.properties"
+    )
         .convert { File(it) }
         .validate { it.exists() }
 
-    private val dbType: String? by option(help = "db type")
+    private val dbType: String? by detailedOption(
+        help = "db type",
+        defaultValue = CoreConfigKey.DB_TYPE.default
+    )
         .choice(DbType.values().associate { v -> v.value to v.value })
 
-    private val dbUri: String? by option(help = "mongo uri with at least database name. Ex: mongodb://localhost:27017/newName")
+    private val dbUri: String? by detailedOption(
+        help = "mongo uri with at least database name. Ex: mongodb://localhost:27017/newName",
+        example = "mongodb://localhost:27017/newName",
+        defaultValue = DriverConfigKey.DB_URI.default
+    )
 
-    private val trustUri: Boolean? by option(help = "Deactivate all controls on the URI you provide Datamaintain").flag()
+    private val trustUri: Boolean? by detailedOption(
+        help = "Deactivate all controls on the URI you provide Datamaintain",
+        defaultValue = DriverConfigKey.DB_TRUST_URI.default
+    ).flag()
 
-    private val mongoTmpPath: String? by option(help = "mongo tmp file path")
+    private val mongoTmpPath: String? by detailedOption(
+        help = "mongo tmp file path",
+        defaultValue = MongoConfigKey.DB_MONGO_TMP_PATH.default
+    )
 
     private val config: Boolean? by option(help = "Print the configuration without executing the subcommand").flag()
 
