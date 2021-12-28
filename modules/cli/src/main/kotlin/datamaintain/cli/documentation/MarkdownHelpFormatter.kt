@@ -19,12 +19,13 @@ class MarkdownHelpFormatter(private val optionsTitle: String) : HelpFormatter {
 
     private fun StringBuilder.addOptions(options: List<HelpFormatter.ParameterHelp.Option>) {
         append("$optionsTitle\n")
-        row("Names", "Secondary names", "Possible values", "Description")
-        append("|---|---|---|---|\n")
+        row("Names", "Secondary names", "Needs argument", "Possible arguments", "Description")
+        append("|---|---|---|---|---|\n")
         options.forEach {
             row(
                 it.names.joinToString(", "),
                 it.secondaryNames.takeUnless { it.isEmpty() }?.joinToString(", ") ?: " ",
+                it.waitingForValue(),
                 it.possibleValues(),
                 it.customizedHelp()
             )
@@ -34,12 +35,20 @@ class MarkdownHelpFormatter(private val optionsTitle: String) : HelpFormatter {
     private fun StringBuilder.row(vararg columns: String?) = append(columns.joinToString("|", "|", "|\n"))
 }
 
+private fun HelpFormatter.ParameterHelp.Option.waitingForValue(): String {
+    return if(this.metavar == null) "✘" else "✔"
+}
+
 private fun HelpFormatter.ParameterHelp.Option.possibleValues(): String {
-    val metavar = this.metavar ?: " "
+    val metavar = this.metavar ?: return "N/A"
 
     if(metavar.contains("[")) {
         // Metavar contains list of available values
         return metavar.substring(1, metavar.length - 1).split("|").map { "```$it```" }.joinToString(" or ")
+    }
+
+    if(metavar == "VALUE") {
+        return " "
     }
 
     return metavar
