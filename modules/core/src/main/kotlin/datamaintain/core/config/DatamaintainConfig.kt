@@ -204,7 +204,7 @@ enum class CoreConfigKey(override val key: String,
     SCAN_PATH("scan.path", "./scripts/"),
     SCAN_IDENTIFIER_REGEX("scan.identifier.regex", "(.*)"),
     CREATE_TAGS_FROM_FOLDER("scan.tags.createFromFolder", "false"),
-    TAG("tag", ""),
+    TAG("tag"),
 
     // FILTER
     TAGS_WHITELISTED("filter.tags.whitelisted"),

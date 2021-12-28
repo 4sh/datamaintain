@@ -5,8 +5,9 @@ import com.github.ajalt.clikt.parameters.options.RawOption
 import com.github.ajalt.clikt.parameters.options.option
 
 const val examplesHelpKey = "examples"
+const val defaultHelpKey = "default"
 
-fun ParameterHolder.optionWithExamples(
+fun ParameterHolder.detailedOption(
     vararg names: String,
     help: String = "",
     metavar: String? = null,
@@ -14,32 +15,27 @@ fun ParameterHolder.optionWithExamples(
     envvar: String? = null,
     envvarSplit: Regex? = null,
     helpTags: Map<String, String> = emptyMap(),
-    examples: List<String> = listOf()
-): RawOption = this.option(
-    names = *names,
-    help = help,
-    metavar = metavar,
-    hidden = hidden,
-    envvar = envvar,
-    envvarSplit = envvarSplit,
-    helpTags = helpTags.plus(examplesHelpKey to examples.joinToString(", "))
-)
+    example: String? = null,
+    defaultValue: String? = null
+): RawOption {
+    var detailedHelpTags = helpTags
 
-fun ParameterHolder.optionWithExample(
-    vararg names: String,
-    help: String = "",
-    metavar: String? = null,
-    hidden: Boolean = false,
-    envvar: String? = null,
-    envvarSplit: Regex? = null,
-    helpTags: Map<String, String> = emptyMap(),
-    example: String? = null
-): RawOption = this.option(
-    names = *names,
-    help = help,
-    metavar = metavar,
-    hidden = hidden,
-    envvar = envvar,
-    envvarSplit = envvarSplit,
-    helpTags = if(example != null) helpTags.plus(examplesHelpKey to example) else helpTags
-)
+    fun addValueToHelpTagsIfNotNull (key: String, value: String?) {
+        if(value != null) {
+            detailedHelpTags = detailedHelpTags.plus(key to value)
+        }
+    }
+
+    addValueToHelpTagsIfNotNull(examplesHelpKey, example)
+    addValueToHelpTagsIfNotNull(defaultHelpKey, defaultValue)
+
+    return this.option(
+        names = *names,
+        help = help,
+        metavar = metavar,
+        hidden = hidden,
+        envvar = envvar,
+        envvarSplit = envvarSplit,
+        helpTags = detailedHelpTags
+    )
+}

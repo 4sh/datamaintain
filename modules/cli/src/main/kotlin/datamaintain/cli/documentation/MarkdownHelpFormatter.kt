@@ -1,6 +1,7 @@
 package datamaintain.cli.documentation
 
 import com.github.ajalt.clikt.output.HelpFormatter
+import datamaintain.cli.app.utils.defaultHelpKey
 import datamaintain.cli.app.utils.examplesHelpKey
 
 class MarkdownHelpFormatter(private val optionsTitle: String) : HelpFormatter {
@@ -20,12 +21,19 @@ class MarkdownHelpFormatter(private val optionsTitle: String) : HelpFormatter {
 
     private fun StringBuilder.addOptions(options: List<HelpFormatter.ParameterHelp.Option>) {
         append("$optionsTitle\n")
-        row("Names", "Secondary names", "Needs argument", "Possible arguments", "Description", "Examples")
+        row(
+            "Names",
+            "Default value",
+            "Needs argument",
+            "Possible arguments",
+            "Description",
+            "Examples"
+        )
         append("|---|---|---|---|---|---|\n")
         options.forEach {
             row(
                 it.names.joinToString(", "),
-                it.secondaryNames.takeUnless { it.isEmpty() }?.joinToString(", ") ?: " ",
+                it.defaultValue(),
                 it.waitingForValue(),
                 it.possibleValues(),
                 it.customizedHelp(),
@@ -36,6 +44,8 @@ class MarkdownHelpFormatter(private val optionsTitle: String) : HelpFormatter {
 
     private fun StringBuilder.row(vararg columns: String?) = append(columns.joinToString("|", "|", "|\n"))
 }
+
+private fun HelpFormatter.ParameterHelp.Option.defaultValue(): String = tags[defaultHelpKey] ?: "No default value"
 
 private fun HelpFormatter.ParameterHelp.Option.waitingForValue(): String {
     return if(this.metavar == null) "✘" else "✔"
@@ -72,5 +82,5 @@ private fun String.formatToMarkdownCode(): String = "```$this```"
 
 private fun HelpFormatter.ParameterHelp.Option.examples(): String {
     val examples = this.tags[examplesHelpKey] ?: return ""
-    return examples.split(",").map { it.formatToMarkdownCode() }.joinToString (", ")
+    return examples.split(";").joinToString(", ") { it.formatToMarkdownCode() }
 }
