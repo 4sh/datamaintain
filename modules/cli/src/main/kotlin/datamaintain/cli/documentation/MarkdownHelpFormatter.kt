@@ -1,6 +1,7 @@
 package datamaintain.cli.documentation
 
 import com.github.ajalt.clikt.output.HelpFormatter
+import datamaintain.cli.app.utils.examplesHelpKey
 
 class MarkdownHelpFormatter(private val optionsTitle: String) : HelpFormatter {
     override fun formatHelp(
@@ -19,15 +20,16 @@ class MarkdownHelpFormatter(private val optionsTitle: String) : HelpFormatter {
 
     private fun StringBuilder.addOptions(options: List<HelpFormatter.ParameterHelp.Option>) {
         append("$optionsTitle\n")
-        row("Names", "Secondary names", "Needs argument", "Possible arguments", "Description")
-        append("|---|---|---|---|---|\n")
+        row("Names", "Secondary names", "Needs argument", "Possible arguments", "Description", "Examples")
+        append("|---|---|---|---|---|---|\n")
         options.forEach {
             row(
                 it.names.joinToString(", "),
                 it.secondaryNames.takeUnless { it.isEmpty() }?.joinToString(", ") ?: " ",
                 it.waitingForValue(),
                 it.possibleValues(),
-                it.customizedHelp()
+                it.customizedHelp(),
+                it.examples()
             )
         }
     }
@@ -44,7 +46,9 @@ private fun HelpFormatter.ParameterHelp.Option.possibleValues(): String {
 
     if(metavar.contains("[")) {
         // Metavar contains list of available values
-        return metavar.substring(1, metavar.length - 1).split("|").map { "```$it```" }.joinToString(" or ")
+        return metavar.substring(1, metavar.length - 1)
+            .split("|")
+            .joinToString(" or ") { it.formatToMarkdownCode() }
     }
 
     if(metavar == "VALUE") {
@@ -62,4 +66,11 @@ private fun HelpFormatter.ParameterHelp.Option.customizedHelp(): String {
     }
 
     return this.help
+}
+
+private fun String.formatToMarkdownCode(): String = "```$this```"
+
+private fun HelpFormatter.ParameterHelp.Option.examples(): String {
+    val examples = this.tags[examplesHelpKey] ?: return ""
+    return examples.split(",").map { it.formatToMarkdownCode() }.joinToString (", ")
 }
