@@ -10,6 +10,8 @@ import com.github.ajalt.clikt.parameters.options.validate
 import com.github.ajalt.clikt.parameters.types.choice
 import datamaintain.cli.app.update.db.MarkOneScriptAsExecuted
 import datamaintain.cli.app.update.db.UpdateDb
+import datamaintain.cli.app.utils.optionWithExample
+import datamaintain.cli.app.utils.optionWithExamples
 import datamaintain.cli.utils.CliSpecificKey
 import datamaintain.core.config.CoreConfigKey
 import datamaintain.core.db.driver.DriverConfigKey
@@ -25,7 +27,9 @@ class App : CliktCommand() {
             .convert { Paths.get(it) }
             .validate { it.toFile().exists() }
 
-    private val configFilePath: File? by option(help = "path to config file")
+    private val configFilePath: File? by optionWithExample(
+        help = "path to config file",
+        example = "myProject/src/main/resources/config/datamaintain.properties")
         .convert { File(it) }
         .validate { it.exists() }
 
