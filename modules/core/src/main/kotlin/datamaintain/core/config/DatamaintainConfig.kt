@@ -63,22 +63,14 @@ data class DatamaintainConfig @JvmOverloads constructor(val path: Path = Paths.g
                     props.getStringPropertiesByPrefix(TAG.key)
                             .map { TagMatcher.parse(it.first.replace("${TAG.key}.", ""), it.second, scanPath) }
                             .toSet(),
-                    extractCheckRules(props.getNullableProperty(CHECK_RULES)),
+                    extractSequence(props.getNullableProperty(CHECK_RULES)),
                     executionMode,
                     scriptAction,
                     driverConfig,
                     props.getProperty(VERBOSE).toBoolean(),
                     props.getProperty(PRINT_RELATIVE_PATH_OF_SCRIPT).toBoolean(),
-                    extractFlags(props.getNullableProperty(FLAGS))
+                    extractSequence(props.getNullableProperty(FLAGS)).toList()
             )
-        }
-
-        private fun extractFlags(flags: String?): List<String> {
-            return if (flags.isNullOrEmpty()) {
-                listOf()
-            } else {
-                flags.split(",")
-            }
         }
 
         private fun extractTags(tags: String?): Set<Tag> {
@@ -88,11 +80,11 @@ data class DatamaintainConfig @JvmOverloads constructor(val path: Path = Paths.g
                     ?: setOf()
         }
 
-        private fun extractCheckRules(checkRules: String?): Sequence<String> {
-            return if (checkRules.isNullOrEmpty()) {
+        private fun extractSequence(string: String?): Sequence<String> {
+            return if (string.isNullOrEmpty()) {
                 sequenceOf()
             } else {
-                checkRules.splitToSequence(",")
+                string.splitToSequence(",")
             }
         }
     }
