@@ -4,6 +4,7 @@
 
 | Key | Description | Default value | Mandatory? | Values examples |
 |---|---|---|---|---|
+| name | Allow to name your config. For now will only be used to logging purpose | None | no |  |
 | working.directory.path | Indicates the directory to use to find relative paths | Java default working directory path | no |  |
 | default.script.action | The default script action | ```RUN``` | no | ```RUN``` or ```MARK_AS_EXECUTED``` |
 | scan.path | Path to the folder containing all your scripts. Can be absolute or relative to `working.directory.path` | ```./scripts/``` | yes |  |
