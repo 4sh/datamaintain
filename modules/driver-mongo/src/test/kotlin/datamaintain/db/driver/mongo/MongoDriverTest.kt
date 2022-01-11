@@ -146,35 +146,13 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
         expectThat(collection.find().toList().map { documentToExecutedScript(it) })
             .hasSize(3).and {
                 get(0).and {
-                    get { name }.isEqualTo("script1.js")
-                    get { checksum }.isEqualTo("c4ca4238a0b923820dcc509a6f75849b")
-                    get { identifier }.isEqualTo("")
-                    get { executionStatus }.isEqualTo(ExecutionStatus.OK)
-                    get { action }.isEqualTo(ScriptAction.RUN)
-                    get { executionOutput }.isNull()
-                    get { executionDurationInMillis }.isNull()
                     get { flags }.isEmpty()
                 }
                 get(1).and {
-                    get { name }.isEqualTo("script2.js")
-                    get { checksum }.isEqualTo("c81e728d9d4c2f636f067f89cc14862c")
-                    get { identifier }.isEqualTo("")
-                    get { executionStatus }.isEqualTo(ExecutionStatus.OK)
-                    get { action }.isEqualTo(ScriptAction.RUN)
-                    get { executionOutput }.isNull()
-                    get { executionDurationInMillis }.isNull()
                     get { flags }.isEmpty()
                 }
                 get(2).and {
-                    get { name }.isEqualTo("script3.js")
-                    get { checksum }.isEqualTo("d3d9446802a44259755d38e6d163e820")
-                    get { identifier }.isEqualTo("")
-                    get { executionStatus }.isEqualTo(ExecutionStatus.OK)
-                    get { action }.isEqualTo(ScriptAction.MARK_AS_EXECUTED)
-                    get { executionOutput }.isNull()
-                    get { executionDurationInMillis }.isNull()
                     get { flags }.and {
-                        hasSize(3)
                         containsExactly("FLAG1", "FLAG1", "FLAG1")
                     }
                 }
