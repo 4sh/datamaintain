@@ -6,7 +6,6 @@ import datamaintain.db.driver.mongo.serialization.ExecutedScriptDb
 import datamaintain.db.driver.mongo.serialization.toExecutedScriptDb
 import datamaintain.db.driver.mongo.test.AbstractMongoDbTest
 import org.bson.Document
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
 import strikt.api.expectCatching
@@ -127,7 +126,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
 
     @ParameterizedTest
     @EnumSource(value = MongoShell::class)
-    fun `should mark script as executed with flags`() {
+    fun `should mark script as executed with flags`(mongoShell: MongoShell) {
         // Given
         val mongoDriver: MongoDriver = buildMongoDriver(mongoShell)
         insertDataInDb()
