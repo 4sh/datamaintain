@@ -81,10 +81,12 @@ class UpdateDb(runner: (DatamaintainConfig) -> Unit = ::defaultUpdateDbRunner) :
         tagsMatchers?.forEach {
             props.put("${CoreConfigKey.TAG.key}.${it.first}", it.second)
         }
-        checkRules?.let { props.put(CoreConfigKey.CHECK_RULES.key, it.joinToString(",")) }
+        checkRules?.let { props.put(CoreConfigKey.CHECK_RULES.key, it.optionListToString()) }
         allowAutoOverride?.let { props.put(CoreConfigKey.PRUNE_OVERRIDE_UPDATED_SCRIPTS.key, it.toString()) }
         porcelain?.let { props.put(CoreConfigKey.PRINT_RELATIVE_PATH_OF_SCRIPT.key, it.toString()) }
         mongoShell?.let { props.put(MongoConfigKey.DB_MONGO_SHELL.key, it.toUpperCase()) }
-        flags?.let { props.put(CoreConfigKey.FLAGS.key, it.joinToString(",")) }
+        flags?.let { props.put(CoreConfigKey.FLAGS.key, it.optionListToString()) }
     }
+
+    fun List<String>.optionListToString(): String = this.joinToString(",")
 }
