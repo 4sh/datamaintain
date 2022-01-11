@@ -434,9 +434,8 @@ internal class UpdateDbTest : BaseCliTest() {
                 runUpdateDb(updateDbArguments)
 
                 // Then
-                expectThat(configWrapper.datamaintainConfig!!.flags.toList()) {
-                    hasSize(1)
-                    first().isEqualTo("MY_TEST_FLAG")
+                expectThat(configWrapper.datamaintainConfig!!.flags) {
+                    containsExactly("MY_TEST_FLAG")
                 }
             }
 
@@ -450,9 +449,7 @@ internal class UpdateDbTest : BaseCliTest() {
 
                 // Then
                 expectThat(configWrapper.datamaintainConfig!!.flags) {
-                    hasSize(2)
-                    first().isEqualTo("MY_TEST_FLAG1")
-                    last().isEqualTo("MY_TEST_FLAG2")
+                    containsExactly("MY_TEST_FLAG1", "MY_TEST_FLAG2")
                 }
             }
         }
