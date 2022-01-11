@@ -204,9 +204,6 @@ internal class ExecutorTest {
         val report = executor.execute(listOf(script1, script2, script3))
 
         // Then
-        verify(exactly = 3) { dbDriverMock.executeScript(any()) }
-        verify(exactly = 3) { dbDriverMock.markAsExecuted(any()) }
-
         expectThat(report) {
             get { executedScripts }.and {
                 hasSize(3)
@@ -214,7 +211,6 @@ internal class ExecutorTest {
                     get { name }.isEqualTo(script1.name)
                     get { executionStatus }.isEqualTo(OK)
                     get { flags }.and {
-                        hasSize(3)
                         containsExactly("FLAG1", "FLAG2", "FLAG3")
                     }
                 }
@@ -222,7 +218,6 @@ internal class ExecutorTest {
                     get { name }.isEqualTo(script2.name)
                     get { executionStatus }.isEqualTo(OK)
                     get { flags }.and {
-                        hasSize(3)
                         containsExactly("FLAG1", "FLAG2", "FLAG3")
                     }
                 }
@@ -230,7 +225,6 @@ internal class ExecutorTest {
                     get { name }.isEqualTo(script3.name)
                     get { executionStatus }.isEqualTo(OK)
                     get { flags }.and {
-                        hasSize(3)
                         containsExactly("FLAG1", "FLAG2", "FLAG3")
                     }
                 }
