@@ -137,6 +137,7 @@ data class ReportExecutedScript(
     override var action: ScriptAction? = null,
     override val executionDurationInMillis: Long? = null,
     override val executionOutput: String? = null,
+    override val flags: List<String> = listOf(),
     val porcelainName: String? = null
 ) : ExecutedScript(
         name,
@@ -145,7 +146,8 @@ data class ReportExecutedScript(
         executionStatus,
         action,
         executionDurationInMillis,
-        executionOutput
+        executionOutput,
+        flags
 ) {
     companion object {
         fun from(executedScript: ExecutedScript, porcelainName: String?) = ReportExecutedScript(
@@ -156,6 +158,7 @@ data class ReportExecutedScript(
             executedScript.action,
             executedScript.executionDurationInMillis,
             executedScript.executionOutput,
+            executedScript.flags,
             porcelainName
         )
     }
