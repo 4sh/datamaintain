@@ -74,7 +74,8 @@ internal class MarkOneScriptAsExecutedTest : BaseCliTest() {
     private fun runMarkScriptAsExecuted(markScriptAsExecutedArguments: List<String> = listOf()) {
         runAppWithMarkOneScriptAsExecuted(
             listOf(
-                "--db-uri", "mongo-uri"
+                    "--db-type", "mongo",
+                    "--db-uri", "mongo-uri"
             ), markScriptAsExecutedArguments
         )
     }

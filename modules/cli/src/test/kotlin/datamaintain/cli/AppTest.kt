@@ -3,7 +3,6 @@ package datamaintain.cli
 import datamaintain.db.driver.jdbc.JdbcDriverConfig
 import datamaintain.db.driver.mongo.MongoDriverConfig
 import datamaintain.test.execAppInSubprocess
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
@@ -84,14 +83,10 @@ internal class AppTest : BaseCliTest() {
 
                 // Then
                 expectThat(exitCode).isEqualTo(1)
-                expectThat(output).contains("dbType invalid db type is unknown")
+                expectThat(output).contains("db.type invalid db type is unknown")
             }
 
             @Test
-            @Disabled(
-                "To ensure backward compatibility, mongo is provided as db type when no type is provided. " +
-                        "Please reactivate this test when it is no longer the case"
-            )
             fun `should throw error when no db type was provided`() {
                 // Given
                 val argv = listOf("--config-file-path", configWithoutDbTypePath, "update-db")
@@ -101,7 +96,7 @@ internal class AppTest : BaseCliTest() {
 
                 // Then
                 expectThat(exitCode).isEqualTo(1)
-                expectThat(output).contains("dbType must not be null")
+                expectThat(output).contains("props.getProperty(\"db.type\") must not be null")
             }
         }
 
@@ -109,7 +104,7 @@ internal class AppTest : BaseCliTest() {
         fun `should build configuration with mongo uri`() {
             // Given
             val mongoUri = "my great mongo uri"
-            val argv = listOf("--db-uri", mongoUri)
+            val argv = listOf("--db-type", "mongo", "--db-uri", mongoUri)
 
             // When
             runAppWithUpdateDb(argv)
@@ -123,7 +118,7 @@ internal class AppTest : BaseCliTest() {
         fun `should build configuration with mongo tmp path`() {
             // Given
             val mongoTmpPath = "my mongo tmp path"
-            val argv = listOf("--db-uri", "mongouri", "--mongo-tmp-path", mongoTmpPath)
+            val argv = listOf("--db-type", "mongo", "--db-uri", "mongouri", "--mongo-tmp-path", mongoTmpPath)
 
             // When
             runAppWithUpdateDb(argv)

@@ -44,11 +44,6 @@ class App : CliktCommand() {
         dbUri?.let { props.put(DriverConfigKey.DB_URI.key, it) }
         dbType?.let { props[CoreConfigKey.DB_TYPE.key] = it }
 
-        // db type was mongo by default. To be backward compatible, set mongo as default is no type configured anywhere.
-        if (!props.containsKey(CoreConfigKey.DB_TYPE.key)) {
-            props[CoreConfigKey.DB_TYPE.key] = DbType.MONGO.value
-        }
-
         mongoTmpPath?.let { props.put(MongoConfigKey.DB_MONGO_TMP_PATH.key, it) }
         trustUri?.let { props.put(DriverConfigKey.DB_TRUST_URI.key, it.toString()) }
     }
@@ -64,4 +59,4 @@ fun main(args: Array<String>) {
     App().subcommands(UpdateDb(), ListExecutedScripts(), MarkOneScriptAsExecuted()).main(args)
 }
 
-class DbTypeNotFoundException(private val dbType: String) : DatamaintainBaseException("dbType $dbType is unknown")
+class DbTypeNotFoundException(private val dbType: String) : DatamaintainBaseException("db.type $dbType is unknown")
