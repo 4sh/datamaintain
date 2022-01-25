@@ -43,7 +43,7 @@ Various operations may endanger your database scheme safety. Here is a detail of
 |---                            |---                 |
 | Add nullable property/column  | :heavy_check_mark: |
 | Add mandatory property/column | :x:                |
-| Add new value in an enum      | :heavy_check_mark: |
+| Add new value in an enum      | :x:                |
 | Add collection/table/view     | :heavy_check_mark: |
 
 See [add operations documentation](./add/add.md) for advice on how to handle these operations.
