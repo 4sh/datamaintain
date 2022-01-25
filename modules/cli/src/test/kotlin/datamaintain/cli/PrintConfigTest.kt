@@ -31,7 +31,7 @@ internal class PrintConfigTest : BaseCliTest() {
         // When
         runAppWithMarkOneScriptAsExecuted(
                 listOf(
-                        "--config", "--db-uri", "mongo-uri"
+                        "--config", "--db-type", "mongo", "--db-uri", "mongo-uri"
                 ), markScriptAsExecutedArguments
         )
 
@@ -68,7 +68,7 @@ internal class PrintConfigTest : BaseCliTest() {
         // When
         runAppWithMarkOneScriptAsExecuted(
                 listOf(
-                        "--config", "--db-uri", "mongo-uri", "--config-file-path", "src/test/resources/config-child.properties"
+                        "--config", "--db-type", "mongo", "--db-uri", "mongo-uri", "--config-file-path", "src/test/resources/config-child.properties"
                 ), markScriptAsExecutedArguments
         )
 
@@ -117,7 +117,7 @@ internal class PrintConfigTest : BaseCliTest() {
         // When
         runAppWithUpdateDb(
                 listOf(
-                        "--config", "--db-uri", "mongo-uri"
+                        "--config", "--db-type", "mongo", "--db-uri", "mongo-uri"
                 ), updateDbArguments
         )
 
@@ -162,7 +162,7 @@ internal class PrintConfigTest : BaseCliTest() {
         // When
         runAppWithUpdateDb(
                 listOf(
-                        "--config", "--db-uri", "mongo-uri", "--config-file-path", "src/test/resources/config-child.properties"
+                        "--config", "--db-type", "mongo", "--db-uri", "mongo-uri", "--config-file-path", "src/test/resources/config-child.properties"
                 ), updateDbArguments
         )
 
