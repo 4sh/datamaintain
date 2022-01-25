@@ -2,6 +2,7 @@ package datamaintain.db.driver.jdbc
 
 import datamaintain.core.config.ConfigKey
 import datamaintain.core.config.getProperty
+import datamaintain.core.db.driver.DBType
 import datamaintain.core.db.driver.DatamaintainDriverConfig
 import datamaintain.core.db.driver.DriverConfigKey
 import mu.KotlinLogging
@@ -14,7 +15,7 @@ data class JdbcDriverConfig @JvmOverloads constructor(
     override val trustUri: Boolean,
     override val printOutput: Boolean = DriverConfigKey.DB_PRINT_OUTPUT.default!!.toBoolean(),
     override val saveOutput: Boolean = DriverConfigKey.DB_SAVE_OUTPUT.default!!.toBoolean()
-) : DatamaintainDriverConfig(uri, trustUri, printOutput, saveOutput, JdbcConnectionStringBuilder()) {
+) : DatamaintainDriverConfig(DBType.JDBC.string, uri, trustUri, printOutput, saveOutput, JdbcConnectionStringBuilder()) {
     companion object {
         @JvmStatic
         fun buildConfig(props: Properties): JdbcDriverConfig {

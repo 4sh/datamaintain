@@ -3,7 +3,7 @@ package datamaintain.core.db.driver
 import datamaintain.core.exception.DatamaintainBaseException
 
 class FakeDriverConfig : 
-        DatamaintainDriverConfig( "",true, false, false,
+        DatamaintainDriverConfig( "fake","",true, false, false,
                 ConnectionStringBuilder(".*") { DatamaintainBaseException("") }) {
     override fun log() {
     }
