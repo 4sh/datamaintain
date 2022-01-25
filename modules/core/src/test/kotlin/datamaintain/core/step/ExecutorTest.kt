@@ -196,7 +196,12 @@ internal class ExecutorTest {
     fun `should execute and produce executed scripts with flags`() {
         // Given
         val context = Context(
-            DatamaintainConfig(Paths.get(""), Regex(""), driverConfig = FakeDriverConfig(), flags = listOf("FLAG1", "FLAG2", "FLAG3")),
+            DatamaintainConfig(
+                path = Paths.get(""),
+                identifierRegex = Regex(""),
+                driverConfig = FakeDriverConfig(),
+                flags = listOf("FLAG1", "FLAG2", "FLAG3")
+            ),
             dbDriver = dbDriverMock
         )
 

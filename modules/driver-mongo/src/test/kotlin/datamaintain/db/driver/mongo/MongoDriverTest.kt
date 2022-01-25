@@ -126,9 +126,9 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
 
     @ParameterizedTest
     @MethodSource("provideMongoVersions")
-    fun `should mark script as executed with flags`(mongoShell: MongoShell) {
+    fun `should mark script as executed with flags`(tag: String, mongoShell: MongoShell) {
         // Given
-        val mongoDriver: MongoDriver = buildMongoDriver(mongoShell)
+        val mongoDriver: MongoDriver = initMongoConnectionAndBuildDriver(tag, mongoShell)
         insertDataInDb()
         val script3 = ExecutedScript(
             "script3.js",
@@ -375,6 +375,8 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
                     }
                 }
 
+        val flags: List<String>? = document.getList(SCRIPT_DOCUMENT_FLAGS, String::class.java)
+
         return ExecutedScript(
             document.getString(SCRIPT_DOCUMENT_NAME),
             document.getString(SCRIPT_DOCUMENT_CHECKSUM),
@@ -383,7 +385,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
             ScriptAction.valueOf(document.getString(SCRIPT_DOCUMENT_ACTION)),
             executionDurationInMillis,
             document.getString(SCRIPT_DOCUMENT_EXECUTION_OUTPUT),
-            document.getList(SCRIPT_DOCUMENT_FLAGS, String::class.java)
+            flags ?: emptyList()
         )
     }
 
