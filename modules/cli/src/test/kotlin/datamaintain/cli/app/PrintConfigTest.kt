@@ -1,4 +1,4 @@
-package datamaintain.cli
+package datamaintain.cli.app
 
 import ch.qos.logback.classic.Logger
 import org.junit.jupiter.api.BeforeEach
