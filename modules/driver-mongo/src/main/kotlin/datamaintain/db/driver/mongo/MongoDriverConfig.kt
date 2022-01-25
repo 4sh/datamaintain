@@ -1,6 +1,9 @@
 package datamaintain.db.driver.mongo
 
-import datamaintain.core.config.*
+import datamaintain.core.config.ConfigKey
+import datamaintain.core.config.getNullableProperty
+import datamaintain.core.config.getProperty
+import datamaintain.core.db.driver.DBType
 import datamaintain.core.db.driver.DatamaintainDriverConfig
 import datamaintain.core.db.driver.DriverConfigKey
 import mu.KotlinLogging
@@ -17,7 +20,7 @@ data class MongoDriverConfig @JvmOverloads constructor(override val uri: String,
                                                        val tmpFilePath: Path = Paths.get(MongoConfigKey.DB_MONGO_TMP_PATH.default!!),
                                                        val mongoShell: MongoShell = DEFAULT_MONGO_SHELL,
                                                        var clientPath: Path? = null
-) : DatamaintainDriverConfig(uri, trustUri, printOutput, saveOutput, MongoConnectionStringBuilder()) {
+) : DatamaintainDriverConfig(DBType.MONGO.string, uri, trustUri, printOutput, saveOutput, MongoConnectionStringBuilder()) {
     init {
         if (clientPath == null) {
             clientPath = Paths.get(mongoShell.defaultBinaryName())

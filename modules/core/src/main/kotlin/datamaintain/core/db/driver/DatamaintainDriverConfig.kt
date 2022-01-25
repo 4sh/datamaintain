@@ -2,7 +2,8 @@ package datamaintain.core.db.driver
 
 import datamaintain.core.config.ConfigKey
 
-abstract class DatamaintainDriverConfig(open val uri: String,
+abstract class DatamaintainDriverConfig(val dbType: String,
+                                        open val uri: String,
                                         open val trustUri: Boolean,
                                         open val printOutput: Boolean = DriverConfigKey.DB_PRINT_OUTPUT.default!!.toBoolean(),
                                         open val saveOutput: Boolean = DriverConfigKey.DB_SAVE_OUTPUT.default!!.toBoolean(),
