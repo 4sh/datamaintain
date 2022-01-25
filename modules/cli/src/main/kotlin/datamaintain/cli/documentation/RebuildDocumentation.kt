@@ -4,20 +4,20 @@ import com.github.ajalt.clikt.core.Context
 import com.github.ajalt.clikt.core.PrintHelpMessage
 import datamaintain.cli.app.datamaintainApp
 import java.io.File
+import java.io.OutputStreamWriter
 
 fun main() {
-    File("../../docs/cli-configuration.md").writeText(buildDocumentation())
+    writeDocumentation(File("../../docs/cli-configuration.md").outputStream().writer())
 }
 
-fun buildDocumentation(): String {
-    return buildString {
-        append(getMarkdownHelp())
-        append("# Subcommands\n")
-        datamaintainApp.registeredSubcommandNames().forEach {
-            append("## $it\n")
-            append(getMarkdownHelp(listOf(it), "### Options\n"))
-        }
+fun writeDocumentation(writer: OutputStreamWriter) {
+    writer.append(getMarkdownHelp())
+    writer.append("# Subcommands\n")
+    datamaintainApp.registeredSubcommandNames().forEach {
+        writer.append("## $it\n")
+        writer.append(getMarkdownHelp(listOf(it), "### Options\n"))
     }
+
 }
 
 fun getMarkdownHelp(commands: List<String> = listOf(), optionsTitle: String = "# Options"): String {
