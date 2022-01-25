@@ -7,6 +7,7 @@ import datamaintain.core.exception.DatamaintainScriptExecutionException
 import datamaintain.core.report.Report
 import datamaintain.core.script.*
 import datamaintain.core.step.Step
+import datamaintain.core.util.exception.DatamaintainQueryException
 import mu.KotlinLogging
 import kotlin.system.measureTimeMillis
 
@@ -73,8 +74,13 @@ class Executor(private val context: Context) {
                 logger.info {"start marking script ${script.name} as executed"}
                 val executedScript = ExecutedScript.build(script, Execution(ExecutionStatus.OK), context.config.flags)
 
-                markAsExecuted(executedScript)
-                if (!context.config.porcelain) { logger.info { "${executedScript.name} only marked as executed (so not executed)" } }
+                try {
+                    markAsExecuted(executedScript)
+                    if (!context.config.porcelain) { logger.info { "${executedScript.name} only marked as executed (so not executed)" } }
+                } catch (e: DatamaintainQueryException) {
+                    logger.warn { "Failed to mark script ${executedScript.name} as executed. Use the following command to force mark the script as executed : " +
+                            "./datamaintain-cli --db-type ${context.config.driverConfig.dbType} --db-uri ${context.config.driverConfig.uri} update-db --path ${context.config.path} --action MARK_AS_EXECUTED" }
+                }
 
                 executedScript
             }
