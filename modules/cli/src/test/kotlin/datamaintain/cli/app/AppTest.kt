@@ -115,7 +115,7 @@ internal class AppTest : BaseCliTest() {
 
                 // Then
                 expectThat(exitCode).isEqualTo(1)
-                expectThat(output).contains("db.type invalid db type is unknown")
+                expectThat(output).contains("Invalid value for \"--db-type\": invalid choice: invalid db type.")
             }
 
             @Test
