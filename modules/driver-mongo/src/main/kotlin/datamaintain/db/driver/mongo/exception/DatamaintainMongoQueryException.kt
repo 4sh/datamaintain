@@ -1,10 +1,12 @@
 package datamaintain.core.exception
 
+import datamaintain.core.util.exception.DatamaintainQueryException
+
 class DatamaintainMongoQueryException(
     query: String,
     exitCode: Int,
     executionOutput: String?
-) : DatamaintainBaseException(
+) : DatamaintainQueryException(
     if (executionOutput != null && executionOutput.isNotEmpty())
         "Error while execute a query on mongodb : query : \"$query\" - exit code : $exitCode - query output : $executionOutput"
     else
