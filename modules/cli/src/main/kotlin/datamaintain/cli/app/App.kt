@@ -10,12 +10,9 @@ import com.github.ajalt.clikt.parameters.options.validate
 import com.github.ajalt.clikt.parameters.types.choice
 import datamaintain.cli.app.update.db.MarkOneScriptAsExecuted
 import datamaintain.cli.app.update.db.UpdateDb
-import datamaintain.cli.app.utils.optionWithExample
-import datamaintain.cli.app.utils.optionWithExamples
 import datamaintain.cli.app.utils.CliSpecificKey
 import datamaintain.cli.app.utils.detailedOption
 import datamaintain.core.config.CoreConfigKey
-import datamaintain.core.db.driver.DatamaintainDriverConfig
 import datamaintain.core.db.driver.DriverConfigKey
 import datamaintain.core.exception.DatamaintainBaseException
 import datamaintain.db.driver.mongo.MongoConfigKey
