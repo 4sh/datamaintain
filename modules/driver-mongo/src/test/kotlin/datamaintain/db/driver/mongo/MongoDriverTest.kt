@@ -1,6 +1,7 @@
 package datamaintain.db.driver.mongo
 
 import com.mongodb.client.model.Filters
+import datamaintain.core.exception.DatamaintainMongoQueryException
 import datamaintain.core.script.*
 import datamaintain.db.driver.mongo.serialization.ExecutedScriptDb
 import datamaintain.db.driver.mongo.serialization.toExecutedScriptDb
@@ -10,6 +11,7 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
 import strikt.api.expectCatching
 import strikt.api.expectThat
+import strikt.api.expectThrows
 import strikt.assertions.*
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -334,6 +336,30 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
                 .succeeded()
     }
 
+    @ParameterizedTest
+    @EnumSource(value = MongoShell::class)
+    fun `should throw proper exception when mark script as executed failed`(mongoShell: MongoShell) {
+        // Given
+        val mongoDriver: MongoDriver = buildMongoDriver(mongoShell, "failUri")
+        insertDataInDb()
+        val script3 = ExecutedScript(
+            "script3.js",
+            "d3d9446802a44259755d38e6d163e820",
+            "",
+            ExecutionStatus.OK,
+            ScriptAction.MARK_AS_EXECUTED
+        )
+
+        // When
+
+        // Then
+        expectThrows<DatamaintainMongoQueryException> { mongoDriver.markAsExecuted(script3) }
+            .get { message }.and {
+                startsWith("Error while execute a query on mongodb : query : ")
+                contains(" - exit code : 1")
+            }
+    }
+
     private fun insertDataInDb() {
         collection.insertMany(listOf(
                 executedScriptToDocument(script1.toExecutedScriptDb()),
@@ -403,6 +429,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
     )
 
     private fun buildMongoDriver(mongoShell: MongoShell,
+                                 mongoUri: String = super.mongoUri,
                                  printOutput: Boolean = false,
                                  saveOutput: Boolean = false,
                                  clientPath: Path? = null): MongoDriver {

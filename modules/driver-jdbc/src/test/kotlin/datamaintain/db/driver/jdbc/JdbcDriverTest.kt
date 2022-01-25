@@ -1,14 +1,19 @@
 package datamaintain.db.driver.jdbc
 
 import datamaintain.core.script.*
+import datamaintain.db.driver.jdbc.exception.JdbcQueryException
+import io.mockk.every
+import io.mockk.spyk
 import org.h2.tools.Server
 import org.junit.jupiter.api.*
 import strikt.api.expectThat
+import strikt.api.expectThrows
 import strikt.assertions.*
 import java.nio.file.Paths
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.ResultSet
+import java.sql.SQLException
 
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -65,6 +70,34 @@ internal class JdbcDriverTest {
 
         expectThat(jdbcDatamaintainDriver.listExecutedScripts().toList())
                 .containsExactlyInAnyOrder(script1.toLightExecutedScript(), script2.toLightExecutedScript(), script3.toLightExecutedScript())
+    }
+
+    @Test
+    fun `should throw proper exception when mark script as executed failed`() {
+        //GIVEN
+        insertDataInDb()
+        val script3 = ExecutedScript(
+            "script3.sql",
+            "d3d9446802a44259755d38e6d163e820",
+            "",
+            ExecutionStatus.OK,
+            ScriptAction.MARK_AS_EXECUTED,
+            executionDurationInMillis = 0
+        )
+
+        val spyConnection = spyk(connection)
+        val exception = SQLException()
+
+        //WHEN
+        val jdbcDatamaintainDriver = JdbcDriver(jdbcUri, spyConnection)
+        every { spyConnection.commit() }.throws(exception)
+
+        //THEN
+        expectThrows<JdbcQueryException> { jdbcDatamaintainDriver.markAsExecuted(script3) }
+            .get { message }.and {
+                startsWith("Query ")
+                endsWith(" fail with exit code ${exception.errorCode} an output : ${exception.message}")
+            }
     }
 
     @Nested
