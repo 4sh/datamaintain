@@ -3,14 +3,22 @@ package datamaintain.db.driver.jdbc
 import datamaintain.core.db.driver.DatamaintainDriver
 import datamaintain.core.script.*
 import datamaintain.core.step.executor.Execution
+import datamaintain.db.driver.jdbc.exception.JdbcQueryException
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.ResultSet
 import java.sql.SQLException
 import java.util.*
 
-class JdbcDriver(jdbcUri: String) : DatamaintainDriver(jdbcUri) {
-    private val connection: Connection = DriverManager.getConnection(jdbcUri)
+/**
+ * @param jdbcUri uri of the jdbc to use
+ * @param connection session with the wanted database
+ * Remark : connection can be set in the constructor only for tests.
+ * Except for test purpose, jdbcUri and connection SHOULD NOT be set separately and
+ * connection should be left as default value.
+ */
+class JdbcDriver(jdbcUri: String,
+                 private val connection: Connection = DriverManager.getConnection(jdbcUri)) : DatamaintainDriver(jdbcUri) {
 
     companion object {
         const val EXECUTED_SCRIPTS_TABLE = "executedScripts"
@@ -57,7 +65,7 @@ class JdbcDriver(jdbcUri: String) : DatamaintainDriver(jdbcUri) {
             connection.commit()
         } catch (e: SQLException) {
             connection.rollback()
-            throw IllegalStateException("Query $insertStmt fail with exit code ${e.errorCode} an output : ${e.message}")
+            throw JdbcQueryException(insertStmt, e);
         }
         return executedScript
     }
