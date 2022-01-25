@@ -1,5 +1,6 @@
 package datamaintain.core.step
 
+import ch.qos.logback.classic.Logger
 import datamaintain.core.Context
 import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.db.driver.DatamaintainDriver
@@ -14,10 +15,13 @@ import datamaintain.core.script.ScriptAction
 import datamaintain.core.step.executor.Execution
 import datamaintain.core.step.executor.ExecutionMode
 import datamaintain.core.step.executor.Executor
+import datamaintain.core.util.exception.DatamaintainQueryException
+import datamaintain.test.TestAppender
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.Test
+import org.slf4j.LoggerFactory
 import strikt.api.expectThat
 import strikt.api.expectThrows
 import strikt.assertions.*
@@ -229,6 +233,42 @@ internal class ExecutorTest {
                     }
                 }
             }
+        }
+    }
+
+    @Test
+    fun `should log properly when a throw occur during markAsExecuted`() {
+        // Given
+        val logger = LoggerFactory.getLogger("datamaintain.core.step.executor.Executor") as Logger
+        val testAppender = TestAppender()
+
+        logger.addAppender(testAppender)
+        testAppender.start()
+
+        every { dbDriverMock.markAsExecuted(any()) }.throws(DatamaintainQueryException(""))
+
+        val context = Context(DatamaintainConfig(
+            Paths.get("/default/test"),
+            Regex(""),
+            driverConfig = FakeDriverConfig(),
+            executionMode = ExecutionMode.NORMAL
+        ), dbDriver = dbDriverMock)
+        val executor = Executor(context)
+
+        val scripts = listOf(
+            script1.copy(action = ScriptAction.MARK_AS_EXECUTED)
+        )
+
+        val executedScript = ExecutedScript.build(scripts[0], Execution(OK), context.config.flags)
+
+        // When
+        val report: Report = executor.execute(scripts)
+
+        // Then
+        expectThat(testAppender.events) {
+            get { get(3).message }.contains(
+                "Failed to mark script ${executedScript.name} as executed. Use the following command to force mark the script as executed : ./datamaintain-cli --db-type ${context.config.driverConfig.dbType} --db-uri ${context.config.driverConfig.uri} update-db --path ${context.config.path} --action MARK_AS_EXECUTED"
+            )
         }
     }
 }
