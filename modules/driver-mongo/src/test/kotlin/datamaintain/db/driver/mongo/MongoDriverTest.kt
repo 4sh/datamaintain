@@ -143,7 +143,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
         mongoDriver.markAsExecuted(script3)
 
         // Then
-        expectThat(collection.find().toList().map { documentToExecutedScript(it) })
+        expectThat(collection().find().toList().map { documentToExecutedScript(it) })
             .hasSize(3).and {
                 get(0).and {
                     get { flags }.isEmpty()
