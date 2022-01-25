@@ -13,8 +13,6 @@ private fun loadDriverConfig(props: Properties): DatamaintainDriverConfig {
 
     if (props.containsKey("db.type")) {
         dbType = props.getProperty("db.type")
-    } else if (props.containsKey("dbType")) { // Old key to set database type. Keep it to avoid breaking changes
-        dbType = props.getProperty("dbType")
     }
 
     return when (dbType) {
