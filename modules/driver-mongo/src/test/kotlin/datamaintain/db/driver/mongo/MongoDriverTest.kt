@@ -338,10 +338,12 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
     }
 
     @ParameterizedTest
-    @EnumSource(value = MongoShell::class)
-    fun `should throw proper exception when mark script as executed failed`(mongoShell: MongoShell) {
+    @MethodSource("provideMongoVersions")
+    fun `should throw proper exception when mark script as executed failed`(tag: String, mongoShell: MongoShell) {
         // Given
-        val mongoDriver: MongoDriver = buildMongoDriver(mongoShell, "failUri")
+        initMongoConnection(tag)
+        val mongoDriver: MongoDriver = buildMongoDriver(mongoShell = mongoShell, mongoUri = "failUri")
+
         insertDataInDb()
         val script3 = ExecutedScript(
             "script3.js",
@@ -437,18 +439,22 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
                                                   saveOutput: Boolean = false,
                                                   clientPath: Path? = null): MongoDriver {
         initMongoConnection(tag)
-        return buildMongoDriver(mongoShell, printOutput, saveOutput, clientPath)
+        return buildMongoDriver(
+            mongoShell = mongoShell,
+            printOutput =  printOutput,
+            saveOutput =  saveOutput,
+            clientPath =  clientPath)
     }
 
     private fun buildMongoDriver(mongoShell: MongoShell,
-                                 mongoUri: String = super.mongoUri,
+                                 mongoUri: String = this.mongoUri(),
                                  printOutput: Boolean = false,
                                  saveOutput: Boolean = false,
                                  clientPath: Path? = null): MongoDriver {
         val mongoClientPath = clientPath ?: Paths.get(mongoShell.defaultBinaryName())
 
         return MongoDriver(
-            mongoUri(),
+            mongoUri = mongoUri,
             tmpFilePath = Paths.get(MongoConfigKey.DB_MONGO_TMP_PATH.default!!),
             clientPath = mongoClientPath,
             saveOutput = saveOutput,

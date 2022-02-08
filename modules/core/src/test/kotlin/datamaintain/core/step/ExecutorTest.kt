@@ -258,8 +258,8 @@ internal class ExecutorTest {
         every { dbDriverMock.markAsExecuted(any()) }.throws(DatamaintainQueryException(""))
 
         val context = Context(DatamaintainConfig(
-            Paths.get("/default/test"),
-            Regex(""),
+            path = Paths.get("/default/test"),
+            identifierRegex = Regex(""),
             driverConfig = FakeDriverConfig(),
             executionMode = ExecutionMode.NORMAL
         ), dbDriver = dbDriverMock)
