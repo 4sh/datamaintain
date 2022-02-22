@@ -1,6 +1,6 @@
 plugins {
     id("org.jetbrains.kotlin.jvm")
-    kotlin("plugin.serialization") version "1.3.70"
+    kotlin("plugin.serialization") version Versions.kotlin
     `maven-publish` // Needed for Jitpack
     id("com.adarshr.test-logger")
 }
