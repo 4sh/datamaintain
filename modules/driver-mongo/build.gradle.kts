@@ -7,8 +7,16 @@ plugins {
 
 baseProject()
 
-repositories {
-    mavenCentral()
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            groupId = project.group.toString()
+            artifactId = "datamaintain-" + project.name
+            version = project.version.toString()
+
+            from(components["java"])
+        }
+    }
 }
 
 dependencies {
