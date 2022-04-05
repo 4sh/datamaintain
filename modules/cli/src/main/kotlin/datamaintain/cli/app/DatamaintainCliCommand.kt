@@ -17,7 +17,7 @@ abstract class DatamaintainCliCommand(name: String, help: String = "") : CliktCo
             overloadProps(props)
             val config = loadConfig(props)
 
-            if (props.getProperty(CliSpecificKey.__PRINT_CONFIG_ONLY.name, "false")!!.toBoolean()) {
+            if (props.getProperty(CliSpecificKey.__PRINT_CONFIG_ONLY.key, CliSpecificKey.__PRINT_CONFIG_ONLY.default)!!.toBoolean()) {
                 config.log()
             } else {
                 executeCommand(config)
