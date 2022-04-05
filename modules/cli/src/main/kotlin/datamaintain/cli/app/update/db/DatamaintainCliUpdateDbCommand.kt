@@ -7,7 +7,7 @@ import datamaintain.core.exception.DatamaintainException
 import kotlin.system.exitProcess
 
 fun defaultUpdateDbRunner(config: DatamaintainConfig) {
-    Datamaintain(config).updateDatabase().print(config.verbose)
+    Datamaintain(config).updateDatabase().print(config.verbose, porcelain = config.porcelain)
 }
 
 abstract class DatamaintainCliUpdateDbCommand(
@@ -20,9 +20,10 @@ abstract class DatamaintainCliUpdateDbCommand(
             runner(config)
         } catch (e: DatamaintainException) {
             val verbose: Boolean = config.verbose
+            val porcelain: Boolean = config.porcelain
 
             echo("Error at step ${e.step}", err = true)
-            e.report.print(verbose)
+            e.report.print(verbose, porcelain = porcelain)
             echo("")
             echo(e.message, err = true)
 
