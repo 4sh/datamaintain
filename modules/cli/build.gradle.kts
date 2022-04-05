@@ -1,4 +1,6 @@
 import java.io.ByteArrayOutputStream
+import java.io.FileOutputStream
+import java.util.*
 
 plugins {
     id("org.jetbrains.kotlin.jvm")
@@ -35,6 +37,7 @@ tasks.startScripts {
 }
 
 tasks.installDist {
+    dependsOn("generateVersionProperties")
     doLast {
         mkdir("$destinationDir/lib/drivers")
     }
@@ -63,4 +66,25 @@ tasks.register<Exec>("graalCheckNative") {
 task("rebuildCliDocumentation", JavaExec::class) {
     main = "datamaintain.cli.documentation.RebuildDocumentationKt"
     classpath = sourceSets["main"].runtimeClasspath
+}
+
+val generatedVersionDir = "${buildDir}/generated-version"
+
+sourceSets {
+    main {
+        kotlin {
+            output.dir(generatedVersionDir)
+        }
+    }
+}
+
+task("generateVersionProperties") {
+    doLast {
+        val propertiesFile = file("$generatedVersionDir/version.properties")
+        propertiesFile.parentFile.mkdirs()
+        val properties = Properties()
+        properties.setProperty("version", rootProject.version.toString())
+        val out = FileOutputStream(propertiesFile)
+        properties.store(out, null)
+    }
 }
