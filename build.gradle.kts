@@ -5,6 +5,7 @@ plugins {
     id("com.palantir.graal") version "0.10.0" apply false
     id("com.palantir.git-version") version "0.12.3"
     id("com.adarshr.test-logger") version "3.1.0" apply false
+    id("maven-publish")
 }
 
 allprojects {
@@ -45,4 +46,17 @@ subprojects {
 
 task("pom") {
     generatePom()
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "OSSRH"
+            url = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
+            credentials {
+                username = System.getenv("MAVEN_USERNAME")
+                password = System.getenv("MAVEN_PASSWORD")
+            }
+        }
+    }
 }
