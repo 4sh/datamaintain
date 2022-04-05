@@ -342,7 +342,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
     fun `should throw proper exception when mark script as executed failed`(tag: String, mongoShell: MongoShell) {
         // Given
         initMongoConnection(tag)
-        val mongoDriver: MongoDriver = buildMongoDriver(mongoShell = mongoShell, mongoUri = "failUri")
+        val mongoDriver: MongoDriver = buildMongoDriver(mongoShell = mongoShell, mongoUri = "mongodb://failUri")
 
         insertDataInDb()
         val script3 = ExecutedScript(
