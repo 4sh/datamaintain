@@ -79,12 +79,18 @@ sourceSets {
 }
 
 task("generateVersionProperties") {
-    doLast {
-        val propertiesFile = file("$generatedVersionDir/version.properties")
-        propertiesFile.parentFile.mkdirs()
-        val properties = Properties()
-        properties.setProperty("version", rootProject.version.toString())
-        val out = FileOutputStream(propertiesFile)
-        properties.store(out, null)
+    val prod = System.getProperty("prod").toBoolean()
+    if (prod) {
+        delete("$generatedVersionDir/version.properties")
+        doLast {
+            val propertiesFile = file("$generatedVersionDir/version.properties")
+            propertiesFile.parentFile.mkdirs()
+            val properties = Properties()
+            properties.setProperty("version", rootProject.version.toString())
+            val out = FileOutputStream(propertiesFile)
+            properties.store(out, null)
+        }
+    } else {
+        delete("$generatedVersionDir/version.properties")
     }
 }

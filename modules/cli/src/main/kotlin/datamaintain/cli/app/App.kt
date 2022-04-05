@@ -22,7 +22,8 @@ import java.util.*
 class App : CliktCommand() {
     init {
         val versionProperties = Properties()
-        versionProperties.load(this.javaClass.getResourceAsStream("/version.properties"))
+        this.javaClass.getResourceAsStream("/version.properties")
+            ?.let { inputStream -> versionProperties.load(inputStream) }
         val version = versionProperties.getProperty(CliSpecificKey.VERSION.key) ?: CliSpecificKey.VERSION.default!!
         val message = "datamaintain version $version"
         registerOption(
