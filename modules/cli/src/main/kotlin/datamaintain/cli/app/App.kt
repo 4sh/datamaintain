@@ -1,12 +1,10 @@
 package datamaintain.cli.app
 
 import com.github.ajalt.clikt.core.CliktCommand
+import com.github.ajalt.clikt.core.PrintMessage
 import com.github.ajalt.clikt.core.findObject
 import com.github.ajalt.clikt.core.subcommands
-import com.github.ajalt.clikt.parameters.options.convert
-import com.github.ajalt.clikt.parameters.options.flag
-import com.github.ajalt.clikt.parameters.options.option
-import com.github.ajalt.clikt.parameters.options.validate
+import com.github.ajalt.clikt.parameters.options.*
 import com.github.ajalt.clikt.parameters.types.choice
 import datamaintain.cli.app.update.db.MarkOneScriptAsExecuted
 import datamaintain.cli.app.update.db.UpdateDb
@@ -22,6 +20,22 @@ import java.nio.file.Paths
 import java.util.*
 
 class App : CliktCommand() {
+    init {
+        val versionProperties = Properties()
+        versionProperties.load(this.javaClass.getResourceAsStream("/version.properties"))
+        val version = versionProperties.getProperty(CliSpecificKey.VERSION.key) ?: CliSpecificKey.VERSION.default!!
+        val message = "datamaintain version $version"
+        registerOption(
+            EagerOption(
+                names = setOf("--version", "--v", "-v", "-version"),
+                nvalues =  0,
+                help = "Show the version and exit",
+                hidden =  false,
+                helpTags =  emptyMap()
+            ) { throw PrintMessage(message) }
+        )
+    }
+
     private val workingDirectoryPath: Path? by option("--working-directory-path", "--wd", help = "path to the working directory. Can be relative but prefer absolute path. All relative paths configured will be relative to this path if set.")
             .convert { Paths.get(it) }
             .validate { it.toFile().exists() }
@@ -86,7 +100,7 @@ class App : CliktCommand() {
         mongoTmpPath?.let { props.put(MongoConfigKey.DB_MONGO_TMP_PATH.key, it) }
         trustUri?.let { props.put(DriverConfigKey.DB_TRUST_URI.key, it.toString()) }
 
-        config?.let { props.put(CliSpecificKey.__PRINT_CONFIG_ONLY.name, it.toString()) }
+        config?.let { props.put(CliSpecificKey.__PRINT_CONFIG_ONLY.key, it.toString()) }
     }
 
 }
