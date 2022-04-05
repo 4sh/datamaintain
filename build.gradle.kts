@@ -19,7 +19,7 @@ allprojects {
         "SNAPSHOT"
     }
 
-    group = "com.github.4sh.datamaintain"
+    group = "io.github.4sh.datamaintain"
     version = computedVersion
 
     repositories {
