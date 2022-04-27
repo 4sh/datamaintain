@@ -79,8 +79,8 @@ sourceSets {
 }
 
 task("generateVersionProperties") {
-    val prod = System.getProperty("prod").toBoolean()
-    if (prod) {
+    val env = System.getProperty("env")
+    if (env == "prod") {
         delete("$generatedVersionDir/version.properties")
         doLast {
             val propertiesFile = file("$generatedVersionDir/version.properties")
