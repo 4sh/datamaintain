@@ -35,7 +35,10 @@ class Scanner(private val context: Context) {
                     if (!context.config.porcelain) { logger.warn {"WARNING: ${tagMatcher.tag} did not match any scripts"} }
                 }
             }
-            if (!context.config.porcelain) { logger.info { "" } }
+            if (!context.config.porcelain) {
+                logger.info { "" }
+                if (scannedFiles.isEmpty()) { logger.warn { "WARNING: No scripts were found" } }
+            }
             return scannedFiles
         } catch (datamaintainException: DatamaintainBaseException) {
             throw DatamaintainException(
