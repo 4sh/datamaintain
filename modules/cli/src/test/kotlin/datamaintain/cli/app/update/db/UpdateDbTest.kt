@@ -55,6 +55,22 @@ internal class UpdateDbTest : BaseCliTest() {
                 expectThat(configWrapper.datamaintainConfig!!.identifierRegex.pattern).isEqualTo(identifierRegex)
             }
 
+            @Test
+            fun `should build config with filename regex`() {
+                // Given
+                val filenameRegex = "myFilenameRegex"
+
+                val updateDbArguments = listOf(
+                        "--filename-regex", filenameRegex
+                    )
+
+                // When
+                runUpdateDb(updateDbArguments)
+
+                // Then
+                expectThat(configWrapper.datamaintainConfig!!.filenameRegex.pattern).isEqualTo(filenameRegex)
+            }
+
             @Nested
             inner class ExecutionMode {
                 @ParameterizedTest

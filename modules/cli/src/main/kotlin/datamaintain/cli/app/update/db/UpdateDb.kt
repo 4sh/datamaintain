@@ -32,6 +32,12 @@ class UpdateDb(runner: (DatamaintainConfig) -> Unit = ::defaultUpdateDbRunner) :
         defaultValue = CoreConfigKey.SCAN_IDENTIFIER_REGEX.default
     )
 
+    private val filenameRegex: String? by detailedOption(
+        help = "regex to filter scripts name",
+        example = "(.*)(\\.js$)",
+        defaultValue = CoreConfigKey.SCAN_FILENAME_REGEX.default
+    )
+
     private val whitelistedTags: String? by detailedOption(
         help = "tags to whitelist (separated by ',')",
         example = "WHITELISTED_TAG1,WHITELISTED_TAG2"
@@ -122,6 +128,7 @@ class UpdateDb(runner: (DatamaintainConfig) -> Unit = ::defaultUpdateDbRunner) :
     override fun overloadProps(props: Properties) {
         path?.let { props.put(CoreConfigKey.SCAN_PATH.key, it) }
         identifierRegex?.let { props.put(CoreConfigKey.SCAN_IDENTIFIER_REGEX.key, it) }
+        filenameRegex?.let { props.put(CoreConfigKey.SCAN_FILENAME_REGEX.key, it) }
         whitelistedTags?.let { props.put(CoreConfigKey.TAGS_WHITELISTED.key, it) }
         blacklistedTags?.let { props.put(CoreConfigKey.TAGS_BLACKLISTED.key, it) }
         tagsToPlayAgain?.let { props.put(CoreConfigKey.PRUNE_TAGS_TO_RUN_AGAIN.key, it) }

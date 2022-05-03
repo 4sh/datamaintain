@@ -14,7 +14,15 @@ class Filter(private val context: Context) {
             if (!context.config.porcelain) {
                 logger.info { "Filter scripts..." }
             }
-            var filteredScripts = scripts
+            var filteredScripts = scripts.filter { script ->
+                val kept = context.config.filenameRegex.matches(script.name)
+
+                if (context.config.verbose && !kept && !context.config.porcelain) {
+                    logger.info { "${script.name} is skipped because it does not match the file name regex" }
+                }
+
+                kept
+            }
 
             if (context.config.whitelistedTags.isNotEmpty()) {
                 filteredScripts = filteredScripts.filter { script ->
