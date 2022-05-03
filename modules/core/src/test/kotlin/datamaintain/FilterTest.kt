@@ -166,4 +166,45 @@ internal class FilterTest {
             get(0).get { this.name }.isEqualTo("01_file1")
         }
     }
+
+    @Test
+    fun `should filter scripts by name`() {
+        // Given
+        val filenameRegex = Regex(".*file1$")
+        val context = Context(
+            DatamaintainConfig(
+                path = Paths.get(""),
+                identifierRegex = Regex(""),
+                filenameRegex = filenameRegex,
+                executionMode = ExecutionMode.NORMAL,
+                defaultScriptAction = ScriptAction.RUN,
+                driverConfig = FakeDriverConfig()),
+            dbDriver = dbDriver)
+
+        val filter = Filter(context)
+
+        val scripts = listOf(
+            FileScript(
+                Paths.get("src/test/resources/scanner_test_files/01_file1"),
+                Regex(""),
+            ),
+            FileScript(
+                Paths.get("src/test/resources/scanner_test_files/02_file2"),
+                Regex(""),
+            ),
+            FileScript(
+                Paths.get("src/test/resources/scanner_test_files/03_file3"),
+                Regex(""),
+            ),
+            FileScript(Paths.get("src/test/resources/scanner_test_files/10_file10"), Regex("")))
+
+        // When
+        val filteredScript = filter.filter(scripts)
+
+        // Then
+        expectThat(filteredScript) {
+            hasSize(1)
+            get(0).get { this.name }.isEqualTo("01_file1")
+        }
+    }
 }

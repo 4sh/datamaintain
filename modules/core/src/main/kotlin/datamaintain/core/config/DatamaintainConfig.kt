@@ -21,6 +21,7 @@ data class DatamaintainConfig @JvmOverloads constructor(val name: String? = null
                                                         val workingDirectory: Path = Paths.get(System.getProperty("user.dir")),
                                                         val path: Path = Paths.get(SCAN_PATH.default!!),
                                                         val identifierRegex: Regex = Regex(SCAN_IDENTIFIER_REGEX.default!!),
+                                                        val filenameRegex: Regex = Regex(SCAN_FILENAME_REGEX.default!!),
                                                         val doesCreateTagsFromFolder: Boolean = CREATE_TAGS_FROM_FOLDER.default!!.toBoolean(),
                                                         val whitelistedTags: Set<Tag> = setOf(),
                                                         val blacklistedTags: Set<Tag> = setOf(),
@@ -85,6 +86,7 @@ data class DatamaintainConfig @JvmOverloads constructor(val name: String? = null
                     workingDirectoryPath,
                     scanPath,
                     Regex(props.getProperty(SCAN_IDENTIFIER_REGEX)),
+                    Regex(props.getProperty(SCAN_FILENAME_REGEX)),
                     props.getProperty(CREATE_TAGS_FROM_FOLDER).toBoolean(),
                     extractTags(props.getNullableProperty(TAGS_WHITELISTED)),
                     extractTags(props.getNullableProperty(TAGS_BLACKLISTED)),
@@ -295,6 +297,7 @@ enum class CoreConfigKey(override val key: String,
     TAG("tag"),
 
     // FILTER
+    SCAN_FILENAME_REGEX("filter.filename.regex", ".*"),
     TAGS_WHITELISTED("filter.tags.whitelisted"),
     TAGS_BLACKLISTED("filter.tags.blacklisted"),
 
