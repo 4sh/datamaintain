@@ -6,7 +6,10 @@ plugins {
     id("com.palantir.git-version") version "0.12.3"
     id("com.adarshr.test-logger") version "3.1.0" apply false
     id("maven-publish")
+    signing
 }
+
+val modulesToPublish = listOf("core", "driver-jdbc", "driver-mongo")
 
 allprojects {
     apply<com.palantir.gradle.gitversion.GitVersionPlugin>()
@@ -26,41 +29,15 @@ allprojects {
     repositories {
         mavenCentral()
     }
+
+    if (modulesToPublish.contains(this.name)) {
+        apply(from = rootProject.file("buildScripts/gradle/publishing.gradle.kts"))
+    }
 }
+
 
 configure(subprojects) {
     tasks.withType<KotlinJvmCompile>().all {
         kotlinOptions.jvmTarget = "1.8"
     }
-
-    tasks.withType<Jar>().all {
-        archiveBaseName.set("${rootProject.name}-${project.name}")
-
-        manifest {
-            attributes(mapOf(
-                "Implementation-Version" to project.version
-            ))
-        }
-    }
-
-    apply<JavaLibraryPlugin>()
-
-    apply<MavenPublishPlugin>()
-
-    configure<PublishingExtension> {
-        repositories {
-            maven {
-                name = "OSSRH"
-                url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
-                credentials {
-                    username = System.getenv("MAVEN_USERNAME")
-                    password = System.getenv("MAVEN_PASSWORD")
-                }
-            }
-        }
-    }
-}
-
-task("pom") {
-    generatePom()
 }
