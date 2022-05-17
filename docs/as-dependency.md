@@ -13,51 +13,44 @@ Datamaintain can be used as a dependency in your **Java** or **Kotlin server** :
 ## Add Datamaintain as a dependency
 
 To install Datamaintain in your project, you will have to add it as a dependency. 
-Since the releases are available on [jitpack](https://jitpack.io/), you will first have to add the jitpack 
-repository in your project.
- 
+
 Then, you may add the dependencies to ```datamaintain-core``` and the driver module you need.
 
 ### Sample with gradle using kotlin DSL
-- In your root build.gradle, at the end of repositories:
+- In your root build.gradle, make sure you declared maven central:
 ```kotlin
-
-maven(url = "https://jitpack.io")
+mavenCentral()
 ```
 
 It should look like that:
 ```kotlin
-
 allprojects {
     repositories {
         ...
-        maven(url = "https://jitpack.io")
+        mavenCentral()
     }
 }
 ```
 - Add the following dependency in your build.gradle:
 ```kotlin
-
 dependencies {
-    implementation("com.github.4sh.datamaintain:datamaintain-core:1.2.0"),
-    implementation("com.github.4sh.datamaintain:datamaintain-driver-mongo:1.2.0")
+    implementation("io.github.4sh.datamaintain:datamaintain-core:2.0.0-1"),
+    implementation("io.github.4sh.datamaintain:datamaintain-driver-mongo:2.0.0-1")
 } 
 ```
     
 ### Sample with gradle using groovy DSL
-- In your root build.gradle, at the end of repositories:
+- In your root build.gradle, make sure you declared maven central:
 ```groovy
-
-maven { url 'https://jitpack.io' }
+mavenCentral()
 ```
 
 It should look like that:
 ```groovy
-
 allprojects {
     repositories {
         ...
-        maven { url 'https://jitpack.io' }
+        mavenCentral()
     }
 }
 ```
@@ -66,32 +59,24 @@ allprojects {
 ```groovy
 
 dependencies {
-    implementation 'com.github.4sh.datamaintain:datamaintain-core:1.2.0',
-    implementation 'com.github.4sh.datamaintain:datamaintain-driver-mongo:1.2.0',
+    implementation 'io.github.4sh.datamaintain:datamaintain-core:2.0.0-1',
+    implementation 'io.github.4sh.datamaintain:datamaintain-driver-mongo:2.0.0-1',
 } 
 ```
     
 ### Sample with maven
 
 ```xml
-
-<repositories>
-    <repository>
-        <id>jitpack.io</id>
-        <url>https://jitpack.io</url>
-    </repository>
-</repositories>
-
 <dependency>
-    <groupId>com.github.4sh.datamaintain</groupId>
+    <groupId>io.github.4sh.datamaintain</groupId>
     <artifactId>datamaintain-core</artifactId>
-    <version>1.2.0</version>
+    <version>2.0.0-1</version>
 </dependency>
 
 <dependency>
-    <groupId>com.github.4sh.datamaintain</groupId>
+    <groupId>io.github.4sh.datamaintain</groupId>
     <artifactId>datamaintain-driver-mongo</artifactId>
-    <version>1.2.0</version>
+    <version>2.0.0-1</version>
 </dependency>
 
 ```
