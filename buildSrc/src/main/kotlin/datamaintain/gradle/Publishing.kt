@@ -12,18 +12,16 @@ infix fun <T> Property<T>.by(value: T) {
     set(value)
 }
 
-const val keyIdEnvironmentVariableName = "SIGNING_KEY_ID"
 const val signingKeyEnvironmentVariableName = "SIGNING_KEY"
 const val signingKeyPassphraseEnvironmentVariableName = "SIGNING_KEY_PASSPHRASE"
 
 fun MavenPublication.signPublicationIfKeyPresent(project: Project) {
-    val keyId = System.getenv(keyIdEnvironmentVariableName)
     val signingKey = System.getenv(signingKeyEnvironmentVariableName)
     val signingKeyPassphrase = System.getenv(signingKeyPassphraseEnvironmentVariableName)
 
     if (!signingKey.isNullOrBlank()) {
         project.extensions.configure<SigningExtension>("signing") {
-            useInMemoryPgpKeys(keyId, signingKey, signingKeyPassphrase)
+            useInMemoryPgpKeys(signingKey, signingKeyPassphrase)
             sign(this@signPublicationIfKeyPresent)
         }
     }
