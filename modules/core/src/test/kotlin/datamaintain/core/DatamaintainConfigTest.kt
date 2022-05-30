@@ -3,11 +3,15 @@ package datamaintain.core
 import datamaintain.core.config.CoreConfigKey
 import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.db.driver.FakeDriverConfig
+import datamaintain.core.exception.DatamaintainBuilderMandatoryException
+import datamaintain.core.script.ScriptAction
 import datamaintain.core.script.Tag
 import datamaintain.core.script.TagMatcher
 import datamaintain.core.step.executor.ExecutionMode
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
+import strikt.api.expectThrows
 import strikt.assertions.*
 import java.nio.file.Paths
 import java.util.*
@@ -138,6 +142,91 @@ class DatamaintainConfigTest {
             get { verbose }.isTrue()
             get { porcelain }.isTrue()
             get { name }.isEqualTo("myDefaultConfig")
+        }
+    }
+
+    @Nested
+    inner class BuilderTest {
+        @Test
+        fun `should build config with builder`() {
+            val config = DatamaintainConfig.Builder()
+                .withDriverConfig(FakeDriverConfig())
+                .withName("a name")
+                .withWorkingDirectory(Paths.get("/working"))
+                .withPath(Paths.get("/path"))
+                .withIdentifierRegex(".*".toRegex())
+                .withDoesCreateTagsFromFolder(true)
+                .withOverrideExecutedScripts(true)
+                .withExecutionMode(ExecutionMode.DRY)
+                .withDefaultScriptAction(ScriptAction.OVERRIDE_EXECUTED)
+                .withVerbose(true)
+                .withPorcelain(true)
+                .addWhitelistedTag(Tag("whitelisted1"))
+                .addWhitelistedTag(Tag("whitelisted2"))
+                .addBlacklistedTag(Tag("blacklisted1"))
+                .addBlacklistedTag(Tag("blacklisted2"))
+                .addTagToPlayAgain(Tag("tagToPlayAgain1"))
+                .addTagToPlayAgain(Tag("tagToPlayAgain2"))
+                .addTagMatcher(TagMatcher(Tag("1"), listOf(".*")))
+                .addTagMatcher(TagMatcher(Tag("2"), listOf(".*")))
+                .addCheckRule("checkRules")
+                .addFlag("1")
+                .addFlag("2")
+                .build()
+
+            expectThat(config).and {
+                get { name } isEqualTo "a name"
+                get { workingDirectory } isEqualTo Paths.get("/working")
+                get { path } isEqualTo Paths.get("/path")
+                get { identifierRegex.pattern } isEqualTo ".*"
+                get { doesCreateTagsFromFolder }.isTrue()
+                get { overrideExecutedScripts }.isTrue()
+                get { executionMode } isEqualTo ExecutionMode.DRY
+                get { defaultScriptAction } isEqualTo ScriptAction.OVERRIDE_EXECUTED
+                get { verbose }.isTrue()
+                get { porcelain }.isTrue()
+                get { whitelistedTags }.containsExactlyInAnyOrder(Tag("whitelisted1"), Tag("whitelisted2"))
+                get { blacklistedTags }.containsExactlyInAnyOrder(Tag("blacklisted1"), Tag("blacklisted2"))
+                get { tagsToPlayAgain }.containsExactlyInAnyOrder(Tag("tagToPlayAgain1"), Tag("tagToPlayAgain2"))
+                get { tagsMatchers }.containsExactlyInAnyOrder(
+                    TagMatcher(Tag("1"), listOf(".*")),
+                    TagMatcher(Tag("2"), listOf(".*"))
+                )
+                get { checkRules.toList() }.containsExactlyInAnyOrder("checkRules")
+                get { flags }.containsExactlyInAnyOrder("1", "2")
+            }
+        }
+
+        @Test
+        fun `should build with default config`() {
+            val config = DatamaintainConfig.Builder()
+                .withDriverConfig(FakeDriverConfig())
+                .build()
+
+            expectThat(config).and {
+                get { name }.isNull()
+                get { workingDirectory } isEqualTo Paths.get(System.getProperty("user.dir"))
+                get { path } isEqualTo Paths.get(CoreConfigKey.SCAN_PATH.default!!)
+                get { identifierRegex.pattern } isEqualTo CoreConfigKey.SCAN_IDENTIFIER_REGEX.default!!
+                get { doesCreateTagsFromFolder } isEqualTo CoreConfigKey.CREATE_TAGS_FROM_FOLDER.default!!.toBoolean()
+                get { overrideExecutedScripts } isEqualTo CoreConfigKey.PRUNE_OVERRIDE_UPDATED_SCRIPTS.default!!.toBoolean()
+                get { executionMode } isEqualTo ExecutionMode.NORMAL
+                get { defaultScriptAction } isEqualTo ScriptAction.RUN
+                get { verbose }.isFalse()
+                get { porcelain }.isFalse()
+                get { whitelistedTags }.isEmpty()
+                get { blacklistedTags }.isEmpty()
+                get { tagsToPlayAgain }.isEmpty()
+                get { tagsMatchers }.isEmpty()
+                get { checkRules.toList() }.isEmpty()
+                get { flags }.isEmpty()
+            }
+        }
+
+        @Test
+        fun `should raise error because driverConfig is not set in builder`() {
+            expectThrows<DatamaintainBuilderMandatoryException>{ DatamaintainConfig.Builder().build() }
+                .get { message } isEqualTo "Cannot build DatamaintainConfigBuilder : driverConfig is mandatory"
         }
     }
 }

@@ -3,6 +3,7 @@ package datamaintain.core.config
 import datamaintain.core.config.ConfigKey.Companion.overrideBySystemProperties
 import datamaintain.core.config.CoreConfigKey.*
 import datamaintain.core.db.driver.DatamaintainDriverConfig
+import datamaintain.core.exception.DatamaintainBuilderMandatoryException
 import datamaintain.core.script.ScriptAction
 import datamaintain.core.script.Tag
 import datamaintain.core.script.TagMatcher
@@ -33,6 +34,26 @@ data class DatamaintainConfig @JvmOverloads constructor(val name: String? = null
                                                         val verbose: Boolean = VERBOSE.default!!.toBoolean(),
                                                         val porcelain: Boolean = PRINT_RELATIVE_PATH_OF_SCRIPT.default!!.toBoolean(),
                                                         val flags: List<String> = emptyList()) {
+
+    private constructor(builder: Builder): this(
+        builder.name,
+        builder.workingDirectory,
+        builder.path,
+        builder.identifierRegex,
+        builder.doesCreateTagsFromFolder,
+        builder.whitelistedTags,
+        builder.blacklistedTags,
+        builder.tagsToPlayAgain,
+        builder.overrideExecutedScripts,
+        builder.tagsMatchers,
+        builder.checkRules.asSequence(),
+        builder.executionMode,
+        builder.defaultScriptAction,
+        builder.driverConfig,
+        builder.verbose,
+        builder.porcelain,
+        builder.flags
+    )
 
     companion object {
         private val defaultExecutionMode = ExecutionMode.NORMAL
@@ -171,6 +192,73 @@ data class DatamaintainConfig @JvmOverloads constructor(val name: String? = null
         logger.info { "" }
     }
 
+    class Builder {
+        // mandatory
+        lateinit var driverConfig: DatamaintainDriverConfig
+            private set
+
+        // optional
+        var name: String? = null
+            private set
+        var workingDirectory: Path = Paths.get(System.getProperty("user.dir"))
+            private set
+        var path: Path = Paths.get(SCAN_PATH.default!!)
+            private set
+        var identifierRegex: Regex = Regex(SCAN_IDENTIFIER_REGEX.default!!)
+            private set
+        var doesCreateTagsFromFolder: Boolean = CREATE_TAGS_FROM_FOLDER.default!!.toBoolean()
+            private set
+        var whitelistedTags: MutableSet<Tag> = mutableSetOf()
+            private set
+        var blacklistedTags: MutableSet<Tag> = mutableSetOf()
+            private set
+        var tagsToPlayAgain: MutableSet<Tag> = mutableSetOf()
+            private set
+        var overrideExecutedScripts: Boolean = PRUNE_OVERRIDE_UPDATED_SCRIPTS.default!!.toBoolean()
+            private set
+        var tagsMatchers: MutableSet<TagMatcher> = mutableSetOf()
+            private set
+        var checkRules: MutableList<String> = mutableListOf()
+            private set
+        var executionMode: ExecutionMode = defaultExecutionMode
+            private set
+        var defaultScriptAction: ScriptAction = defaultAction
+            private set
+        var verbose: Boolean = VERBOSE.default!!.toBoolean()
+            private set
+        var porcelain: Boolean = PRINT_RELATIVE_PATH_OF_SCRIPT.default!!.toBoolean()
+            private set
+        var flags: MutableList<String> = mutableListOf()
+            private set
+
+        fun withName(name: String) = apply { this.name = name }
+        fun withWorkingDirectory(workingDirectory: Path) = apply { this.workingDirectory = workingDirectory }
+        fun withPath(path: Path) = apply { this.path = path }
+        fun withIdentifierRegex(identifierRegex: Regex) = apply { this.identifierRegex = identifierRegex }
+        fun withDoesCreateTagsFromFolder(doesCreateTagsFromFolder: Boolean) = apply { this.doesCreateTagsFromFolder = doesCreateTagsFromFolder }
+        fun withOverrideExecutedScripts(overrideExecutedScripts: Boolean) = apply { this.overrideExecutedScripts = overrideExecutedScripts }
+        fun withExecutionMode(executionMode: ExecutionMode) = apply { this.executionMode = executionMode }
+        fun withDefaultScriptAction(defaultScriptAction: ScriptAction) = apply { this.defaultScriptAction = defaultScriptAction }
+        fun withDriverConfig(driverConfig: DatamaintainDriverConfig) = apply { this.driverConfig = driverConfig }
+        fun withVerbose(verbose: Boolean) = apply { this.verbose = verbose }
+        fun withPorcelain(porcelain: Boolean) = apply { this.porcelain = porcelain }
+
+        // Collection
+        fun addWhitelistedTag(whitelistedTag: Tag) = apply { this.whitelistedTags.add(whitelistedTag) }
+        fun addBlacklistedTag(blacklistedTag: Tag) = apply { this.blacklistedTags.add(blacklistedTag) }
+        fun addTagToPlayAgain(tagToPlayAgain: Tag) = apply { this.tagsToPlayAgain.add(tagToPlayAgain) }
+        fun addTagMatcher(tagsMatcher: TagMatcher) = apply { this.tagsMatchers.add(tagsMatcher) }
+        fun addCheckRule(checkRule: String) = apply { this.checkRules.add(checkRule) }
+        fun addFlag(flag: String) = apply { this.flags.add(flag) }
+
+        fun build(): DatamaintainConfig {
+            if (!::driverConfig.isInitialized) {
+                throw DatamaintainBuilderMandatoryException("DatamaintainConfigBuilder", "driverConfig")
+            }
+
+            return DatamaintainConfig(this)
+        }
+    }
 }
 
 interface ConfigKey {

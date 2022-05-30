@@ -5,6 +5,7 @@ import datamaintain.core.config.getProperty
 import datamaintain.core.db.driver.DBType
 import datamaintain.core.db.driver.DatamaintainDriverConfig
 import datamaintain.core.db.driver.DriverConfigKey
+import datamaintain.core.exception.DatamaintainBuilderMandatoryException
 import mu.KotlinLogging
 import java.util.*
 
@@ -29,6 +30,13 @@ data class JdbcDriverConfig @JvmOverloads constructor(
         }
     }
 
+    constructor(builder: Builder): this(
+        builder.uri,
+        builder.trustUri,
+        builder.printOutput,
+        builder.saveOutput
+    )
+
     override fun toDriver(connectionString: String) = JdbcDriver(connectionString)
 
     override fun log() {
@@ -38,5 +46,32 @@ data class JdbcDriverConfig @JvmOverloads constructor(
         logger.info { "- print output -> $printOutput" }
         logger.info { "- save output -> $saveOutput" }
         logger.info { "" }
+    }
+
+    class Builder {
+        // mandatory
+        lateinit var uri: String
+            private set
+
+        // optional
+        var printOutput: Boolean = DriverConfigKey.DB_PRINT_OUTPUT.default!!.toBoolean()
+            private set
+        var saveOutput: Boolean = DriverConfigKey.DB_SAVE_OUTPUT.default!!.toBoolean()
+            private set
+        var trustUri: Boolean = DriverConfigKey.DB_TRUST_URI.default!!.toBoolean()
+            private set
+
+        fun withUri(uri: String) = apply { this.uri = uri }
+        fun withPrintOutput(printOutput: Boolean) = apply { this.printOutput = printOutput }
+        fun withSaveOutput(saveOutput: Boolean) = apply { this.saveOutput = saveOutput }
+        fun withTrustUri(trustUri: Boolean) = apply { this.trustUri = trustUri }
+
+        fun build(): JdbcDriverConfig {
+            if (!::uri.isInitialized) {
+                throw DatamaintainBuilderMandatoryException("JdbcDriverConfigBuilder", "uri")
+            }
+
+            return JdbcDriverConfig(this)
+        }
     }
 }

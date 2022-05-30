@@ -1,11 +1,10 @@
 package datamaintain.db.driver.mongo
 
-import datamaintain.core.config.ConfigKey
-import datamaintain.core.config.getNullableProperty
-import datamaintain.core.config.getProperty
+import datamaintain.core.config.*
 import datamaintain.core.db.driver.DBType
 import datamaintain.core.db.driver.DatamaintainDriverConfig
 import datamaintain.core.db.driver.DriverConfigKey
+import datamaintain.core.exception.DatamaintainBuilderMandatoryException
 import mu.KotlinLogging
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -26,6 +25,16 @@ data class MongoDriverConfig @JvmOverloads constructor(override val uri: String,
             clientPath = Paths.get(mongoShell.defaultBinaryName())
         }
     }
+
+    constructor(builder: Builder): this(
+        builder.uri,
+        builder.printOutput,
+        builder.saveOutput,
+        builder.trustUri,
+        builder.tmpFilePath,
+        builder.mongoShell,
+        builder.clientPath
+    )
 
     companion object {
         val DEFAULT_MONGO_SHELL = MongoShell.MONGO
@@ -69,6 +78,42 @@ data class MongoDriverConfig @JvmOverloads constructor(override val uri: String,
         logger.info { "- mongo print output -> $printOutput" }
         logger.info { "- mongo save output -> $saveOutput" }
         logger.info { "" }
+    }
+
+    class Builder {
+        // mandatory
+        lateinit var uri: String
+            private set
+
+        // optional
+        var printOutput: Boolean = DriverConfigKey.DB_PRINT_OUTPUT.default!!.toBoolean()
+            private set
+        var saveOutput: Boolean = DriverConfigKey.DB_SAVE_OUTPUT.default!!.toBoolean()
+            private set
+        var trustUri: Boolean = DriverConfigKey.DB_TRUST_URI.default!!.toBoolean()
+            private set
+        var tmpFilePath: Path = Paths.get(MongoConfigKey.DB_MONGO_TMP_PATH.default!!)
+            private set
+        var mongoShell: MongoShell = DEFAULT_MONGO_SHELL
+            private set
+        var clientPath: Path? = null
+            private set
+
+        fun withUri(uri: String) = apply { this.uri = uri }
+        fun withPrintOutput(printOutput: Boolean) = apply { this.printOutput = printOutput }
+        fun withSaveOutput(saveOutput: Boolean) = apply { this.saveOutput = saveOutput }
+        fun withTrustUri(trustUri: Boolean) = apply { this.trustUri = trustUri }
+        fun withTmpFilePath(tmpFilePath: Path) = apply { this.tmpFilePath = tmpFilePath }
+        fun withMongoShell(mongoShell: MongoShell) = apply { this.mongoShell = mongoShell }
+        fun withClientPath(clientPath: Path?) = apply { this.clientPath = clientPath }
+
+        fun build(): MongoDriverConfig {
+            if (!::uri.isInitialized) {
+                throw DatamaintainBuilderMandatoryException("MongoDriverConfigBuilder", "uri")
+            }
+
+            return MongoDriverConfig(this)
+        }
     }
 }
 

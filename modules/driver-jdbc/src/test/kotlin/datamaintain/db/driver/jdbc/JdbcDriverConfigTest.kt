@@ -1,7 +1,10 @@
 package datamaintain.db.driver.jdbc
 
+import datamaintain.core.exception.DatamaintainBuilderMandatoryException
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
+import strikt.api.expectThrows
 import strikt.assertions.isEqualTo
 import strikt.assertions.isFalse
 import strikt.assertions.isTrue
@@ -32,6 +35,46 @@ internal class JdbcDriverConfigTest {
         expectThat(JdbcDriverConfig.buildConfig(props)).and {
             get { uri }.isEqualTo(updatedURI)
             get { trustUri }.isFalse()
+        }
+    }
+
+    @Nested
+    inner class BuilderTest {
+        @Test
+        fun `should build config with builder`() {
+            val config = JdbcDriverConfig.Builder()
+                .withUri("uri")
+                .withSaveOutput(true)
+                .withTrustUri(true)
+                .withPrintOutput(true)
+                .build()
+
+            expectThat(config).and {
+                get { uri } isEqualTo "uri"
+                get { saveOutput }.isTrue()
+                get { trustUri }.isTrue()
+                get { printOutput }.isTrue()
+            }
+        }
+
+        @Test
+        fun `should build with default config`() {
+            val config = JdbcDriverConfig.Builder()
+                .withUri("uri")
+                .build()
+
+            expectThat(config).and {
+                get { uri } isEqualTo "uri"
+                get { saveOutput }.isFalse()
+                get { trustUri }.isFalse()
+                get { printOutput }.isFalse()
+            }
+        }
+
+        @Test
+        fun `should raise error because uri is not set in builder`() {
+            expectThrows<DatamaintainBuilderMandatoryException>{ JdbcDriverConfig.Builder().build() }
+                .get { message } isEqualTo "Cannot build JdbcDriverConfigBuilder : uri is mandatory"
         }
     }
 }
