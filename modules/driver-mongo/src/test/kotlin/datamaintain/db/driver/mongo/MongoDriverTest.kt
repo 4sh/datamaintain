@@ -5,7 +5,7 @@ import datamaintain.core.exception.DatamaintainMongoQueryException
 import datamaintain.core.script.*
 import datamaintain.db.driver.mongo.mapping.ExecutedScriptDb
 import datamaintain.db.driver.mongo.mapping.toExecutedScriptDb
-import datamaintain.db.driver.mongo.serialization.SerializationMapper
+import datamaintain.db.driver.mongo.spi.SPI_JSON_MAPPER
 import datamaintain.db.driver.mongo.test.AbstractMongoDbTest
 import org.bson.Document
 import org.junit.jupiter.params.ParameterizedTest
@@ -461,7 +461,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
             saveOutput = saveOutput,
             printOutput = printOutput,
             mongoShell = mongoShell,
-            jsonMapper = SerializationMapper()
+            jsonMapper = SPI_JSON_MAPPER
         )
     }
 }
