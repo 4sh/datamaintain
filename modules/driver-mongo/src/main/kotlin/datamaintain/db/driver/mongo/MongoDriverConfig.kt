@@ -5,6 +5,7 @@ import datamaintain.core.db.driver.DBType
 import datamaintain.core.db.driver.DatamaintainDriver
 import datamaintain.core.db.driver.DatamaintainDriverConfig
 import datamaintain.core.db.driver.DriverConfigKey
+import datamaintain.db.driver.mongo.spi.SPI_JSON_MAPPER
 import datamaintain.db.driver.mongo.exception.DatamaintainMongoParserNullPointerException
 import datamaintain.core.exception.DatamaintainBuilderMandatoryException
 import mu.KotlinLogging
@@ -21,7 +22,7 @@ data class MongoDriverConfig @JvmOverloads constructor(override val uri: String,
                                                        val tmpFilePath: Path = Paths.get(MongoConfigKey.DB_MONGO_TMP_PATH.default!!),
                                                        val mongoShell: MongoShell = DEFAULT_MONGO_SHELL,
                                                        val clientPath: Path = Paths.get(mongoShell.defaultBinaryName()),
-                                                       var jsonMapper: JsonMapper? = null  // Not in properties
+                                                       val jsonMapper: JsonMapper? = null  // Not in properties
 ) : DatamaintainDriverConfig(DBType.MONGO.string, uri, trustUri, printOutput, saveOutput, MongoConnectionStringBuilder()) {
     constructor(builder: Builder): this(
         builder.uri,
@@ -59,21 +60,16 @@ data class MongoDriverConfig @JvmOverloads constructor(override val uri: String,
         }
     }
 
-    override fun toDriver(connectionString: String): DatamaintainDriver {
-        if (jsonMapper == null) {
-            throw DatamaintainMongoParserNullPointerException()
-        }
-
-        return MongoDriver(
+    override fun toDriver(connectionString: String): DatamaintainDriver =
+        MongoDriver(
             connectionString,
             tmpFilePath,
             clientPath,
             printOutput,
             saveOutput,
             mongoShell,
-            jsonMapper!!
+            jsonMapper ?: SPI_JSON_MAPPER  // Use provided instance or search one via SPI
         )
-    }
 
     override fun log() {
         logger.info { "Mongo driver configuration: " }
