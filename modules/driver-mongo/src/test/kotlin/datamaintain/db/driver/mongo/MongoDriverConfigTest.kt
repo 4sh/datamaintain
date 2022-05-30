@@ -1,11 +1,15 @@
 package datamaintain.db.driver.mongo
 
+import datamaintain.db.driver.mongo.exception.DatamaintainMongoJsonMapperInstanceException
 import datamaintain.core.exception.DatamaintainBuilderMandatoryException
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.api.expectThrows
+import strikt.assertions.isA
+import strikt.api.expectThrows
 import strikt.assertions.isEqualTo
+import strikt.assertions.isNotNull
 import strikt.assertions.isFalse
 import strikt.assertions.isTrue
 import java.nio.file.Paths
@@ -38,6 +42,33 @@ internal class MongoDriverConfigTest {
             get { uri }.isEqualTo(updatedURI)
             get { tmpFilePath }.isEqualTo(Paths.get("/tmp/test"))
         }
+    }
+
+    @Test
+    fun `should load FakeJsonMapper`() {
+        val props = Properties()
+        props.load(MongoDriverConfigTest::class.java.getResourceAsStream("/config/default.properties"))
+
+        // Add fake mapper
+        System.setProperty(MongoConfigKey.DB_MONGO_JSON_MAPPER.key, FakeJsonMapper::class.java.name)
+
+        expectThat(MongoDriverConfig.buildConfig(props)).and {
+            get { jsonMapper }.and {
+                isNotNull()
+                isA<FakeJsonMapper>()
+            }
+        }
+    }
+
+    @Test
+    fun `should thrown a DatamaintainException when loading FakeJsonMapperWithBadConstructor`() {
+        val props = Properties()
+        props.load(MongoDriverConfigTest::class.java.getResourceAsStream("/config/default.properties"))
+
+        // Add fake mapper
+        System.setProperty(MongoConfigKey.DB_MONGO_JSON_MAPPER.key, FakeJsonMapperWithBadConstructor::class.java.name)
+
+        expectThrows<DatamaintainMongoJsonMapperInstanceException> { MongoDriverConfig.buildConfig(props) }
     }
 
     @Nested
@@ -89,3 +120,4 @@ internal class MongoDriverConfigTest {
         }
     }
 }
+
