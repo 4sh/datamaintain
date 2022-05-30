@@ -1,4 +1,7 @@
 object Versions {
+    // use this for specify latest release
+    const val versionLatest = "latest.integration"
+
     const val kotlin = "1.5.31"
     const val kotlinLogging = "1.7.7"
     const val logbackClassic = "1.2.3"
@@ -11,7 +14,6 @@ object Versions {
     const val mongo = "4.0.13"
     const val mongoDriver = "4.3.0"
     const val jongo = "1.4.1"
-    const val kotlinxSerialization = "1.3.1"
 
     const val h2Database = "1.4.200"
     const val postgresql = "42.1.4"

@@ -3,8 +3,9 @@ package datamaintain.db.driver.mongo
 import com.mongodb.client.model.Filters
 import datamaintain.core.exception.DatamaintainMongoQueryException
 import datamaintain.core.script.*
-import datamaintain.db.driver.mongo.serialization.ExecutedScriptDb
-import datamaintain.db.driver.mongo.serialization.toExecutedScriptDb
+import datamaintain.db.driver.mongo.mapping.ExecutedScriptDb
+import datamaintain.db.driver.mongo.mapping.toExecutedScriptDb
+import datamaintain.db.driver.mongo.serialization.SerializationMapper
 import datamaintain.db.driver.mongo.test.AbstractMongoDbTest
 import org.bson.Document
 import org.junit.jupiter.params.ParameterizedTest
@@ -382,11 +383,11 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
 
     private fun executedScriptToDocument(executedScript: ExecutedScriptDb): Document =
             Document()
-                    .append(SCRIPT_DOCUMENT_ID, executedScript.id)
+                    .append(SCRIPT_DOCUMENT_ID, executedScript._id)
                     .append(SCRIPT_DOCUMENT_NAME, executedScript.name)
                     .append(SCRIPT_DOCUMENT_CHECKSUM, executedScript.checksum)
                     .append(SCRIPT_DOCUMENT_IDENTIFIER, executedScript.identifier)
-                    .append(SCRIPT_DOCUMENT_EXECUTION_STATUS, executedScript.executionStatus.name)
+                    .append(SCRIPT_DOCUMENT_EXECUTION_STATUS, executedScript.executionStatus!!.name)
                     .append(SCRIPT_DOCUMENT_ACTION, executedScript.action!!.name)
                     .append(SCRIPT_DOCUMENT_EXECUTION_DURATION_IN_MILLIS, executedScript.executionDurationInMillis)
                     .append(SCRIPT_DOCUMENT_EXECUTION_OUTPUT, executedScript.executionOutput)
@@ -459,7 +460,8 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
             clientPath = mongoClientPath,
             saveOutput = saveOutput,
             printOutput = printOutput,
-            mongoShell = mongoShell
+            mongoShell = mongoShell,
+            jsonMapper = SerializationMapper()
         )
     }
 }

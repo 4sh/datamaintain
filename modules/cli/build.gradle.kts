@@ -14,10 +14,14 @@ baseProject()
 dependencies {
     implementation(project(":modules:core"))
     implementation(project(":modules:driver-mongo"))
+    implementation(project(":modules:driver-mongo-mapping:driver-mongo-mapping-serialization"))
     implementation(project(":modules:driver-jdbc"))
-    testImplementation(project(":modules:test"))
+
     implementation("com.github.ajalt:clikt:${Versions.clikt}")
     implementation("ch.qos.logback:logback-classic:${Versions.logbackClassic}")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:${Versions.versionLatest}")
+
+    testImplementation(project(":modules:test"))
 }
 
 application {
