@@ -5,7 +5,9 @@ import datamaintain.cli.app.DbTypeNotFoundException
 import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.db.driver.DatamaintainDriverConfig
 import datamaintain.db.driver.jdbc.JdbcDriverConfig
+import datamaintain.db.driver.mongo.MongoConfigKey
 import datamaintain.db.driver.mongo.MongoDriverConfig
+import datamaintain.db.driver.mongo.serialization.SerializationMapper
 import java.util.*
 
 private fun loadDriverConfig(props: Properties): DatamaintainDriverConfig {
@@ -16,8 +18,14 @@ private fun loadDriverConfig(props: Properties): DatamaintainDriverConfig {
     }
 
     return when (dbType) {
-        // Build mongo config with kotlinx serialization
-        DbType.MONGO.value -> MongoDriverConfig.buildConfig(props)
+        DbType.MONGO.value -> {
+            // Build mongo config with kotlinx serialization if no other mapper is provided
+            if (!props.containsKey(MongoConfigKey.DB_MONGO_JSON_MAPPER.key)) {
+                props[MongoConfigKey.DB_MONGO_JSON_MAPPER.key] = SerializationMapper::class.java.name
+            }
+
+            MongoDriverConfig.buildConfig(props)
+        }
         DbType.JDBC.value -> JdbcDriverConfig.buildConfig(props)
         else -> throw DbTypeNotFoundException(props.getProperty("db.type"))
     }

@@ -5,6 +5,8 @@ import datamaintain.core.db.driver.DBType
 import datamaintain.core.db.driver.DatamaintainDriver
 import datamaintain.core.db.driver.DatamaintainDriverConfig
 import datamaintain.core.db.driver.DriverConfigKey
+import datamaintain.core.exception.DatamaintainScriptExecutionException
+import datamaintain.db.driver.mongo.exception.DatamaintainMongoJsonMapperInstanceException
 import datamaintain.db.driver.mongo.spi.SPI_JSON_MAPPER
 import datamaintain.db.driver.mongo.exception.DatamaintainMongoParserNullPointerException
 import datamaintain.core.exception.DatamaintainBuilderMandatoryException
@@ -22,7 +24,7 @@ data class MongoDriverConfig @JvmOverloads constructor(override val uri: String,
                                                        val tmpFilePath: Path = Paths.get(MongoConfigKey.DB_MONGO_TMP_PATH.default!!),
                                                        val mongoShell: MongoShell = DEFAULT_MONGO_SHELL,
                                                        val clientPath: Path = Paths.get(mongoShell.defaultBinaryName()),
-                                                       val jsonMapper: JsonMapper? = null  // Not in properties
+                                                       val jsonMapper: JsonMapper? = null
 ) : DatamaintainDriverConfig(DBType.MONGO.string, uri, trustUri, printOutput, saveOutput, MongoConnectionStringBuilder()) {
     constructor(builder: Builder): this(
         builder.uri,
@@ -45,6 +47,13 @@ data class MongoDriverConfig @JvmOverloads constructor(override val uri: String,
             val mongoShell =
                 MongoShell.fromNullable(props.getNullableProperty(MongoConfigKey.DB_MONGO_SHELL), DEFAULT_MONGO_SHELL)
 
+            val jsonMapper = try {
+                props.getNullableProperty(MongoConfigKey.DB_MONGO_JSON_MAPPER)
+                    ?.let { Class.forName(it).getConstructor().newInstance() as JsonMapper }
+            } catch (e: Exception) {
+                throw DatamaintainMongoJsonMapperInstanceException(e)
+            }
+
             // default mongo path is mongo or mongosh (depends of mongo shell variable)
             val mongoPath = props.getProperty(MongoConfigKey.DB_MONGO_CLIENT_PATH, mongoShell.defaultBinaryName()).let { Paths.get(it) }
 
@@ -55,7 +64,8 @@ data class MongoDriverConfig @JvmOverloads constructor(override val uri: String,
                     trustUri = props.getProperty(DriverConfigKey.DB_TRUST_URI).toBoolean(),
                     tmpFilePath = props.getProperty(MongoConfigKey.DB_MONGO_TMP_PATH).let { Paths.get(it) },
                     clientPath = mongoPath,
-                    mongoShell = mongoShell
+                    mongoShell = mongoShell,
+                    jsonMapper = jsonMapper
             )
         }
     }
@@ -125,5 +135,5 @@ enum class MongoConfigKey(
     DB_MONGO_TMP_PATH("db.mongo.tmp.path", "/tmp/datamaintain.tmp"),
     DB_MONGO_CLIENT_PATH("db.mongo.client.path"),
     DB_MONGO_SHELL("db.mongo.client.shell", MongoDriverConfig.DEFAULT_MONGO_SHELL.name),
-    DB_MONGO_PARSER("db.mongo.parser")
+    DB_MONGO_JSON_MAPPER("db.mongo.json.mapper")
 }
