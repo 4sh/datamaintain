@@ -22,8 +22,10 @@ publishing {
 dependencies {
     compileOnly(project(":modules:core"))
     testImplementation(project(":modules:core"))
-    implementation(
-        "org.jetbrains.kotlinx:kotlinx-serialization-json:${Versions.kotlinxSerialization}"
-    )
+
     testImplementation("org.mongodb:mongodb-driver-sync:${Versions.mongoDriver}")
+
+    // Use kotlinx-serialization implementation
+    testImplementation(project(":modules:driver-mongo-mapping:driver-mongo-mapping-serialization"))
+    testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-json:${Versions.versionLatest}")
 }

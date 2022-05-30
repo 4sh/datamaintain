@@ -2,8 +2,10 @@ package datamaintain.db.driver.mongo
 
 import datamaintain.core.config.*
 import datamaintain.core.db.driver.DBType
+import datamaintain.core.db.driver.DatamaintainDriver
 import datamaintain.core.db.driver.DatamaintainDriverConfig
 import datamaintain.core.db.driver.DriverConfigKey
+import datamaintain.db.driver.mongo.exception.DatamaintainMongoParserNullPointerException
 import datamaintain.core.exception.DatamaintainBuilderMandatoryException
 import mu.KotlinLogging
 import java.nio.file.Path
@@ -18,14 +20,9 @@ data class MongoDriverConfig @JvmOverloads constructor(override val uri: String,
                                                        override val trustUri: Boolean,
                                                        val tmpFilePath: Path = Paths.get(MongoConfigKey.DB_MONGO_TMP_PATH.default!!),
                                                        val mongoShell: MongoShell = DEFAULT_MONGO_SHELL,
-                                                       var clientPath: Path? = null
+                                                       val clientPath: Path = Paths.get(mongoShell.defaultBinaryName()),
+                                                       var jsonMapper: JsonMapper? = null  // Not in properties
 ) : DatamaintainDriverConfig(DBType.MONGO.string, uri, trustUri, printOutput, saveOutput, MongoConnectionStringBuilder()) {
-    init {
-        if (clientPath == null) {
-            clientPath = Paths.get(mongoShell.defaultBinaryName())
-        }
-    }
-
     constructor(builder: Builder): this(
         builder.uri,
         builder.printOutput,
@@ -62,13 +59,21 @@ data class MongoDriverConfig @JvmOverloads constructor(override val uri: String,
         }
     }
 
-    override fun toDriver(connectionString: String) = MongoDriver(
+    override fun toDriver(connectionString: String): DatamaintainDriver {
+        if (jsonMapper == null) {
+            throw DatamaintainMongoParserNullPointerException()
+        }
+
+        return MongoDriver(
             connectionString,
             tmpFilePath,
-            clientPath!!,
+            clientPath,
             printOutput,
             saveOutput,
-            mongoShell)
+            mongoShell,
+            jsonMapper!!
+        )
+    }
 
     override fun log() {
         logger.info { "Mongo driver configuration: " }
@@ -124,4 +129,5 @@ enum class MongoConfigKey(
     DB_MONGO_TMP_PATH("db.mongo.tmp.path", "/tmp/datamaintain.tmp"),
     DB_MONGO_CLIENT_PATH("db.mongo.client.path"),
     DB_MONGO_SHELL("db.mongo.client.shell", MongoDriverConfig.DEFAULT_MONGO_SHELL.name),
+    DB_MONGO_PARSER("db.mongo.parser")
 }

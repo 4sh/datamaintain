@@ -5,7 +5,9 @@ import datamaintain.core.exception.DatamaintainMongoQueryException
 import datamaintain.core.script.*
 import datamaintain.core.step.executor.Execution
 import datamaintain.core.util.runProcess
-import datamaintain.db.driver.mongo.serialization.KJsonParser
+import datamaintain.db.driver.mongo.mapping.LightExecutedScriptDb
+import datamaintain.db.driver.mongo.mapping.toExecutedScriptDb
+import datamaintain.db.driver.mongo.mapping.toLightExecutedScript
 import mu.KotlinLogging
 import java.io.InputStream
 import java.nio.file.Path
@@ -19,10 +21,9 @@ class MongoDriver(mongoUri: String,
                   private val clientPath: Path,
                   private val printOutput: Boolean,
                   private val saveOutput: Boolean,
-                  private val mongoShell: MongoShell
+                  private val mongoShell: MongoShell,
+                  private val jsonMapper: JsonMapper
 ) : DatamaintainDriver(mongoUri) {
-    private val jsonParser = KJsonParser()
-
     companion object {
         const val EXECUTED_SCRIPTS_COLLECTION = "executedScripts"
 
@@ -80,12 +81,16 @@ class MongoDriver(mongoUri: String,
 
     override fun listExecutedScripts(): Sequence<LightExecutedScript> {
         val executionOutput: String = executeMongoQuery("db.$EXECUTED_SCRIPTS_COLLECTION.find({}, { \"name\": 1, \"checksum\": 1, \"identifier\": 1}).toArray()")
-        return if (executionOutput.isNotBlank()) jsonParser.parseArrayOfLightExecutedScripts(executionOutput) else emptySequence()
+        return if (executionOutput.isNotBlank()) {
+            (jsonMapper.fromJson(executionOutput, Array<LightExecutedScriptDb>::class.java) ?: emptyArray())
+                .asSequence()
+                .map { it.toLightExecutedScript() }
+        } else emptySequence()
     }
 
     override fun markAsExecuted(executedScript: ExecutedScript): ExecutedScript {
-        val executedScriptBson = jsonParser.serializeExecutedScript(executedScript)
-        executeMongoQuery("db.$EXECUTED_SCRIPTS_COLLECTION.insert($executedScriptBson)")
+        val executedScriptJson = jsonMapper.toJson(executedScript.toExecutedScriptDb())
+        executeMongoQuery("db.$EXECUTED_SCRIPTS_COLLECTION.insert($executedScriptJson)")
         return executedScript
     }
 
