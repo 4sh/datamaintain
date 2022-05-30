@@ -3,6 +3,7 @@ include(
         "modules:core",
         "modules:cli",
         "modules:driver-mongo",
+        "modules:driver-mongo-mapping:driver-mongo-mapping-test",
         "modules:driver-mongo-mapping:driver-mongo-mapping-serialization",
         "modules:driver-jdbc",
         "modules:test",
