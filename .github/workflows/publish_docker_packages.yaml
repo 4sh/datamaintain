@@ -15,7 +15,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Publish docker packages
-        run: ./modules/cli/Dockerfile/docker-build-push.sh $TAG
+        run: ./modules/cli/docker-build-push.sh $TAG
         shell: bash
         env:
           TAG: ${{github.ref}}
