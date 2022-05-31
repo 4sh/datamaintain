@@ -21,31 +21,29 @@ class ByCaseInsensitiveSeparatorFreeAlphabeticalSortingStrategy : SortingStrateg
 
             val compareResult: Int
 
-            //Go to first difference or until the end of shorter value
-            var index = 0
-            while (index < value1.size && index < value2.size && value1[index] == value2[index]) {
-                index++
-            }
+            //Get index of the first difference or else null
+            val minLength = if (value1.size < value2.size) value1.size else value2.size
+            val lastIndex: Int? = (0 until minLength).dropWhile { value1[it] == value2[it] }.firstOrNull()
 
             compareResult =
-                if (index == value1.size || index == value2.size) {
-                    //We stopped due to reaching the end of one of the values
-                    value1.size.compareTo(value2.size)
-                } else {
-                    //We stopped due to a difference
-                    val part1 = value1[index]
-                    val part2 = value2[index]
+                lastIndex
+                    ?.let { index ->
+                        //We stopped due to a difference
+                        val part1 = value1[index]
+                        val part2 = value2[index]
 
-                    val lengthComparison = part1.length.compareTo(part2.length)
+                        val lengthComparison = part1.length.compareTo(part2.length)
 
-                    //String number with different length can't be compared with compareTo
-                    //ex: "2".compareTo("12") = 1
-                    if (lengthComparison != 0 && numberRegex.matches(part1)) {
-                        lengthComparison
-                    } else {
-                        part1.compareTo(part2)
+                        //String number with different length can't be compared with compareTo
+                        //ex: "2".compareTo("12") = 1
+                        if (lengthComparison != 0 && numberRegex.matches(part1)) {
+                            lengthComparison
+                        } else {
+                            part1.compareTo(part2)
+                        }
                     }
-                }
+                    //We stopped due to reaching the end of one of the values
+                    ?: value1.size.compareTo(value2.size)
 
             compareResult
         }
