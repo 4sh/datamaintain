@@ -24,7 +24,7 @@ Your docker CLI must have access to Datamaintain project, follow the
 ### Release
 Build datamaintain with gradle :
 ```
-./gradlew build
+./gradlew build -Denv=prod
 ```
 
 Execute `modules/cli/docker-build-push.sh`, you need to pass the Datamaintain version
