@@ -1,8 +1,7 @@
 name: Publish docker packages on github
 on:
   push:
-    tags:
-      - '*'
+    branches: ['#189-gh-action-docker-package-cd']
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -19,4 +18,4 @@ jobs:
         run: ./modules/cli/docker-build-push.sh $TAG
         shell: bash
         env:
-          TAG: ${{github.ref}}
+          TAG: ${{github.ref_name}}
