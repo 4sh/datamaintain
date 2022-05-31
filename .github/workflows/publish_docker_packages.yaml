@@ -7,8 +7,10 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v1
       - name: Publish docker packages
-        run: ./modules/cli/docker-build-push.sh $TAG
+        run: ./modules/cli/Dockerfile/docker-build-push.sh $TAG
         shell: bash
         env:
           TAG: ${{github.ref}}
