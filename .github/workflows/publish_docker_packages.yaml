@@ -1,7 +1,8 @@
 name: Publish docker packages on github
 on:
   push:
-    branches: ['#189-gh-action-docker-package-cd']
+    tags:
+      - '*'
 jobs:
   publish:
     runs-on: ubuntu-latest
