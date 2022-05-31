@@ -1,0 +1,14 @@
+name: Publish docker packages on github
+on:
+  push:
+    tags:
+      - '*'
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Publish docker packages
+        run: ./modules/cli/docker-build-push.sh $TAG
+        shell: bash
+        env:
+          TAG: ${{github.ref}}
