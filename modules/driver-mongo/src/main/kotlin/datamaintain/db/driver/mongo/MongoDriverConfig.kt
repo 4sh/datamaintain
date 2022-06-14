@@ -33,7 +33,8 @@ data class MongoDriverConfig @JvmOverloads constructor(override val uri: String,
         builder.trustUri,
         builder.tmpFilePath,
         builder.mongoShell,
-        builder.clientPath
+        builder.clientPath ?: Paths.get(builder.mongoShell.defaultBinaryName()),
+        builder.jsonMapper
     )
 
     companion object {
@@ -109,6 +110,8 @@ data class MongoDriverConfig @JvmOverloads constructor(override val uri: String,
             private set
         var clientPath: Path? = null
             private set
+        var jsonMapper: JsonMapper? = null
+            private set
 
         fun withUri(uri: String) = apply { this.uri = uri }
         fun withPrintOutput(printOutput: Boolean) = apply { this.printOutput = printOutput }
@@ -117,6 +120,7 @@ data class MongoDriverConfig @JvmOverloads constructor(override val uri: String,
         fun withTmpFilePath(tmpFilePath: Path) = apply { this.tmpFilePath = tmpFilePath }
         fun withMongoShell(mongoShell: MongoShell) = apply { this.mongoShell = mongoShell }
         fun withClientPath(clientPath: Path?) = apply { this.clientPath = clientPath }
+        fun withJsonMapper(jsonMapper: JsonMapper?) = apply { this.jsonMapper = jsonMapper }
 
         fun build(): MongoDriverConfig {
             if (!::uri.isInitialized) {
