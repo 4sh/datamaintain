@@ -2,18 +2,24 @@ package datamaintain.db.driver.mongo.spi
 
 import datamaintain.db.driver.mongo.JsonMapper
 import datamaintain.db.driver.mongo.exception.DatamaintainMongoJsonMapperNotFoundException
+import datamaintain.db.driver.mongo.exception.DatamaintainMongoJsonMapperMoreThanOneImplFoundException
 import java.util.ServiceLoader
 
 /**
- * Load JsonMapperProvider implementation and return first
+ * Load JsonMapper implementation and return first
+ * @throws DatamaintainMongoJsonMapperMoreThanOneImplFoundException If more than one implementation is found
  * @throws DatamaintainMongoJsonMapperNotFoundException If no implementation found
  */
 val SPI_JSON_MAPPER by lazy {
-    ServiceLoader.load(JsonMapperFactory::class.java).iterator()
-        .asSequence()
-        .firstOrNull()
-        ?.create()
-        ?: throw DatamaintainMongoJsonMapperNotFoundException()
+    val jsonMapperFactories = ServiceLoader.load(JsonMapperFactory::class.java).toList()
+
+    if (jsonMapperFactories.isEmpty()) {
+        throw DatamaintainMongoJsonMapperNotFoundException()
+    } else if (jsonMapperFactories.size > 1) {
+        throw DatamaintainMongoJsonMapperMoreThanOneImplFoundException(jsonMapperFactories)
+    }
+
+    jsonMapperFactories.first().create()
 }
 
 interface JsonMapperFactory {
