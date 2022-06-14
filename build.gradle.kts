@@ -9,7 +9,15 @@ plugins {
     signing
 }
 
-val modulesToPublish = listOf("core", "driver-jdbc", "driver-mongo")
+val modulesToPublish = listOf(
+    "core",
+    "driver-jdbc",
+    "driver-mongo",
+    "driver-mongo-mapping-serialization",
+    "driver-mongo-mapping-jackson",
+    "driver-mongo-mapping-gson",
+    "driver-mongo-mapping-test"
+)
 
 allprojects {
     apply<com.palantir.gradle.gitversion.GitVersionPlugin>()
