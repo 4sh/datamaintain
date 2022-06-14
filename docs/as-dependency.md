@@ -4,17 +4,22 @@ Datamaintain can be used as a dependency in your **Java** or **Kotlin server** :
 
 ## Available packages
 
-| Package | Description | 
-|---|---|
-| datamaintain-core | Core package, needed for all uses of Datamaintain |
-| datamaintain-driver-mongo | Mongo driver package to run scripts on a mongo database |
-| datamaintain-driver-jdbc | JDBC driver package to run scripts on a database management system that has a JDBC driver |
+| Package                                         | Description                                                                               | 
+|-------------------------------------------------|-------------------------------------------------------------------------------------------|
+| datamaintain-core                               | Core package, needed for all uses of Datamaintain                                         |
+| datamaintain-driver-mongo                       | Mongo driver package to run scripts on a mongo database                                   |
+| datamaintain-driver-mongo-mapping-jackson       | Mongo driver used Jackson for json mapping                                                |
+| datamaintain-driver-mongo-mapping-serialization | Mongo driver used Kotlinx Serialization for json mapping                                  |
+| datamaintain-driver-mongo-mapping-gson          | Mongo driver used Gson for map json mapping                                               |
+| datamaintain-driver-mongo-mapping-test          | Provided a test class for testing your custom implementation for json mapping             |
+| datamaintain-driver-jdbc                        | JDBC driver package to run scripts on a database management system that has a JDBC driver |
 
 ## Add Datamaintain as a dependency
 
 To install Datamaintain in your project, you will have to add it as a dependency. 
 
 Then, you may add the dependencies to ```datamaintain-core``` and the driver module you need.
+If you used mongo driver you must add a mongo mapping dependency too : see [mongo mapping documentation](docs/mongo-json-mapping.md)
 
 ### Sample with gradle using kotlin DSL
 - In your root build.gradle, make sure you declared maven central:
@@ -36,6 +41,7 @@ allprojects {
 dependencies {
     implementation("io.github.4sh.datamaintain:datamaintain-core:2.0.0-1"),
     implementation("io.github.4sh.datamaintain:datamaintain-driver-mongo:2.0.0-1")
+    implementation("io.github.4sh.datamaintain:datamaintain-driver-mongo-mapping-serialization:2.0.0-1")
 } 
 ```
     
@@ -61,6 +67,7 @@ allprojects {
 dependencies {
     implementation 'io.github.4sh.datamaintain:datamaintain-core:2.0.0-1',
     implementation 'io.github.4sh.datamaintain:datamaintain-driver-mongo:2.0.0-1',
+    implementation 'io.github.4sh.datamaintain:datamaintain-driver-mongo-mapping-serialization:2.0.0-1',
 } 
 ```
     
@@ -76,6 +83,12 @@ dependencies {
 <dependency>
     <groupId>io.github.4sh.datamaintain</groupId>
     <artifactId>datamaintain-driver-mongo</artifactId>
+    <version>2.0.0-1</version>
+</dependency>
+
+<dependency>
+    <groupId>io.github.4sh.datamaintain</groupId>
+    <artifactId>datamaintain-driver-mongo-mapping-serialization</artifactId>
     <version>2.0.0-1</version>
 </dependency>
 
