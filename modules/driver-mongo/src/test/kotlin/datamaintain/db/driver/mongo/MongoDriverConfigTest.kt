@@ -6,12 +6,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.api.expectThrows
-import strikt.assertions.isA
-import strikt.api.expectThrows
-import strikt.assertions.isEqualTo
-import strikt.assertions.isNotNull
-import strikt.assertions.isFalse
-import strikt.assertions.isTrue
+import strikt.assertions.*
 import java.nio.file.Paths
 import java.util.*
 
@@ -83,6 +78,7 @@ internal class MongoDriverConfigTest {
                 .withTmpFilePath(Paths.get("/tmpFile"))
                 .withMongoShell(MongoShell.MONGOSH)
                 .withClientPath(Paths.get("/clientPath"))
+                .withJsonMapper(FakeJsonMapper())
                 .build()
 
             expectThat(config).and {
@@ -93,6 +89,7 @@ internal class MongoDriverConfigTest {
                 get { tmpFilePath } isEqualTo Paths.get("/tmpFile")
                 get { mongoShell } isEqualTo MongoShell.MONGOSH
                 get { clientPath } isEqualTo Paths.get("/clientPath")
+                get { jsonMapper }.isA<FakeJsonMapper>()
             }
         }
 
@@ -110,6 +107,7 @@ internal class MongoDriverConfigTest {
                 get { tmpFilePath } isEqualTo Paths.get(MongoConfigKey.DB_MONGO_TMP_PATH.default!!)
                 get { mongoShell } isEqualTo MongoShell.MONGO
                 get { clientPath } isEqualTo Paths.get(MongoShell.MONGO.defaultBinaryName())
+                get { jsonMapper }.isNull()
             }
         }
 
