@@ -2,6 +2,7 @@ package datamaintain.core.config
 
 import datamaintain.core.config.ConfigKey.Companion.overrideBySystemProperties
 import datamaintain.core.config.CoreConfigKey.*
+import datamaintain.core.db.driver.DBType
 import datamaintain.core.db.driver.DatamaintainDriverConfig
 import datamaintain.core.exception.DatamaintainBuilderMandatoryException
 import datamaintain.core.script.TagMatcher
@@ -21,7 +22,6 @@ data class DatamaintainConfig @JvmOverloads constructor(val name: String? = null
                                                         val workingDirectory: Path = Paths.get(System.getProperty("user.dir")),
                                                         val path: Path = Paths.get(SCAN_PATH.default!!),
                                                         val identifierRegex: Regex = Regex(SCAN_IDENTIFIER_REGEX.default!!),
-                                                        val filenameRegex: Regex = Regex(SCAN_FILENAME_REGEX.default!!),
                                                         val doesCreateTagsFromFolder: Boolean = CREATE_TAGS_FROM_FOLDER.default!!.toBoolean(),
                                                         val whitelistedTags: Set<Tag> = setOf(),
                                                         val blacklistedTags: Set<Tag> = setOf(),
@@ -32,6 +32,7 @@ data class DatamaintainConfig @JvmOverloads constructor(val name: String? = null
                                                         val executionMode: ExecutionMode = defaultExecutionMode,
                                                         val defaultScriptAction: ScriptAction = defaultAction,
                                                         val driverConfig: DatamaintainDriverConfig,
+                                                        val filenameRegex: Regex = defaultFilenameRegex(driverConfig),
                                                         val verbose: Boolean = VERBOSE.default!!.toBoolean(),
                                                         val porcelain: Boolean = PRINT_RELATIVE_PATH_OF_SCRIPT.default!!.toBoolean(),
                                                         val flags: List<String> = emptyList()) {
@@ -81,12 +82,13 @@ data class DatamaintainConfig @JvmOverloads constructor(val name: String? = null
 
             val scanPath = buildAbsoluteScanPath(workingDirectoryPath, props)
 
+            val filenameRegex = props.getNullableProperty(SCAN_FILENAME_REGEX)?.toRegex() ?: defaultFilenameRegex(driverConfig)
+
             return DatamaintainConfig(
                     props.getProperty(CONFIG_NAME.key),
                     workingDirectoryPath,
                     scanPath,
                     Regex(props.getProperty(SCAN_IDENTIFIER_REGEX)),
-                    Regex(props.getProperty(SCAN_FILENAME_REGEX)),
                     props.getProperty(CREATE_TAGS_FROM_FOLDER).toBoolean(),
                     extractTags(props.getNullableProperty(TAGS_WHITELISTED)),
                     extractTags(props.getNullableProperty(TAGS_BLACKLISTED)),
@@ -99,6 +101,7 @@ data class DatamaintainConfig @JvmOverloads constructor(val name: String? = null
                     executionMode,
                     scriptAction,
                     driverConfig,
+                    filenameRegex,
                     props.getProperty(VERBOSE).toBoolean(),
                     props.getProperty(PRINT_RELATIVE_PATH_OF_SCRIPT).toBoolean(),
                     extractSequence(props.getNullableProperty(FLAGS)).toList()
@@ -171,6 +174,9 @@ data class DatamaintainConfig @JvmOverloads constructor(val name: String? = null
                 string.splitToSequence(",")
             }
         }
+
+        private fun defaultFilenameRegex(datamaintainDriverConfig: DatamaintainDriverConfig) =
+            DBType.tryFindFromString(datamaintainDriverConfig.dbType)?.filenameRegex ?: ".*".toRegex()
     }
 
     fun log() {
@@ -297,7 +303,7 @@ enum class CoreConfigKey(override val key: String,
     TAG("tag"),
 
     // FILTER
-    SCAN_FILENAME_REGEX("filter.filename.regex", ".*"),
+    SCAN_FILENAME_REGEX("filter.filename.regex"),
     TAGS_WHITELISTED("filter.tags.whitelisted"),
     TAGS_BLACKLISTED("filter.tags.blacklisted"),
 
