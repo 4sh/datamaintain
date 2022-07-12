@@ -47,6 +47,7 @@ class DatamaintainConfigTest {
         System.setProperty(CoreConfigKey.EXECUTION_MODE.key, "NORMAL")
         System.setProperty(CoreConfigKey.VERBOSE.key, "FALSE")
         System.setProperty(CoreConfigKey.PRINT_RELATIVE_PATH_OF_SCRIPT.key, "false")
+        System.setProperty(CoreConfigKey.SCAN_FILENAME_REGEX.key, ".*")
 
         val config = DatamaintainConfig.buildConfig(DatamaintainConfigTest::class.java.getResourceAsStream("/config/default.properties"),
                 FakeDriverConfig())
@@ -54,6 +55,7 @@ class DatamaintainConfigTest {
             get { path }.isEqualTo(Paths.get("/new"))
             get { identifierRegex.pattern }.isEqualTo("(.*?)_.*")
             get { doesCreateTagsFromFolder }.isFalse()
+            get { filenameRegex.pattern }.isEqualTo(".*")
             get { blacklistedTags }.isEqualTo(setOf(Tag("un"), Tag("deux")))
             get { tagsToPlayAgain }.isEqualTo(setOf(Tag("again")))
             get { executionMode }.isEqualTo(ExecutionMode.NORMAL)
@@ -129,6 +131,7 @@ class DatamaintainConfigTest {
             get { tagsToPlayAgain }.isEqualTo(setOf(Tag("again")))
             get { doesCreateTagsFromFolder }.isTrue()
             get { executionMode }.isEqualTo(ExecutionMode.DRY)
+            get { filenameRegex.pattern }.isEqualTo("v_.*\\.js")
             get { tagsMatchers }.containsExactlyInAnyOrder(
                     TagMatcher(Tag("TOTO"), setOf(
                             expectedPath.resolve(Paths.get("src/test/resources/scanner_test_files/01_file1")).toString(),
@@ -172,6 +175,7 @@ class DatamaintainConfigTest {
                 .addCheckRule("checkRules")
                 .addFlag("1")
                 .addFlag("2")
+                .withFilenameRegex("version_.*.sql".toRegex())
                 .build()
 
             expectThat(config).and {
@@ -194,6 +198,7 @@ class DatamaintainConfigTest {
                 )
                 get { checkRules.toList() }.containsExactlyInAnyOrder("checkRules")
                 get { flags }.containsExactlyInAnyOrder("1", "2")
+                get { filenameRegex.pattern } isEqualTo "version_.*.sql"
             }
         }
 
@@ -220,6 +225,7 @@ class DatamaintainConfigTest {
                 get { tagsMatchers }.isEmpty()
                 get { checkRules.toList() }.isEmpty()
                 get { flags }.isEmpty()
+                get { filenameRegex.pattern } isEqualTo ".*"
             }
         }
 
