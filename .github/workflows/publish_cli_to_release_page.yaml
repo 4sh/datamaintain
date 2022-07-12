@@ -1,0 +1,33 @@
+# .github/workflows/build-docker-image.yml
+name: Publish CLI
+
+on: release
+
+jobs:
+  build-docker-image:
+    name: Build and upload docker image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pull source
+        uses: actions/checkout@v1
+      - name: Validate Gradle wrapper
+        uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
+      - name: Build CLI
+        uses: gradle/gradle-build-action@0d13054264b0bb894ded474f08ebb30921341cee
+        with:
+          arguments: installDist
+      - name: Build CLI archives
+        run: tar -cvf
+        shell: bash
+      - name: Upload tar to release
+        uses: JasonEtco/upload-to-release@master
+        with:
+          args: cli.tar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload zip to release
+        uses: JasonEtco/upload-to-release@master
+        with:
+          args: cli.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
