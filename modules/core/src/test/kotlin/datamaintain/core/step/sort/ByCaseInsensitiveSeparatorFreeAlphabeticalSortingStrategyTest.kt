@@ -1,9 +1,9 @@
 package datamaintain.core.step.sort
 
-import datamaintain.core.script.ExecutedScript
-import datamaintain.core.script.ExecutionStatus
-import datamaintain.core.script.Script
-import datamaintain.core.script.ScriptAction
+import datamaintain.domain.script.ExecutedScript
+import datamaintain.domain.script.ExecutionStatus
+import datamaintain.domain.script.Script
+import datamaintain.domain.script.ScriptAction
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.*

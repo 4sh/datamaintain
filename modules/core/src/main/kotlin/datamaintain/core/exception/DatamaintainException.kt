@@ -1,8 +1,8 @@
 package datamaintain.core.exception
 
-import datamaintain.core.report.Report
-import datamaintain.core.report.ReportBuilder
 import datamaintain.core.step.Step
+import datamaintain.domain.report.Report
+import datamaintain.domain.report.ReportBuilder
 
 class DatamaintainException(
     override val message: String,

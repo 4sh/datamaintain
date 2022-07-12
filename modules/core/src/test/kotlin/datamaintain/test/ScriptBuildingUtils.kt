@@ -1,7 +1,7 @@
 package datamaintain.test
 
-import datamaintain.core.script.ExecutionStatus
-import datamaintain.core.script.ReportExecutedScript
+import datamaintain.domain.script.ExecutionStatus
+import datamaintain.domain.script.ReportExecutedScript
 
 fun buildReportExecutedScript(scriptName: String, porcelainName: String?) =
     ReportExecutedScript(

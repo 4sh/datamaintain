@@ -1,6 +1,4 @@
-package datamaintain.core.script
-
-import datamaintain.core.step.executor.Execution
+package datamaintain.domain.script
 
 interface Script {
     val name: String
@@ -52,32 +50,6 @@ open class ExecutedScript @JvmOverloads constructor(
         open val executionOutput: String? = null,
         open val flags: List<String> = listOf()
 ) : LightExecutedScript(name, checksum, identifier) {
-    companion object {
-        fun simulateExecuted(script: ScriptWithContent, executionStatus: ExecutionStatus, flags: List<String>) =
-                ExecutedScript(
-                        script.name,
-                        script.checksum,
-                        script.identifier,
-                        executionStatus,
-                        script.action,
-                        flags = flags
-                )
-
-        fun build(script: ScriptWithContent, execution: Execution, flags: List<String>) = simulateExecuted(script, execution.executionStatus, flags)
-
-        fun build(script: ScriptWithContent, execution: Execution, executionDurationInMillis: Long, flags: List<String>) =
-                ExecutedScript(
-                        script.name,
-                        script.checksum,
-                        script.identifier,
-                        execution.executionStatus,
-                        script.action,
-                        executionDurationInMillis,
-                        execution.executionOutput,
-                        flags
-                )
-    }
-
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

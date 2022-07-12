@@ -2,10 +2,14 @@ package datamaintain.db.driver.mongo
 
 import datamaintain.core.db.driver.DatamaintainDriver
 import datamaintain.core.exception.DatamaintainMongoQueryException
-import datamaintain.core.script.*
+import datamaintain.core.script.FileScript
 import datamaintain.core.step.executor.Execution
 import datamaintain.core.util.runProcess
 import datamaintain.db.driver.mongo.serialization.KJsonParser
+import datamaintain.domain.script.ExecutedScript
+import datamaintain.domain.script.ExecutionStatus
+import datamaintain.domain.script.LightExecutedScript
+import datamaintain.domain.script.ScriptWithContent
 import mu.KotlinLogging
 import java.io.InputStream
 import java.nio.file.Path

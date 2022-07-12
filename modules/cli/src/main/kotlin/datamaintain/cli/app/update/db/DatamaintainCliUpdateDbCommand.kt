@@ -4,6 +4,7 @@ import datamaintain.cli.app.DatamaintainCliCommand
 import datamaintain.core.Datamaintain
 import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.exception.DatamaintainException
+import datamaintain.core.report.print
 import kotlin.system.exitProcess
 
 fun defaultUpdateDbRunner(config: DatamaintainConfig) {

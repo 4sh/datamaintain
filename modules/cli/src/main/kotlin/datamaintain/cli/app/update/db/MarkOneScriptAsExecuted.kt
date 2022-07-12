@@ -5,7 +5,7 @@ import com.github.ajalt.clikt.parameters.options.option
 import datamaintain.cli.app.utils.detailedOption
 import datamaintain.core.config.CoreConfigKey
 import datamaintain.core.config.DatamaintainConfig
-import datamaintain.core.script.ScriptAction
+import datamaintain.domain.script.ScriptAction
 import java.util.*
 
 class MarkOneScriptAsExecuted(runner: (DatamaintainConfig) -> Unit = ::defaultUpdateDbRunner) :
