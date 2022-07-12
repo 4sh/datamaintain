@@ -8,17 +8,18 @@ import datamaintain.core.config.DatamaintainScannerConfig
 import datamaintain.core.db.driver.DatamaintainDriver
 import datamaintain.core.db.driver.FakeDriverConfig
 import datamaintain.core.exception.DatamaintainException
-import datamaintain.core.report.Report
-import datamaintain.core.script.ExecutedScript
-import datamaintain.core.script.ExecutionStatus.KO
-import datamaintain.core.script.ExecutionStatus.OK
 import datamaintain.core.script.InMemoryScript
-import datamaintain.core.script.ScriptAction
 import datamaintain.core.step.executor.Execution
 import datamaintain.core.step.executor.ExecutionMode
 import datamaintain.core.step.executor.Executor
+import datamaintain.core.step.executor.buildExecutedScript
 import datamaintain.core.util.exception.DatamaintainQueryException
 import datamaintain.test.TestAppender
+import datamaintain.domain.report.Report
+import datamaintain.domain.script.ExecutedScript
+import datamaintain.domain.script.ExecutionStatus.KO
+import datamaintain.domain.script.ExecutionStatus.OK
+import datamaintain.domain.script.ScriptAction
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -277,7 +278,7 @@ internal class ExecutorTest {
             script1.copy(action = ScriptAction.MARK_AS_EXECUTED)
         )
 
-        val executedScript = ExecutedScript.build(scripts[0], Execution(OK), context.config.executor.flags)
+        val executedScript = buildExecutedScript(scripts[0], Execution(OK), context.config.executor.flags)
 
         // When
         val report: Report = executor.execute(scripts)

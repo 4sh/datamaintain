@@ -1,9 +1,9 @@
 package datamaintain.db.driver.jdbc
 
 import datamaintain.core.config.DatamaintainExecutorConfig
-import datamaintain.core.script.ScriptAction
-import datamaintain.core.script.ScriptWithContent
-import datamaintain.core.script.Tag
+import datamaintain.domain.script.ScriptAction
+import datamaintain.domain.script.ScriptWithContent
+import datamaintain.domain.script.Tag
 import java.math.BigInteger
 import java.security.MessageDigest
 

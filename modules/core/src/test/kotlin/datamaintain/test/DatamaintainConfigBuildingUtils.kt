@@ -3,10 +3,10 @@ package datamaintain.test
 import datamaintain.core.config.*
 import datamaintain.core.db.driver.DatamaintainDriverConfig
 import datamaintain.core.db.driver.FakeDriverConfig
-import datamaintain.core.script.ScriptAction
-import datamaintain.core.script.Tag
 import datamaintain.core.script.TagMatcher
 import datamaintain.core.step.executor.ExecutionMode
+import datamaintain.domain.script.ScriptAction
+import datamaintain.domain.script.Tag
 import java.nio.file.Path
 import java.nio.file.Paths
 

@@ -1,9 +1,9 @@
 package datamaintain.core.db.driver
 
-import datamaintain.core.script.ExecutedScript
-import datamaintain.core.script.LightExecutedScript
-import datamaintain.core.script.ScriptWithContent
 import datamaintain.core.step.executor.Execution
+import datamaintain.domain.script.ExecutedScript
+import datamaintain.domain.script.LightExecutedScript
+import datamaintain.domain.script.ScriptWithContent
 
 abstract class DatamaintainDriver(protected val uri: String) {
 

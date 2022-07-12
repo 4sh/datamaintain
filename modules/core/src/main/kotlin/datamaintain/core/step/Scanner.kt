@@ -5,8 +5,8 @@ import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.exception.DatamaintainBaseException
 import datamaintain.core.exception.DatamaintainException
 import datamaintain.core.script.FileScript
-import datamaintain.core.script.ScriptWithContent
-import datamaintain.core.script.Tag
+import datamaintain.domain.script.ScriptWithContent
+import datamaintain.domain.script.Tag
 import mu.KotlinLogging
 import java.io.File
 import java.nio.file.Path

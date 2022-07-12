@@ -1,10 +1,9 @@
 package datamaintain.core.step.check.rules.implementations
 
 import datamaintain.core.exception.DatamaintainCheckException
-import datamaintain.core.exception.DatamaintainException
-import datamaintain.core.script.ExecutedScript
-import datamaintain.core.script.ExecutionStatus
-import datamaintain.core.script.ScriptAction
+import datamaintain.domain.script.ExecutedScript
+import datamaintain.domain.script.ExecutionStatus
+import datamaintain.domain.script.ScriptAction
 import datamaintain.test.ScriptWithContentWithFixedChecksum
 import org.junit.jupiter.api.Test
 import strikt.api.expectCatching

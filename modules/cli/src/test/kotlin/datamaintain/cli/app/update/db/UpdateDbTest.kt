@@ -1,12 +1,15 @@
 package datamaintain.cli.app.update.db
 
 import datamaintain.cli.app.BaseCliTest
+import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.script.ScriptAction
 import datamaintain.core.script.Tag
 import datamaintain.core.script.TagMatcher
 import datamaintain.core.step.check.rules.implementations.SameScriptsAsExecutedCheck
 import datamaintain.db.driver.mongo.MongoDriverConfig
 import datamaintain.db.driver.mongo.MongoShell
+import datamaintain.domain.script.ScriptAction
+import datamaintain.domain.script.Tag
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test

@@ -4,16 +4,16 @@ import datamaintain.core.Context
 import datamaintain.core.exception.DatamaintainBaseException
 import datamaintain.core.exception.DatamaintainCheckRuleNotFoundException
 import datamaintain.core.exception.DatamaintainException
-import datamaintain.core.script.ScriptWithContent
 import datamaintain.core.step.Step
-import datamaintain.core.step.check.rules.CheckRule
-import datamaintain.core.step.check.rules.ScriptType
 import datamaintain.core.step.check.rules.contracts.FullContextCheckRule
 import datamaintain.core.step.check.rules.contracts.ScriptCheckRule
 import datamaintain.core.step.check.rules.contracts.ScriptWithContextCheckRule
 import datamaintain.core.step.check.rules.implementations.AlwaysFailedCheck
 import datamaintain.core.step.check.rules.implementations.AlwaysSucceedCheck
 import datamaintain.core.step.check.rules.implementations.SameScriptsAsExecutedCheck
+import datamaintain.domain.CheckRule
+import datamaintain.domain.ScriptType
+import datamaintain.domain.script.ScriptWithContent
 import mu.KotlinLogging
 
 private val logger = KotlinLogging.logger {}

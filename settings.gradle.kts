@@ -2,6 +2,7 @@ rootProject.name = "datamaintain"
 include(
         "modules:core",
         "modules:cli",
+        "modules:domain-report",
         "modules:driver-mongo",
         "modules:driver-mongo-mapping:driver-mongo-mapping-test",
         "modules:driver-mongo-mapping:driver-mongo-mapping-serialization",
