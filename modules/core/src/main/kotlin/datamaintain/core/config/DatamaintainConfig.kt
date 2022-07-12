@@ -52,6 +52,7 @@ data class DatamaintainConfig @JvmOverloads constructor(val name: String? = null
         builder.executionMode,
         builder.defaultScriptAction,
         builder.driverConfig,
+        builder.filenameRegex,
         builder.verbose,
         builder.porcelain,
         builder.flags
@@ -205,6 +206,9 @@ data class DatamaintainConfig @JvmOverloads constructor(val name: String? = null
         lateinit var driverConfig: DatamaintainDriverConfig
             private set
 
+        lateinit var filenameRegex: Regex
+            private set
+
         // optional
         var name: String? = null
             private set
@@ -248,6 +252,7 @@ data class DatamaintainConfig @JvmOverloads constructor(val name: String? = null
         fun withExecutionMode(executionMode: ExecutionMode) = apply { this.executionMode = executionMode }
         fun withDefaultScriptAction(defaultScriptAction: ScriptAction) = apply { this.defaultScriptAction = defaultScriptAction }
         fun withDriverConfig(driverConfig: DatamaintainDriverConfig) = apply { this.driverConfig = driverConfig }
+        fun withFilenameRegex(filenameRegex: Regex) = apply { this.filenameRegex = filenameRegex }
         fun withVerbose(verbose: Boolean) = apply { this.verbose = verbose }
         fun withPorcelain(porcelain: Boolean) = apply { this.porcelain = porcelain }
 
@@ -262,6 +267,10 @@ data class DatamaintainConfig @JvmOverloads constructor(val name: String? = null
         fun build(): DatamaintainConfig {
             if (!::driverConfig.isInitialized) {
                 throw DatamaintainBuilderMandatoryException("DatamaintainConfigBuilder", "driverConfig")
+            }
+
+            if (!::filenameRegex.isInitialized) {
+                filenameRegex = defaultFilenameRegex(driverConfig)
             }
 
             return DatamaintainConfig(this)
