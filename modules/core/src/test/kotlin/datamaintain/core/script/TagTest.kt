@@ -1,5 +1,6 @@
 package datamaintain.core.script
 
+import datamaintain.domain.script.Tag
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import java.nio.file.Paths

@@ -4,10 +4,10 @@ import datamaintain.core.config.ConfigKey.Companion.overrideBySystemProperties
 import datamaintain.core.config.CoreConfigKey.*
 import datamaintain.core.db.driver.DatamaintainDriverConfig
 import datamaintain.core.exception.DatamaintainBuilderMandatoryException
-import datamaintain.core.script.ScriptAction
-import datamaintain.core.script.Tag
 import datamaintain.core.script.TagMatcher
 import datamaintain.core.step.executor.ExecutionMode
+import datamaintain.domain.script.ScriptAction
+import datamaintain.domain.script.Tag
 import mu.KotlinLogging
 import java.io.File
 import java.io.InputStream

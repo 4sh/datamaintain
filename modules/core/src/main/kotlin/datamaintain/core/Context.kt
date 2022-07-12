@@ -2,8 +2,7 @@ package datamaintain.core
 
 import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.db.driver.DatamaintainDriver
-import datamaintain.core.report.Report
-import datamaintain.core.report.ReportBuilder
+import datamaintain.domain.report.ReportBuilder
 
 data class Context(
         val config: DatamaintainConfig,

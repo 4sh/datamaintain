@@ -1,6 +1,6 @@
 package datamaintain.core.step.sort
 
-import datamaintain.core.script.Script
+import datamaintain.domain.script.Script
 import java.util.*
 
 /**

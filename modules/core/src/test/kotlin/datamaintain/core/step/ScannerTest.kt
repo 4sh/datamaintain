@@ -2,9 +2,9 @@ package datamaintain.core.step
 
 import datamaintain.core.Context
 import datamaintain.core.db.driver.FakeDatamaintainDriver
-import datamaintain.core.script.ScriptWithContent
-import datamaintain.core.script.Tag
 import datamaintain.core.script.TagMatcher
+import datamaintain.domain.script.ScriptWithContent
+import datamaintain.domain.script.Tag
 import datamaintain.test.buildDatamaintainConfig
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test

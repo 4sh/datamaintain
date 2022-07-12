@@ -1,6 +1,10 @@
 package datamaintain.db.driver.jdbc
 
-import datamaintain.core.script.*
+import datamaintain.core.script.FileScript
+import datamaintain.domain.script.ExecutedScript
+import datamaintain.domain.script.ExecutionStatus
+import datamaintain.domain.script.LightExecutedScript
+import datamaintain.domain.script.ScriptAction
 import datamaintain.db.driver.jdbc.exception.JdbcQueryException
 import io.mockk.every
 import io.mockk.spyk
