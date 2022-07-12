@@ -33,9 +33,10 @@ class UpdateDb(runner: (DatamaintainConfig) -> Unit = ::defaultUpdateDbRunner) :
     )
 
     private val filenameRegex: String? by detailedOption(
-        help = "regex to filter scripts name",
-        example = "(.*)(\\.js$)",
-        defaultValue = CoreConfigKey.SCAN_FILENAME_REGEX.default
+        help = "regex to filter scripts name. Default are : " +
+                "${datamaintain.core.db.driver.DBType.MONGO.filenameRegex} for mongo and " +
+                "${datamaintain.core.db.driver.DBType.JDBC.filenameRegex} for JDBC",
+        example = "^.*\\.js\$",
     )
 
     private val whitelistedTags: String? by detailedOption(

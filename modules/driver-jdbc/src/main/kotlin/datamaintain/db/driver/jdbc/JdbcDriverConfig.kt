@@ -16,7 +16,7 @@ data class JdbcDriverConfig @JvmOverloads constructor(
     override val trustUri: Boolean,
     override val printOutput: Boolean = DriverConfigKey.DB_PRINT_OUTPUT.default!!.toBoolean(),
     override val saveOutput: Boolean = DriverConfigKey.DB_SAVE_OUTPUT.default!!.toBoolean()
-) : DatamaintainDriverConfig(DBType.JDBC.string, uri, trustUri, printOutput, saveOutput, JdbcConnectionStringBuilder()) {
+) : DatamaintainDriverConfig(DBType.JDBC.toString(), uri, trustUri, printOutput, saveOutput, JdbcConnectionStringBuilder()) {
     companion object {
         @JvmStatic
         fun buildConfig(props: Properties): JdbcDriverConfig {

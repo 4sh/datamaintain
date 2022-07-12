@@ -19,7 +19,7 @@ data class MongoDriverConfig @JvmOverloads constructor(override val uri: String,
                                                        val tmpFilePath: Path = Paths.get(MongoConfigKey.DB_MONGO_TMP_PATH.default!!),
                                                        val mongoShell: MongoShell = DEFAULT_MONGO_SHELL,
                                                        var clientPath: Path? = null
-) : DatamaintainDriverConfig(DBType.MONGO.string, uri, trustUri, printOutput, saveOutput, MongoConnectionStringBuilder()) {
+) : DatamaintainDriverConfig(DBType.MONGO.toString(), uri, trustUri, printOutput, saveOutput, MongoConnectionStringBuilder()) {
     init {
         if (clientPath == null) {
             clientPath = Paths.get(mongoShell.defaultBinaryName())
