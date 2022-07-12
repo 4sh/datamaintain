@@ -3,7 +3,7 @@ package datamaintain.core.step
 import datamaintain.core.Context
 import datamaintain.core.exception.DatamaintainBaseException
 import datamaintain.core.exception.DatamaintainException
-import datamaintain.core.script.ScriptWithContent
+import datamaintain.domain.script.ScriptWithContent
 import mu.KotlinLogging
 
 private val logger = KotlinLogging.logger {}
@@ -11,7 +11,9 @@ private val logger = KotlinLogging.logger {}
 class Filter(private val context: Context) {
     fun filter(scripts: List<ScriptWithContent>): List<ScriptWithContent> {
         try {
-            if (!context.config.porcelain) { logger.info { "Filter scripts..." } }
+            if (!context.config.porcelain) {
+                logger.info { "Filter scripts..." }
+            }
             var filteredScripts = scripts
 
             if (context.config.whitelistedTags.isNotEmpty()) {

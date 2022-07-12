@@ -1,8 +1,8 @@
 package datamaintain.db.driver.jdbc
 
 import datamaintain.core.db.driver.DatamaintainDriver
-import datamaintain.core.script.*
 import datamaintain.core.step.executor.Execution
+import datamaintain.domain.script.*
 import datamaintain.db.driver.jdbc.exception.JdbcQueryException
 import java.sql.Connection
 import java.sql.DriverManager

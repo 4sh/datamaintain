@@ -3,9 +3,9 @@ package datamaintain.core.step.sort
 import datamaintain.core.Context
 import datamaintain.core.exception.DatamaintainBaseException
 import datamaintain.core.exception.DatamaintainException
-import datamaintain.core.script.Script
-import datamaintain.core.script.ScriptWithContent
 import datamaintain.core.step.Step
+import datamaintain.domain.script.Script
+import datamaintain.domain.script.ScriptWithContent
 import mu.KotlinLogging
 
 private val logger = KotlinLogging.logger {}

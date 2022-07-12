@@ -4,9 +4,9 @@ import datamaintain.core.Context
 import datamaintain.core.exception.DatamaintainBaseException
 import datamaintain.core.exception.DatamaintainException
 import datamaintain.core.exception.DatamaintainScriptExecutionException
-import datamaintain.core.report.Report
-import datamaintain.core.script.*
 import datamaintain.core.step.Step
+import datamaintain.domain.report.Report
+import datamaintain.domain.script.*
 import datamaintain.core.util.exception.DatamaintainQueryException
 import mu.KotlinLogging
 import kotlin.system.measureTimeMillis
@@ -61,7 +61,7 @@ class Executor(private val context: Context) {
                     execution = context.dbDriver.executeScript(script)
                 }
 
-                val executedScript = ExecutedScript.build(script, execution, executionDurationInMillis, context.config.flags)
+                val executedScript = buildExecutedScript(script, execution, executionDurationInMillis, context.config.flags)
 
                 if (executedScript.executionStatus == ExecutionStatus.OK) {
                     markAsExecuted(executedScript)
@@ -72,7 +72,7 @@ class Executor(private val context: Context) {
             }
             ScriptAction.MARK_AS_EXECUTED -> {
                 logger.info {"start marking script ${script.name} as executed"}
-                val executedScript = ExecutedScript.build(script, Execution(ExecutionStatus.OK), context.config.flags)
+                val executedScript = buildExecutedScript(script, Execution(ExecutionStatus.OK), context.config.flags)
 
                 try {
                     markAsExecuted(executedScript)
@@ -86,7 +86,7 @@ class Executor(private val context: Context) {
             }
             ScriptAction.OVERRIDE_EXECUTED -> {
                 logger.info {"start overriding script ${script.name} execution"}
-                val executedScript = ExecutedScript.build(script, Execution(ExecutionStatus.OK), context.config.flags)
+                val executedScript = buildExecutedScript(script, Execution(ExecutionStatus.OK), context.config.flags)
 
                 overrideExecuted(executedScript)
                 if (!context.config.porcelain) { logger.info { "${executedScript.name} only marked as executed (so not executed)" } }
@@ -104,7 +104,7 @@ class Executor(private val context: Context) {
                 if (!context.config.porcelain) { logger.info { "${script.name} would have been only marked as executed (so not executed)" } }
         }
 
-        return ExecutedScript.simulateExecuted(script, ExecutionStatus.OK, context.config.flags)
+        return buildSimulatedExecutedScript(script, ExecutionStatus.OK, context.config.flags)
     }
 
     private fun markAsExecuted(it: ExecutedScript) {
@@ -121,8 +121,35 @@ class Executor(private val context: Context) {
         try {
             context.dbDriver.overrideScript(it)
         } catch (e: Exception) {
-            if (!context.config.porcelain) { logger.error { "error during override of ${it.fullName()} " } }
+            if (!context.config.porcelain) {
+                logger.error { "error during override of ${it.fullName()} " }
+            }
             throw e
         }
     }
 }
+
+fun buildSimulatedExecutedScript(script: ScriptWithContent, executionStatus: ExecutionStatus, flags: List<String>) =
+    ExecutedScript(
+        script.name,
+        script.checksum,
+        script.identifier,
+        executionStatus,
+        script.action,
+        flags = flags
+    )
+
+fun buildExecutedScript(script: ScriptWithContent, execution: Execution, flags: List<String>) =
+    buildSimulatedExecutedScript(script, execution.executionStatus, flags)
+
+fun buildExecutedScript(script: ScriptWithContent, execution: Execution, executionDurationInMillis: Long, flags: List<String>) =
+    ExecutedScript(
+        script.name,
+        script.checksum,
+        script.identifier,
+        execution.executionStatus,
+        script.action,
+        executionDurationInMillis,
+        execution.executionOutput,
+        flags = flags
+    )

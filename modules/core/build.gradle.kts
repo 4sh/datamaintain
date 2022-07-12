@@ -24,6 +24,8 @@ publishing {
 }
 
 dependencies {
+    api(project(":modules:domain-report"))
+
     "testImplementation"("ch.qos.logback:logback-classic:${Versions.logbackClassic}")
 }
 

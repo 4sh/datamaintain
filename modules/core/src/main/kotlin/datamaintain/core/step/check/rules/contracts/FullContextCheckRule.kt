@@ -1,9 +1,9 @@
 package datamaintain.core.step.check.rules.contracts
 
 import datamaintain.core.exception.DatamaintainCheckException
-import datamaintain.core.script.LightExecutedScript
-import datamaintain.core.script.ScriptWithContent
-import datamaintain.core.step.check.rules.CheckRule
+import datamaintain.domain.CheckRule
+import datamaintain.domain.script.LightExecutedScript
+import datamaintain.domain.script.ScriptWithContent
 
 abstract class FullContextCheckRule(
         val executedScripts: Sequence<LightExecutedScript>

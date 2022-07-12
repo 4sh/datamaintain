@@ -1,7 +1,7 @@
 package datamaintain.cli.app.update.db
 
 import datamaintain.cli.app.BaseCliTest
-import datamaintain.core.script.ScriptAction
+import datamaintain.domain.script.ScriptAction
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat

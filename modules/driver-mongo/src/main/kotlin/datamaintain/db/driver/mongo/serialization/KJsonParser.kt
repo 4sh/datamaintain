@@ -1,11 +1,11 @@
 package datamaintain.db.driver.mongo.serialization
 
-import datamaintain.core.script.ExecutedScript
-import datamaintain.core.script.ExecutionStatus
-import datamaintain.core.script.LightExecutedScript
-import datamaintain.core.script.ScriptAction
 import datamaintain.db.driver.mongo.ExecutedScriptJsonParser
 import datamaintain.db.driver.mongo.LightExecutedScriptJsonParser
+import datamaintain.domain.script.ExecutedScript
+import datamaintain.domain.script.ExecutionStatus
+import datamaintain.domain.script.LightExecutedScript
+import datamaintain.domain.script.ScriptAction
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString

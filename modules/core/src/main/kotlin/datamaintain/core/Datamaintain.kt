@@ -1,7 +1,6 @@
 package datamaintain.core
 
 import datamaintain.core.config.DatamaintainConfig
-import datamaintain.core.report.Report
 import datamaintain.core.step.Filter
 import datamaintain.core.step.Pruner
 import datamaintain.core.step.Scanner
@@ -9,6 +8,7 @@ import datamaintain.core.step.check.Checker
 import datamaintain.core.step.check.CheckerData
 import datamaintain.core.step.executor.Executor
 import datamaintain.core.step.sort.Sorter
+import datamaintain.domain.report.Report
 import mu.KotlinLogging
 
 private val logger = KotlinLogging.logger {}

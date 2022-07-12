@@ -1,6 +1,9 @@
 package datamaintain.core.script
 
 import datamaintain.core.config.DatamaintainConfig
+import datamaintain.domain.script.ScriptAction
+import datamaintain.domain.script.ScriptWithContent
+import datamaintain.domain.script.Tag
 import java.math.BigInteger
 import java.security.MessageDigest
 

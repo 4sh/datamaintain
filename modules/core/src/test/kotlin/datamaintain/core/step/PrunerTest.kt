@@ -5,6 +5,10 @@ import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.db.driver.DatamaintainDriver
 import datamaintain.core.db.driver.FakeDriverConfig
 import datamaintain.core.script.*
+import datamaintain.domain.script.ExecutedScript
+import datamaintain.domain.script.ExecutionStatus
+import datamaintain.domain.script.ScriptAction
+import datamaintain.domain.script.Tag
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Test

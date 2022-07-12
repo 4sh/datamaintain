@@ -1,6 +1,7 @@
 package datamaintain.core.script
 
 import datamaintain.core.exception.DatamaintainBaseException
+import datamaintain.domain.script.Tag
 import java.nio.file.FileSystems
 import java.nio.file.Path
 import java.nio.file.PathMatcher

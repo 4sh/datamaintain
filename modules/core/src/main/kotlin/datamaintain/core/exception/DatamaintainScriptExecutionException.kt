@@ -1,6 +1,6 @@
 package datamaintain.core.exception
 
-import datamaintain.core.script.ExecutedScript
+import datamaintain.domain.script.ExecutedScript
 
 class DatamaintainScriptExecutionException (
     executedScript: ExecutedScript

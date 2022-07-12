@@ -1,6 +1,6 @@
 package datamaintain.db.driver.mongo
 
-import datamaintain.core.script.LightExecutedScript
+import datamaintain.domain.script.LightExecutedScript
 
 interface LightExecutedScriptJsonParser {
     // parse a stringify json array to an Array of LightExecutedScript
