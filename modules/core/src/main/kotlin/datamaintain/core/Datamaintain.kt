@@ -8,18 +8,23 @@ import datamaintain.core.step.check.Checker
 import datamaintain.core.step.check.CheckerData
 import datamaintain.core.step.executor.Executor
 import datamaintain.core.step.sort.Sorter
+import datamaintain.domain.report.IReportSender
 import datamaintain.domain.report.Report
+import datamaintain.monitoring.ReportSender
 import mu.KotlinLogging
 
 private val logger = KotlinLogging.logger {}
 
 class Datamaintain(config: DatamaintainConfig) {
+    private val reportSender: IReportSender?
 
     init {
         if (config.logs.verbose && !config.logs.porcelain) {
             config.log()
             config.scanner.log()
         }
+
+        reportSender = ReportSender()
     }
 
     val context = Context(
@@ -51,6 +56,7 @@ class Datamaintain(config: DatamaintainConfig) {
                 }
                 .let { Checker(context).check(checkerData) }
                 .let { scripts -> Executor(context).execute(scripts) }
+                .also { reportSender?.sendReport(it) }
     }
 
     fun listExecutedScripts() = context.dbDriver.listExecutedScripts()
