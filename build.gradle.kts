@@ -16,7 +16,8 @@ val modulesToPublish = listOf(
     "driver-mongo-mapping-serialization",
     "driver-mongo-mapping-jackson",
     "driver-mongo-mapping-gson",
-    "driver-mongo-mapping-test"
+    "driver-mongo-mapping-test",
+    "monitoring"
 )
 
 allprojects {
