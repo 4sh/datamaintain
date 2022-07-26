@@ -9,7 +9,7 @@ import org.http4k.core.Method
 import org.http4k.core.Request
 import org.http4k.format.ConfigurableJackson
 
-val url = "http://localhost:8080"
+val url = "http://localhost:8080/api/public/reports"
 
 class ReportSender : IReportSender {
     private val httpClient = Java8HttpClient()
