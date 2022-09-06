@@ -17,7 +17,7 @@ fun writeDocumentation(writer: OutputStreamWriter) {
         writer.append("## $it\n")
         writer.append(getMarkdownHelp(listOf(it), "### Options\n"))
     }
-
+    writer.flush()
 }
 
 fun getMarkdownHelp(commands: List<String> = listOf(), optionsTitle: String = "# Options"): String {
