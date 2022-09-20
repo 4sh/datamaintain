@@ -13,17 +13,17 @@ abstract class DatamaintainDriver(protected val uri: String) {
     abstract fun listExecutedScripts(): Sequence<LightExecutedScript>
 
     /**
-     * Executes the given script and inserts its execution in the database
+     * Executes the given script
      */
     abstract fun executeScript(script: ScriptWithContent): Execution
 
     /**
-     * Does not execute the given script, only inserts its execution in the database
+     * Inserts script execution in the database
      */
     abstract fun markAsExecuted(executedScript: ExecutedScript): ExecutedScript
 
     /**
-     * Does not execute the given script, only update its execution in the database
+     * Update script execution in the database
      */
     abstract fun overrideScript(executedScript: ExecutedScript): ExecutedScript
 }
