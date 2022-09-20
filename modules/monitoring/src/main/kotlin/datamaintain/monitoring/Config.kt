@@ -1,3 +1,3 @@
 package datamaintain.monitoring
 
-const val url = "http://localhost:8080/api/public/reports"
+const val baseUrl = "http://localhost:8080/api"
