@@ -57,6 +57,22 @@ internal class UpdateDbTest : BaseCliTest() {
                 expectThat(configWrapper.datamaintainConfig!!.scanner.identifierRegex.pattern).isEqualTo(identifierRegex)
             }
 
+            @Test
+            fun `should build config with datamaintain api url`() {
+                // Given
+                val datamaintainMonitoringApiUrl = "https://url.com"
+
+                val updateDbArguments = listOf(
+                    "--datamaintain-monitoring-api-url", datamaintainMonitoringApiUrl
+                )
+
+                // When
+                runUpdateDb(updateDbArguments)
+
+                // Then
+                expectThat(configWrapper.datamaintainConfig!!.datamaintainMonitoringApiUrl).isEqualTo(datamaintainMonitoringApiUrl)
+            }
+
             @Nested
             inner class ExecutionMode {
                 @ParameterizedTest

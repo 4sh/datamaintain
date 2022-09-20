@@ -27,6 +27,7 @@ data class DatamaintainConfig @JvmOverloads constructor(
     val executor: DatamaintainExecutorConfig = DatamaintainExecutorConfig(),
     val driverConfig: DatamaintainDriverConfig,
     val logs: DatamaintainLogsConfig = DatamaintainLogsConfig(),
+    val datamaintainMonitoringApiUrl: String? = null
 ) {
 
     private constructor(builder: Builder) : this(
@@ -59,6 +60,7 @@ data class DatamaintainConfig @JvmOverloads constructor(
             builder.verbose,
             builder.porcelain,
         ),
+        builder.datamaintainMonitoringApiUrl
     )
 
     companion object {
@@ -115,6 +117,7 @@ data class DatamaintainConfig @JvmOverloads constructor(
                     props.getProperty(VERBOSE).toBoolean(),
                     props.getProperty(PRINT_RELATIVE_PATH_OF_SCRIPT).toBoolean(),
                 ),
+                props.getNullableProperty(DATAMAINTAIN_MONITORING_API_URL)
             )
         }
 
@@ -238,6 +241,8 @@ data class DatamaintainConfig @JvmOverloads constructor(
             private set
         var flags: MutableList<String> = mutableListOf()
             private set
+        var datamaintainMonitoringApiUrl: String? = null
+            private set
 
         fun withName(name: String) = apply { this.name = name }
         fun withWorkingDirectory(workingDirectory: Path) = apply { this.workingDirectory = workingDirectory }
@@ -250,6 +255,7 @@ data class DatamaintainConfig @JvmOverloads constructor(
         fun withDriverConfig(driverConfig: DatamaintainDriverConfig) = apply { this.driverConfig = driverConfig }
         fun withVerbose(verbose: Boolean) = apply { this.verbose = verbose }
         fun withPorcelain(porcelain: Boolean) = apply { this.porcelain = porcelain }
+        fun withDatamaintainMonitoringApiUrl(datamaintainMonitoringApiUrl: String) = apply { this.datamaintainMonitoringApiUrl = datamaintainMonitoringApiUrl }
 
         // Collection
         fun addWhitelistedTag(whitelistedTag: Tag) = apply { this.whitelistedTags.add(whitelistedTag) }
@@ -295,6 +301,7 @@ enum class CoreConfigKey(override val key: String,
     DEFAULT_SCRIPT_ACTION("default.script.action", "RUN"),
     PRINT_RELATIVE_PATH_OF_SCRIPT("porcelain", "false"),
     FLAGS("flags"),
+    DATAMAINTAIN_MONITORING_API_URL("datamaintain.monitoring.api.url", null),
 
     // SCAN
     SCAN_PATH("scan.path", "./scripts/"),

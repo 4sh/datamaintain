@@ -119,6 +119,9 @@ class UpdateDb(runner: (DatamaintainConfig) -> Unit = ::defaultUpdateDbRunner) :
             "To define multiple rules, use option multiple times.")
         .multiple()
 
+    private val datamaintainMonitoringApiUrl: String? by option(help = "Url to contact the datamaintain monitoring app." +
+            "Will be used to send all reports on executions")
+
     override fun overloadProps(props: Properties) {
         path?.let { props.put(CoreConfigKey.SCAN_PATH.key, it) }
         identifierRegex?.let { props.put(CoreConfigKey.SCAN_IDENTIFIER_REGEX.key, it) }
@@ -139,6 +142,7 @@ class UpdateDb(runner: (DatamaintainConfig) -> Unit = ::defaultUpdateDbRunner) :
         porcelain?.let { props.put(CoreConfigKey.PRINT_RELATIVE_PATH_OF_SCRIPT.key, it.toString()) }
         mongoShell?.let { props.put(MongoConfigKey.DB_MONGO_SHELL.key, it.toUpperCase()) }
         flags?.let { props.put(CoreConfigKey.FLAGS.key, it.optionListToString()) }
+        datamaintainMonitoringApiUrl?.let { props.put(CoreConfigKey.DATAMAINTAIN_MONITORING_API_URL.key, it) }
     }
 
     fun List<String>.optionListToString(): String = this.joinToString(",")
