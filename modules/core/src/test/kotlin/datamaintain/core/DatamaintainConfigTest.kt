@@ -37,6 +37,7 @@ class DatamaintainConfigTest {
             get { logs.verbose }.isFalse()
             get { logs.porcelain }.isFalse()
             get { name }.isNull()
+            get { datamaintainMonitoringApiUrl }.isNull()
         }
     }
 
@@ -47,6 +48,7 @@ class DatamaintainConfigTest {
         System.setProperty(CoreConfigKey.EXECUTION_MODE.key, "NORMAL")
         System.setProperty(CoreConfigKey.VERBOSE.key, "FALSE")
         System.setProperty(CoreConfigKey.PRINT_RELATIVE_PATH_OF_SCRIPT.key, "false")
+        System.setProperty(CoreConfigKey.DATAMAINTAIN_MONITORING_API_URL.key, "myUrl")
 
         val config = DatamaintainConfig.buildConfig(DatamaintainConfigTest::class.java.getResourceAsStream("/config/default.properties"),
                 FakeDriverConfig())
@@ -59,6 +61,7 @@ class DatamaintainConfigTest {
             get { executor.executionMode }.isEqualTo(ExecutionMode.NORMAL)
             get { logs.verbose }.isFalse()
             get { logs.porcelain }.isFalse()
+            get { datamaintainMonitoringApiUrl }.isEqualTo("myUrl")
         }
 
         System.clearProperty("scan.path")
@@ -66,6 +69,7 @@ class DatamaintainConfigTest {
         System.clearProperty(CoreConfigKey.EXECUTION_MODE.key)
         System.clearProperty(CoreConfigKey.VERBOSE.key)
         System.clearProperty(CoreConfigKey.PRINT_RELATIVE_PATH_OF_SCRIPT.key)
+        System.clearProperty(CoreConfigKey.DATAMAINTAIN_MONITORING_API_URL.key)
     }
 
     @Test
@@ -142,6 +146,7 @@ class DatamaintainConfigTest {
             get { logs.verbose }.isTrue()
             get { logs.porcelain }.isTrue()
             get { name }.isEqualTo("myDefaultConfig")
+            get { datamaintainMonitoringApiUrl }.isEqualTo("https://datamaintain-monitoring.com")
         }
     }
 
@@ -172,6 +177,7 @@ class DatamaintainConfigTest {
                 .addCheckRule("checkRules")
                 .addFlag("1")
                 .addFlag("2")
+                .withDatamaintainMonitoringApiUrl("https://url.com")
                 .build()
 
             expectThat(config).and {
@@ -194,6 +200,7 @@ class DatamaintainConfigTest {
                 )
                 get { checker.rules }.containsExactlyInAnyOrder("checkRules")
                 get { executor.flags }.containsExactlyInAnyOrder("1", "2")
+                get { datamaintainMonitoringApiUrl }.isEqualTo("https://url.com")
             }
         }
 
@@ -220,6 +227,7 @@ class DatamaintainConfigTest {
                 get { scanner.tagsMatchers }.isEmpty()
                 get { checker.rules }.isEmpty()
                 get { executor.flags }.isEmpty()
+                get { datamaintainMonitoringApiUrl }.isNull()
             }
         }
 
