@@ -1,5 +1,5 @@
 package datamaintain.domain.report
 
-interface IReportSender {
+interface IExecutionWorkflowMessagesSender {
     fun sendReport(report: Report)
 }

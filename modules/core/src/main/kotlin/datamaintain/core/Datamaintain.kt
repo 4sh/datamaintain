@@ -8,15 +8,15 @@ import datamaintain.core.step.check.Checker
 import datamaintain.core.step.check.CheckerData
 import datamaintain.core.step.executor.Executor
 import datamaintain.core.step.sort.Sorter
-import datamaintain.domain.report.IReportSender
+import datamaintain.domain.report.IExecutionWorkflowMessagesSender
 import datamaintain.domain.report.Report
-import datamaintain.monitoring.ReportSender
+import datamaintain.monitoring.ExecutionWorkflowMessagesSender
 import mu.KotlinLogging
 
 private val logger = KotlinLogging.logger {}
 
 class Datamaintain(config: DatamaintainConfig) {
-    private val reportSender: IReportSender?
+    private val reportSender: IExecutionWorkflowMessagesSender?
 
     init {
         if (config.logs.verbose && !config.logs.porcelain) {
@@ -24,7 +24,7 @@ class Datamaintain(config: DatamaintainConfig) {
             config.scanner.log()
         }
 
-        reportSender = ReportSender()
+        reportSender = ExecutionWorkflowMessagesSender()
     }
 
     val context = Context(
