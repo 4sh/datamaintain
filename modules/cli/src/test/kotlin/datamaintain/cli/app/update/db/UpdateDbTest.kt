@@ -417,7 +417,7 @@ internal class UpdateDbTest : BaseCliTest() {
                     expectThat((configWrapper.datamaintainConfig!!.driverConfig) as MongoDriverConfig)
                         .and {
                             get { mongoShell }.isEqualTo(MongoShell.MONGO)
-                            get { clientPath }.isEqualTo(Paths.get("mongo"))
+                            get { clientExecutable }.isEqualTo("mongo")
                         }
                 }
 
@@ -433,7 +433,7 @@ internal class UpdateDbTest : BaseCliTest() {
                     expectThat((configWrapper.datamaintainConfig!!.driverConfig) as MongoDriverConfig)
                         .and {
                             get { mongoShell }.isEqualTo(MongoShell.MONGOSH)
-                            get { clientPath }.isEqualTo(Paths.get("mongosh"))
+                            get { clientExecutable }.isEqualTo("mongosh")
                         }
                 }
             }

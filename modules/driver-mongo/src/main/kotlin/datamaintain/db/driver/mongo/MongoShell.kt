@@ -5,7 +5,7 @@ enum class MongoShell {
     MONGOSH; // mongosh command line. Default CLI since Mongo 5.0
 
     fun defaultBinaryName(): String {
-        return name.toLowerCase()
+        return name.lowercase()
     }
 
     companion object {

@@ -5,7 +5,9 @@ import datamaintain.core.db.driver.DBType
 import datamaintain.core.db.driver.DatamaintainDriverConfig
 import datamaintain.core.db.driver.DriverConfigKey
 import datamaintain.core.exception.DatamaintainBuilderMandatoryException
+import datamaintain.db.driver.mongo.exception.DatamaintainMongoClientNotFound
 import mu.KotlinLogging
+import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.*
@@ -18,11 +20,11 @@ data class MongoDriverConfig @JvmOverloads constructor(override val uri: String,
                                                        override val trustUri: Boolean,
                                                        val tmpFilePath: Path = Paths.get(MongoConfigKey.DB_MONGO_TMP_PATH.default!!),
                                                        val mongoShell: MongoShell = DEFAULT_MONGO_SHELL,
-                                                       var clientPath: Path? = null
+                                                       var clientExecutable: String? = null
 ) : DatamaintainDriverConfig(DBType.MONGO.toString(), uri, trustUri, printOutput, saveOutput, MongoConnectionStringBuilder()) {
     init {
-        if (clientPath == null) {
-            clientPath = Paths.get(mongoShell.defaultBinaryName())
+        if (clientExecutable == null) {
+            clientExecutable = mongoShell.defaultBinaryName()
         }
     }
 
@@ -33,7 +35,7 @@ data class MongoDriverConfig @JvmOverloads constructor(override val uri: String,
         builder.trustUri,
         builder.tmpFilePath,
         builder.mongoShell,
-        builder.clientPath
+        builder.clientExecutable
     )
 
     companion object {
@@ -47,8 +49,8 @@ data class MongoDriverConfig @JvmOverloads constructor(override val uri: String,
             val mongoShell =
                 MongoShell.fromNullable(props.getNullableProperty(MongoConfigKey.DB_MONGO_SHELL), DEFAULT_MONGO_SHELL)
 
-            // default mongo path is mongo or mongosh (depends of mongo shell variable)
-            val mongoPath = props.getProperty(MongoConfigKey.DB_MONGO_CLIENT_PATH, mongoShell.defaultBinaryName()).let { Paths.get(it) }
+            // default mongo executable is 'mongo' or 'mongosh' command
+            val mongoPath = props.getProperty(MongoConfigKey.DB_MONGO_CLIENT_PATH, mongoShell.defaultBinaryName())
 
             return MongoDriverConfig(
                     uri = props.getProperty(DriverConfigKey.DB_URI),
@@ -56,25 +58,69 @@ data class MongoDriverConfig @JvmOverloads constructor(override val uri: String,
                     saveOutput = props.getProperty(DriverConfigKey.DB_SAVE_OUTPUT).toBoolean(),
                     trustUri = props.getProperty(DriverConfigKey.DB_TRUST_URI).toBoolean(),
                     tmpFilePath = props.getProperty(MongoConfigKey.DB_MONGO_TMP_PATH).let { Paths.get(it) },
-                    clientPath = mongoPath,
+                    clientExecutable = mongoPath,
                     mongoShell = mongoShell
             )
         }
     }
 
-    override fun toDriver(connectionString: String) = MongoDriver(
+    override fun toDriver(connectionString: String): MongoDriver {
+        ensureMongoExecutableIsPresent()
+
+        return MongoDriver(
             connectionString,
             tmpFilePath,
-            clientPath!!,
+            clientExecutable!!,
             printOutput,
             saveOutput,
-            mongoShell)
+            mongoShell
+        )
+    }
+
+    /**
+     * The clientExecutable designed the mongo executable, it can be a :
+     * * command like 'mongo'
+     * * path like '/path/to/mongo'
+     *
+     * If it is a command then ensure the program exists in $PATH.
+     *
+     * If it is a path then ensure the path exists, note that 'mongo' can be resolved has
+     * './mongo' if mongo is not in $PATH
+     */
+    fun ensureMongoExecutableIsPresent() {
+        val clientExecutable = this.clientExecutable!!
+        val clientExecutablePath = Paths.get(clientExecutable)
+
+        // If a filename is pass, it can be either a command or a filename
+        val canBeACommand = clientExecutablePath.fileName.toString() == clientExecutable
+
+        if (canBeACommand) {
+            val pathEnv = System.getenv("PATH").split(":")
+            val mongoClientsFound = pathEnv.asSequence()
+                    .map { Paths.get(it).resolve(clientExecutable) }
+                    .filter { Files.exists(it) }
+                    .toList()
+
+            if (mongoClientsFound.isNotEmpty()) {
+                return
+            }
+        }
+
+        val exists = Files.exists(clientExecutablePath)
+        if (exists) {
+            if (canBeACommand) {
+                this.clientExecutable = clientExecutablePath.toAbsolutePath().toString()
+            }
+        } else {
+            throw DatamaintainMongoClientNotFound(clientExecutable)
+        }
+    }
 
     override fun log() {
         logger.info { "Mongo driver configuration: " }
         logger.info { "- mongo uri -> $uri" }
         logger.info { "- mongo tmp file -> $tmpFilePath" }
-        logger.info { "- mongo client -> $clientPath" }
+        logger.info { "- mongo client -> $clientExecutable" }
         logger.info { "- mongo print output -> $printOutput" }
         logger.info { "- mongo save output -> $saveOutput" }
         logger.info { "" }
@@ -96,7 +142,7 @@ data class MongoDriverConfig @JvmOverloads constructor(override val uri: String,
             private set
         var mongoShell: MongoShell = DEFAULT_MONGO_SHELL
             private set
-        var clientPath: Path? = null
+        var clientExecutable: String? = null
             private set
 
         fun withUri(uri: String) = apply { this.uri = uri }
@@ -105,7 +151,7 @@ data class MongoDriverConfig @JvmOverloads constructor(override val uri: String,
         fun withTrustUri(trustUri: Boolean) = apply { this.trustUri = trustUri }
         fun withTmpFilePath(tmpFilePath: Path) = apply { this.tmpFilePath = tmpFilePath }
         fun withMongoShell(mongoShell: MongoShell) = apply { this.mongoShell = mongoShell }
-        fun withClientPath(clientPath: Path?) = apply { this.clientPath = clientPath }
+        fun withClientExecutable(clientExecutable: String?) = apply { this.clientExecutable = clientExecutable }
 
         fun build(): MongoDriverConfig {
             if (!::uri.isInitialized) {
