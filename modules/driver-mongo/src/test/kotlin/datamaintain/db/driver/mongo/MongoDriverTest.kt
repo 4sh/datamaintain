@@ -442,26 +442,27 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
                                                   mongoShell: MongoShell,
                                                   printOutput: Boolean = false,
                                                   saveOutput: Boolean = false,
-                                                  clientPath: Path? = null): MongoDriver {
+                                                  clientExecutable: String? = null): MongoDriver {
         initMongoConnection(tag)
         return buildMongoDriver(
             mongoShell = mongoShell,
-            printOutput =  printOutput,
-            saveOutput =  saveOutput,
-            clientPath =  clientPath)
+            printOutput = printOutput,
+            saveOutput = saveOutput,
+            clientExecutable = clientExecutable
+        )
     }
 
     private fun buildMongoDriver(mongoShell: MongoShell,
                                  mongoUri: String = this.mongoUri(),
                                  printOutput: Boolean = false,
                                  saveOutput: Boolean = false,
-                                 clientPath: Path? = null): MongoDriver {
-        val mongoClientPath = clientPath ?: Paths.get(mongoShell.defaultBinaryName())
+                                 clientExecutable: String? = null): MongoDriver {
+        val clientExecutable = clientExecutable ?: mongoShell.defaultBinaryName()
 
         return MongoDriver(
             mongoUri = mongoUri,
             tmpFilePath = Paths.get(MongoConfigKey.DB_MONGO_TMP_PATH.default!!),
-            clientPath = mongoClientPath,
+            clientExecutable = clientExecutable,
             saveOutput = saveOutput,
             printOutput = printOutput,
             mongoShell = mongoShell

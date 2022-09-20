@@ -20,7 +20,7 @@ private val logger = KotlinLogging.logger {}
 
 class MongoDriver(mongoUri: String,
                   private val tmpFilePath: Path,
-                  private val clientPath: Path,
+                  private val clientExecutable: String,
                   private val printOutput: Boolean,
                   private val saveOutput: Boolean,
                   private val mongoShell: MongoShell
@@ -48,7 +48,7 @@ class MongoDriver(mongoUri: String,
 
         var executionOutput: String? = null
 
-        val exitCode = listOf(clientPath.toString(), uri, "--quiet", scriptPath.toString()).runProcess() { inputStream ->
+        val exitCode = listOf(clientExecutable, uri, "--quiet", scriptPath.toString()).runProcess() { inputStream ->
             executionOutput = processDriverOutput(inputStream)
         }
 
@@ -122,7 +122,7 @@ class MongoDriver(mongoUri: String,
         }
 
         // Execute
-        val exitCode = listOf(clientPath.toString(), uri, "--quiet", "--eval", evalQuery).runProcess { inputStream ->
+        val exitCode = listOf(clientExecutable, uri, "--quiet", "--eval", evalQuery).runProcess { inputStream ->
             var lines = inputStream.bufferedReader().lines().toList()
 
             // Dropwhile is a workaround to fix this issue: https://jira.mongodb.org/browse/SERVER-27159
