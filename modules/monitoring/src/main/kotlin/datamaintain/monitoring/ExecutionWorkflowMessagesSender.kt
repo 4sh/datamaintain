@@ -14,7 +14,7 @@ class ReportSender : IReportSender {
     private val executionApiBaseUrl = "$baseUrl/public/executions"
 
     override fun sendReport(report: Report) {
-        httpClient(Request(Method.POST, "$executionApiBaseUrl/report").body(ConfigurableJackson(ObjectMapper()).asFormatString(report.toMonitoringReport())))
+        httpClient(Request(Method.POST, "$executionApiBaseUrl/report").body(datamaintainJackson.asFormatString(report.toMonitoringReport())))
     }
 }
 
