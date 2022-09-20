@@ -14,9 +14,12 @@ class ReportSender : IReportSender {
     private val executionApiBaseUrl = "$baseUrl/public/executions"
 
     override fun sendReport(report: Report) {
-        httpClient(Request(Method.POST, "$executionApiBaseUrl/report").body(datamaintainJackson.asFormatString(report.toMonitoringReport())))
+        httpClient(Request(Method.POST, "$executionApiBaseUrl/report").body(report.toMonitoringReport()))
     }
 }
 
 fun Report.toMonitoringReport() =
     MonitoringReport(this.executedScripts.size)
+
+fun <T : Any> Request.body(payload: T) =
+    this.body(datamaintainJackson.asFormatString(payload))
