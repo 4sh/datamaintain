@@ -26,5 +26,5 @@ dependencies {
 
     // Use kotlinx-serialization implementation
     testImplementation(project(":modules:driver-mongo-mapping:driver-mongo-mapping-serialization"))
-    testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-json:${Versions.versionLatest}")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-json:${Versions.kotlinxSerialization}")
 }
