@@ -20,13 +20,8 @@ data class MongoDriverConfig @JvmOverloads constructor(override val uri: String,
                                                        override val trustUri: Boolean,
                                                        val tmpFilePath: Path = Paths.get(MongoConfigKey.DB_MONGO_TMP_PATH.default!!),
                                                        val mongoShell: MongoShell = DEFAULT_MONGO_SHELL,
-                                                       var clientExecutable: String? = null
+                                                       var clientExecutable: String = mongoShell.defaultBinaryName()
 ) : DatamaintainDriverConfig(DBType.MONGO.toString(), uri, trustUri, printOutput, saveOutput, MongoConnectionStringBuilder()) {
-    init {
-        if (clientExecutable == null) {
-            clientExecutable = mongoShell.defaultBinaryName()
-        }
-    }
 
     constructor(builder: Builder): this(
         builder.uri,
@@ -35,7 +30,7 @@ data class MongoDriverConfig @JvmOverloads constructor(override val uri: String,
         builder.trustUri,
         builder.tmpFilePath,
         builder.mongoShell,
-        builder.clientExecutable
+        builder.clientExecutable?: builder.mongoShell.defaultBinaryName()
     )
 
     companion object {
@@ -70,7 +65,7 @@ data class MongoDriverConfig @JvmOverloads constructor(override val uri: String,
         return MongoDriver(
             connectionString,
             tmpFilePath,
-            clientExecutable!!,
+            clientExecutable,
             printOutput,
             saveOutput,
             mongoShell
@@ -91,7 +86,7 @@ data class MongoDriverConfig @JvmOverloads constructor(override val uri: String,
         val clientExecutable = this.clientExecutable!!
         val clientExecutablePath = Paths.get(clientExecutable)
 
-        // If a filename is pass, it can be either a command or a filename
+        // If a filename is passed, it can be either a command or a filename
         val canBeACommand = clientExecutablePath.fileName.toString() == clientExecutable
 
         if (canBeACommand) {
