@@ -83,7 +83,7 @@ data class MongoDriverConfig @JvmOverloads constructor(override val uri: String,
      * './mongo' if mongo is not in $PATH
      */
     fun ensureMongoExecutableIsPresent() {
-        val clientExecutable = this.clientExecutable!!
+        val clientExecutable = this.clientExecutable
         val clientExecutablePath = Paths.get(clientExecutable)
 
         // If a filename is passed, it can be either a command or a filename
