@@ -14,10 +14,10 @@ repositories {
 dependencies {
     compileOnly(project(":modules:core"))
     compileOnly(project(":modules:driver-mongo"))
-    compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:${Versions.versionLatest}")
+    compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:${Versions.kotlinxSerialization}")
 
     testImplementation(project(":modules:core"))
     testImplementation(project(":modules:driver-mongo"))
     testImplementation(project(":modules:driver-mongo-mapping:driver-mongo-mapping-test"))
-    testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-json:${Versions.versionLatest}")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-json:${Versions.kotlinxSerialization}")
 }

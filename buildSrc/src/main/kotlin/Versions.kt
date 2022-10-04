@@ -3,6 +3,7 @@ object Versions {
     const val versionLatest = "latest.integration"
 
     const val kotlin = "1.5.31"
+    const val kotlinxSerialization = "1.3.1"
     const val kotlinLogging = "1.7.7"
     const val logbackClassic = "1.2.3"
     const val junit = "5.7.0"
