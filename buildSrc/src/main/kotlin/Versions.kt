@@ -1,9 +1,9 @@
 object Versions {
     const val kotlin = "1.5.31"
     const val kotlinLogging = "1.7.7"
-    const val logbackClassic = "1.2.3"
+    const val logbackClassic = "1.3.3"
     const val junit = "5.7.0"
-    const val testcontainers = "1.16.2"
+    const val testcontainers = "1.17.4"
     const val strikt = "0.32.0"
     const val mockk = "1.9.3"
     const val clikt = "2.3.0"
