@@ -19,7 +19,7 @@ dependencies {
 
     implementation("com.github.ajalt:clikt:${Versions.clikt}")
     implementation("ch.qos.logback:logback-classic:${Versions.logbackClassic}")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:${Versions.versionLatest}")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:${Versions.kotlinxSerialization}")
 
     testImplementation(project(":modules:test"))
 }
