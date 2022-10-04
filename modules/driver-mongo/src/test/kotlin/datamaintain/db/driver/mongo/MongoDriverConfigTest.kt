@@ -113,7 +113,7 @@ internal class MongoDriverConfigTest {
             expectThrows<DatamaintainMongoClientNotFound>{ mongoDriverConfig.ensureMongoExecutableIsPresent() }
                 .and {
                     get { message } isEqualTo "Cannot find $clientExecutable"
-                    get { resolutionMessage } isEqualTo "Check your command : is '$clientExecutable --version' work ? " +
+                    get { resolutionMessage } isEqualTo "Check your command : does '$clientExecutable --version' work ? " +
                             "If mongo client is a command, check your PATH variable. " +
                             "If mongo client is a path, please check the path exists."
                 }
