@@ -1,3 +1,5 @@
+![Datamaintain logo](https://i.imgur.com/kLfOIDH.png)
+
 # Datamaintain
 ![GitHub](https://img.shields.io/github/license/4sh/datamaintain)
 
