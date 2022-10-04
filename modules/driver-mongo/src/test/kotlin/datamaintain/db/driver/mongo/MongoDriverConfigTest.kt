@@ -99,7 +99,6 @@ internal class MongoDriverConfigTest {
     inner class ClientExecutableExist {
         @Test
         fun `should raise an exception because the path is invalid`() {
-            println("test")
             val clientExecutable = "/path/not/exists/mongo"
             val mongoDriverConfig = MongoDriverConfig(
                 "mongodb://localhost:27017",
