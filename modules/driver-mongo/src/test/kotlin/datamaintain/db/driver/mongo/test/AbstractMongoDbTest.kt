@@ -76,7 +76,8 @@ abstract class AbstractMongoDbTest {
             MongoVersionSpec("mongo:4.0"),
             MongoVersionSpec("mongo:4.2"),
             MongoVersionSpec("mongo:4.4"),
-            MongoVersionSpec("mongo:5.0")
+            MongoVersionSpec("mongo:5.0"),
+            MongoVersionSpec("mongo:6.0", mongoCli = false),
         )
 
         // Mongo containers cache
