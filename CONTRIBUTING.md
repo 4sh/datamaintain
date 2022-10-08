@@ -81,3 +81,7 @@ An example:
 This branch solves the issue #71 and concerns relative path matchers.
 
 Once you are done solving the issue you were working on, please submit a pull request with ```dev``` as the base. Please make sure to respect the [pull request template](https://github.com/4sh/datamaintain/blob/dev/.github/pull_request_template.md) when opening a pull request.
+
+### Requirements to run the tests
+
+The [mongo integration tests](./modules/test/src/test/kotlin/datamaintain/test/MongoIT.kt) use both the [mongo cli](https://www.mongodb.com/docs/mongocli/stable/) and the [mongodb shell](https://www.mongodb.com/docs/mongodb-shell/) so you will need them to run the integration tests. Since the [CI](https://github.com/4sh/datamaintain/actions/workflows/CI.yaml) does run the integration tests on every push, you shouldn't worry too much about it, except if the build failed on the CI
