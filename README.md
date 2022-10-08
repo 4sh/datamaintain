@@ -35,7 +35,7 @@ You will have to ensure that all your scripts were executed and in the right ord
 
 - MongoDB
 
-Your DMBS is not in that list? Feel free to write a driver for it, following the [documentation](docs/how-to-write-a-driver.md)!
+Your DBMS is not in that list? Feel free to write a driver for it, following the [documentation](docs/how-to-write-a-driver.md)!
 
 ## How to use Datamaintain?
 
