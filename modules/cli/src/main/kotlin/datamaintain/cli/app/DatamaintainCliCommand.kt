@@ -10,14 +10,14 @@ import java.util.*
 import kotlin.system.exitProcess
 
 abstract class DatamaintainCliCommand(name: String, help: String = "") : CliktCommand(name = name, help = help) {
-    private val props by findObject { Properties() }
+    private val props by findObject<Properties>()
 
     override fun run() {
         try {
-            overloadProps(props)
-            val config = loadConfig(props)
+            overloadProps(props!!)
+            val config = loadConfig(props!!)
 
-            if (props.getProperty(CliSpecificKey.__PRINT_CONFIG_ONLY.key, CliSpecificKey.__PRINT_CONFIG_ONLY.default)!!.toBoolean()) {
+            if (props!!.getProperty(CliSpecificKey.__PRINT_CONFIG_ONLY.key, CliSpecificKey.__PRINT_CONFIG_ONLY.default)!!.toBoolean()) {
                 config.log()
             } else {
                 executeCommand(config)
