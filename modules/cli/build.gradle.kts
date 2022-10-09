@@ -17,7 +17,8 @@ dependencies {
     implementation(project(":modules:driver-mongo-mapping:driver-mongo-mapping-serialization"))
     implementation(project(":modules:driver-jdbc"))
 
-    implementation("com.github.ajalt:clikt:${Versions.clikt}")
+    implementation("com.github.ajalt.clikt:clikt:${Versions.clikt}")
+    //implementation("com.github.ajalt:clikt:${Versions.clikt}")
     implementation("ch.qos.logback:logback-classic:${Versions.logbackClassic}")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:${Versions.kotlinxSerialization}")
 

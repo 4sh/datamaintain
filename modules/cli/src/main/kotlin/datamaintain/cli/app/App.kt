@@ -28,7 +28,7 @@ class App : CliktCommand() {
         val message = "datamaintain version $version"
         registerOption(
             EagerOption(
-                names = setOf("--version", "--v", "-v", "-version"),
+                names = arrayOf("--version", "--v", "-v", "-version"),
                 nvalues =  0,
                 help = "Show the version and exit",
                 hidden =  false,
@@ -72,16 +72,16 @@ class App : CliktCommand() {
 
     private val config: Boolean? by option(help = "Print the configuration without executing the subcommand").flag()
 
-    private val props by findObject { Properties() }
+    private val props by findObject<Properties>()
 
     override fun run() {
         configFilePath?.let {
             val file = workingDirectoryPath?.resolve(it.toPath())?.toFile() ?: it
 
-            props.load(file.inputStream())
+            props!!.load(file.inputStream())
         }
 
-        overloadPropsFromArgs(props)
+        overloadPropsFromArgs(props!!)
     }
 
     private fun overloadPropsFromArgs(props: Properties) {
@@ -114,6 +114,7 @@ enum class DbType(val value: String) {
 val datamaintainApp = App().subcommands(UpdateDb(), ListExecutedScripts(), MarkOneScriptAsExecuted())
 
 fun main(args: Array<String>) {
+    println("Args: " + args.joinToString() { x -> x.toString() })
     datamaintainApp.main(args)
 }
 
