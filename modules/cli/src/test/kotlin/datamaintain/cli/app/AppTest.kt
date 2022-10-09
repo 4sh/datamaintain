@@ -4,12 +4,18 @@ import ch.qos.logback.classic.Logger
 import datamaintain.db.driver.jdbc.JdbcDriverConfig
 import datamaintain.db.driver.mongo.MongoDriverConfig
 import datamaintain.test.execAppInSubprocess
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.slf4j.LoggerFactory
 import strikt.api.expectThat
 import strikt.assertions.*
+import java.io.ByteArrayOutputStream
+import java.io.PrintStream
+
+
+
 
 internal class AppTest : BaseCliTest() {
     private fun buildPathToConfigFile(fileName: String): String = "src/test/resources/${fileName}.properties"
@@ -207,32 +213,30 @@ internal class AppTest : BaseCliTest() {
 
         @Nested
         inner class GenerateCompletion {
-            @Test
-            fun `should generate completion script for bash`() {
+            private val logger = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME) as Logger
+            private val testAppender = TestAppender()
 
-                // Given
-                val logger = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME) as Logger
-                val testAppender = TestAppender()
+            @BeforeEach
+            fun setupLogger() {
                 logger.addAppender(testAppender)
                 testAppender.start()
+            }
 
+            @Test
+            fun `should generate completion script for bash`() {
+                // Given
                 val argv = listOf(
-                        "--generate-completion",
-                        "bash",
+                        "bash"
                 )
 
                 // When
-                runAppWithUpdateDb(argv)
+                runAppWithGenerateCompletion(listOf(), argv)
+                expectThat("x").isEqualTo("yy")
 
-                // Then
                 // Then
                 var index = 0
                 expectThat(testAppender.events) {
-                    get { get(index++).message }.matches(("Load new config keys from parent config located" +
-                            " at .*/datamaintain/modules/cli/src/test/resources/config-parent\\.properties").toRegex())
-                    get { get(index++).message }.isEqualTo("Configuration: ")
-                    get { get(index++).message }.matches("- working directory -> .*/datamaintain/modules/cli/src/test/resources".toRegex())
-
+                    get { get(index++).message }.isEqualTo("#!/usr/bin/env zsh")
                 }
             }
         }
