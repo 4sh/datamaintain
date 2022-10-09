@@ -13,7 +13,6 @@ fun ParameterHolder.detailedOption(
     metavar: String? = null,
     hidden: Boolean = false,
     envvar: String? = null,
-    envvarSplit: Regex? = null,
     helpTags: Map<String, String> = emptyMap(),
     example: String? = null,
     defaultValue: String? = null
@@ -35,7 +34,6 @@ fun ParameterHolder.detailedOption(
         metavar = metavar,
         hidden = hidden,
         envvar = envvar,
-        envvarSplit = envvarSplit,
         helpTags = detailedHelpTags
     )
 }
