@@ -1,8 +1,11 @@
 package datamaintain.cli.app
 
+import com.github.ajalt.clikt.completion.CompletionCommand
+import com.github.ajalt.clikt.completion.completionOption
 import com.github.ajalt.clikt.core.*
 import com.github.ajalt.clikt.parameters.options.*
 import com.github.ajalt.clikt.parameters.types.choice
+import datamaintain.cli.app.generate.completion.GenerateCompletionCommand
 import datamaintain.cli.app.update.db.MarkOneScriptAsExecuted
 import datamaintain.cli.app.update.db.UpdateDb
 import datamaintain.cli.app.utils.CliSpecificKey
@@ -32,6 +35,8 @@ class App : CliktCommand() {
                 helpTags =  emptyMap()
             ) { throw PrintMessage(message) }
         )
+
+        completionOption()
     }
 
     private val workingDirectoryPath: Path? by option("--working-directory-path", "--wd", help = "path to the working directory. Can be relative but prefer absolute path. All relative paths configured will be relative to this path if set.")
@@ -108,10 +113,9 @@ enum class DbType(val value: String) {
     JDBC("jdbc")
 }
 
-val datamaintainApp = App().subcommands(UpdateDb(), ListExecutedScripts(), MarkOneScriptAsExecuted())
+val datamaintainApp = App().subcommands(UpdateDb(), ListExecutedScripts(), MarkOneScriptAsExecuted(), CompletionCommand(), GenerateCompletionCommand())
 
 fun main(args: Array<String>) {
-    println("Args: " + args.joinToString() { x -> x.toString() })
     datamaintainApp.main(args)
 }
 

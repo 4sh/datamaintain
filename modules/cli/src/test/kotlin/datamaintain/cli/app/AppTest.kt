@@ -1,10 +1,13 @@
 package datamaintain.cli.app
 
+import ch.qos.logback.classic.Logger
 import datamaintain.db.driver.jdbc.JdbcDriverConfig
 import datamaintain.db.driver.mongo.MongoDriverConfig
 import datamaintain.test.execAppInSubprocess
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.slf4j.LoggerFactory
 import strikt.api.expectThat
 import strikt.assertions.*
 
@@ -198,6 +201,38 @@ internal class AppTest : BaseCliTest() {
                 // Then
                 expectThat((configWrapper.datamaintainConfig!!.driverConfig as MongoDriverConfig).trustUri) {
                     isFalse()
+                }
+            }
+        }
+
+        @Nested
+        inner class GenerateCompletion {
+            @Test
+            fun `should generate completion script for bash`() {
+
+                // Given
+                val logger = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME) as Logger
+                val testAppender = TestAppender()
+                logger.addAppender(testAppender)
+                testAppender.start()
+
+                val argv = listOf(
+                        "--generate-completion",
+                        "bash",
+                )
+
+                // When
+                runAppWithUpdateDb(argv)
+
+                // Then
+                // Then
+                var index = 0
+                expectThat(testAppender.events) {
+                    get { get(index++).message }.matches(("Load new config keys from parent config located" +
+                            " at .*/datamaintain/modules/cli/src/test/resources/config-parent\\.properties").toRegex())
+                    get { get(index++).message }.isEqualTo("Configuration: ")
+                    get { get(index++).message }.matches("- working directory -> .*/datamaintain/modules/cli/src/test/resources".toRegex())
+
                 }
             }
         }

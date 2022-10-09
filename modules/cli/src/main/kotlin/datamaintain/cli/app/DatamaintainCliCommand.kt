@@ -2,6 +2,7 @@ package datamaintain.cli.app
 
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.findObject
+import com.github.ajalt.clikt.core.findOrSetObject
 import datamaintain.cli.app.utils.CliSpecificKey
 import datamaintain.cli.app.utils.loadConfig
 import datamaintain.core.config.DatamaintainConfig
@@ -10,7 +11,7 @@ import java.util.*
 import kotlin.system.exitProcess
 
 abstract class DatamaintainCliCommand(name: String, help: String = "") : CliktCommand(name = name, help = help) {
-    private val props by findObject<Properties>()
+    private val props by findOrSetObject<Properties> { Properties() }
 
     override fun run() {
         try {
