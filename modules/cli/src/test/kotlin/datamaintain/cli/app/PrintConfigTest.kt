@@ -19,7 +19,7 @@ internal class PrintConfigTest : BaseCliTest() {
     }
 
     @Test
-    fun `should print config when command is mark-script-as-exectued`() {
+    fun `should print config when command is mark-script-as-executed`() {
         // Given
         val path = "/myPath"
 

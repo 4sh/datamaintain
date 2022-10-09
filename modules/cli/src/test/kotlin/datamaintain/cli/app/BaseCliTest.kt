@@ -1,5 +1,6 @@
 package datamaintain.cli.app
 
+import com.github.ajalt.clikt.completion.CompletionCommand
 import com.github.ajalt.clikt.core.subcommands
 import datamaintain.cli.app.update.db.MarkOneScriptAsExecuted
 import datamaintain.cli.app.update.db.UpdateDb
@@ -20,6 +21,11 @@ open class BaseCliTest {
 
     protected fun runAppWithUpdateDb(baseArguments: List<String>, updateDbArguments: List<String> = listOf()) {
         runAppWithSubCommand(UpdateDb(runner = ::runner), baseArguments + "update-db" + updateDbArguments)
+    }
+
+    protected fun runAppWithGenerateCompletion(baseArguments: List<String>, generateCompletionArguments: List<String> = listOf()) {
+        App().subcommands(CompletionCommand()).main(baseArguments + "generate-completion" + generateCompletionArguments)
+        //runAppWithSubCommand(AppTest.BaseConfiguration.GenerateCompletion, baseArguments + "generate-completion" + generateCompletionArguments)
     }
 
     protected fun runAppWithMarkOneScriptAsExecuted(baseArguments: List<String>, markScriptAsExecutedArguments: List<String> = listOf()) {

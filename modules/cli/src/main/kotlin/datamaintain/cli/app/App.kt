@@ -5,7 +5,6 @@ import com.github.ajalt.clikt.completion.completionOption
 import com.github.ajalt.clikt.core.*
 import com.github.ajalt.clikt.parameters.options.*
 import com.github.ajalt.clikt.parameters.types.choice
-import datamaintain.cli.app.generate.completion.GenerateCompletionCommand
 import datamaintain.cli.app.update.db.MarkOneScriptAsExecuted
 import datamaintain.cli.app.update.db.UpdateDb
 import datamaintain.cli.app.utils.CliSpecificKey
@@ -113,7 +112,7 @@ enum class DbType(val value: String) {
     JDBC("jdbc")
 }
 
-val datamaintainApp = App().subcommands(UpdateDb(), ListExecutedScripts(), MarkOneScriptAsExecuted(), CompletionCommand(), GenerateCompletionCommand())
+val datamaintainApp = App().subcommands(UpdateDb(), ListExecutedScripts(), MarkOneScriptAsExecuted(), CompletionCommand())
 
 fun main(args: Array<String>) {
     datamaintainApp.main(args)
