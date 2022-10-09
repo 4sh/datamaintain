@@ -2,6 +2,7 @@
 |Names|Default value|Needs argument|Possible arguments|Description|Examples|
 |---|---|---|---|---|---|
 |--version, --v, -v, -version|No default value|✘|N/A|Show the version and exit||
+|--generate-completion|No default value|✔|```bash``` or ```zsh``` or ```fish```|||
 |--working-directory-path, --wd|No default value|✔| |path to the working directory. Can be relative but prefer absolute path. All relative paths configured will be relative to this path if set.||
 |--config-file-path|No default value|✔| |Path to config file. File must exist.|```myProject/src/main/resources/config/datamaintain.properties```|
 |--db-type|mongo|✔|```mongo``` or ```jdbc```|db type||
@@ -47,4 +48,10 @@
 |---|---|---|---|---|---|
 |--path|./scripts/|✔|TEXT|path to the script you want to mark as executed|```scripts/myScript1.js```|
 |--verbose||✘|N/A|verbose||
+|-h, --help|No default value|✘|N/A|Display command help and exit||
+## generate-completion
+### Options
+
+|Names|Default value|Needs argument|Possible arguments|Description|Examples|
+|---|---|---|---|---|---|
 |-h, --help|No default value|✘|N/A|Display command help and exit||
