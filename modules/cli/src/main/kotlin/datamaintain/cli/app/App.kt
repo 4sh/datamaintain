@@ -1,9 +1,6 @@
 package datamaintain.cli.app
 
-import com.github.ajalt.clikt.core.CliktCommand
-import com.github.ajalt.clikt.core.PrintMessage
-import com.github.ajalt.clikt.core.findObject
-import com.github.ajalt.clikt.core.subcommands
+import com.github.ajalt.clikt.core.*
 import com.github.ajalt.clikt.parameters.options.*
 import com.github.ajalt.clikt.parameters.types.choice
 import datamaintain.cli.app.update.db.MarkOneScriptAsExecuted
@@ -72,16 +69,16 @@ class App : CliktCommand() {
 
     private val config: Boolean? by option(help = "Print the configuration without executing the subcommand").flag()
 
-    private val props by findObject<Properties>()
+    private val props by findOrSetObject<Properties> { -> Properties() }
 
     override fun run() {
         configFilePath?.let {
             val file = workingDirectoryPath?.resolve(it.toPath())?.toFile() ?: it
 
-            props!!.load(file.inputStream())
+            props.load(file.inputStream())
         }
 
-        overloadPropsFromArgs(props!!)
+        overloadPropsFromArgs(props)
     }
 
     private fun overloadPropsFromArgs(props: Properties) {
