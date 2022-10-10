@@ -41,9 +41,9 @@ jobs:
       # Fix for my GH name having capitals, should be removed
       - name: set lower case owner name
         run: |
-          echo "OWNER_LC=${OWNER,,}" >>${GITHUB_ENV}
+          echo "REPO_LC=${REPO,,}" >>${GITHUB_ENV}
         env:
-          OWNER: '${{ github.repository_owner }}'
+          REPO: '${{ github.repository }}'
 
       - name: Build and push (4.0)
         env:
