@@ -1,0 +1,83 @@
+name: Publish docker packages on GitHub
+
+on:
+  push:
+    tags:
+      - '*'
+
+env:
+  REGISTRY: ghcr.io
+
+jobs: 
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Gradle build
+        run: |
+          ./gradlew clean build -Denv=prod
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push (4.0)
+        env:
+          MONGO_VERSION: "4.0"
+        uses: docker/build-push-action@v3
+        with:
+          context: modules/cli/build/distributions
+          push: true
+          file: modules/cli/Dockerfile/mongo/4/Dockerfile
+          build-args: MONGO_MAJOR=${{ env.MONGO_VERSION }}
+          tags: ${{ env.REGISTRY }}/${{ github.repository }}:${{ github.ref_name }}-mongo-${{ env.MONGO_VERSION }}
+
+      - name: Build and push (4.2)
+        env:
+          MONGO_VERSION: "4.2"
+        uses: docker/build-push-action@v3
+        with:
+          context: modules/cli/build/distributions
+          push: true
+          file: modules/cli/Dockerfile/mongo/4/Dockerfile
+          build-args: MONGO_MAJOR=${{ env.MONGO_VERSION }}
+          tags: ${{ env.REGISTRY }}/${{ github.repository }}:${{ github.ref_name }}-mongo-${{ env.MONGO_VERSION }}
+
+      - name: Build and push (4.4)
+        env:
+          MONGO_VERSION: "4.4"
+        uses: docker/build-push-action@v3
+        with:
+          context: modules/cli/build/distributions
+          push: true
+          file: modules/cli/Dockerfile/mongo/4/Dockerfile
+          build-args: MONGO_MAJOR=${{ env.MONGO_VERSION }}
+          tags: ${{ env.REGISTRY }}/${{ github.repository }}:${{ github.ref_name }}-mongo-${{ env.MONGO_VERSION }}
+
+      - name: Build and push (5.0)
+        env:
+          MONGO_VERSION: "5.0"
+        uses: docker/build-push-action@v3
+        with:
+          context: modules/cli/build/distributions
+          push: true
+          file: modules/cli/Dockerfile/mongo/5/Dockerfile
+          build-args: MONGO_MAJOR=${{ env.MONGO_VERSION }}
+          tags: ${{ env.REGISTRY }}/${{ github.repository }}:${{ github.ref_name }}-mongo-${{ env.MONGO_VERSION }}
