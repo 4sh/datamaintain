@@ -38,6 +38,13 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      # Fix for my GH name having capitals, should be removed
+      - name: set lower case owner name
+        run: |
+          echo "OWNER_LC=${OWNER,,}" >>${GITHUB_ENV}
+        env:
+          OWNER: '${{ github.repository_owner }}'
+
       - name: Build and push (4.0)
         env:
           MONGO_VERSION: 4.0
@@ -46,5 +53,38 @@ jobs:
           context: modules/cli/build/distributions
           push: true
           file: modules/cli/Dockerfile/mongo/4/Dockerfile
+          build-args: MONGO_MAJOR=${{ env.MONGO_VERSION }}
+          tags: ${{ env.REGISTRY }}/${{ github.repository }}:${{ github.ref_name }}-mongo-${{ env.MONGO_VERSION }}
+
+      - name: Build and push (4.2)
+        env:
+          MONGO_VERSION: 4.2
+        uses: docker/build-push-action@v3
+        with:
+          context: modules/cli/build/distributions
+          push: true
+          file: modules/cli/Dockerfile/mongo/4/Dockerfile
+          build-args: MONGO_MAJOR=${{ env.MONGO_VERSION }}
+          tags: ${{ env.REGISTRY }}/${{ github.repository }}:${{ github.ref_name }}-mongo-${{ env.MONGO_VERSION }}
+
+      - name: Build and push (4.4)
+        env:
+          MONGO_VERSION: 4.4
+        uses: docker/build-push-action@v3
+        with:
+          context: modules/cli/build/distributions
+          push: true
+          file: modules/cli/Dockerfile/mongo/4/Dockerfile
+          build-args: MONGO_MAJOR=${{ env.MONGO_VERSION }}
+          tags: ${{ env.REGISTRY }}/${{ github.repository }}:${{ github.ref_name }}-mongo-${{ env.MONGO_VERSION }}
+
+      - name: Build and push (5.0)
+        env:
+          MONGO_VERSION: 5.0
+        uses: docker/build-push-action@v3
+        with:
+          context: modules/cli/build/distributions
+          push: true
+          file: modules/cli/Dockerfile/mongo/5/Dockerfile
           build-args: MONGO_MAJOR=${{ env.MONGO_VERSION }}
           tags: ${{ env.REGISTRY }}/${{ github.repository }}:${{ github.ref_name }}-mongo-${{ env.MONGO_VERSION }}
