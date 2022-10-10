@@ -38,13 +38,6 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # Fix for my GH name having capitals, should be removed
-      - name: set lower case owner name
-        run: |
-          echo "REPO_LC=${REPO,,}" >>${GITHUB_ENV}
-        env:
-          REPO: '${{ github.repository }}'
-
       - name: Build and push (4.0)
         env:
           MONGO_VERSION: 4.0
@@ -54,7 +47,7 @@ jobs:
           push: true
           file: modules/cli/Dockerfile/mongo/4/Dockerfile
           build-args: MONGO_MAJOR=${{ env.MONGO_VERSION }}
-          tags: ${{ env.REGISTRY }}/${{ github.repository }}:${{ github.ref_name }}-mongo-${{ env.MONGO_VERSION }}
+          tags: ${{ env.REGISTRY }}/tijmen34/datamaintain:${{ github.ref_name }}-mongo-${{ env.MONGO_VERSION }}
 
       - name: Build and push (4.2)
         env:
@@ -65,7 +58,7 @@ jobs:
           push: true
           file: modules/cli/Dockerfile/mongo/4/Dockerfile
           build-args: MONGO_MAJOR=${{ env.MONGO_VERSION }}
-          tags: ${{ env.REGISTRY }}/${{ github.repository }}:${{ github.ref_name }}-mongo-${{ env.MONGO_VERSION }}
+          tags: ${{ env.REGISTRY }}/tijmen34/datamaintain:${{ github.ref_name }}-mongo-${{ env.MONGO_VERSION }}
 
       - name: Build and push (4.4)
         env:
@@ -76,7 +69,7 @@ jobs:
           push: true
           file: modules/cli/Dockerfile/mongo/4/Dockerfile
           build-args: MONGO_MAJOR=${{ env.MONGO_VERSION }}
-          tags: ${{ env.REGISTRY }}/${{ github.repository }}:${{ github.ref_name }}-mongo-${{ env.MONGO_VERSION }}
+          tags: ${{ env.REGISTRY }}/tijmen34/datamaintain:${{ github.ref_name }}-mongo-${{ env.MONGO_VERSION }}
 
       - name: Build and push (5.0)
         env:
@@ -87,4 +80,4 @@ jobs:
           push: true
           file: modules/cli/Dockerfile/mongo/5/Dockerfile
           build-args: MONGO_MAJOR=${{ env.MONGO_VERSION }}
-          tags: ${{ env.REGISTRY }}/${{ github.repository }}:${{ github.ref_name }}-mongo-${{ env.MONGO_VERSION }}
+          tags: ${{ env.REGISTRY }}/tijmen34/datamaintain:${{ github.ref_name }}-mongo-${{ env.MONGO_VERSION }}
