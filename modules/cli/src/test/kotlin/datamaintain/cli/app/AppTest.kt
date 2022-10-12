@@ -3,18 +3,13 @@ package datamaintain.cli.app
 import ch.qos.logback.classic.Logger
 import datamaintain.db.driver.jdbc.JdbcDriverConfig
 import datamaintain.db.driver.mongo.MongoDriverConfig
-import datamaintain.test.execAppInSubprocess
-import org.junit.jupiter.api.AfterEach
+import datamaintain.core.util.execAppInSubprocess
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.slf4j.LoggerFactory
 import strikt.api.expectThat
 import strikt.assertions.*
-import java.io.ByteArrayOutputStream
-import java.io.PrintStream
-
-
 
 
 internal class AppTest : BaseCliTest() {
@@ -222,23 +217,6 @@ internal class AppTest : BaseCliTest() {
                 testAppender.start()
             }
 
-            @Test
-            fun `should generate completion script for bash`() {
-                // Given
-                val argv = listOf(
-                        "bash"
-                )
-
-                // When
-                runAppWithGenerateCompletion(listOf(), argv)
-                expectThat("x").isEqualTo("yy")
-
-                // Then
-                var index = 0
-                expectThat(testAppender.events) {
-                    get { get(index++).message }.isEqualTo("#!/usr/bin/env zsh")
-                }
-            }
         }
     }
 }

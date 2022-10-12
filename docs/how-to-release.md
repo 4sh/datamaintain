@@ -14,7 +14,17 @@ At the moment, there is no CI to release Datamaintain. We release 3 modules :
 - Release your staging repository
 
 ## CLI
-TODO
+### Rebuild the documentation
+```
+gradlew rebuildDocumentation
+```
+### Rebuild the CLI autocompletion scripts
+```
+gradlew rebuildAutoCompletion
+```
+This will generate auto-completion scripts for Bash and Zsh in the docs/auto-completion subdirectory.
+### Rebuild the CLI application
+todo
 
 ## CLI images
 ### Prerequisites
