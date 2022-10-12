@@ -73,6 +73,11 @@ task("rebuildCliDocumentation", JavaExec::class) {
     classpath = sourceSets["main"].runtimeClasspath
 }
 
+task("rebuildAutocompletion", JavaExec::class) {
+    main = "datamaintain.cli.completion.RebuildAutoCompletionScriptsKt"
+    classpath = sourceSets["main"].runtimeClasspath
+}
+
 val generatedVersionDir = "${buildDir}/generated-version"
 
 sourceSets {
@@ -99,3 +104,4 @@ task("generateVersionProperties") {
         delete("$generatedVersionDir/version.properties")
     }
 }
+
