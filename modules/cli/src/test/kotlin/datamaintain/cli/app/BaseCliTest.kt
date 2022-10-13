@@ -23,11 +23,6 @@ open class BaseCliTest {
         runAppWithSubCommand(UpdateDb(runner = ::runner), baseArguments + "update-db" + updateDbArguments)
     }
 
-    protected fun runAppWithGenerateCompletion(baseArguments: List<String>, generateCompletionArguments: List<String> = listOf()) {
-        App().subcommands(CompletionCommand()).main(baseArguments + "generate-completion" + generateCompletionArguments)
-        //runAppWithSubCommand(AppTest.BaseConfiguration.GenerateCompletion, baseArguments + "generate-completion" + generateCompletionArguments)
-    }
-
     protected fun runAppWithMarkOneScriptAsExecuted(baseArguments: List<String>, markScriptAsExecutedArguments: List<String> = listOf()) {
         runAppWithSubCommand(
             MarkOneScriptAsExecuted(runner = ::runner),
