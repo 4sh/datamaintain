@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
 import datamaintain.cli.completion.*
+import java.io.File
 import kotlin.io.path.createTempDirectory
 
 internal class RebuildAutoCompletionScriptsTest {
@@ -16,8 +17,25 @@ internal class RebuildAutoCompletionScriptsTest {
         generateAutoCompletionScripts(path.toString())
 
         // Then
-        // TODO: verify files exist in output path and have the right contents
-        expectThat(1).isEqualTo(2)
+        val lineList = mutableListOf<String>()
+        val bashFileName = path.toString() + "/bash-autocomplete.sh"
+        File(bashFileName).useLines { lines -> lines.forEach { lineList.add(it) }}
+        expectThat(lineList[0]).isEqualTo("#!/usr/bin/env bash")
+    }
+
+    @Test
+    fun `should generate zsh script`() {
+        // Given
+        val path = createTempDirectory()
+
+        // When
+        generateAutoCompletionScripts(path.toString())
+
+        // Then
+        val lineList = mutableListOf<String>()
+        val bashFileName = path.toString() + "/zsh-autocomplete.sh"
+        File(bashFileName).useLines { lines -> lines.forEach { lineList.add(it) }}
+        expectThat(lineList[0]).isEqualTo("#!/usr/bin/env zsh")
     }
 
 }
