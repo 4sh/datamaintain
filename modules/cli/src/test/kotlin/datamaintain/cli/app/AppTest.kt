@@ -1,13 +1,10 @@
 package datamaintain.cli.app
 
-import ch.qos.logback.classic.Logger
 import datamaintain.db.driver.jdbc.JdbcDriverConfig
 import datamaintain.db.driver.mongo.MongoDriverConfig
 import datamaintain.core.util.execAppInSubprocess
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.slf4j.LoggerFactory
 import strikt.api.expectThat
 import strikt.assertions.*
 
@@ -204,19 +201,6 @@ internal class AppTest : BaseCliTest() {
                     isFalse()
                 }
             }
-        }
-
-        @Nested
-        inner class GenerateCompletion {
-            private val logger = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME) as Logger
-            private val testAppender = TestAppender()
-
-            @BeforeEach
-            fun setupLogger() {
-                logger.addAppender(testAppender)
-                testAppender.start()
-            }
-
         }
     }
 }

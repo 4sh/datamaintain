@@ -6,7 +6,6 @@ object Versions {
     const val testcontainers = "1.17.4"
     const val strikt = "0.32.0"
     const val mockk = "1.9.3"
-    //const val clikt = "2.3.0"
     const val clikt = "3.5.0"
 
     const val mongo = "4.0.13"
