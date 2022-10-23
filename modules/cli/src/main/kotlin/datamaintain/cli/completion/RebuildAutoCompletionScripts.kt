@@ -9,9 +9,7 @@ fun generateAutoCompletionScripts(outputDir: String) {
     listOf("bash", "zsh").forEach {
         val result = execAppInSubprocess(listOf("--generate-completion", it),
                                  outputDir + "/" + it + "-autocomplete.sh")
-        //File(outputDir + "/" + it + "-autocomplete.sh").writeText(result.output)
     }
-
 }
 
 fun main() {
@@ -21,7 +19,7 @@ fun main() {
 
 /**
  * Execute App.kt class as a subprocess. The class is executed with the "java" command.
- * This allow the subprocess to call "exit 1" without crashing the main test process
+ * This allows the subprocess to call "exit 1" without crashing the main test process
  *
  * @see <a href="https://lankydan.dev/running-a-kotlin-class-as-a-subprocess">https://lankydan.dev/running-a-kotlin-class-as-a-subprocess</a>
  */
