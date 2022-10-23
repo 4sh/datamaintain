@@ -18,8 +18,6 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.*
 
-var generateCompletion = false
-
 class App : CliktCommand() {
     init {
         val versionProperties = Properties()
@@ -112,12 +110,7 @@ enum class DbType(val value: String) {
     JDBC("jdbc")
 }
 
-val datamaintainApp =  if (generateCompletion) {
-    App().subcommands(UpdateDb(), ListExecutedScripts(), MarkOneScriptAsExecuted(), CompletionCommand())
-}
-else {
-    App().subcommands(UpdateDb(), ListExecutedScripts(), MarkOneScriptAsExecuted())
-}
+val datamaintainApp = App().subcommands(UpdateDb(), ListExecutedScripts(), MarkOneScriptAsExecuted())
 
 fun main(args: Array<String>) {
     datamaintainApp.main(args)
