@@ -15,7 +15,7 @@ docker_build_datamaintain() {
   docker push "$image_build"
 }
 
-./"$script_dir"/../../gradlew clean build -Denv=prod
+./"$script_dir"/../../gradlew clean build rebuildAutocompletion -Denv=prod
 docker_build_datamaintain "$mongo_4_dockerfile" 4.0
 docker_build_datamaintain "$mongo_4_dockerfile" 4.2
 docker_build_datamaintain "$mongo_4_dockerfile" 4.4

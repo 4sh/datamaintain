@@ -13,5 +13,5 @@ docker_build_datamaintain() {
   docker build -t "$image_build" --build-arg MONGO_MAJOR="$2" -f "$1" "$script_dir"/build/distributions/
 }
 
-./"$script_dir"/../../gradlew clean build
+./"$script_dir"/../../gradlew clean build rebuildAutocompletion
 docker_build_datamaintain "$mongo_4_dockerfile" 4.0
