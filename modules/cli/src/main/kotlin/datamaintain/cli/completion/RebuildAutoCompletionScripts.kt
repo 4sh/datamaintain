@@ -37,7 +37,6 @@ fun execAppInSubprocess(args: List<String> = emptyList(), outputFileName: String
     command.add(className)
     command.addAll(args)
 
-    System.out.println("\n------------------\nCOMMAND:\n" + command.toString() + "\n-------------------\n")
     // directly write output to the given output file
     val process = ProcessBuilder(command)
             .redirectOutput(File(outputFileName))
