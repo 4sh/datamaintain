@@ -1,3 +1,4 @@
+import org.gradle.wrapper.Install
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile
 
 plugins {

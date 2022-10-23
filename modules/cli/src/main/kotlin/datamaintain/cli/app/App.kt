@@ -18,6 +18,8 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.*
 
+var generateCompletion = false
+
 class App : CliktCommand() {
     init {
         val versionProperties = Properties()
@@ -34,8 +36,6 @@ class App : CliktCommand() {
                 helpTags =  emptyMap()
             ) { throw PrintMessage(message) }
         )
-
-        completionOption()
     }
 
     private val workingDirectoryPath: Path? by option("--working-directory-path", "--wd", help = "path to the working directory. Can be relative but prefer absolute path. All relative paths configured will be relative to this path if set.")
@@ -112,7 +112,12 @@ enum class DbType(val value: String) {
     JDBC("jdbc")
 }
 
-val datamaintainApp = App().subcommands(UpdateDb(), ListExecutedScripts(), MarkOneScriptAsExecuted(), CompletionCommand())
+val datamaintainApp =  if (generateCompletion) {
+    App().subcommands(UpdateDb(), ListExecutedScripts(), MarkOneScriptAsExecuted(), CompletionCommand())
+}
+else {
+    App().subcommands(UpdateDb(), ListExecutedScripts(), MarkOneScriptAsExecuted())
+}
 
 fun main(args: Array<String>) {
     datamaintainApp.main(args)
