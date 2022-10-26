@@ -44,7 +44,6 @@ allprojects {
     }
 }
 
-
 configure(subprojects) {
     tasks.withType<KotlinJvmCompile>().all {
         kotlinOptions.jvmTarget = "1.8"

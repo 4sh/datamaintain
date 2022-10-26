@@ -86,6 +86,14 @@ sourceSets {
         }
     }
 }
+distributions {
+    main {
+        contents {
+            from("../../docs/auto-completion/bash-autocomplete.sh")
+            from("../../docs/auto-completion/zsh-autocomplete.sh")
+        }
+    }
+}
 
 task("generateVersionProperties") {
     val env = System.getProperty("env")
