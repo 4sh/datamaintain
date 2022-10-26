@@ -18,7 +18,7 @@ fun main() {
  }
 
 /**
- * Execute App.kt class as a subprocess. The class is executed with the "java" command.
+ * Execute DatamaintainCLIWithCompletion.kt class as a subprocess. The class is executed with the "java" command.
  * This allows the subprocess to call "exit 1" without crashing the main test process
  *
  * @see <a href="https://lankydan.dev/running-a-kotlin-class-as-a-subprocess">https://lankydan.dev/running-a-kotlin-class-as-a-subprocess</a>
@@ -28,7 +28,7 @@ fun execAppInSubprocess(args: List<String> = emptyList(), outputFileName: String
     val javaHome = System.getProperty("java.home")
     val javaBin = javaHome + File.separator + "bin" + File.separator + "java"
     val classpath = System.getProperty("java.class.path")
-    val className = "datamaintain.cli.app.AppWithCompletionKt"
+    val className = "datamaintain.cli.completion.app.DatamaintainCLIWithCompletionKt"
 
     val command = ArrayList<String>()
     command.add(javaBin)

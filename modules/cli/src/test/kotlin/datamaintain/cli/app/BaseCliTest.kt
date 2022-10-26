@@ -15,7 +15,7 @@ open class BaseCliTest {
     }
 
     private fun runAppWithSubCommand(subCommand: DatamaintainCliCommand, argv: List<String>) {
-        App().subcommands(subCommand).main(argv)
+        Datamaintain().subcommands(subCommand).main(argv)
     }
 
     protected fun runAppWithUpdateDb(baseArguments: List<String>, updateDbArguments: List<String> = listOf()) {
