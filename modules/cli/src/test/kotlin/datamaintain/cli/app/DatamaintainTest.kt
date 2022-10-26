@@ -9,7 +9,7 @@ import strikt.api.expectThat
 import strikt.assertions.*
 
 
-internal class AppTest : BaseCliTest() {
+internal class DatamaintainTest : BaseCliTest() {
     private fun buildPathToConfigFile(fileName: String): String = "src/test/resources/${fileName}.properties"
 
     private val configFilePath = buildPathToConfigFile("config")
