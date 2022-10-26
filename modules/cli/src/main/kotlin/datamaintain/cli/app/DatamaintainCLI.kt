@@ -1,7 +1,5 @@
 package datamaintain.cli.app
 
-import com.github.ajalt.clikt.completion.CompletionCommand
-import com.github.ajalt.clikt.completion.completionOption
 import com.github.ajalt.clikt.core.*
 import com.github.ajalt.clikt.parameters.options.*
 import com.github.ajalt.clikt.parameters.types.choice
@@ -18,7 +16,7 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.*
 
-class App : CliktCommand() {
+class Datamaintain : CliktCommand() {
     init {
         val versionProperties = Properties()
         this.javaClass.getResourceAsStream("/version.properties")
@@ -110,7 +108,7 @@ enum class DbType(val value: String) {
     JDBC("jdbc")
 }
 
-val datamaintainApp = App().subcommands(UpdateDb(), ListExecutedScripts(), MarkOneScriptAsExecuted())
+val datamaintainApp = Datamaintain().subcommands(UpdateDb(), ListExecutedScripts(), MarkOneScriptAsExecuted())
 
 fun main(args: Array<String>) {
     datamaintainApp.main(args)
