@@ -30,4 +30,8 @@ RUN mkdir /code/datamaintain \
     && rm /code/datamaintain-cli.tar \
     && rm /code/datamaintain/bin/cli.bat
 
+# Setup autocompletion
+RUN echo "source /code/datamaintain/bash-autocomplete.sh" >> ~/.bashrc \
+    && echo "source /code/datamaintain/zsh-autocomplete.sh" >> ~/.zshrc
+
 ENTRYPOINT ["/code/datamaintain/bin/cli"]
