@@ -10,8 +10,11 @@ import mu.KotlinLogging
 private val logger = KotlinLogging.logger {}
 
 class Pruner(private val context: Context) {
+    private val prunerConfig
+        get() = context.config.pruner
+
     fun prune(scripts: List<ScriptWithContent>): List<ScriptWithContent> {
-        if (!context.config.porcelain) { logger.info { "Prune scripts..." } }
+        if (!context.config.logs.porcelain) { logger.info { "Prune scripts..." } }
         try {
             val listExecutedScripts = context.dbDriver.listExecutedScripts()
     
@@ -22,7 +25,7 @@ class Pruner(private val context: Context) {
             var prunedScripts = scripts
                     .filterNot { script -> doesScriptAlreadyExecuted(script, executedChecksums) }
     
-            if (context.config.overrideExecutedScripts) {
+            if (context.config.executor.overrideExecutedScripts) {
                 val executedNames = listExecutedScripts
                         .map { executedScript -> executedScript.fullName() }
                         .toList()
@@ -34,7 +37,7 @@ class Pruner(private val context: Context) {
     
             prunedScripts = prunedScripts.onEach { context.reportBuilder.addPrunedScript(it) }
 
-            if (!context.config.porcelain) {
+            if (!context.config.logs.porcelain) {
                 logger.info { "${prunedScripts.size} scripts pruned (${executedChecksums.size} skipped)" }
                 logger.info { "" }
             }
@@ -52,8 +55,8 @@ class Pruner(private val context: Context) {
 
     private fun doesScriptAlreadyExecuted(script: ScriptWithContent, executedChecksums: List<String>): Boolean {
         val skipped = executedChecksums.contains(script.checksum) &&
-                script.tags.intersect(context.config.tagsToPlayAgain).isEmpty()
-        if (context.config.verbose && skipped && !context.config.porcelain) {
+                script.tags.intersect(prunerConfig.tagsToPlayAgain).isEmpty()
+        if (context.config.logs.verbose && skipped && !context.config.logs.porcelain) {
             logger.info {
                 "${script.name} is skipped because it was already executed " +
                         "and it does not have a tag to play again."

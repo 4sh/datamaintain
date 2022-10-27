@@ -3,6 +3,8 @@ package datamaintain.core.step
 import ch.qos.logback.classic.Logger
 import datamaintain.core.Context
 import datamaintain.core.config.DatamaintainConfig
+import datamaintain.core.config.DatamaintainExecutorConfig
+import datamaintain.core.config.DatamaintainScannerConfig
 import datamaintain.core.db.driver.DatamaintainDriver
 import datamaintain.core.db.driver.FakeDriverConfig
 import datamaintain.core.exception.DatamaintainException
@@ -31,9 +33,11 @@ internal class ExecutorTest {
     private val dbDriverMock = mockk<DatamaintainDriver>()
     private val context = Context(
             DatamaintainConfig(
+                scanner = DatamaintainScannerConfig(
                     path = Paths.get(""),
                     identifierRegex = Regex(""),
-                    driverConfig = FakeDriverConfig()),
+                ),
+                driverConfig = FakeDriverConfig()),
             dbDriver = dbDriverMock
     )
 
@@ -102,13 +106,6 @@ internal class ExecutorTest {
     fun `should execute forcing mark as executed`() {
         // Given
         every { dbDriverMock.markAsExecuted(any()) }.returnsArgument(0)
-
-        val context = Context(DatamaintainConfig(
-                path = Paths.get(""),
-                identifierRegex = Regex(""),
-                driverConfig = FakeDriverConfig(),
-                executionMode = ExecutionMode.NORMAL
-        ), dbDriver = dbDriverMock)
         val executor = Executor(context)
 
         val scripts = listOf(
@@ -163,12 +160,17 @@ internal class ExecutorTest {
     fun `should not call executeScript when execution mode is dry`() {
         // Given
         val context = Context(
-                DatamaintainConfig(
-                        path = Paths.get(""),
-                        identifierRegex = Regex(""),
-                        driverConfig = FakeDriverConfig(),
-                        executionMode = ExecutionMode.DRY),
-                dbDriver = dbDriverMock)
+            DatamaintainConfig(
+                scanner = DatamaintainScannerConfig(
+                    path = Paths.get(""),
+                    identifierRegex = Regex(""),
+                ),
+                executor = DatamaintainExecutorConfig(
+                    executionMode = ExecutionMode.DRY
+                ),
+                driverConfig = FakeDriverConfig()),
+            dbDriver = dbDriverMock
+        )
         val executor = Executor(context)
 
         // When
@@ -201,11 +203,14 @@ internal class ExecutorTest {
         // Given
         val context = Context(
             DatamaintainConfig(
-                path = Paths.get(""),
-                identifierRegex = Regex(""),
-                driverConfig = FakeDriverConfig(),
-                flags = listOf("FLAG1", "FLAG2", "FLAG3")
-            ),
+                scanner = DatamaintainScannerConfig(
+                    path = Paths.get(""),
+                    identifierRegex = Regex(""),
+                ),
+                executor = DatamaintainExecutorConfig(
+                    flags = listOf("FLAG1", "FLAG2", "FLAG3")
+                ),
+                driverConfig = FakeDriverConfig()),
             dbDriver = dbDriverMock
         )
 
@@ -257,19 +262,22 @@ internal class ExecutorTest {
 
         every { dbDriverMock.markAsExecuted(any()) }.throws(DatamaintainQueryException(""))
 
-        val context = Context(DatamaintainConfig(
-            path = Paths.get("/default/test"),
-            identifierRegex = Regex(""),
-            driverConfig = FakeDriverConfig(),
-            executionMode = ExecutionMode.NORMAL
-        ), dbDriver = dbDriverMock)
+        val context = Context(
+            DatamaintainConfig(
+                scanner = DatamaintainScannerConfig(
+                    path = Paths.get("/default/test"),
+                    identifierRegex = Regex(""),
+                ),
+                driverConfig = FakeDriverConfig()),
+            dbDriver = dbDriverMock
+        )
         val executor = Executor(context)
 
         val scripts = listOf(
             script1.copy(action = ScriptAction.MARK_AS_EXECUTED)
         )
 
-        val executedScript = ExecutedScript.build(scripts[0], Execution(OK), context.config.flags)
+        val executedScript = ExecutedScript.build(scripts[0], Execution(OK), context.config.executor.flags)
 
         // When
         val report: Report = executor.execute(scripts)
@@ -277,7 +285,13 @@ internal class ExecutorTest {
         // Then
         expectThat(testAppender.events) {
             get { get(3).message }.contains(
-                "Failed to mark script ${executedScript.name} as executed. Use the following command to force mark the script as executed : ./datamaintain-cli --db-type ${context.config.driverConfig.dbType} --db-uri ${context.config.driverConfig.uri} update-db --path ${context.config.path} --action MARK_AS_EXECUTED"
+                "Failed to mark script ${executedScript.name} as executed. " +
+                        "Use the following command to force mark the script as executed : " +
+                        "./datamaintain-cli --db-type ${context.config.driverConfig.dbType} " +
+                        "--db-uri ${context.config.driverConfig.uri} " +
+                        "update-db " +
+                        "--path ${context.config.scanner.path} " +
+                        "--action MARK_AS_EXECUTED"
             )
         }
     }

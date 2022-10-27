@@ -2,6 +2,8 @@ package datamaintain.core.step
 
 import datamaintain.core.Context
 import datamaintain.core.config.DatamaintainConfig
+import datamaintain.core.config.DatamaintainPrunerConfig
+import datamaintain.core.config.DatamaintainScannerConfig
 import datamaintain.core.db.driver.DatamaintainDriver
 import datamaintain.core.db.driver.FakeDriverConfig
 import datamaintain.core.script.*
@@ -18,12 +20,16 @@ import java.nio.file.Paths
 internal class PrunerTest {
     private val dbDriver = mockk<DatamaintainDriver>()
     private val tagToPlayAgain = Tag("again")
-    private val context = Context(DatamaintainConfig(
-            path = Paths.get(""),
-            identifierRegex = Regex(""),
-            tagsToPlayAgain = setOf(tagToPlayAgain),
-            driverConfig = FakeDriverConfig()),
-            dbDriver = dbDriver)
+    private val context = Context(
+        DatamaintainConfig(
+            scanner = DatamaintainScannerConfig(
+                path = Paths.get(""),
+                identifierRegex = Regex(""),
+            ),
+            pruner = DatamaintainPrunerConfig(tagsToPlayAgain = setOf(tagToPlayAgain)),
+            driverConfig = FakeDriverConfig(),
+        ),
+        dbDriver = dbDriver)
 
     private val pruner = Pruner(context)
 

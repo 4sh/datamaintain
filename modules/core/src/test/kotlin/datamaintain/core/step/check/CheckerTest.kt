@@ -1,7 +1,9 @@
 package datamaintain.core.step.check
 
 import datamaintain.core.Context
+import datamaintain.core.config.DatamaintainCheckerConfig
 import datamaintain.core.config.DatamaintainConfig
+import datamaintain.core.config.DatamaintainScannerConfig
 import datamaintain.core.db.driver.DatamaintainDriver
 import datamaintain.core.db.driver.FakeDriverConfig
 import datamaintain.core.exception.DatamaintainException
@@ -37,12 +39,14 @@ internal class CheckerTest {
     fun `should succeed when no check rule`() {
         // Given
         val context = Context(
-                DatamaintainConfig(
-                        path = Paths.get(""),
-                        identifierRegex = Regex(""),
-                        driverConfig = FakeDriverConfig(),
-                        checkRules = sequenceOf()),
-                dbDriver = dbDriverMock
+            DatamaintainConfig(
+                scanner = DatamaintainScannerConfig(
+                    path = Paths.get(""),
+                    identifierRegex = Regex(""),
+                ),
+                checker = DatamaintainCheckerConfig(rules = emptyList()),
+                driverConfig = FakeDriverConfig()),
+            dbDriver = dbDriverMock
         )
 
         val checker = Checker(context)
@@ -64,12 +68,14 @@ internal class CheckerTest {
         every { dbDriverMock.listExecutedScripts() }.answers { sequenceOf() }
 
         val context = Context(
-                DatamaintainConfig(
-                        path = Paths.get(""),
-                        identifierRegex = Regex(""),
-                        driverConfig = FakeDriverConfig(),
-                        checkRules = sequenceOf(AlwaysSucceedCheck.NAME)),
-                dbDriver = dbDriverMock
+            DatamaintainConfig(
+                scanner = DatamaintainScannerConfig(
+                    path = Paths.get(""),
+                    identifierRegex = Regex(""),
+                ),
+                checker = DatamaintainCheckerConfig(rules = listOf(AlwaysSucceedCheck.NAME)),
+                driverConfig = FakeDriverConfig()),
+            dbDriver = dbDriverMock
         )
 
         val checker = Checker(context)
@@ -91,12 +97,14 @@ internal class CheckerTest {
         every { dbDriverMock.listExecutedScripts() }.answers { sequenceOf() }
 
         val context = Context(
-                DatamaintainConfig(
-                        path = Paths.get(""),
-                        identifierRegex = Regex(""),
-                        driverConfig = FakeDriverConfig(),
-                        checkRules = sequenceOf(AlwaysFailedCheck.NAME)),
-                dbDriver = dbDriverMock
+            DatamaintainConfig(
+                scanner = DatamaintainScannerConfig(
+                    path = Paths.get(""),
+                    identifierRegex = Regex(""),
+                ),
+                checker = DatamaintainCheckerConfig(rules = listOf(AlwaysFailedCheck.NAME)),
+                driverConfig = FakeDriverConfig()),
+            dbDriver = dbDriverMock
         )
 
         val checker = Checker(context)
@@ -114,12 +122,14 @@ internal class CheckerTest {
 
         val badRuleName = "sadfsdf"
         val context = Context(
-                DatamaintainConfig(
-                        path = Paths.get(""),
-                        identifierRegex = Regex(""),
-                        driverConfig = FakeDriverConfig(),
-                        checkRules = sequenceOf(badRuleName)),
-                dbDriver = dbDriverMock
+            DatamaintainConfig(
+                scanner = DatamaintainScannerConfig(
+                    path = Paths.get(""),
+                    identifierRegex = Regex(""),
+                ),
+                checker = DatamaintainCheckerConfig(rules = listOf(badRuleName)),
+                driverConfig = FakeDriverConfig()),
+            dbDriver = dbDriverMock
         )
 
         val checker = Checker(context)
@@ -137,12 +147,14 @@ internal class CheckerTest {
 
         val badRuleName = "sadfsdf"
         val context = Context(
-                DatamaintainConfig(
-                        path = Paths.get(""),
-                        identifierRegex = Regex(""),
-                        driverConfig = FakeDriverConfig(),
-                        checkRules = sequenceOf(AlwaysFailedCheck.NAME, badRuleName)),
-                dbDriver = dbDriverMock
+            DatamaintainConfig(
+                scanner = DatamaintainScannerConfig(
+                    path = Paths.get(""),
+                    identifierRegex = Regex(""),
+                ),
+                checker = DatamaintainCheckerConfig(rules = listOf(AlwaysFailedCheck.NAME, badRuleName)),
+                driverConfig = FakeDriverConfig()),
+            dbDriver = dbDriverMock
         )
 
         val checker = Checker(context)

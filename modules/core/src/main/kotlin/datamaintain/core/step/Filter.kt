@@ -9,16 +9,19 @@ import mu.KotlinLogging
 private val logger = KotlinLogging.logger {}
 
 class Filter(private val context: Context) {
+    private val filterConfig
+        get() = context.config.filter
+
     fun filter(scripts: List<ScriptWithContent>): List<ScriptWithContent> {
         try {
-            if (!context.config.porcelain) { logger.info { "Filter scripts..." } }
+            if (!context.config.logs.porcelain) { logger.info { "Filter scripts..." } }
             var filteredScripts = scripts
 
-            if (context.config.whitelistedTags.isNotEmpty()) {
+            if (filterConfig.whitelistedTags.isNotEmpty()) {
                 filteredScripts = filteredScripts.filter { script ->
-                    val kept = context.config.whitelistedTags.any { it isIncluded script }
+                    val kept = filterConfig.whitelistedTags.any { it isIncluded script }
 
-                    if (context.config.verbose && !kept && !context.config.porcelain) {
+                    if (context.config.logs.verbose && !kept && !context.config.logs.porcelain) {
                         logger.info { "${script.name} is skipped because not whitelisted" }
                     }
 
@@ -26,10 +29,10 @@ class Filter(private val context: Context) {
                 }
             }
 
-            if (context.config.blacklistedTags.isNotEmpty()) {
+            if (filterConfig.blacklistedTags.isNotEmpty()) {
                 filteredScripts = filteredScripts.filterNot { script ->
-                    val skipped = context.config.blacklistedTags.any { it isIncluded script }
-                    if (context.config.verbose && skipped && !context.config.porcelain) {
+                    val skipped = filterConfig.blacklistedTags.any { it isIncluded script }
+                    if (context.config.logs.verbose && skipped && !context.config.logs.porcelain) {
                         logger.info { "${script.name} is skipped because blacklisted" }
                     }
                     skipped
@@ -38,7 +41,7 @@ class Filter(private val context: Context) {
 
             filteredScripts = filteredScripts.onEach { context.reportBuilder.addFilteredScript(it) }
 
-            if (!context.config.porcelain) {
+            if (!context.config.logs.porcelain) {
                 logger.info { "${filteredScripts.size} scripts filtered (${scripts.size - filteredScripts.size} skipped)" }
                 logger.info { "" }
             }

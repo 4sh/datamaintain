@@ -1,7 +1,6 @@
 package datamaintain.cli.app.update.db
 
 import datamaintain.cli.app.BaseCliTest
-import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.script.ScriptAction
 import datamaintain.core.script.Tag
 import datamaintain.core.script.TagMatcher
@@ -36,7 +35,7 @@ internal class UpdateDbTest : BaseCliTest() {
                 runUpdateDb(updateDbArguments)
 
                 // Then
-                expectThat(configWrapper.datamaintainConfig!!.path).isEqualTo(Paths.get(path))
+                expectThat(configWrapper.datamaintainConfig!!.scanner.path).isEqualTo(Paths.get(path))
             }
 
             @Test
@@ -52,7 +51,7 @@ internal class UpdateDbTest : BaseCliTest() {
                 runUpdateDb(updateDbArguments)
 
                 // Then
-                expectThat(configWrapper.datamaintainConfig!!.identifierRegex.pattern).isEqualTo(identifierRegex)
+                expectThat(configWrapper.datamaintainConfig!!.scanner.identifierRegex.pattern).isEqualTo(identifierRegex)
             }
 
             @Nested
@@ -72,7 +71,7 @@ internal class UpdateDbTest : BaseCliTest() {
                     runUpdateDb(updateDbArguments)
 
                     // Then
-                    expectThat(configWrapper.datamaintainConfig!!.executionMode).isEqualTo(executionMode)
+                    expectThat(configWrapper.datamaintainConfig!!.executor.executionMode).isEqualTo(executionMode)
                 }
             }
 
@@ -87,7 +86,7 @@ internal class UpdateDbTest : BaseCliTest() {
                     runUpdateDb(updateDbArguments)
 
                     // Then
-                    expectThat(configWrapper.datamaintainConfig!!.verbose).isTrue()
+                    expectThat(configWrapper.datamaintainConfig!!.logs.verbose).isTrue()
                 }
 
                 @Test
@@ -98,7 +97,7 @@ internal class UpdateDbTest : BaseCliTest() {
                     runUpdateDb()
 
                     // Then
-                    expectThat(configWrapper.datamaintainConfig!!.verbose).isFalse()
+                    expectThat(configWrapper.datamaintainConfig!!.logs.verbose).isFalse()
                 }
             }
 
@@ -113,7 +112,7 @@ internal class UpdateDbTest : BaseCliTest() {
                     runUpdateDb(updateDbArguments)
 
                     // Then
-                    expectThat(configWrapper.datamaintainConfig!!.doesCreateTagsFromFolder).isTrue()
+                    expectThat(configWrapper.datamaintainConfig!!.scanner.doesCreateTagsFromFolder).isTrue()
                 }
 
                 @Test
@@ -124,7 +123,7 @@ internal class UpdateDbTest : BaseCliTest() {
                     runUpdateDb()
 
                     // Then
-                    expectThat(configWrapper.datamaintainConfig!!.doesCreateTagsFromFolder).isFalse()
+                    expectThat(configWrapper.datamaintainConfig!!.scanner.doesCreateTagsFromFolder).isFalse()
                 }
             }
 
@@ -145,7 +144,7 @@ internal class UpdateDbTest : BaseCliTest() {
                     runUpdateDb(updateDbArguments)
 
                     // Then
-                    expectThat(configWrapper.datamaintainConfig!!.tagsMatchers)
+                    expectThat(configWrapper.datamaintainConfig!!.scanner.tagsMatchers)
                         .containsExactlyInAnyOrder(tagMatcher1, tagMatcher2)
                 }
 
@@ -156,20 +155,20 @@ internal class UpdateDbTest : BaseCliTest() {
             inner class TagsList {
                 @Test
                 fun `should build config with blacklisted tags`() {
-                    testBuildConfigWithTagsList("--blacklisted-tags", DatamaintainConfig::blacklistedTags)
+                    testBuildConfigWithTagsList("--blacklisted-tags", "blacklisted")
                 }
 
                 @Test
                 fun `should build config with whitelisted tags`() {
-                    testBuildConfigWithTagsList("--whitelisted-tags", DatamaintainConfig::whitelistedTags)
+                    testBuildConfigWithTagsList("--whitelisted-tags", "whitelisted")
                 }
 
                 @Test
                 fun `should build config with tags to play again`() {
-                    testBuildConfigWithTagsList("--tags-to-play-again", DatamaintainConfig::tagsToPlayAgain)
+                    testBuildConfigWithTagsList("--tags-to-play-again", "play-again")
                 }
 
-                private fun testBuildConfigWithTagsList(key: String, getter: KProperty1<DatamaintainConfig, Set<Tag>>) {
+                private fun testBuildConfigWithTagsList(key: String, tagsToTest: String) {
                     // Given
                     val tagsList = setOf("MYTAG", "MYOTHERTAG")
 
@@ -182,7 +181,14 @@ internal class UpdateDbTest : BaseCliTest() {
                     runUpdateDb(updateDbArguments)
 
                     // Then
-                    expectThat(getter.get(configWrapper.datamaintainConfig!!))
+                    val tags = when (tagsToTest) {
+                        "blacklisted" -> configWrapper.datamaintainConfig!!.filter.blacklistedTags
+                        "whitelisted" -> configWrapper.datamaintainConfig!!.filter.whitelistedTags
+                        "play-again" -> configWrapper.datamaintainConfig!!.pruner.tagsToPlayAgain
+                        else -> error("unknown tagsToTest $tagsToTest")
+                    }
+
+                    expectThat(tags)
                         .map { it.name }
                         .containsExactlyInAnyOrder(tagsList)
                 }
@@ -205,7 +211,7 @@ internal class UpdateDbTest : BaseCliTest() {
                     expectThat(configWrapper) {
                         get { datamaintainConfig }.isNotNull()
                     }
-                    expectThat(configWrapper.datamaintainConfig!!.checkRules.toList()) {
+                    expectThat(configWrapper.datamaintainConfig!!.checker.rules) {
                         hasSize(1)
                         first().isEqualTo(SameScriptsAsExecutedCheck.NAME)
                     }
@@ -227,7 +233,7 @@ internal class UpdateDbTest : BaseCliTest() {
                     expectThat(configWrapper) {
                         get { datamaintainConfig }.isNotNull()
                     }
-                    expectThat(configWrapper.datamaintainConfig!!.checkRules.toList()) {
+                    expectThat(configWrapper.datamaintainConfig!!.checker.rules) {
                         hasSize(2)
                         first().isEqualTo(SameScriptsAsExecutedCheck.NAME)
                         last().isEqualTo(SameScriptsAsExecutedCheck.NAME)
@@ -248,7 +254,7 @@ internal class UpdateDbTest : BaseCliTest() {
                     expectThat(configWrapper) {
                         get { datamaintainConfig }.isNotNull()
                     }
-                    expectThat(configWrapper.datamaintainConfig!!.overrideExecutedScripts) {
+                    expectThat(configWrapper.datamaintainConfig!!.executor.overrideExecutedScripts) {
                         isFalse()
                     }
                 }
@@ -265,7 +271,7 @@ internal class UpdateDbTest : BaseCliTest() {
                     expectThat(configWrapper) {
                         get { datamaintainConfig }.isNotNull()
                     }
-                    expectThat(configWrapper.datamaintainConfig!!.overrideExecutedScripts) {
+                    expectThat(configWrapper.datamaintainConfig!!.executor.overrideExecutedScripts) {
                         isTrue()
                     }
                 }
@@ -284,7 +290,7 @@ internal class UpdateDbTest : BaseCliTest() {
                     expectThat(configWrapper) {
                         get { datamaintainConfig }.isNotNull()
                     }
-                    expectThat(configWrapper.datamaintainConfig!!.porcelain) {
+                    expectThat(configWrapper.datamaintainConfig!!.logs.porcelain) {
                         isFalse()
                     }
                 }
@@ -301,7 +307,7 @@ internal class UpdateDbTest : BaseCliTest() {
                     expectThat(configWrapper) {
                         get { datamaintainConfig }.isNotNull()
                     }
-                    expectThat(configWrapper.datamaintainConfig!!.porcelain) {
+                    expectThat(configWrapper.datamaintainConfig!!.logs.porcelain) {
                         isTrue()
                     }
                 }
@@ -321,7 +327,7 @@ internal class UpdateDbTest : BaseCliTest() {
                 runUpdateDb(updateDbArguments)
 
                 // Then
-                expectThat(configWrapper.datamaintainConfig!!.defaultScriptAction).isEqualTo(scriptAction)
+                expectThat(configWrapper.datamaintainConfig!!.executor.defaultScriptAction).isEqualTo(scriptAction)
             }
         }
 
@@ -434,7 +440,7 @@ internal class UpdateDbTest : BaseCliTest() {
                 runUpdateDb(updateDbArguments)
 
                 // Then
-                expectThat(configWrapper.datamaintainConfig!!.flags) {
+                expectThat(configWrapper.datamaintainConfig!!.executor.flags) {
                     containsExactly("MY_TEST_FLAG")
                 }
             }
@@ -448,7 +454,7 @@ internal class UpdateDbTest : BaseCliTest() {
                 runUpdateDb(updateDbArguments)
 
                 // Then
-                expectThat(configWrapper.datamaintainConfig!!.flags) {
+                expectThat(configWrapper.datamaintainConfig!!.executor.flags) {
                     containsExactly("MY_TEST_FLAG1", "MY_TEST_FLAG2")
                 }
             }
