@@ -33,5 +33,5 @@ RUN mkdir /code/datamaintain \
 # Setup autocompletion
 RUN echo "source /code/datamaintain/bash-autocomplete.sh" >> ~/.bashrc \
     && echo "source /code/datamaintain/zsh-autocomplete.sh" >> ~/.zshrc
-
-ENTRYPOINT ["/code/datamaintain/bin/cli"]
+RUN alias datamaintain=/code/datamaintain/bin/cli
+ENTRYPOINT ["datamaintain"]
