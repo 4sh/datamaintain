@@ -10,6 +10,8 @@ in the project's root directory. Afterwards, you'll find the generated scripts i
 Source the script for your shell, e.g. for Bash:
 
 ```source bash-autocomplete.sh```
+Define an alias to the Datamaintain CLI:
+```alias datamaintain=/your/path/cli```
 
 Afterwards, you can use 
 ```datamaintain <TAB>```
