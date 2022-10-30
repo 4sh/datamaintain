@@ -3,7 +3,7 @@ Auto-completion scripts to be used with bash and zsh.
 
 # BUILD
 Run 
-```./gradlew rebuildCompletion```
+```./gradlew rebuildAutocompletion```
 in the project's root directory. Afterwards, you'll find the generated scripts in this directory.
 
 # USAGE
