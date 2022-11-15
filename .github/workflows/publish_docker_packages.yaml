@@ -45,7 +45,7 @@ jobs:
         with:
           context: modules/cli/build/distributions
           push: true
-          file: modules/cli/Dockerfile/mongo/3/Dockerfile
+          file: modules/cli/Dockerfile/mongo/3/3.2/Dockerfile
           build-args: MONGO_MAJOR=${{ env.MONGO_VERSION }}
           tags: ${{ env.REGISTRY }}/${{ github.repository }}:${{ github.ref_name }}-mongo-${{ env.MONGO_VERSION }}
 
@@ -56,7 +56,7 @@ jobs:
         with:
           context: modules/cli/build/distributions
           push: true
-          file: modules/cli/Dockerfile/mongo/3/Dockerfile
+          file: modules/cli/Dockerfile/mongo/3/3.6/Dockerfile
           build-args: MONGO_MAJOR=${{ env.MONGO_VERSION }}
           tags: ${{ env.REGISTRY }}/${{ github.repository }}:${{ github.ref_name }}-mongo-${{ env.MONGO_VERSION }}
 
