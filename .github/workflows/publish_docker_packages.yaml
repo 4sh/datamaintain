@@ -47,7 +47,7 @@ jobs:
           push: true
           file: modules/cli/Dockerfile/mongo/3/3.2/Dockerfile
           build-args: MONGO_MAJOR=${{ env.MONGO_VERSION }}
-          tags: ${{ env.REGISTRY }}/${{ github.repository }}/${{ github.ref_name }}:${{ github.ref_name }}-mongo-${{ env.MONGO_VERSION }}
+          tags: ${{ env.REGISTRY }}/${{ github.repository }}/datamaintain:${{ github.ref_name }}-mongo-${{ env.MONGO_VERSION }}
 
       - name: Build and push (3.6)
         env:
