@@ -106,7 +106,7 @@ jobs:
 
       - name: Build and push (6.0)
         env:
-          MONGO_VERSION: "6 .0"
+          MONGO_VERSION: "6.0"
         uses: docker/build-push-action@v3
         with:
           context: modules/cli/build/distributions
