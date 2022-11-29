@@ -138,7 +138,6 @@ data class ReportExecutedScript(
     override val executionDurationInMillis: Long? = null,
     override val executionOutput: String? = null,
     override val flags: List<String> = listOf(),
-    val porcelainName: String? = null
 ) : ExecutedScript(
         name,
         checksum,
@@ -150,7 +149,7 @@ data class ReportExecutedScript(
         flags
 ) {
     companion object {
-        fun from(executedScript: ExecutedScript, porcelainName: String?) = ReportExecutedScript(
+        fun from(executedScript: ExecutedScript) = ReportExecutedScript(
             executedScript.name,
             executedScript.checksum,
             executedScript.identifier,
@@ -159,7 +158,6 @@ data class ReportExecutedScript(
             executedScript.executionDurationInMillis,
             executedScript.executionOutput,
             executedScript.flags,
-            porcelainName
         )
     }
 }
@@ -168,7 +166,6 @@ interface ScriptWithContent : Script {
     val content: String
     val tags: Set<Tag>
     var action: ScriptAction
-    val porcelainName: String?
 }
 
 

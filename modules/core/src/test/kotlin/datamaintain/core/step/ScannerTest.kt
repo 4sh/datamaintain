@@ -15,14 +15,13 @@ import java.nio.file.Paths
 internal class ScannerTest {
     private val scanner = prepareScanner()
 
-    fun prepareScanner(tagsMatchers: Set<TagMatcher> = emptySet(), doesCreateTagsFromFolder: Boolean = false, porcelain: Boolean = true): Scanner {
+    fun prepareScanner(tagsMatchers: Set<TagMatcher> = emptySet(), doesCreateTagsFromFolder: Boolean = false): Scanner {
         return Scanner(Context(
                 buildDatamaintainConfig(
                     Paths.get("src/test/resources/scanner_test_files"),
                     Regex("(.*?)_.*"),
                     tagsMatchers = tagsMatchers,
                     doesCreateTagsFromFolder = doesCreateTagsFromFolder,
-                    porcelain = porcelain
                 ),
                 dbDriver = FakeDatamaintainDriver()))
     }
@@ -137,25 +136,6 @@ internal class ScannerTest {
         }
     }
 
-    @Test
-    fun `should collect script porcelain names`() {
-        // Given
-
-        // When
-        val scripts = scanner.scan()
-
-        // Then
-        expectThat(scripts) {
-            size.isEqualTo(6)
-            get(0).get { this.porcelainName }.isEqualTo("01_file1")
-            get(1).get { this.porcelainName }.isEqualTo("02_file2")
-            get(2).get { this.porcelainName }.isEqualTo("subfolder/03_file3")
-            get(3).get { this.porcelainName }.isEqualTo("subfolder/04_file4")
-            get(4).get { this.porcelainName }.isEqualTo("10_file10")
-            get(5).get { this.porcelainName }.isEqualTo("subfolder/old/11_file11")
-        }
-    }
-
     @Nested
     inner class TagsFromParents {
         @Test
@@ -197,55 +177,6 @@ internal class ScannerTest {
                 get(4).get { this.tags }.isEmpty()
                 get(5).get { this.name }.isEqualTo("11_file11")
                 get(5).get { this.tags }.isEqualTo(setOf(Tag("subfolder"), Tag("old")))
-            }
-        }
-    }
-
-    @Nested
-    inner class PorcelainNameComputation {
-        @Test
-        fun `should not compute porcelainName when porcelain is set to false`() {
-            //GIVEN
-            val scanner = prepareScanner(porcelain = false)
-
-            //WHEN
-            val scripts: List<ScriptWithContent> = scanner.scan()
-
-            //THEN
-            expectThat(scripts) {
-                size.isEqualTo(6)
-                get(0).get { this.porcelainName }.isNull()
-                get(1).get { this.porcelainName }.isNull()
-                get(2).get { this.porcelainName }.isNull()
-                get(3).get { this.porcelainName }.isNull()
-                get(4).get { this.porcelainName }.isNull()
-                get(5).get { this.porcelainName }.isNull()
-            }
-        }
-
-        @Test
-        fun `should compute porcelainName when porcelain is set to true`() {
-            //GIVEN
-            val scanner = prepareScanner(porcelain = true)
-
-            //WHEN
-            val scripts: List<ScriptWithContent> = scanner.scan()
-
-            //THEN
-            expectThat(scripts) {
-                size.isEqualTo(6)
-                get(0).get { this.porcelainName }.isNotNull()
-                get(0).get { this.porcelainName }.isEqualTo("01_file1")
-                get(1).get { this.porcelainName }.isNotNull()
-                get(1).get { this.porcelainName }.isEqualTo("02_file2")
-                get(2).get { this.porcelainName }.isNotNull()
-                get(2).get { this.porcelainName }.isEqualTo("subfolder/03_file3")
-                get(3).get { this.porcelainName }.isNotNull()
-                get(3).get { this.porcelainName }.isEqualTo("subfolder/04_file4")
-                get(4).get { this.porcelainName }.isNotNull()
-                get(4).get { this.porcelainName }.isEqualTo("10_file10")
-                get(5).get { this.porcelainName }.isNotNull()
-                get(5).get { this.porcelainName }.isEqualTo("subfolder/old/11_file11")
             }
         }
     }

@@ -1,5 +1,8 @@
 package datamaintain.cli.app.update.db
 
+import ch.qos.logback.classic.Level
+import ch.qos.logback.classic.Logger
+import ch.qos.logback.classic.LoggerContext
 import datamaintain.cli.app.BaseCliTest
 import datamaintain.core.script.ScriptAction
 import datamaintain.core.script.Tag
@@ -7,11 +10,10 @@ import datamaintain.core.script.TagMatcher
 import datamaintain.core.step.check.rules.implementations.SameScriptsAsExecutedCheck
 import datamaintain.db.driver.mongo.MongoDriverConfig
 import datamaintain.db.driver.mongo.MongoShell
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Nested
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.*
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
+import org.slf4j.LoggerFactory
 import strikt.api.expectThat
 import strikt.assertions.*
 import java.nio.file.Paths
@@ -77,6 +79,23 @@ internal class UpdateDbTest : BaseCliTest() {
 
             @Nested
             inner class Verbose {
+                private lateinit var datamaintainLogger: Logger
+                private lateinit var datamaintainLoggerLevel: Level
+
+                @BeforeEach
+                fun beforeEach() {
+                    if (!::datamaintainLogger.isInitialized) {
+                        val context = LoggerFactory.getILoggerFactory() as LoggerContext
+                        datamaintainLogger = context.getLogger("datamaintain")
+                        datamaintainLoggerLevel = datamaintainLogger.level
+                    }
+                }
+
+                @AfterEach
+                fun afterEach() {
+                    datamaintainLogger.level = datamaintainLoggerLevel
+                }
+
                 @Test
                 fun `should build config with verbose set to true`() {
                     // Given
@@ -86,7 +105,7 @@ internal class UpdateDbTest : BaseCliTest() {
                     runUpdateDb(updateDbArguments)
 
                     // Then
-                    expectThat(configWrapper.datamaintainConfig!!.logs.verbose).isTrue()
+                    expectThat(datamaintainLogger.level).isEqualTo(Level.DEBUG)
                 }
 
                 @Test
@@ -97,7 +116,31 @@ internal class UpdateDbTest : BaseCliTest() {
                     runUpdateDb()
 
                     // Then
-                    expectThat(configWrapper.datamaintainConfig!!.logs.verbose).isFalse()
+                    expectThat(datamaintainLogger.level).isEqualTo(Level.INFO)
+                }
+
+                @Test
+                fun `should build config with trace set to true`() {
+                    // Given
+                    val updateDbArguments = listOf("-vv")
+
+                    // When
+                    runUpdateDb(updateDbArguments)
+
+                    // Then
+                    expectThat(datamaintainLogger.level).isEqualTo(Level.TRACE)
+                }
+
+                @Test
+                fun `should build config with trace set to true even if verbose is set`() {
+                    // Given
+                    val updateDbArguments = listOf("--verbose", "-vv")
+
+                    // When
+                    runUpdateDb(updateDbArguments)
+
+                    // Then
+                    expectThat(datamaintainLogger.level).isEqualTo(Level.TRACE)
                 }
             }
 
@@ -279,6 +322,23 @@ internal class UpdateDbTest : BaseCliTest() {
 
             @Nested
             inner class Porcelain {
+                private lateinit var datamaintainLogger: Logger
+                private lateinit var datamaintainLoggerLevel: Level
+
+                @BeforeEach
+                fun beforeEach() {
+                    if (!::datamaintainLogger.isInitialized) {
+                        val context = LoggerFactory.getILoggerFactory() as LoggerContext
+                        datamaintainLogger = context.getLogger("datamaintain")
+                        datamaintainLoggerLevel = datamaintainLogger.level
+                    }
+                }
+
+                @AfterEach
+                fun afterEach() {
+                    datamaintainLogger.level = datamaintainLoggerLevel
+                }
+
                 @Test
                 fun `should build default config without auto override`() {
                     // Given
@@ -290,9 +350,7 @@ internal class UpdateDbTest : BaseCliTest() {
                     expectThat(configWrapper) {
                         get { datamaintainConfig }.isNotNull()
                     }
-                    expectThat(configWrapper.datamaintainConfig!!.logs.porcelain) {
-                        isFalse()
-                    }
+                    expectThat(datamaintainLogger.level).isEqualTo(Level.INFO)
                 }
 
                 @Test
@@ -304,12 +362,8 @@ internal class UpdateDbTest : BaseCliTest() {
                     runUpdateDb(updateDbArguments)
 
                     // Then
-                    expectThat(configWrapper) {
-                        get { datamaintainConfig }.isNotNull()
-                    }
-                    expectThat(configWrapper.datamaintainConfig!!.logs.porcelain) {
-                        isTrue()
-                    }
+                    expectThat(configWrapper) { get { datamaintainConfig }.isNotNull() }
+                    expectThat(datamaintainLogger.level).isEqualTo(Level.ERROR)
                 }
             }
 

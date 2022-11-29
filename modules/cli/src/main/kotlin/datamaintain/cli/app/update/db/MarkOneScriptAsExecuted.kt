@@ -1,14 +1,14 @@
 package datamaintain.cli.app.update.db
 
 import com.github.ajalt.clikt.parameters.options.flag
-import com.github.ajalt.clikt.parameters.options.option
+import datamaintain.cli.app.utils.CliSpecificKey
 import datamaintain.cli.app.utils.detailedOption
 import datamaintain.core.config.CoreConfigKey
 import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.script.ScriptAction
 import java.util.*
 
-class MarkOneScriptAsExecuted(runner: (DatamaintainConfig) -> Unit = ::defaultUpdateDbRunner) :
+class MarkOneScriptAsExecuted(runner: (DatamaintainConfig, Boolean) -> Unit = ::defaultUpdateDbRunner) :
     DatamaintainCliUpdateDbCommand(
         name = "mark-script-as-executed",
         runner = runner,
@@ -20,9 +20,14 @@ class MarkOneScriptAsExecuted(runner: (DatamaintainConfig) -> Unit = ::defaultUp
         defaultValue = CoreConfigKey.SCAN_PATH.default
     )
 
-    private val verbose: Boolean? by detailedOption(
+    private val verbose: Boolean? by detailedOption("--verbose", "-v",
         help = "verbose",
-        defaultValue = CoreConfigKey.VERBOSE.default
+        defaultValue = CliSpecificKey.VERBOSE.default
+    ).flag()
+
+    private val trace: Boolean? by detailedOption("-vv",
+        help = "trace is more verbose than verbose",
+        defaultValue = CliSpecificKey.VERBOSE.default
     ).flag()
 
     override fun overloadProps(props: Properties) {
@@ -30,6 +35,7 @@ class MarkOneScriptAsExecuted(runner: (DatamaintainConfig) -> Unit = ::defaultUp
 
         // Overload from arguments
         path?.let { props.put(CoreConfigKey.SCAN_PATH.key, it) }
-        verbose?.let { props.put(CoreConfigKey.VERBOSE.key, it.toString()) }
+        verbose?.let { props.put(CliSpecificKey.VERBOSE.key, it.toString()) }
+        trace?.let { props.put(CliSpecificKey.TRACE.key, it.toString()) }
     }
 }

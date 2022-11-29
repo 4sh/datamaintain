@@ -5,6 +5,7 @@ import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.multiple
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.types.choice
+import datamaintain.cli.app.utils.CliSpecificKey
 import datamaintain.cli.app.utils.detailedOption
 import datamaintain.core.config.CoreConfigKey
 import datamaintain.core.config.DatamaintainConfig
@@ -16,7 +17,7 @@ import datamaintain.db.driver.mongo.MongoConfigKey
 import datamaintain.db.driver.mongo.MongoShell
 import java.util.*
 
-class UpdateDb(runner: (DatamaintainConfig) -> Unit = ::defaultUpdateDbRunner) : DatamaintainCliUpdateDbCommand(
+class UpdateDb(runner: (DatamaintainConfig, Boolean) -> Unit = ::defaultUpdateDbRunner) : DatamaintainCliUpdateDbCommand(
     name = "update-db",
     runner = runner
 ) {
@@ -67,9 +68,14 @@ class UpdateDb(runner: (DatamaintainConfig) -> Unit = ::defaultUpdateDbRunner) :
         defaultValue = CoreConfigKey.PRUNE_OVERRIDE_UPDATED_SCRIPTS.default
     ).flag()
 
-    private val verbose: Boolean? by detailedOption(
+    private val verbose: Boolean? by detailedOption("--verbose", "-v",
         help = "verbose",
-        defaultValue = CoreConfigKey.VERBOSE.default
+        defaultValue = CliSpecificKey.VERBOSE.default
+    ).flag()
+
+    private val trace: Boolean? by detailedOption("-vv",
+        help = "trace is more verbose than verbose",
+        defaultValue = CliSpecificKey.VERBOSE.default
     ).flag()
 
     private val saveDbOutput: Boolean? by detailedOption(
@@ -117,7 +123,7 @@ class UpdateDb(runner: (DatamaintainConfig) -> Unit = ::defaultUpdateDbRunner) :
 
     private val porcelain: Boolean? by detailedOption(
         help = "for each executed script, display relative path to scan path",
-        defaultValue = CoreConfigKey.PRINT_RELATIVE_PATH_OF_SCRIPT.default
+        defaultValue = CliSpecificKey.PORCELAIN.default
     ).flag()
 
     private val flags: List<String>? by option(help = "add a flag on the executed scripts. " +
@@ -131,7 +137,8 @@ class UpdateDb(runner: (DatamaintainConfig) -> Unit = ::defaultUpdateDbRunner) :
         blacklistedTags?.let { props.put(CoreConfigKey.TAGS_BLACKLISTED.key, it) }
         tagsToPlayAgain?.let { props.put(CoreConfigKey.PRUNE_TAGS_TO_RUN_AGAIN.key, it) }
         createTagsFromFolder?.let { props.put(CoreConfigKey.CREATE_TAGS_FROM_FOLDER.key, it.toString()) }
-        verbose?.let { props.put(CoreConfigKey.VERBOSE.key, it.toString()) }
+        verbose?.let { props.put(CliSpecificKey.VERBOSE.key, it.toString()) }
+        trace?.let { props.put(CliSpecificKey.TRACE.key, it.toString()) }
         saveDbOutput?.let { props.put(DriverConfigKey.DB_SAVE_OUTPUT.key, it.toString()) }
         printDbOutput?.let { props.put(DriverConfigKey.DB_PRINT_OUTPUT.key, it.toString()) }
         executionMode?.let { props.put(CoreConfigKey.EXECUTION_MODE.key, it) }
@@ -141,7 +148,7 @@ class UpdateDb(runner: (DatamaintainConfig) -> Unit = ::defaultUpdateDbRunner) :
         }
         checkRules?.let { props.put(CoreConfigKey.CHECK_RULES.key, it.optionListToString()) }
         allowAutoOverride?.let { props.put(CoreConfigKey.PRUNE_OVERRIDE_UPDATED_SCRIPTS.key, it.toString()) }
-        porcelain?.let { props.put(CoreConfigKey.PRINT_RELATIVE_PATH_OF_SCRIPT.key, it.toString()) }
+        porcelain?.let { props.put(CliSpecificKey.PORCELAIN.key, it.toString()) }
         mongoShell?.let { props.put(MongoConfigKey.DB_MONGO_SHELL.key, it.toUpperCase()) }
         flags?.let { props.put(CoreConfigKey.FLAGS.key, it.optionListToString()) }
         mongoClient?.let { props.put(MongoConfigKey.DB_MONGO_CLIENT_PATH.key, mongoClient) }

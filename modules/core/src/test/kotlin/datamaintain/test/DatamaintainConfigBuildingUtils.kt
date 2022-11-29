@@ -23,8 +23,6 @@ fun buildDatamaintainConfig(
     executionMode: ExecutionMode = ExecutionMode.NORMAL,
     defaultScriptAction: ScriptAction = DatamaintainExecutorConfig.defaultAction,
     driverConfig: DatamaintainDriverConfig = FakeDriverConfig(),
-    verbose: Boolean = CoreConfigKey.VERBOSE.default!!.toBoolean(),
-    porcelain: Boolean = CoreConfigKey.PRINT_RELATIVE_PATH_OF_SCRIPT.default!!.toBoolean()
 ) = DatamaintainConfig(
     scanner = DatamaintainScannerConfig(
         path = path,
@@ -48,8 +46,4 @@ fun buildDatamaintainConfig(
         overrideExecutedScripts = overrideExecutedScripts
     ),
     driverConfig = driverConfig,
-    logs = DatamaintainLogsConfig(
-        verbose = verbose,
-        porcelain = porcelain
-    )
 )

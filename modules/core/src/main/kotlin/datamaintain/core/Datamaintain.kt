@@ -16,10 +16,8 @@ private val logger = KotlinLogging.logger {}
 class Datamaintain(config: DatamaintainConfig) {
 
     init {
-        if (config.logs.verbose && !config.logs.porcelain) {
-            config.log()
-            config.scanner.log()
-        }
+        config.log()
+        config.driverConfig.log()
     }
 
     val context = Context(

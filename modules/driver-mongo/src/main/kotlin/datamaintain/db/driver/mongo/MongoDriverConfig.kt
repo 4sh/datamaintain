@@ -83,13 +83,13 @@ data class MongoDriverConfig @JvmOverloads constructor(override val uri: String,
         )
 
     override fun log() {
-        logger.info { "Mongo driver configuration: " }
-        logger.info { "- mongo uri -> $uri" }
-        logger.info { "- mongo tmp file -> $tmpFilePath" }
-        logger.info { "- mongo client -> $clientPath" }
-        logger.info { "- mongo print output -> $printOutput" }
-        logger.info { "- mongo save output -> $saveOutput" }
-        logger.info { "" }
+        logger.debug { "Mongo driver configuration: " }
+        logger.debug { "- mongo uri -> $uri" }
+        logger.debug { "- mongo tmp file -> $tmpFilePath" }
+        logger.debug { "- mongo client -> $clientPath" }
+        logger.debug { "- mongo print output -> $printOutput" }
+        logger.debug { "- mongo save output -> $saveOutput" }
+        logger.debug { "" }
     }
 
     class Builder {

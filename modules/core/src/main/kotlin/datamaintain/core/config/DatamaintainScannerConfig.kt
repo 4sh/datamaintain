@@ -14,9 +14,9 @@ data class DatamaintainScannerConfig @JvmOverloads constructor(
     val tagsMatchers: Set<TagMatcher> = setOf(),
 ) {
     fun log() {
-        path.let { logger.info { "- path -> $it" } }
-        identifierRegex.let { logger.info { "- identifier regex -> $it" } }
-        doesCreateTagsFromFolder.let { logger.info { "- create tags from folder -> $it" } }
-        tagsMatchers.let { logger.info { "- tags -> $it" } }
+        path.let { logger.debug { "- path -> $it" } }
+        identifierRegex.let { logger.debug { "- identifier regex -> $it" } }
+        doesCreateTagsFromFolder.let { logger.debug { "- create tags from folder -> $it" } }
+        tagsMatchers.let { logger.debug { "- tags -> $it" } }
     }
 }

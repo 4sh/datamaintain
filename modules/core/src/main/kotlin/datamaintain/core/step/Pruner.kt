@@ -14,7 +14,7 @@ class Pruner(private val context: Context) {
         get() = context.config.pruner
 
     fun prune(scripts: List<ScriptWithContent>): List<ScriptWithContent> {
-        if (!context.config.logs.porcelain) { logger.info { "Prune scripts..." } }
+        logger.info { "Prune scripts..." }
         try {
             val listExecutedScripts = context.dbDriver.listExecutedScripts()
     
@@ -37,10 +37,9 @@ class Pruner(private val context: Context) {
     
             prunedScripts = prunedScripts.onEach { context.reportBuilder.addPrunedScript(it) }
 
-            if (!context.config.logs.porcelain) {
-                logger.info { "${prunedScripts.size} scripts pruned (${executedChecksums.size} skipped)" }
-                logger.info { "" }
-            }
+            logger.info { "${prunedScripts.size} scripts pruned (${executedChecksums.size} skipped)" }
+            logger.trace { prunedScripts.map { it.name } }
+            logger.info { "" }
     
             return prunedScripts
         } catch (datamaintainException: DatamaintainBaseException) {
@@ -56,11 +55,9 @@ class Pruner(private val context: Context) {
     private fun doesScriptAlreadyExecuted(script: ScriptWithContent, executedChecksums: List<String>): Boolean {
         val skipped = executedChecksums.contains(script.checksum) &&
                 script.tags.intersect(prunerConfig.tagsToPlayAgain).isEmpty()
-        if (context.config.logs.verbose && skipped && !context.config.logs.porcelain) {
-            logger.info {
-                "${script.name} is skipped because it was already executed " +
-                        "and it does not have a tag to play again."
-            }
+        if (skipped) {
+            logger.debug { "${script.name} is skipped because it was already executed " +
+                    "and it does not have a tag to play again." }
         }
         return skipped
     }

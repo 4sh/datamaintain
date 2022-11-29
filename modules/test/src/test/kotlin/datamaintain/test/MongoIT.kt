@@ -143,7 +143,10 @@ class MongoIT : AbstractMongoDbTest() {
 
         // When
         executeUpdateDbWithMongoClientInDocker(
-            arrayOf("--db-type", "mongo"),
+            arrayOf(
+                "--db-type", "mongo",
+                "--db-uri", mongoUri()
+            ),
             arrayOf(
                 "--verbose",
                 "--path", "src/test/resources/integration/override",

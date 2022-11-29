@@ -10,7 +10,7 @@ open class BaseCliTest {
 
     protected val configWrapper = ConfigWrapper()
 
-    private fun runner(config: DatamaintainConfig) {
+    private fun runner(config: DatamaintainConfig, porcelain: Boolean) {
         configWrapper.datamaintainConfig = config
     }
 

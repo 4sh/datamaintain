@@ -9,7 +9,7 @@ data class DatamaintainPrunerConfig @JvmOverloads constructor(
     val tagsToPlayAgain: Set<Tag> = setOf(),
 ) {
     fun log() {
-        tagsToPlayAgain.let { logger.info { "- tags to play again -> $it" } }
+        tagsToPlayAgain.let { logger.debug { "- tags to play again -> $it" } }
     }
 }
 

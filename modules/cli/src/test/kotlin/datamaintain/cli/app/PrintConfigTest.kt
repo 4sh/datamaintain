@@ -19,7 +19,7 @@ internal class PrintConfigTest : BaseCliTest() {
     }
 
     @Test
-    fun `should print config when command is mark-script-as-exectued`() {
+    fun `should print config when command is mark-script-as-executed`() {
         // Given
         val path = "/myPath"
 
@@ -52,8 +52,6 @@ internal class PrintConfigTest : BaseCliTest() {
             get { get(index++).message }.isEqualTo("- allow override executed script -> false")
             get { get(index++).message }.isEqualTo("- script action -> MARK_AS_EXECUTED")
             get { get(index++).message }.isEqualTo("- flags -> []")
-            get { get(index++).message }.isEqualTo("- verbose -> false")
-            get { get(index++).message }.isEqualTo("- porcelain -> false")
         }
     }
 
@@ -94,8 +92,6 @@ internal class PrintConfigTest : BaseCliTest() {
             get { get(index++).message }.isEqualTo("- allow override executed script -> false")
             get { get(index++).message }.isEqualTo("- script action -> MARK_AS_EXECUTED")
             get { get(index++).message }.isEqualTo("- flags -> []")
-            get { get(index++).message }.isEqualTo("- verbose -> false")
-            get { get(index++).message }.isEqualTo("- porcelain -> false")
         }
     }
 
@@ -142,8 +138,6 @@ internal class PrintConfigTest : BaseCliTest() {
             get { get(index++).message }.isEqualTo("- allow override executed script -> false")
             get { get(index++).message }.isEqualTo("- script action -> RUN")
             get { get(index++).message }.isEqualTo("- flags -> []")
-            get { get(index++).message }.isEqualTo("- verbose -> true")
-            get { get(index++).message }.isEqualTo("- porcelain -> true")
         }
     }
 
@@ -192,8 +186,6 @@ internal class PrintConfigTest : BaseCliTest() {
             get { get(index++).message }.isEqualTo("- allow override executed script -> false")
             get { get(index++).message }.isEqualTo("- script action -> RUN")
             get { get(index++).message }.isEqualTo("- flags -> []")
-            get { get(index++).message }.isEqualTo("- verbose -> true")
-            get { get(index++).message }.isEqualTo("- porcelain -> true")
         }
     }
 }

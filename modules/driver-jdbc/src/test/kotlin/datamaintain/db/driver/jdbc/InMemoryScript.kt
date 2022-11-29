@@ -13,7 +13,6 @@ data class InMemoryScript(
     override val identifier: String,
     override val tags: Set<Tag> = setOf(),
     override var action: ScriptAction = DatamaintainExecutorConfig.defaultAction,
-    override val porcelainName: String?
 ) : ScriptWithContent {
 
     override val checksum: String by lazy {
@@ -25,3 +24,4 @@ data class InMemoryScript(
         return BigInteger(1, md.digest(toByteArray())).toString(16).padStart(32, '0')
     }
 }
+

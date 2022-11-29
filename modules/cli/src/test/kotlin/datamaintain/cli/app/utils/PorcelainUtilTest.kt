@@ -1,4 +1,4 @@
-package datamaintain.core.util
+package datamaintain.cli.app.utils
 
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
