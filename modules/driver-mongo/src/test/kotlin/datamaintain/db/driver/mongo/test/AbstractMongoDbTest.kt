@@ -5,7 +5,7 @@ import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoClients
 import com.mongodb.client.MongoCollection
 import com.mongodb.client.MongoDatabase
-import datamaintain.db.driver.mongo.MongoDriver
+import datamaintain.core.db.driver.DriverConfigKey
 import datamaintain.db.driver.mongo.MongoShell
 import org.bson.Document
 import org.junit.jupiter.api.AfterAll
@@ -63,7 +63,7 @@ abstract class AbstractMongoDbTest {
         connectionString = ConnectionString(mongoUri)
         client = MongoClients.create(connectionString)
         database = client.getDatabase(defaultDatabaseName)
-        collection = database.getCollection(MongoDriver.EXECUTED_SCRIPTS_COLLECTION, Document::class.java)
+        collection = database.getCollection(DriverConfigKey.EXECUTED_SCRIPTS_STORAGE_NAME.default!!, Document::class.java)
         cleanDb()
     }
 
