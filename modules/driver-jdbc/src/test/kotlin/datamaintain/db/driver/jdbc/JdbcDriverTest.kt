@@ -25,7 +25,8 @@ internal class JdbcDriverTest {
     private val server: Server = Server.createTcpServer().start()
     private val jdbcUri = "jdbc:h2:mem:test_mem"
     private val connection: Connection = DriverManager.getConnection(jdbcUri)
-    private val jdbcDatamaintainDriver = JdbcDriver(jdbcUri)
+    private val executedScriptsTableName: String = "myExecutedScriptsTableName"
+    private val jdbcDatamaintainDriver = JdbcDriver(jdbcUri, executedScriptsTableName)
 
     @BeforeEach
     fun `create executed scripts table`() {
@@ -34,7 +35,7 @@ internal class JdbcDriverTest {
 
     @AfterEach
     fun `drop table`() {
-        connection.prepareStatement("""DROP TABLE ${JdbcDriver.EXECUTED_SCRIPTS_TABLE}""").execute()
+        connection.prepareStatement("""DROP TABLE $executedScriptsTableName""").execute()
     }
 
     @AfterAll
@@ -45,7 +46,7 @@ internal class JdbcDriverTest {
     @Test
     fun `should list scripts in db`() {
         // Given
-        insertDataInDb()
+        insertDataInDb(executedScriptsTableName)
 
         // When
         val executedScripts = jdbcDatamaintainDriver.listExecutedScripts()
@@ -57,7 +58,7 @@ internal class JdbcDriverTest {
     @Test
     fun `should mark script as executed`() {
         // Given
-        insertDataInDb()
+        insertDataInDb(executedScriptsTableName)
         val script3 = ExecutedScript(
                 "script3.sql",
                 "d3d9446802a44259755d38e6d163e820",
@@ -79,7 +80,7 @@ internal class JdbcDriverTest {
     @Test
     fun `should throw proper exception when mark script as executed failed`() {
         //GIVEN
-        insertDataInDb()
+        insertDataInDb(executedScriptsTableName)
         val script3 = ExecutedScript(
             "script3.sql",
             "d3d9446802a44259755d38e6d163e820",
@@ -93,7 +94,7 @@ internal class JdbcDriverTest {
         val exception = SQLException()
 
         //WHEN
-        val jdbcDatamaintainDriver = JdbcDriver(jdbcUri, spyConnection)
+        val jdbcDatamaintainDriver = JdbcDriver(jdbcUri, executedScriptsTableName, spyConnection)
         every { spyConnection.commit() }.throws(exception)
 
         //THEN
@@ -167,7 +168,7 @@ internal class JdbcDriverTest {
     @Test
     fun `should override script`() {
         // Given
-        insertDataInDb()
+        insertDataInDb(executedScriptsTableName)
         val script3 = script1.copy(checksum = "8747e564eb53cb2f1dcb9aae0779c2aa",
                 executionStatus = ExecutionStatus.OK,
                 action = ScriptAction.OVERRIDE_EXECUTED)
@@ -201,9 +202,9 @@ internal class JdbcDriverTest {
             0
     )
 
-    private fun insertDataInDb() {
+    private fun insertDataInDb(executedScriptsTableName: String) {
         connection.prepareStatement("""
-            INSERT INTO ${JdbcDriver.EXECUTED_SCRIPTS_TABLE} (
+            INSERT INTO $executedScriptsTableName (
                 id, `name`, checksum, identifier, executionStatus, `action`
             ) VALUES 
             ('id1', '${script1.name}', '${script1.checksum}', '${script1.identifier}', '${script1.executionStatus}', '${script1.action}'), 
