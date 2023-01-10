@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -eEuox pipefail
+set -eEuo pipefail
 
 script_dir=$(dirname "$0")
 datamaintain_version=$1
@@ -14,8 +14,19 @@ mongo_6_dockerfile=$script_dir/Dockerfile/mongo/6/Dockerfile  # DockerFile with 
 
 docker_build_datamaintain() {
   image_build="$image:$datamaintain_version-mongo-$2"
+  echo build image "$image_build"
   docker build -t "$image_build" --build-arg MONGO_MAJOR="$2" -f "$1" "$script_dir"/build/distributions/
+  echo
+  echo check "$image_build"
+  docker run --rm -it "$image_build" --help  # Check image startup
+  docker run --rm -it --entrypoint bash "$image_build" --login -i -c "complete -p datamaintain"  # Check bash autocomplete
+  echo
+  echo push "$image_build"
   docker push "$image_build"
+
+  echo "done"
+  echo
+  echo
 }
 
 ./"$script_dir"/../../gradlew clean build -Denv=prod
