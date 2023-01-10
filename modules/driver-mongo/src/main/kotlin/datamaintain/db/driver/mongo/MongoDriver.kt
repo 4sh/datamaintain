@@ -32,8 +32,6 @@ class MongoDriver(mongoUri: String,
     private val jsonParser = KJsonParser()
 
     companion object {
-        const val EXECUTED_SCRIPTS_COLLECTION = "executedScripts"
-
         // This constant was found doing multiple tests on scripts logging too match
         const val OUTPUT_MAX_SIZE = 120000
         const val OUTPUT_TRUNCATED_MESSAGE = "... output was truncated because it was too long"
@@ -87,13 +85,13 @@ class MongoDriver(mongoUri: String,
     }
 
     override fun listExecutedScripts(): Sequence<LightExecutedScript> {
-        val executionOutput: String = executeMongoQuery("db.$EXECUTED_SCRIPTS_COLLECTION.find({}, { \"name\": 1, \"checksum\": 1, \"identifier\": 1}).toArray()")
+        val executionOutput: String = executeMongoQuery("db.$executedScriptsStorageName.find({}, { \"name\": 1, \"checksum\": 1, \"identifier\": 1}).toArray()")
         return if (executionOutput.isNotBlank()) jsonParser.parseArrayOfLightExecutedScripts(executionOutput) else emptySequence()
     }
 
     override fun markAsExecuted(executedScript: ExecutedScript): ExecutedScript {
         val executedScriptBson = jsonParser.serializeExecutedScript(executedScript)
-        executeMongoQuery("db.$EXECUTED_SCRIPTS_COLLECTION.insert($executedScriptBson)")
+        executeMongoQuery("db.$executedScriptsStorageName.insert($executedScriptBson)")
         return executedScript
     }
 
@@ -101,7 +99,7 @@ class MongoDriver(mongoUri: String,
         val set = "\$set";
 
         executeMongoQuery("""
-            db.$EXECUTED_SCRIPTS_COLLECTION.updateOne({
+            db.$executedScriptsStorageName.updateOne({
                   "identifier": "${executedScript.identifier}",
                   "name": "${executedScript.name}"
                 }, {

@@ -1,6 +1,7 @@
 package datamaintain.db.driver.mongo
 
 import com.mongodb.client.model.Filters
+import datamaintain.core.db.driver.DriverConfigKey
 import datamaintain.core.exception.DatamaintainMongoQueryException
 import datamaintain.core.script.FileScript
 import datamaintain.core.step.executor.buildExecutedScript
@@ -18,7 +19,6 @@ import strikt.api.expectCatching
 import strikt.api.expectThat
 import strikt.api.expectThrows
 import strikt.assertions.*
-import java.nio.file.Path
 import java.nio.file.Paths
 
 
@@ -432,13 +432,16 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
                                                   mongoShell: MongoShell,
                                                   printOutput: Boolean = false,
                                                   saveOutput: Boolean = false,
-                                                  clientExecutable: String? = null): MongoDriver {
+                                                  clientExecutable: String? = null,
+                                                  executedScriptsCollection: String = DriverConfigKey.EXECUTED_SCRIPTS_STORAGE_NAME.default!!
+    ): MongoDriver {
         initMongoConnection(tag)
         return buildMongoDriver(
             mongoShell = mongoShell,
             printOutput = printOutput,
             saveOutput = saveOutput,
-            clientExecutable = clientExecutable
+            clientExecutable = clientExecutable,
+            executedScriptsCollectionName = executedScriptsCollection
         )
     }
 
@@ -446,7 +449,9 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
                                  mongoUri: String = this.mongoUri(),
                                  printOutput: Boolean = false,
                                  saveOutput: Boolean = false,
-                                 clientExecutable: String? = null): MongoDriver {
+                                 clientExecutable: String? = null,
+                                 executedScriptsCollectionName: String = DriverConfigKey.EXECUTED_SCRIPTS_STORAGE_NAME.default!!
+    ): MongoDriver {
         val clientExecutable = clientExecutable ?: mongoShell.defaultBinaryName()
 
         return MongoDriver(
@@ -455,7 +460,8 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
             clientExecutable = clientExecutable,
             saveOutput = saveOutput,
             printOutput = printOutput,
-            mongoShell = mongoShell
+            mongoShell = mongoShell,
+            executedScriptsCollectionName = executedScriptsCollectionName
         )
     }
 }
