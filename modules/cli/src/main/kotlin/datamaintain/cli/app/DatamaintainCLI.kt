@@ -67,6 +67,11 @@ class Datamaintain : CliktCommand() {
         defaultValue = MongoConfigKey.DB_MONGO_TMP_PATH.default
     )
 
+    private val executedScriptsStorageName: String? by detailedOption(
+        help = "executed scripts storage (table/collection) name, the executed scripts will be stored in the specified storage",
+        defaultValue = DriverConfigKey.EXECUTED_SCRIPTS_STORAGE_NAME.default
+    )
+
     private val config: Boolean? by option(help = "Print the configuration without executing the subcommand").flag()
 
     private val props by findOrSetObject<Properties> { -> Properties() }
@@ -97,6 +102,7 @@ class Datamaintain : CliktCommand() {
 
         mongoTmpPath?.let { props.put(MongoConfigKey.DB_MONGO_TMP_PATH.key, it) }
         trustUri?.let { props.put(DriverConfigKey.DB_TRUST_URI.key, it.toString()) }
+        executedScriptsStorageName?.let { props.put(DriverConfigKey.EXECUTED_SCRIPTS_STORAGE_NAME.key, it) }
 
         config?.let { props.put(CliSpecificKey.__PRINT_CONFIG_ONLY.key, it.toString()) }
     }

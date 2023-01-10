@@ -161,6 +161,20 @@ internal class DatamaintainTest : BaseCliTest() {
                     .get { mongoTmpPath }.isEqualTo(mongoTmpPath)
         }
 
+        @Test
+        fun `should build configuration with executed scripts storage name`() {
+            // Given
+            val executedScriptsStorageName = "myExecutedScripts"
+            val argv = listOf("--db-type", "mongo", "--db-uri", "mongouri", "--executed-scripts-storage-name", executedScriptsStorageName)
+
+            // When
+            runAppWithUpdateDb(argv)
+
+            // Then
+            expectThat(configWrapper.datamaintainConfig!!.driverConfig)
+                .get { executedScriptsStorageName }.isEqualTo(executedScriptsStorageName)
+        }
+
         @Nested
         inner class TrustUri {
             @Test
