@@ -7,6 +7,7 @@ abstract class DatamaintainDriverConfig(val dbType: String,
                                         open val trustUri: Boolean,
                                         open val printOutput: Boolean = DriverConfigKey.DB_PRINT_OUTPUT.default!!.toBoolean(),
                                         open val saveOutput: Boolean = DriverConfigKey.DB_SAVE_OUTPUT.default!!.toBoolean(),
+                                        open val executedScriptsStorageName: String = DriverConfigKey.EXECUTED_SCRIPTS_STORAGE_NAME.default!!,
                                         private val connectionStringBuilder: ConnectionStringBuilder) {
 
     fun toDriver(): DatamaintainDriver {
@@ -29,5 +30,6 @@ enum class DriverConfigKey(override val key: String,
     DB_URI("db.uri"),
     DB_TRUST_URI("db.trust.uri", "false"),
     DB_PRINT_OUTPUT("db.print.output", "false"),
-    DB_SAVE_OUTPUT("db.save.output", "false")
+    DB_SAVE_OUTPUT("db.save.output", "false"),
+    EXECUTED_SCRIPTS_STORAGE_NAME("db.executed.scripts.storage.name", "executedScripts")
 }
