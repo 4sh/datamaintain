@@ -1,7 +1,5 @@
 FROM ubuntu:xenial
 
-CMD ["bash"]
-
 # Install JRE 8
 RUN apt-get update \
     && apt-get install -y --no-install-recommends curl netbase \
@@ -33,6 +31,11 @@ COPY cli-*.tar /code/datamaintain-cli.tar
 RUN mkdir /code/datamaintain \
     && tar xvf /code/datamaintain-cli.tar --strip-components=1 -C /code/datamaintain \
     && rm /code/datamaintain-cli.tar \
-    && rm /code/datamaintain/bin/cli.bat
+    && rm /code/datamaintain/bin/cli.bat \
+    && rm /code/datamaintain/zsh-autocomplete.sh
 
-ENTRYPOINT ["/code/datamaintain/bin/cli"]
+# Setup autocompletion
+RUN ln -s /code/datamaintain/bin/cli /usr/local/bin/datamaintain
+RUN echo "source /code/datamaintain/bash-autocomplete.sh" >> ~/.bashrc
+
+ENTRYPOINT ["datamaintain"]

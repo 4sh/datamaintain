@@ -28,10 +28,11 @@ COPY cli-*.tar /code/datamaintain-cli.tar
 RUN mkdir /code/datamaintain \
     && tar xvf /code/datamaintain-cli.tar --strip-components=1 -C /code/datamaintain \
     && rm /code/datamaintain-cli.tar \
-    && rm /code/datamaintain/bin/cli.bat
+    && rm /code/datamaintain/bin/cli.bat \
+    && rm /code/datamaintain/zsh-autocomplete.sh
 
 # Setup autocompletion
-RUN echo "source /code/datamaintain/bash-autocomplete.sh" >> ~/.bashrc \
-    && echo "source /code/datamaintain/zsh-autocomplete.sh" >> ~/.zshrc
-RUN alias datamaintain=/code/datamaintain/bin/cli
+RUN ln -s /code/datamaintain/bin/cli /usr/local/bin/datamaintain
+RUN echo "source /code/datamaintain/bash-autocomplete.sh" >> ~/.bashrc
+
 ENTRYPOINT ["datamaintain"]
