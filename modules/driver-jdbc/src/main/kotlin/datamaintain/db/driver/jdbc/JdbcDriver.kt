@@ -35,7 +35,7 @@ class JdbcDriver(jdbcUri: String,
         createExecutedScriptsTableIfNotExists()
 
         val statement = connection.createStatement()
-        val executionOutput: ResultSet = statement.executeQuery("SELECT name, checksum, identifier from $EXECUTED_SCRIPTS_TABLE")
+        val executionOutput: ResultSet = statement.executeQuery("SELECT name, checksum, identifier from $executedScriptsStorageName")
         val executedScript = mutableListOf<LightExecutedScript>()
         while (executionOutput.next()) {
             executedScript.add(executionOutput.toLightExecutedScript())
@@ -45,7 +45,7 @@ class JdbcDriver(jdbcUri: String,
 
     override fun markAsExecuted(executedScript: ExecutedScript): ExecutedScript {
         val insertStmt = connection.prepareStatement("""
-            INSERT INTO $EXECUTED_SCRIPTS_TABLE (id, name, checksum, identifier, executionStatus, action) 
+            INSERT INTO $executedScriptsStorageName (id, name, checksum, identifier, executionStatus, action) 
             VALUES (?, ?, ?, ?, ?, ?)"""
         )
 
@@ -70,7 +70,7 @@ class JdbcDriver(jdbcUri: String,
 
     fun createExecutedScriptsTableIfNotExists() {
         val tableCreationStatement = connection.prepareStatement("""
-            CREATE TABLE IF NOT EXISTS $EXECUTED_SCRIPTS_TABLE (
+            CREATE TABLE IF NOT EXISTS $executedScriptsStorageName (
                 id VARCHAR(255) NOT NULL,
                 name VARCHAR(255) NOT NULL,
                 checksum VARCHAR(255) NOT NULL,
@@ -86,7 +86,7 @@ class JdbcDriver(jdbcUri: String,
 
     override fun overrideScript(executedScript: ExecutedScript): ExecutedScript {
         connection.prepareStatement("""
-            UPDATE $EXECUTED_SCRIPTS_TABLE SET
+            UPDATE $executedScriptsStorageName SET
             action = '${ScriptAction.OVERRIDE_EXECUTED.name}',
             checksum = '${executedScript.checksum}',
             executionStatus = '${ExecutionStatus.OK.name}'
