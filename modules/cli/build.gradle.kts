@@ -36,6 +36,10 @@ tasks.startScripts {
     }
 }
 
+tasks.jar {
+    dependsOn("rebuildAutocompletion")
+}
+
 tasks.installDist {
     dependsOn("generateVersionProperties")
     doLast {
@@ -71,6 +75,7 @@ task("rebuildCliDocumentation", JavaExec::class) {
 task("rebuildAutocompletion", JavaExec::class) {
     main = "datamaintain.cli.completion.RebuildAutoCompletionScriptsKt"
     classpath = sourceSets["main"].runtimeClasspath
+    outputs.upToDateWhen { false }
 }
 
 val generatedVersionDir = "${buildDir}/generated-version"
