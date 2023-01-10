@@ -15,8 +15,17 @@ data class JdbcDriverConfig @JvmOverloads constructor(
     override val uri: String,
     override val trustUri: Boolean,
     override val printOutput: Boolean = DriverConfigKey.DB_PRINT_OUTPUT.default!!.toBoolean(),
-    override val saveOutput: Boolean = DriverConfigKey.DB_SAVE_OUTPUT.default!!.toBoolean()
-) : DatamaintainDriverConfig(DBType.JDBC.toString(), uri, trustUri, printOutput, saveOutput, JdbcConnectionStringBuilder()) {
+    override val saveOutput: Boolean = DriverConfigKey.DB_SAVE_OUTPUT.default!!.toBoolean(),
+    override val executedScriptsStorageName: String = DriverConfigKey.EXECUTED_SCRIPTS_STORAGE_NAME.default!!
+) : DatamaintainDriverConfig(
+    dbType = DBType.JDBC.toString(),
+    uri = uri,
+    trustUri = trustUri,
+    printOutput = printOutput,
+    saveOutput = saveOutput,
+    executedScriptsStorageName = executedScriptsStorageName,
+    connectionStringBuilder = JdbcConnectionStringBuilder()
+) {
     companion object {
         @JvmStatic
         fun buildConfig(props: Properties): JdbcDriverConfig {
@@ -25,19 +34,24 @@ data class JdbcDriverConfig @JvmOverloads constructor(
                 props.getProperty(DriverConfigKey.DB_URI),
                 props.getProperty(DriverConfigKey.DB_TRUST_URI).toBoolean(),
                 props.getProperty(DriverConfigKey.DB_SAVE_OUTPUT).toBoolean(),
-                props.getProperty(DriverConfigKey.DB_TRUST_URI).toBoolean()
+                props.getProperty(DriverConfigKey.DB_TRUST_URI).toBoolean(),
+                props.getProperty(DriverConfigKey.EXECUTED_SCRIPTS_STORAGE_NAME)
             )
         }
     }
 
     constructor(builder: Builder): this(
-        builder.uri,
-        builder.trustUri,
-        builder.printOutput,
-        builder.saveOutput
+        uri = builder.uri,
+        trustUri = builder.trustUri,
+        printOutput = builder.printOutput,
+        saveOutput = builder.saveOutput,
+        executedScriptsStorageName = builder.executedScriptsStorageName
     )
 
-    override fun toDriver(connectionString: String) = JdbcDriver(connectionString)
+    override fun toDriver(connectionString: String) = JdbcDriver(
+        jdbcUri = connectionString,
+        executedScriptsTableName = executedScriptsStorageName
+    )
 
     override fun log() {
         logger.info { "JDBC driver configuration: " }
@@ -60,11 +74,14 @@ data class JdbcDriverConfig @JvmOverloads constructor(
             private set
         var trustUri: Boolean = DriverConfigKey.DB_TRUST_URI.default!!.toBoolean()
             private set
+        var executedScriptsStorageName: String = DriverConfigKey.EXECUTED_SCRIPTS_STORAGE_NAME.default!!
+            private set
 
         fun withUri(uri: String) = apply { this.uri = uri }
         fun withPrintOutput(printOutput: Boolean) = apply { this.printOutput = printOutput }
         fun withSaveOutput(saveOutput: Boolean) = apply { this.saveOutput = saveOutput }
         fun withTrustUri(trustUri: Boolean) = apply { this.trustUri = trustUri }
+        fun withExecutedScriptsStorageName(executedScriptsStorageName: String) = apply { this.executedScriptsStorageName = executedScriptsStorageName }
 
         fun build(): JdbcDriverConfig {
             if (!::uri.isInitialized) {
