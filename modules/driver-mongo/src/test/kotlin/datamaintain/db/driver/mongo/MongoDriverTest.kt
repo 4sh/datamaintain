@@ -229,14 +229,8 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
             printOutput = false,
             saveOutput = true
         )
-        val script3 = ExecutedScript(
-                "script3.js",
-                "d3d9446802a44259755d38e6d163e820",
-                "",
-                ExecutionStatus.OK,
-                ScriptAction.RUN,
-                0,
-                executionOutput = "test"
+        val script3 = buildExecutedScript(
+            executionOutput = "test"
         )
 
         // When
@@ -350,12 +344,8 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
         val mongoDriver: MongoDriver = buildMongoDriver(mongoShell = mongoShell, mongoUri = "mongodb://failUri")
 
         insertDataInDb()
-        val script3 = ExecutedScript(
-            "script3.js",
-            "d3d9446802a44259755d38e6d163e820",
-            "",
-            ExecutionStatus.OK,
-            ScriptAction.MARK_AS_EXECUTED
+        val script3 = buildExecutedScript(
+            action = ScriptAction.MARK_AS_EXECUTED
         )
 
         // When
