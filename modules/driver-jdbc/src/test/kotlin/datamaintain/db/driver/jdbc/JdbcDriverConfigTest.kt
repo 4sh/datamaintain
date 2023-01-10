@@ -31,10 +31,12 @@ internal class JdbcDriverConfigTest {
         val updatedURI = "jdbc://localhost/my-db"
         System.setProperty("db.uri", updatedURI)
         System.setProperty("db.trust.uri", "false")
+        System.setProperty("db.executed.scripts.storage.name", "myStorageName")
 
         expectThat(JdbcDriverConfig.buildConfig(props)).and {
             get { uri }.isEqualTo(updatedURI)
             get { trustUri }.isFalse()
+            get { executedScriptsStorageName } isEqualTo "myStorageName"
         }
     }
 
@@ -47,6 +49,7 @@ internal class JdbcDriverConfigTest {
                 .withSaveOutput(true)
                 .withTrustUri(true)
                 .withPrintOutput(true)
+                .withExecutedScriptsStorageName("myStorageName")
                 .build()
 
             expectThat(config).and {
@@ -54,6 +57,7 @@ internal class JdbcDriverConfigTest {
                 get { saveOutput }.isTrue()
                 get { trustUri }.isTrue()
                 get { printOutput }.isTrue()
+                get { executedScriptsStorageName } isEqualTo "myStorageName"
             }
         }
 
@@ -68,6 +72,7 @@ internal class JdbcDriverConfigTest {
                 get { saveOutput }.isFalse()
                 get { trustUri }.isFalse()
                 get { printOutput }.isFalse()
+                get { executedScriptsStorageName } isEqualTo "executedScripts"
             }
         }
 

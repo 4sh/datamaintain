@@ -18,11 +18,9 @@ import java.util.*
  * connection should be left as default value.
  */
 class JdbcDriver(jdbcUri: String,
-                 private val connection: Connection = DriverManager.getConnection(jdbcUri)) : DatamaintainDriver(jdbcUri) {
-
-    companion object {
-        const val EXECUTED_SCRIPTS_TABLE = "executedScripts"
-    }
+                 executedScriptsTableName: String,
+                 private val connection: Connection = DriverManager.getConnection(jdbcUri)
+) : DatamaintainDriver(jdbcUri, executedScriptsTableName) {
 
     override fun executeScript(script: ScriptWithContent): Execution {
         return try {
