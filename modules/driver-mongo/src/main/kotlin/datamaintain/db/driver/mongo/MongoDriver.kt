@@ -19,12 +19,16 @@ import kotlin.streams.toList
 private val logger = KotlinLogging.logger {}
 
 class MongoDriver(mongoUri: String,
+                  executedScriptsCollectionName: String,
                   private val tmpFilePath: Path,
                   private val clientExecutable: String,
                   private val printOutput: Boolean,
                   private val saveOutput: Boolean,
-                  private val mongoShell: MongoShell
-) : DatamaintainDriver(mongoUri) {
+                  private val mongoShell: MongoShell,
+) : DatamaintainDriver(
+    uri = mongoUri,
+    executedScriptsStorageName = executedScriptsCollectionName
+) {
     private val jsonParser = KJsonParser()
 
     companion object {

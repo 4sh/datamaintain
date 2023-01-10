@@ -15,22 +15,32 @@ import java.util.*
 private val logger = KotlinLogging.logger {}
 
 data class MongoDriverConfig @JvmOverloads constructor(override val uri: String,
+                                                       override val executedScriptsStorageName: String = DriverConfigKey.EXECUTED_SCRIPTS_STORAGE_NAME.default!!,
                                                        override val printOutput: Boolean = DriverConfigKey.DB_PRINT_OUTPUT.default!!.toBoolean(),
                                                        override val saveOutput: Boolean = DriverConfigKey.DB_SAVE_OUTPUT.default!!.toBoolean(),
                                                        override val trustUri: Boolean,
                                                        val tmpFilePath: Path = Paths.get(MongoConfigKey.DB_MONGO_TMP_PATH.default!!),
                                                        val mongoShell: MongoShell = DEFAULT_MONGO_SHELL,
-                                                       var clientExecutable: String = mongoShell.defaultBinaryName()
-) : DatamaintainDriverConfig(DBType.MONGO.toString(), uri, trustUri, printOutput, saveOutput, MongoConnectionStringBuilder()) {
+                                                       var clientExecutable: String = mongoShell.defaultBinaryName(),
+) : DatamaintainDriverConfig(
+    dbType = DBType.MONGO.toString(),
+    uri = uri,
+    trustUri = trustUri,
+    printOutput = printOutput,
+    saveOutput = saveOutput,
+    connectionStringBuilder = MongoConnectionStringBuilder(),
+    executedScriptsStorageName = executedScriptsStorageName
+) {
 
     constructor(builder: Builder): this(
-        builder.uri,
-        builder.printOutput,
-        builder.saveOutput,
-        builder.trustUri,
-        builder.tmpFilePath,
-        builder.mongoShell,
-        builder.clientExecutable?: builder.mongoShell.defaultBinaryName()
+        uri = builder.uri,
+        executedScriptsStorageName = builder.executedScriptsCollectionName,
+        printOutput = builder.printOutput,
+        saveOutput = builder.saveOutput,
+        trustUri = builder.trustUri,
+        tmpFilePath = builder.tmpFilePath,
+        mongoShell = builder.mongoShell,
+        clientExecutable = builder.clientExecutable?: builder.mongoShell.defaultBinaryName(),
     )
 
     companion object {
@@ -54,7 +64,8 @@ data class MongoDriverConfig @JvmOverloads constructor(override val uri: String,
                     trustUri = props.getProperty(DriverConfigKey.DB_TRUST_URI).toBoolean(),
                     tmpFilePath = props.getProperty(MongoConfigKey.DB_MONGO_TMP_PATH).let { Paths.get(it) },
                     clientExecutable = mongoPath,
-                    mongoShell = mongoShell
+                    mongoShell = mongoShell,
+                    executedScriptsStorageName = props.getProperty(DriverConfigKey.EXECUTED_SCRIPTS_STORAGE_NAME)
             )
         }
     }
@@ -63,12 +74,13 @@ data class MongoDriverConfig @JvmOverloads constructor(override val uri: String,
         ensureMongoExecutableIsPresent()
 
         return MongoDriver(
-            connectionString,
-            tmpFilePath,
-            clientExecutable,
-            printOutput,
-            saveOutput,
-            mongoShell
+            mongoUri = connectionString,
+            executedScriptsCollectionName = executedScriptsStorageName,
+            tmpFilePath = tmpFilePath,
+            clientExecutable = clientExecutable,
+            printOutput = printOutput,
+            saveOutput = saveOutput,
+            mongoShell = mongoShell
         )
     }
 
@@ -117,6 +129,7 @@ data class MongoDriverConfig @JvmOverloads constructor(override val uri: String,
         logger.info { "- mongo client -> $clientExecutable" }
         logger.info { "- mongo print output -> $printOutput" }
         logger.info { "- mongo save output -> $saveOutput" }
+        logger.info { "- mongo executed scripts collection name -> $executedScriptsStorageName" }
         logger.info { "" }
     }
 
@@ -138,6 +151,8 @@ data class MongoDriverConfig @JvmOverloads constructor(override val uri: String,
             private set
         var clientExecutable: String? = null
             private set
+        var executedScriptsCollectionName: String = DriverConfigKey.EXECUTED_SCRIPTS_STORAGE_NAME.default!!
+            private set
 
         fun withUri(uri: String) = apply { this.uri = uri }
         fun withPrintOutput(printOutput: Boolean) = apply { this.printOutput = printOutput }
@@ -146,6 +161,7 @@ data class MongoDriverConfig @JvmOverloads constructor(override val uri: String,
         fun withTmpFilePath(tmpFilePath: Path) = apply { this.tmpFilePath = tmpFilePath }
         fun withMongoShell(mongoShell: MongoShell) = apply { this.mongoShell = mongoShell }
         fun withClientExecutable(clientExecutable: String?) = apply { this.clientExecutable = clientExecutable }
+        fun withExecutedScriptsCollectionName(executedScriptsCollectionName: String) = apply { this.executedScriptsCollectionName = executedScriptsCollectionName }
 
         fun build(): MongoDriverConfig {
             if (!::uri.isInitialized) {

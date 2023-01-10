@@ -1,5 +1,6 @@
 package datamaintain.db.driver.mongo
 
+import datamaintain.core.db.driver.DriverConfigKey
 import datamaintain.core.exception.DatamaintainBuilderMandatoryException
 import datamaintain.db.driver.mongo.exception.DatamaintainMongoClientNotFound
 import io.mockk.every
@@ -29,6 +30,7 @@ internal class MongoDriverConfigTest {
             get { tmpFilePath }.isEqualTo(Paths.get("/tmp/test"))
             get { printOutput }.isEqualTo(true)
             get { saveOutput }.isEqualTo(true)
+            get { executedScriptsStorageName }.isEqualTo("myCollectionName")
         }
     }
 
@@ -38,11 +40,14 @@ internal class MongoDriverConfigTest {
         props.load(MongoDriverConfigTest::class.java.getResourceAsStream("/config/default.properties"))
 
         val updatedURI = "mongodb://localhost:27017/newName"
+        val updatedCollectionName = "myCollectionNameFromJvm"
         System.setProperty("db.uri", updatedURI)
+        System.setProperty("db.executed.scripts.storage.name", updatedCollectionName)
 
         expectThat(MongoDriverConfig.buildConfig(props)).and {
             get { uri }.isEqualTo(updatedURI)
             get { tmpFilePath }.isEqualTo(Paths.get("/tmp/test"))
+            get { executedScriptsStorageName }.isEqualTo("myCollectionNameFromJvm")
         }
     }
 
@@ -58,6 +63,7 @@ internal class MongoDriverConfigTest {
                 .withTmpFilePath(Paths.get("/tmpFile"))
                 .withMongoShell(MongoShell.MONGOSH)
                 .withClientExecutable("/clientPath")
+                .withExecutedScriptsCollectionName("myCollectionName")
                 .build()
 
             expectThat(config).and {
@@ -68,6 +74,7 @@ internal class MongoDriverConfigTest {
                 get { tmpFilePath } isEqualTo Paths.get("/tmpFile")
                 get { mongoShell } isEqualTo MongoShell.MONGOSH
                 get { clientExecutable } isEqualTo "/clientPath"
+                get { executedScriptsStorageName } isEqualTo "myCollectionName"
             }
         }
 
@@ -85,6 +92,7 @@ internal class MongoDriverConfigTest {
                 get { tmpFilePath } isEqualTo Paths.get(MongoConfigKey.DB_MONGO_TMP_PATH.default!!)
                 get { mongoShell } isEqualTo MongoShell.MONGO
                 get { clientExecutable } isEqualTo MongoShell.MONGO.defaultBinaryName()
+                get { executedScriptsStorageName } isEqualTo DriverConfigKey.EXECUTED_SCRIPTS_STORAGE_NAME.default!!
             }
         }
 
