@@ -5,7 +5,7 @@ import datamaintain.domain.script.ExecutedScript
 import datamaintain.domain.script.ScriptWithContent
 
 
-class FakeDatamaintainDriver : DatamaintainDriver("") {
+class FakeDatamaintainDriver : DatamaintainDriver("", "") {
     override fun executeScript(script: ScriptWithContent): Execution {
         throw NotImplementedError("FakeDatamaintainDriver executeScript method should not be used")
     }

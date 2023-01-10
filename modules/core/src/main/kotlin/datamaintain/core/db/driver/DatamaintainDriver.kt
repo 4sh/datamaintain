@@ -5,7 +5,8 @@ import datamaintain.domain.script.ExecutedScript
 import datamaintain.domain.script.LightExecutedScript
 import datamaintain.domain.script.ScriptWithContent
 
-abstract class DatamaintainDriver(protected val uri: String) {
+abstract class DatamaintainDriver(protected val uri: String,
+                                  protected val executedScriptsStorageName: String) {
 
     /**
      * Reads the executed scripts from the database and returns them
