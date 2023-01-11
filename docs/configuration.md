@@ -24,12 +24,13 @@
 
 ### Common driver configuration
 
-| Key | Description | Default value | Mandatory? | Values examples |
-|---|---|---|---|---|
-| db.uri | URI to your db server. **Database name is mandatory.**  |  | yes | ```mongodb://localhost/my-db```<br />```mongodb://localhost:8000/my-db```<br />```mongodb://username:password@localhost/my-db```<br />```mongodb+srv://server.example.com/my-db``` <br />```mongodb://my-db,my-db2:27018/my-db``` <br /> |
-| db.trust.uri | Bypass all checks that could be done on your URI because you are very sure of it and think our checks are just liars | ```false``` | no | ```true``` or ```false``` |
-| db.print.output | If true, db output will be logged. | ```false``` | no | ```true``` or ```false``` |
-| db.save.output | If true, db output will be saved in script execution report.  | ```false``` | no | ```true``` or ```false``` |
+| Key             | Description                                                                                                          | Default value     | Mandatory? | Values examples |
+|-----------------|----------------------------------------------------------------------------------------------------------------------|-------------------|---|---|
+| db.uri          | URI to your db server. **Database name is mandatory.**                                                               |                   | yes | ```mongodb://localhost/my-db```<br />```mongodb://localhost:8000/my-db```<br />```mongodb://username:password@localhost/my-db```<br />```mongodb+srv://server.example.com/my-db``` <br />```mongodb://my-db,my-db2:27018/my-db``` <br /> |
+| db.trust.uri    | Bypass all checks that could be done on your URI because you are very sure of it and think our checks are just liars | ```false```       | no | ```true``` or ```false``` |
+| db.print.output | If true, db output will be logged.                                                                                   | ```false```       | no | ```true``` or ```false``` |
+| db.save.output  | If true, db output will be saved in script execution report.                                                         | ```false```       | no | ```true``` or ```false``` |
+| db.executed.scripts.storage.name           | Name of the collection (mongo) or table (SQL) where the executed scripts will be stored                              | ``executedScripts`` | no | ``executedScripts`` |
 
 ### Specific mongodb driver configuration
 
