@@ -27,7 +27,7 @@ data class DatamaintainConfig @JvmOverloads constructor(
     val executor: DatamaintainExecutorConfig = DatamaintainExecutorConfig(),
     val driverConfig: DatamaintainDriverConfig,
     val logs: DatamaintainLogsConfig = DatamaintainLogsConfig(),
-    val datamaintainMonitoringApiUrl: String? = null
+    val monitoringConfiguration: MonitoringConfiguration? = null
 ) {
 
     private constructor(builder: Builder) : this(
@@ -60,7 +60,9 @@ data class DatamaintainConfig @JvmOverloads constructor(
             builder.verbose,
             builder.porcelain,
         ),
-        builder.datamaintainMonitoringApiUrl
+        builder.datamaintainMonitoringApiUrl?.let {
+            MonitoringConfiguration(it)
+        }
     )
 
     companion object {
@@ -92,9 +94,10 @@ data class DatamaintainConfig @JvmOverloads constructor(
                     scanPath,
                     Regex(props.getProperty(SCAN_IDENTIFIER_REGEX)),
                     props.getProperty(CREATE_TAGS_FROM_FOLDER).toBoolean(),
-                    props.getStringPropertiesByPrefix(TAG.key)
-                        .map { TagMatcher.parse(it.first.replace("${TAG.key}.", ""), it.second, scanPath) }
-                        .toSet(),
+
+                props.getStringPropertiesByPrefix(TAG.key)
+                    .map { TagMatcher.parse(it.first.replace("${TAG.key}.", ""), it.second, scanPath) }
+                    .toSet(),
                 ),
                 DatamaintainFilterConfig(
                     extractTags(props.getNullableProperty(TAGS_WHITELISTED)),
@@ -107,17 +110,20 @@ data class DatamaintainConfig @JvmOverloads constructor(
                     extractList(props.getNullableProperty(CHECK_RULES)),
                 ),
                 DatamaintainExecutorConfig(
-                    executionMode,
-                    props.getProperty(PRUNE_OVERRIDE_UPDATED_SCRIPTS).toBoolean(),
+                executionMode,
+                props.getProperty(PRUNE_OVERRIDE_UPDATED_SCRIPTS).toBoolean(),
                     scriptAction,
                     extractList(props.getNullableProperty(FLAGS))
                 ),
                 driverConfig,
-                DatamaintainLogsConfig(
-                    props.getProperty(VERBOSE).toBoolean(),
-                    props.getProperty(PRINT_RELATIVE_PATH_OF_SCRIPT).toBoolean(),
+                DatamaintainLogsConfig(props.getProperty(VERBOSE).toBoolean(),
+                props.getProperty(PRINT_RELATIVE_PATH_OF_SCRIPT).toBoolean(),
                 ),
-                props.getNullableProperty(DATAMAINTAIN_MONITORING_API_URL)
+                props.getNullableProperty(DATAMAINTAIN_MONITORING_API_URL)?.let {
+                    MonitoringConfiguration(
+                        it
+                    )
+                }
             )
         }
 
