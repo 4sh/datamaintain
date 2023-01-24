@@ -37,7 +37,7 @@ class DatamaintainConfigTest {
             get { logs.verbose }.isFalse()
             get { logs.porcelain }.isFalse()
             get { name }.isNull()
-            get { datamaintainMonitoringApiUrl }.isNull()
+            get { monitoringConfiguration }.isNull()
         }
     }
 
@@ -61,7 +61,7 @@ class DatamaintainConfigTest {
             get { executor.executionMode }.isEqualTo(ExecutionMode.NORMAL)
             get { logs.verbose }.isFalse()
             get { logs.porcelain }.isFalse()
-            get { datamaintainMonitoringApiUrl }.isEqualTo("myUrl")
+            get { monitoringConfiguration?.apiUrl }.isEqualTo("myUrl")
         }
 
         System.clearProperty("scan.path")
@@ -146,7 +146,7 @@ class DatamaintainConfigTest {
             get { logs.verbose }.isTrue()
             get { logs.porcelain }.isTrue()
             get { name }.isEqualTo("myDefaultConfig")
-            get { datamaintainMonitoringApiUrl }.isEqualTo("https://datamaintain-monitoring.com")
+            get { monitoringConfiguration?.apiUrl }.isEqualTo("https://datamaintain-monitoring.com")
         }
     }
 
@@ -200,7 +200,7 @@ class DatamaintainConfigTest {
                 )
                 get { checker.rules }.containsExactlyInAnyOrder("checkRules")
                 get { executor.flags }.containsExactlyInAnyOrder("1", "2")
-                get { datamaintainMonitoringApiUrl }.isEqualTo("https://url.com")
+                get { monitoringConfiguration?.apiUrl }.isEqualTo("https://url.com")
             }
         }
 
@@ -227,7 +227,7 @@ class DatamaintainConfigTest {
                 get { scanner.tagsMatchers }.isEmpty()
                 get { checker.rules }.isEmpty()
                 get { executor.flags }.isEmpty()
-                get { datamaintainMonitoringApiUrl }.isNull()
+                get { monitoringConfiguration }.isNull()
             }
         }
 

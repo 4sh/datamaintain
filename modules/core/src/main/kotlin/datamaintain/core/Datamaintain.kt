@@ -57,7 +57,7 @@ class Datamaintain(config: DatamaintainConfig) {
                     checkerData.prunedScripts = prunedScripts.asSequence()
                 }
                 .let { Checker(context).check(checkerData) }
-                .let { scripts -> Executor(context).execute(scripts) }
+                .let { scripts -> Executor(context, reportSender).execute(scripts, executionId) }
                 .also { reportSender?.sendReport(executionId!!, it) }
     }
 
