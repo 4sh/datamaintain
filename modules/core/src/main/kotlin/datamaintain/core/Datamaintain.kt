@@ -8,6 +8,7 @@ import datamaintain.core.step.check.Checker
 import datamaintain.core.step.check.CheckerData
 import datamaintain.core.step.executor.Executor
 import datamaintain.core.step.sort.Sorter
+import datamaintain.domain.report.ExecutionId
 import datamaintain.domain.report.IExecutionWorkflowMessagesSender
 import datamaintain.domain.report.Report
 import datamaintain.monitoring.ExecutionWorkflowMessagesSender
@@ -34,6 +35,7 @@ class Datamaintain(config: DatamaintainConfig) {
 
     fun updateDatabase(): Report {
         val checkerData = CheckerData()
+        val executionId: ExecutionId? = reportSender?.startExecution()
 
         return Scanner(context).scan()
                 .let { scannedScripts ->
@@ -56,7 +58,7 @@ class Datamaintain(config: DatamaintainConfig) {
                 }
                 .let { Checker(context).check(checkerData) }
                 .let { scripts -> Executor(context).execute(scripts) }
-                .also { reportSender?.sendReport(it) }
+                .also { reportSender?.sendReport(executionId!!, it) }
     }
 
     fun listExecutedScripts() = context.dbDriver.listExecutedScripts()
