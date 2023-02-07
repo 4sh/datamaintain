@@ -14,28 +14,28 @@
 ## update-db
 ### Options
 
-| Names                     |Default value|Needs argument|Possible arguments| Description                                                                                                                                   |Examples|
-|---------------------------|---|---|---|-----------------------------------------------------------------------------------------------------------------------------------------------|---|
-| --path                    |./scripts/|✔|TEXT| path to directory containing scripts                                                                                                          |```src/main/resources/scripts/```|
-| --identifier-regex        |(.*)|✔|TEXT| regex to extract identifier part from scripts                                                                                                 |```v(.*)_.*```|
-| --whitelisted-tags        |No default value|✔|TEXT| tags to whitelist (separated by ',')                                                                                                          |```WHITELISTED_TAG1,WHITELISTED_TAG2```|
-| --blacklisted-tags        |No default value|✔|TEXT| tags to blacklist (separated by ',')                                                                                                          |```BLACKLISTED_TAG1,BLACKLISTED_TAG2```|
-| --tags-to-play-again      |No default value|✔|TEXT| tags to play again at each datamaintain execution (separated by ',')                                                                          |```TAG_TO_PLAY_AGAIN1,TAG_TO_PLAY_AGAIN2```|
-| --create-tags-from-folder |false|✘|N/A| create automatically tags from parent folders                                                                                                 ||
-| --execution-mode          |NORMAL|✔|```NORMAL``` or ```DRY```| execution mode                                                                                                                                ||
-| --action                  |RUN|✔|```RUN``` or ```MARK_AS_EXECUTED``` or ```OVERRIDE_EXECUTED```| script action                                                                                                                                 ||
-| --allow-auto-override     |false|✘|N/A| Allow datamaintain to automaticaly override scripts                                                                                           ||
-| --verbose                 |false|✘|N/A| verbose                                                                                                                                       ||
-| -vv                       |false|✘|N/A| verbose level 2                                                                                                                               ||
-| --save-db-output          |false|✘|N/A| save your script and db output                                                                                                                ||
-| --print-db-output         |false|✘|N/A| print your script and db output                                                                                                               ||
-| --tag                     |No default value|✔| | Tag defined using glob path matchers. To define multiple tags, use option multiple times. Syntax example: MYTAG1=[pathMatcher1, pathMatcher2] |```MYTAG1=[pathMatcher1, pathMatcher2]```|
-| --rule                    |No default value|✔|```SameScriptsAsExecutedCheck```| check rule to play. To define multiple rules, use option multiple times.                                                                      ||
-| --mongo-shell             |mongo|✔|```mongo``` or ```mongosh```| mongo binary, can be mongo or mongosh. mongo by default                                                                                       ||
-| --mongo-client|No default value|✔|TEXT|mongo binary path. The path must match --mongo-shell value.|```/path/to/mongo```|
-|--porcelain               |false|✘|N/A| for each executed script, display relative path to scan path                                                                                  ||
-| --flags                   |No default value|✔|TEXT| add a flag on the executed scripts. To define multiple rules, use option multiple times.                                                      ||
-| -h, --help                |No default value|✘|N/A| Display command help and exit                                                                                                                 ||
+|Names|Default value|Needs argument|Possible arguments|Description|Examples|
+|---|---|---|---|---|---|
+|--path|./scripts/|✔|TEXT|path to directory containing scripts|```src/main/resources/scripts/```|
+|--identifier-regex|(.*)|✔|TEXT|regex to extract identifier part from scripts|```v(.*)_.*```|
+|--whitelisted-tags|No default value|✔|TEXT|tags to whitelist (separated by ',')|```WHITELISTED_TAG1,WHITELISTED_TAG2```|
+|--blacklisted-tags|No default value|✔|TEXT|tags to blacklist (separated by ',')|```BLACKLISTED_TAG1,BLACKLISTED_TAG2```|
+|--tags-to-play-again|No default value|✔|TEXT|tags to play again at each datamaintain execution (separated by ',')|```TAG_TO_PLAY_AGAIN1,TAG_TO_PLAY_AGAIN2```|
+|--create-tags-from-folder|false|✘|N/A|create automatically tags from parent folders||
+|--execution-mode|NORMAL|✔|```NORMAL``` or ```DRY```|execution mode||
+|--action|RUN|✔|```RUN``` or ```MARK_AS_EXECUTED``` or ```OVERRIDE_EXECUTED```|script action||
+|--allow-auto-override|false|✘|N/A|Allow datamaintain to automaticaly override scripts||
+|--verbose, -v|false|✘|N/A|verbose||
+|-vv|false|✘|N/A|trace is more verbose than verbose||
+|--save-db-output|false|✘|N/A|save your script and db output||
+|--print-db-output|false|✘|N/A|print your script and db output||
+|--tag|No default value|✔| |Tag defined using glob path matchers. To define multiple tags, use option multiple times. Syntax example: MYTAG1=[pathMatcher1, pathMatcher2]|```MYTAG1=[pathMatcher1, pathMatcher2]```|
+|--rule|No default value|✔|```SameScriptsAsExecutedCheck```|check rule to play. To define multiple rules, use option multiple times.||
+|--mongo-shell|mongo|✔|```mongo``` or ```mongosh```|mongo binary, can be mongo or mongosh. mongo by default||
+|--mongo-client|No default value|✔|TEXT|mongo binary path. The path must match --mongo-shell value.|```/path/to/mongo```|
+|--porcelain|false|✘|N/A|for each executed script, display relative path to scan path||
+|--flags|No default value|✔|TEXT|add a flag on the executed scripts. To define multiple rules, use option multiple times.||
+|-h, --help|No default value|✘|N/A|Display command help and exit||
 ## list
 ### Options
 
@@ -49,5 +49,6 @@
 |Names|Default value|Needs argument|Possible arguments|Description|Examples|
 |---|---|---|---|---|---|
 |--path|./scripts/|✔|TEXT|path to the script you want to mark as executed|```scripts/myScript1.js```|
-|--verbose|false|✘|N/A|verbose||
+|--verbose, -v|false|✘|N/A|verbose||
+|-vv|false|✘|N/A|trace is more verbose than verbose||
 |-h, --help|No default value|✘|N/A|Display command help and exit||
