@@ -24,5 +24,6 @@ dependencies {
     implementation("io.github.4sh.datamaintain-monitoring:api-execution-report:DEV")
     implementation("org.http4k:http4k-core:4.3.4.1")
     implementation("org.http4k:http4k-format-jackson:4.3.4.1")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.12.2")
 }
 

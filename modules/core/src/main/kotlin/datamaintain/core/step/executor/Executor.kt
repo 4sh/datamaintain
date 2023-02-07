@@ -8,31 +8,39 @@ import datamaintain.core.step.Step
 import datamaintain.domain.report.Report
 import datamaintain.domain.script.*
 import datamaintain.core.util.exception.DatamaintainQueryException
+import datamaintain.domain.report.ExecutionId
+import datamaintain.domain.report.IExecutionWorkflowMessagesSender
 import mu.KotlinLogging
 import kotlin.system.measureTimeMillis
 
 private val logger = KotlinLogging.logger {}
 
-class Executor(private val context: Context) {
+class Executor(private val context: Context,
+               private val reportSender: IExecutionWorkflowMessagesSender?
+) {
     private val executorConfig
         get() = context.config.executor
 
-    fun execute(scripts: List<ScriptWithContent>): Report {
+    fun execute(scripts: List<ScriptWithContent>, executionId: ExecutionId?): Report {
         if (!context.config.logs.porcelain) { logger.info { "Executes scripts.." } }
         try {
             for (script in scripts) {
+                if (reportSender != null && executionId != null) {
+                    reportSender.startScriptExecution(executionId, script)
+                }
+
                 val executedScript = when (executorConfig.executionMode) {
                     ExecutionMode.NORMAL -> doAction(script)
                     ExecutionMode.DRY -> simulateAction(script)
                     else -> throw IllegalStateException("Should not be in that case")
                 }
 
-                    context.reportBuilder.addReportExecutedScript(
-                        ReportExecutedScript.from(
-                            executedScript,
-                            scripts.first { it.checksum == executedScript.checksum }.porcelainName
-                        )
+                context.reportBuilder.addReportExecutedScript(
+                    ReportExecutedScript.from(
+                        executedScript,
+                        scripts.first { it.checksum == executedScript.checksum }.porcelainName
                     )
+                )
 
                 if (executedScript.executionStatus == ExecutionStatus.KO) {
                     if (!context.config.logs.porcelain) { logger.info { "" } }
