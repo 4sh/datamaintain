@@ -17,48 +17,51 @@ import java.util.*
 
 private val logger = KotlinLogging.logger {}
 
-data class DatamaintainConfig @JvmOverloads constructor(val name: String? = null,
-                                                        val workingDirectory: Path = Paths.get(System.getProperty("user.dir")),
-                                                        val path: Path = Paths.get(SCAN_PATH.default!!),
-                                                        val identifierRegex: Regex = Regex(SCAN_IDENTIFIER_REGEX.default!!),
-                                                        val doesCreateTagsFromFolder: Boolean = CREATE_TAGS_FROM_FOLDER.default!!.toBoolean(),
-                                                        val whitelistedTags: Set<Tag> = setOf(),
-                                                        val blacklistedTags: Set<Tag> = setOf(),
-                                                        val tagsToPlayAgain: Set<Tag> = setOf(),
-                                                        val overrideExecutedScripts: Boolean = PRUNE_OVERRIDE_UPDATED_SCRIPTS.default!!.toBoolean(),
-                                                        val tagsMatchers: Set<TagMatcher> = setOf(),
-                                                        val checkRules: Sequence<String> = emptySequence(),
-                                                        val executionMode: ExecutionMode = defaultExecutionMode,
-                                                        val defaultScriptAction: ScriptAction = defaultAction,
-                                                        val driverConfig: DatamaintainDriverConfig,
-                                                        val verbose: Boolean = VERBOSE.default!!.toBoolean(),
-                                                        val porcelain: Boolean = PRINT_RELATIVE_PATH_OF_SCRIPT.default!!.toBoolean(),
-                                                        val flags: List<String> = emptyList()) {
+data class DatamaintainConfig @JvmOverloads constructor(
+    val name: String? = null,
+    val workingDirectory: Path = Paths.get(System.getProperty("user.dir")),
+    val scanner: DatamaintainScannerConfig = DatamaintainScannerConfig(),
+    val filter: DatamaintainFilterConfig = DatamaintainFilterConfig(),
+    val pruner: DatamaintainPrunerConfig = DatamaintainPrunerConfig(),
+    val checker: DatamaintainCheckerConfig = DatamaintainCheckerConfig(),
+    val executor: DatamaintainExecutorConfig = DatamaintainExecutorConfig(),
+    val driverConfig: DatamaintainDriverConfig,
+    val logs: DatamaintainLogsConfig = DatamaintainLogsConfig(),
+) {
 
-    private constructor(builder: Builder): this(
+    private constructor(builder: Builder) : this(
         builder.name,
         builder.workingDirectory,
-        builder.path,
-        builder.identifierRegex,
-        builder.doesCreateTagsFromFolder,
-        builder.whitelistedTags,
-        builder.blacklistedTags,
-        builder.tagsToPlayAgain,
-        builder.overrideExecutedScripts,
-        builder.tagsMatchers,
-        builder.checkRules.asSequence(),
-        builder.executionMode,
-        builder.defaultScriptAction,
+        DatamaintainScannerConfig(
+            builder.path,
+            builder.identifierRegex,
+            builder.doesCreateTagsFromFolder,
+            builder.tagsMatchers,
+        ),
+        DatamaintainFilterConfig(
+            builder.whitelistedTags,
+            builder.blacklistedTags,
+        ),
+        DatamaintainPrunerConfig(
+            builder.tagsToPlayAgain,
+        ),
+        DatamaintainCheckerConfig(
+            builder.checkRules.toList(),
+        ),
+        DatamaintainExecutorConfig(
+            builder.executionMode,
+            builder.overrideExecutedScripts,
+            builder.defaultScriptAction,
+            builder.flags
+        ),
         builder.driverConfig,
-        builder.verbose,
-        builder.porcelain,
-        builder.flags
+        DatamaintainLogsConfig(
+            builder.verbose,
+            builder.porcelain,
+        ),
     )
 
     companion object {
-        private val defaultExecutionMode = ExecutionMode.NORMAL
-        public val defaultAction = ScriptAction.RUN
-
         @JvmStatic
         fun buildConfig(configInputStream: InputStream, driverConfig: DatamaintainDriverConfig): DatamaintainConfig {
             val props = Properties()
@@ -74,32 +77,44 @@ data class DatamaintainConfig @JvmOverloads constructor(val name: String? = null
             val workingDirectoryPath = buildWorkingDirectoryPath(props)
             enrichFromParentConfig(workingDirectoryPath, props)
 
-            var executionMode = ExecutionMode.fromNullable(props.getNullableProperty(EXECUTION_MODE), defaultExecutionMode)
+            val executionMode = ExecutionMode.fromNullable(props.getNullableProperty(EXECUTION_MODE), DatamaintainExecutorConfig.defaultExecutionMode)
 
-            val scriptAction = ScriptAction.fromNullable(props.getNullableProperty(DEFAULT_SCRIPT_ACTION), defaultAction)
+            val scriptAction = ScriptAction.fromNullable(props.getNullableProperty(DEFAULT_SCRIPT_ACTION), DatamaintainExecutorConfig.defaultAction)
 
             val scanPath = buildAbsoluteScanPath(workingDirectoryPath, props)
 
             return DatamaintainConfig(
-                    props.getProperty(CONFIG_NAME.key),
-                    workingDirectoryPath,
+                props.getProperty(CONFIG_NAME.key),
+                workingDirectoryPath,
+                DatamaintainScannerConfig(
                     scanPath,
                     Regex(props.getProperty(SCAN_IDENTIFIER_REGEX)),
                     props.getProperty(CREATE_TAGS_FROM_FOLDER).toBoolean(),
+                    props.getStringPropertiesByPrefix(TAG.key)
+                        .map { TagMatcher.parse(it.first.replace("${TAG.key}.", ""), it.second, scanPath) }
+                        .toSet(),
+                ),
+                DatamaintainFilterConfig(
                     extractTags(props.getNullableProperty(TAGS_WHITELISTED)),
                     extractTags(props.getNullableProperty(TAGS_BLACKLISTED)),
+                ),
+                DatamaintainPrunerConfig(
                     extractTags(props.getNullableProperty(PRUNE_TAGS_TO_RUN_AGAIN)),
-                    props.getProperty(PRUNE_OVERRIDE_UPDATED_SCRIPTS).toBoolean(),
-                    props.getStringPropertiesByPrefix(TAG.key)
-                            .map { TagMatcher.parse(it.first.replace("${TAG.key}.", ""), it.second, scanPath) }
-                            .toSet(),
-                    extractSequence(props.getNullableProperty(CHECK_RULES)),
+                ),
+                DatamaintainCheckerConfig(
+                    extractList(props.getNullableProperty(CHECK_RULES)),
+                ),
+                DatamaintainExecutorConfig(
                     executionMode,
+                    props.getProperty(PRUNE_OVERRIDE_UPDATED_SCRIPTS).toBoolean(),
                     scriptAction,
-                    driverConfig,
+                    extractList(props.getNullableProperty(FLAGS))
+                ),
+                driverConfig,
+                DatamaintainLogsConfig(
                     props.getProperty(VERBOSE).toBoolean(),
                     props.getProperty(PRINT_RELATIVE_PATH_OF_SCRIPT).toBoolean(),
-                    extractSequence(props.getNullableProperty(FLAGS)).toList()
+                ),
             )
         }
 
@@ -162,11 +177,11 @@ data class DatamaintainConfig @JvmOverloads constructor(val name: String? = null
                     ?: setOf()
         }
 
-        private fun extractSequence(string: String?): Sequence<String> {
+        private fun extractList(string: String?): List<String> {
             return if (string.isNullOrEmpty()) {
-                sequenceOf()
+                emptyList()
             } else {
-                string.splitToSequence(",")
+                string.splitToSequence(",").toList()
             }
         }
     }
@@ -176,19 +191,12 @@ data class DatamaintainConfig @JvmOverloads constructor(val name: String? = null
 
         workingDirectory.also { logger.info { "- working directory -> $it" } }
         name?.also { logger.info { "- name -> $it" } }
-        path.let { logger.info { "- path -> $it" } }
-        identifierRegex.let { logger.info { "- identifier regex -> ${it.pattern}" } }
-        defaultScriptAction.let { logger.info { "- script action -> ${it}" } }
-        executionMode.let { logger.info { "- execution mode -> $it" } }
-        tagsMatchers.let { logger.info { "- tags -> $tagsMatchers" } }
-        whitelistedTags.let { logger.info { "- whitelisted tags -> $it" } }
-        blacklistedTags.let { logger.info { "- blacklisted tags -> $it" } }
-        tagsToPlayAgain.let { logger.info { "- tags to play again -> $it" } }
-        overrideExecutedScripts.let { logger.info { "- Allow override executed script -> ${it}" } }
-        checkRules.let { logger.info { "- rules -> ${checkRules.toList()}" } }
-        verbose.let { logger.info { "- verbose -> $it" } }
-        porcelain.let { logger.info { "- porcelain -> $it" } }
-        flags.let { logger.info { "- flags -> $it" } }
+        scanner.log()
+        filter.log()
+        pruner.log()
+        checker.log()
+        executor.log()
+        logs.log()
         logger.info { "" }
     }
 
@@ -220,9 +228,9 @@ data class DatamaintainConfig @JvmOverloads constructor(val name: String? = null
             private set
         var checkRules: MutableList<String> = mutableListOf()
             private set
-        var executionMode: ExecutionMode = defaultExecutionMode
+        var executionMode: ExecutionMode = DatamaintainExecutorConfig.defaultExecutionMode
             private set
-        var defaultScriptAction: ScriptAction = defaultAction
+        var defaultScriptAction: ScriptAction = DatamaintainExecutorConfig.defaultAction
             private set
         var verbose: Boolean = VERBOSE.default!!.toBoolean()
             private set

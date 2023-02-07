@@ -31,11 +31,11 @@ class DatamaintainConfigTest {
         val config = DatamaintainConfig.buildConfig(DatamaintainConfigTest::class.java.getResourceAsStream("/config/minimal.properties"),
                 FakeDriverConfig())
         expectThat(config) and {
-            get { identifierRegex.pattern }.isEqualTo(CoreConfigKey.SCAN_IDENTIFIER_REGEX.default)
-            get { doesCreateTagsFromFolder }.isEqualTo(CoreConfigKey.CREATE_TAGS_FROM_FOLDER.default!!.toBoolean())
-            get { executionMode }.isEqualTo(ExecutionMode.NORMAL)
-            get { verbose }.isFalse()
-            get { porcelain }.isFalse()
+            get { scanner.identifierRegex.pattern }.isEqualTo(CoreConfigKey.SCAN_IDENTIFIER_REGEX.default)
+            get { scanner.doesCreateTagsFromFolder }.isEqualTo(CoreConfigKey.CREATE_TAGS_FROM_FOLDER.default!!.toBoolean())
+            get { executor.executionMode }.isEqualTo(ExecutionMode.NORMAL)
+            get { logs.verbose }.isFalse()
+            get { logs.porcelain }.isFalse()
             get { name }.isNull()
         }
     }
@@ -51,14 +51,14 @@ class DatamaintainConfigTest {
         val config = DatamaintainConfig.buildConfig(DatamaintainConfigTest::class.java.getResourceAsStream("/config/default.properties"),
                 FakeDriverConfig())
         expectThat(config).and {
-            get { path }.isEqualTo(Paths.get("/new"))
-            get { identifierRegex.pattern }.isEqualTo("(.*?)_.*")
-            get { doesCreateTagsFromFolder }.isFalse()
-            get { blacklistedTags }.isEqualTo(setOf(Tag("un"), Tag("deux")))
-            get { tagsToPlayAgain }.isEqualTo(setOf(Tag("again")))
-            get { executionMode }.isEqualTo(ExecutionMode.NORMAL)
-            get { verbose }.isFalse()
-            get { porcelain }.isFalse()
+            get { scanner.path }.isEqualTo(Paths.get("/new"))
+            get { scanner.identifierRegex.pattern }.isEqualTo("(.*?)_.*")
+            get { scanner.doesCreateTagsFromFolder }.isFalse()
+            get { filter.blacklistedTags }.isEqualTo(setOf(Tag("un"), Tag("deux")))
+            get { pruner.tagsToPlayAgain }.isEqualTo(setOf(Tag("again")))
+            get { executor.executionMode }.isEqualTo(ExecutionMode.NORMAL)
+            get { logs.verbose }.isFalse()
+            get { logs.porcelain }.isFalse()
         }
 
         System.clearProperty("scan.path")
@@ -76,7 +76,7 @@ class DatamaintainConfigTest {
         val config = DatamaintainConfig.buildConfig(FakeDriverConfig(), properties)
 
         expectThat(config).and {
-            get { path }.isEqualTo(Paths.get(System.getProperty("user.dir"),"scanPath"))
+            get { scanner.path }.isEqualTo(Paths.get(System.getProperty("user.dir"),"scanPath"))
         }
     }
 
@@ -89,7 +89,7 @@ class DatamaintainConfigTest {
         val config = DatamaintainConfig.buildConfig(FakeDriverConfig(), properties)
 
         expectThat(config).and {
-            get { path }.isEqualTo(Paths.get("/var/scanPath"))
+            get { scanner.path }.isEqualTo(Paths.get("/var/scanPath"))
         }
     }
 
@@ -102,7 +102,7 @@ class DatamaintainConfigTest {
         val config = DatamaintainConfig.buildConfig(FakeDriverConfig(), properties)
 
         expectThat(config).and {
-            get { path }.isEqualTo(Paths.get("/tmp/scanPath"))
+            get { scanner.path }.isEqualTo(Paths.get("/tmp/scanPath"))
         }
     }
 
@@ -122,14 +122,14 @@ class DatamaintainConfigTest {
         val expectedPath = Paths.get("/tmp/test")
 
         expectThat(config).and {
-            get { path }.isEqualTo(expectedPath)
-            get { identifierRegex.pattern }.isEqualTo("(.*?)_.*")
-            get { whitelistedTags }.isEqualTo(setOf(Tag("trois"), Tag("quatre")))
-            get { blacklistedTags }.isEqualTo(setOf(Tag("un"), Tag("deux")))
-            get { tagsToPlayAgain }.isEqualTo(setOf(Tag("again")))
-            get { doesCreateTagsFromFolder }.isTrue()
-            get { executionMode }.isEqualTo(ExecutionMode.DRY)
-            get { tagsMatchers }.containsExactlyInAnyOrder(
+            get { scanner.path }.isEqualTo(expectedPath)
+            get { scanner.identifierRegex.pattern }.isEqualTo("(.*?)_.*")
+            get { filter.whitelistedTags }.isEqualTo(setOf(Tag("trois"), Tag("quatre")))
+            get { filter.blacklistedTags }.isEqualTo(setOf(Tag("un"), Tag("deux")))
+            get { pruner.tagsToPlayAgain }.isEqualTo(setOf(Tag("again")))
+            get { scanner.doesCreateTagsFromFolder }.isTrue()
+            get { executor.executionMode }.isEqualTo(ExecutionMode.DRY)
+            get { scanner.tagsMatchers }.containsExactlyInAnyOrder(
                     TagMatcher(Tag("TOTO"), setOf(
                             expectedPath.resolve(Paths.get("src/test/resources/scanner_test_files/01_file1")).toString(),
                             expectedPath.resolve(Paths.get("src/test/resources/scanner_test_files/subfolder/*")).toString()
@@ -139,8 +139,8 @@ class DatamaintainConfigTest {
                             expectedPath.resolve(Paths.get("src/test/resources/scanner_test_files/subfolder/03_file3")).toString()
                     ))
             )
-            get { verbose }.isTrue()
-            get { porcelain }.isTrue()
+            get { logs.verbose }.isTrue()
+            get { logs.porcelain }.isTrue()
             get { name }.isEqualTo("myDefaultConfig")
         }
     }
@@ -177,23 +177,23 @@ class DatamaintainConfigTest {
             expectThat(config).and {
                 get { name } isEqualTo "a name"
                 get { workingDirectory } isEqualTo Paths.get("/working")
-                get { path } isEqualTo Paths.get("/path")
-                get { identifierRegex.pattern } isEqualTo ".*"
-                get { doesCreateTagsFromFolder }.isTrue()
-                get { overrideExecutedScripts }.isTrue()
-                get { executionMode } isEqualTo ExecutionMode.DRY
-                get { defaultScriptAction } isEqualTo ScriptAction.OVERRIDE_EXECUTED
-                get { verbose }.isTrue()
-                get { porcelain }.isTrue()
-                get { whitelistedTags }.containsExactlyInAnyOrder(Tag("whitelisted1"), Tag("whitelisted2"))
-                get { blacklistedTags }.containsExactlyInAnyOrder(Tag("blacklisted1"), Tag("blacklisted2"))
-                get { tagsToPlayAgain }.containsExactlyInAnyOrder(Tag("tagToPlayAgain1"), Tag("tagToPlayAgain2"))
-                get { tagsMatchers }.containsExactlyInAnyOrder(
+                get { scanner.path } isEqualTo Paths.get("/path")
+                get { scanner.identifierRegex.pattern } isEqualTo ".*"
+                get { scanner.doesCreateTagsFromFolder }.isTrue()
+                get { executor.overrideExecutedScripts }.isTrue()
+                get { executor.executionMode } isEqualTo ExecutionMode.DRY
+                get { executor.defaultScriptAction } isEqualTo ScriptAction.OVERRIDE_EXECUTED
+                get { logs.verbose }.isTrue()
+                get { logs.porcelain }.isTrue()
+                get { filter.whitelistedTags }.containsExactlyInAnyOrder(Tag("whitelisted1"), Tag("whitelisted2"))
+                get { filter.blacklistedTags }.containsExactlyInAnyOrder(Tag("blacklisted1"), Tag("blacklisted2"))
+                get { pruner.tagsToPlayAgain }.containsExactlyInAnyOrder(Tag("tagToPlayAgain1"), Tag("tagToPlayAgain2"))
+                get { scanner.tagsMatchers }.containsExactlyInAnyOrder(
                     TagMatcher(Tag("1"), listOf(".*")),
                     TagMatcher(Tag("2"), listOf(".*"))
                 )
-                get { checkRules.toList() }.containsExactlyInAnyOrder("checkRules")
-                get { flags }.containsExactlyInAnyOrder("1", "2")
+                get { checker.rules }.containsExactlyInAnyOrder("checkRules")
+                get { executor.flags }.containsExactlyInAnyOrder("1", "2")
             }
         }
 
@@ -206,20 +206,20 @@ class DatamaintainConfigTest {
             expectThat(config).and {
                 get { name }.isNull()
                 get { workingDirectory } isEqualTo Paths.get(System.getProperty("user.dir"))
-                get { path } isEqualTo Paths.get(CoreConfigKey.SCAN_PATH.default!!)
-                get { identifierRegex.pattern } isEqualTo CoreConfigKey.SCAN_IDENTIFIER_REGEX.default!!
-                get { doesCreateTagsFromFolder } isEqualTo CoreConfigKey.CREATE_TAGS_FROM_FOLDER.default!!.toBoolean()
-                get { overrideExecutedScripts } isEqualTo CoreConfigKey.PRUNE_OVERRIDE_UPDATED_SCRIPTS.default!!.toBoolean()
-                get { executionMode } isEqualTo ExecutionMode.NORMAL
-                get { defaultScriptAction } isEqualTo ScriptAction.RUN
-                get { verbose }.isFalse()
-                get { porcelain }.isFalse()
-                get { whitelistedTags }.isEmpty()
-                get { blacklistedTags }.isEmpty()
-                get { tagsToPlayAgain }.isEmpty()
-                get { tagsMatchers }.isEmpty()
-                get { checkRules.toList() }.isEmpty()
-                get { flags }.isEmpty()
+                get { scanner.path } isEqualTo Paths.get(CoreConfigKey.SCAN_PATH.default!!)
+                get { scanner.identifierRegex.pattern } isEqualTo CoreConfigKey.SCAN_IDENTIFIER_REGEX.default!!
+                get { scanner.doesCreateTagsFromFolder } isEqualTo CoreConfigKey.CREATE_TAGS_FROM_FOLDER.default!!.toBoolean()
+                get { executor.overrideExecutedScripts } isEqualTo CoreConfigKey.PRUNE_OVERRIDE_UPDATED_SCRIPTS.default!!.toBoolean()
+                get { executor.executionMode } isEqualTo ExecutionMode.NORMAL
+                get { executor.defaultScriptAction } isEqualTo ScriptAction.RUN
+                get { logs.verbose }.isFalse()
+                get { logs.porcelain }.isFalse()
+                get { filter.whitelistedTags }.isEmpty()
+                get { filter.blacklistedTags }.isEmpty()
+                get { pruner.tagsToPlayAgain }.isEmpty()
+                get { scanner.tagsMatchers }.isEmpty()
+                get { checker.rules }.isEmpty()
+                get { executor.flags }.isEmpty()
             }
         }
 

@@ -29,7 +29,7 @@ internal class MarkOneScriptAsExecutedTest : BaseCliTest() {
                 runMarkScriptAsExecuted(markScriptAsExecutedArguments)
 
                 // Then
-                expectThat(configWrapper.datamaintainConfig!!.path).isEqualTo(Paths.get(path))
+                expectThat(configWrapper.datamaintainConfig!!.scanner.path).isEqualTo(Paths.get(path))
             }
 
             @Nested
@@ -43,7 +43,7 @@ internal class MarkOneScriptAsExecutedTest : BaseCliTest() {
                     runMarkScriptAsExecuted(markScriptAsExecutedArguments)
 
                     // Then
-                    expectThat(configWrapper.datamaintainConfig!!.verbose).isTrue()
+                    expectThat(configWrapper.datamaintainConfig!!.logs.verbose).isTrue()
                 }
 
                 @Test
@@ -54,7 +54,7 @@ internal class MarkOneScriptAsExecutedTest : BaseCliTest() {
                     runMarkScriptAsExecuted()
 
                     // Then
-                    expectThat(configWrapper.datamaintainConfig!!.verbose).isFalse()
+                    expectThat(configWrapper.datamaintainConfig!!.logs.verbose).isFalse()
                 }
             }
 
@@ -66,7 +66,7 @@ internal class MarkOneScriptAsExecutedTest : BaseCliTest() {
                 runMarkScriptAsExecuted()
 
                 // Then
-                expectThat(configWrapper.datamaintainConfig!!.defaultScriptAction).isEqualTo(ScriptAction.MARK_AS_EXECUTED)
+                expectThat(configWrapper.datamaintainConfig!!.executor.defaultScriptAction).isEqualTo(ScriptAction.MARK_AS_EXECUTED)
             }
         }
     }

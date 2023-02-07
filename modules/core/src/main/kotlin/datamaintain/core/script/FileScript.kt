@@ -2,6 +2,7 @@ package datamaintain.core.script
 
 import java.math.BigInteger
 import datamaintain.core.config.DatamaintainConfig
+import datamaintain.core.config.DatamaintainExecutorConfig
 import datamaintain.core.exception.DatamaintainFileIdentifierPatternException
 import datamaintain.core.util.extractRelativePath
 import java.io.File
@@ -12,7 +13,7 @@ class FileScript @JvmOverloads constructor(
         val path: Path,
         identifierRegex: Regex,
         override val tags: Set<Tag> = setOf(),
-        override var action: ScriptAction = DatamaintainConfig.defaultAction,
+        override var action: ScriptAction = DatamaintainExecutorConfig.defaultAction,
         override val porcelainName: String? = null
 ) : ScriptWithContent {
 
@@ -21,18 +22,18 @@ class FileScript @JvmOverloads constructor(
             val path = scriptFile.toPath()
             return FileScript(
                 path,
-                config.identifierRegex,
+                config.scanner.identifierRegex,
                 tags,
-                config.defaultScriptAction,
+                config.executor.defaultScriptAction,
                 computePorcelainName(config, path)
             )
         }
 
         private fun computePorcelainName(config: DatamaintainConfig, path: Path): String? =
-            if(!config.porcelain) {
+            if(!config.logs.porcelain) {
                 null
             } else {
-                extractRelativePath(config.path, path)
+                extractRelativePath(config.scanner.path, path)
             }
     }
 

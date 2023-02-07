@@ -1,6 +1,6 @@
 package datamaintain.db.driver.mongo
 
-import datamaintain.core.config.DatamaintainConfig
+import datamaintain.core.config.DatamaintainExecutorConfig
 import datamaintain.core.script.ScriptAction
 import datamaintain.core.script.ScriptWithContent
 import datamaintain.core.script.Tag
@@ -12,7 +12,7 @@ data class InMemoryScript(
         override val content: String,
         override val identifier: String,
         override val tags: Set<Tag> = setOf(),
-        override var action: ScriptAction = DatamaintainConfig.defaultAction,
+        override var action: ScriptAction = DatamaintainExecutorConfig.defaultAction,
         override val porcelainName: String = "") : ScriptWithContent {
 
     override val checksum: String by lazy {

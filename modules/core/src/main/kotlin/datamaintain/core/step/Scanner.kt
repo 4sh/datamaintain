@@ -14,28 +14,31 @@ import java.nio.file.Path
 private val logger = KotlinLogging.logger {}
 
 class Scanner(private val context: Context) {
+    private val scannerConfig
+        get() = context.config.scanner
+    
     fun scan(): List<ScriptWithContent> {
         try {
-            val rootFolder: File = context.config.path.toFile()
-            if (!context.config.porcelain) { logger.info { "Scan ${rootFolder.absolutePath}..." } }
+            val rootFolder: File = scannerConfig.path.toFile()
+            if (!context.config.logs.porcelain) { logger.info { "Scan ${rootFolder.absolutePath}..." } }
             val scannedFiles = rootFolder.walk()
                     .filter { it.isFile }
-                    .map { FileScript.from(context.config, buildTags(context.config, rootFolder, it).toSet(), it) }
+                    .map { FileScript.from(context.config, buildTags(rootFolder, it).toSet(), it) }
                     .sortedBy { it.name }
                     .onEach { context.reportBuilder.addScannedScript(it) }
                     .onEach {
-                        if (context.config.verbose && !context.config.porcelain) {
+                        if (context.config.logs.verbose && !context.config.logs.porcelain) {
                             logger.info { "${it.name} is scanned" }
                         }
                     }
                     .toList()
-            if (!context.config.porcelain) { logger.info { "${scannedFiles.size} files scanned" } }
-            context.config.tagsMatchers.onEach { tagMatcher ->
+            if (!context.config.logs.porcelain) { logger.info { "${scannedFiles.size} files scanned" } }
+            scannerConfig.tagsMatchers.onEach { tagMatcher ->
                 if (scannedFiles.none { it.tags.contains(tagMatcher.tag) }) {
-                    if (!context.config.porcelain) { logger.warn {"WARNING: ${tagMatcher.tag} did not match any scripts"} }
+                    if (!context.config.logs.porcelain) { logger.warn {"WARNING: ${tagMatcher.tag} did not match any scripts"} }
                 }
             }
-            if (!context.config.porcelain) {
+            if (!context.config.logs.porcelain) {
                 logger.info { "" }
                 if (scannedFiles.isEmpty()) { logger.warn { "WARNING: No scripts were found" } }
             }
@@ -50,14 +53,14 @@ class Scanner(private val context: Context) {
         }
     }
 
-    private fun buildTags(config: DatamaintainConfig, rootFolder: File, file: File): Set<Tag> {
+    private fun buildTags(rootFolder: File, file: File): Set<Tag> {
         val tags = mutableSetOf<Tag>()
 
-        if (config.doesCreateTagsFromFolder) {
+        if (scannerConfig.doesCreateTagsFromFolder) {
             tags.addAll(buildTagsFromFolder(rootFolder, file))
         }
 
-        tags.addAll(config.tagsMatchers.filter { it.matches(file.toPath()) }.map { it.tag })
+        tags.addAll(scannerConfig.tagsMatchers.filter { it.matches(file.toPath()) }.map { it.tag })
 
         return tags
     }

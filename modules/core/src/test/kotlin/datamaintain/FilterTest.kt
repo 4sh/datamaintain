@@ -2,6 +2,9 @@ package datamaintain
 
 import datamaintain.core.Context
 import datamaintain.core.config.DatamaintainConfig
+import datamaintain.core.config.DatamaintainExecutorConfig
+import datamaintain.core.config.DatamaintainFilterConfig
+import datamaintain.core.config.DatamaintainScannerConfig
 import datamaintain.core.db.driver.DatamaintainDriver
 import datamaintain.core.db.driver.FakeDriverConfig
 import datamaintain.core.script.FileScript
@@ -26,14 +29,21 @@ internal class FilterTest {
         // Given
         val blacklistedTag = Tag("blacklistedTag")
         val context = Context(
-                DatamaintainConfig(
-                        path = Paths.get(""),
-                        identifierRegex = Regex(""),
-                        blacklistedTags = setOf(blacklistedTag),
-                        executionMode = ExecutionMode.NORMAL,
-                        defaultScriptAction = ScriptAction.RUN,
-                        driverConfig = FakeDriverConfig()),
-                dbDriver = dbDriver)
+            DatamaintainConfig(
+                scanner = DatamaintainScannerConfig(
+                    path = Paths.get(""),
+                    identifierRegex = Regex(""),
+                ),
+                filter = DatamaintainFilterConfig(
+                    blacklistedTags = setOf(blacklistedTag)
+                ),
+                executor = DatamaintainExecutorConfig(
+                    executionMode = ExecutionMode.NORMAL,
+                    defaultScriptAction = ScriptAction.RUN,
+                ),
+                driverConfig = FakeDriverConfig()),
+            dbDriver = dbDriver
+        )
 
         val filter = Filter(context)
 
@@ -71,14 +81,22 @@ internal class FilterTest {
         // Given
         val whitelistedTag = Tag("whitelistedTag")
         val context = Context(
-                DatamaintainConfig(
-                        path = Paths.get(""),
-                        identifierRegex = Regex(""),
-                        whitelistedTags = setOf(whitelistedTag),
-                        executionMode = ExecutionMode.NORMAL,
-                        defaultScriptAction = ScriptAction.RUN,
-                        driverConfig = FakeDriverConfig()),
-                dbDriver = dbDriver)
+            DatamaintainConfig(
+                scanner = DatamaintainScannerConfig(
+                    path = Paths.get(""),
+                    identifierRegex = Regex(""),
+                ),
+                filter = DatamaintainFilterConfig(
+                    whitelistedTags = setOf(whitelistedTag)
+                ),
+                executor = DatamaintainExecutorConfig(
+                    executionMode = ExecutionMode.NORMAL,
+                    defaultScriptAction = ScriptAction.RUN,
+                ),
+                driverConfig = FakeDriverConfig()
+            ),
+            dbDriver = dbDriver
+        )
 
         val filter = Filter(context)
 
@@ -122,15 +140,23 @@ internal class FilterTest {
         val blacklistedTags = setOf(blacklistedTag, blackAndWhitelistedTag)
 
         val context = Context(
-                DatamaintainConfig(
-                        path = Paths.get(""),
-                        identifierRegex = Regex(""),
-                        whitelistedTags = whitelistedTags,
-                        blacklistedTags = blacklistedTags,
-                        executionMode = ExecutionMode.NORMAL,
-                        defaultScriptAction = ScriptAction.RUN,
-                        driverConfig = FakeDriverConfig()),
-                dbDriver = dbDriver)
+            DatamaintainConfig(
+                scanner = DatamaintainScannerConfig(
+                    path = Paths.get(""),
+                    identifierRegex = Regex(""),
+                ),
+                filter = DatamaintainFilterConfig(
+                    whitelistedTags = whitelistedTags,
+                    blacklistedTags = blacklistedTags,
+                ),
+                executor = DatamaintainExecutorConfig(
+                    executionMode = ExecutionMode.NORMAL,
+                    defaultScriptAction = ScriptAction.RUN,
+                ),
+                driverConfig = FakeDriverConfig()
+            ),
+            dbDriver = dbDriver
+        )
 
         val filter = Filter(context)
 

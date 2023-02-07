@@ -133,8 +133,10 @@ You can create `Config objects` directly from constructor in pure kotlin:
 ```kotlin
 val driverConfig: DatamaintainDriverConfig = MongoDriverConfig(uri = "mongodb://localhost:27017/datamaintain")
 val config = DatamaintainConfig(
-    path = Paths.get("/scripts"),
-    identifierRegex = "(.*?)_.*",
+    scanner = DatamaintainScannerConfig(
+        path = Paths.get("/scripts"),
+        identifierRegex = "(.*?)_.*",
+    ),
     driverConfig = driverConfig
 )
 ```

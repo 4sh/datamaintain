@@ -1,7 +1,6 @@
 package datamaintain.test
 
-import datamaintain.core.config.CoreConfigKey
-import datamaintain.core.config.DatamaintainConfig
+import datamaintain.core.config.*
 import datamaintain.core.db.driver.DatamaintainDriverConfig
 import datamaintain.core.db.driver.FakeDriverConfig
 import datamaintain.core.script.ScriptAction
@@ -22,23 +21,35 @@ fun buildDatamaintainConfig(
     tagsMatchers: Set<TagMatcher> = setOf(),
     checkRules: Sequence<String> = emptySequence(),
     executionMode: ExecutionMode = ExecutionMode.NORMAL,
-    defaultScriptAction: ScriptAction = DatamaintainConfig.defaultAction,
+    defaultScriptAction: ScriptAction = DatamaintainExecutorConfig.defaultAction,
     driverConfig: DatamaintainDriverConfig = FakeDriverConfig(),
     verbose: Boolean = CoreConfigKey.VERBOSE.default!!.toBoolean(),
     porcelain: Boolean = CoreConfigKey.PRINT_RELATIVE_PATH_OF_SCRIPT.default!!.toBoolean()
 ) = DatamaintainConfig(
-    path = path,
-    identifierRegex = identifierRegex,
-    doesCreateTagsFromFolder = doesCreateTagsFromFolder,
-    whitelistedTags = whitelistedTags,
-    blacklistedTags = blacklistedTags,
-    tagsToPlayAgain = tagsToPlayAgain,
-    overrideExecutedScripts = overrideExecutedScripts,
-    tagsMatchers = tagsMatchers,
-    checkRules = checkRules,
-    executionMode = executionMode,
-    defaultScriptAction = defaultScriptAction,
+    scanner = DatamaintainScannerConfig(
+        path = path,
+        identifierRegex = identifierRegex,
+        doesCreateTagsFromFolder = doesCreateTagsFromFolder,
+        tagsMatchers = tagsMatchers,
+    ),
+    filter = DatamaintainFilterConfig(
+        whitelistedTags = whitelistedTags,
+        blacklistedTags = blacklistedTags,
+    ),
+    pruner = DatamaintainPrunerConfig(
+        tagsToPlayAgain = tagsToPlayAgain
+    ),
+    checker = DatamaintainCheckerConfig(
+        rules = checkRules.toList(),
+    ),
+    executor = DatamaintainExecutorConfig(
+        executionMode = executionMode,
+        defaultScriptAction = defaultScriptAction,
+        overrideExecutedScripts = overrideExecutedScripts
+    ),
     driverConfig = driverConfig,
-    verbose = verbose,
-    porcelain = porcelain
+    logs = DatamaintainLogsConfig(
+        verbose = verbose,
+        porcelain = porcelain
+    )
 )

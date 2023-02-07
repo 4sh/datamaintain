@@ -23,13 +23,16 @@ val allCheckRuleNames: Sequence<String> = sequenceOf(
 )
 
 class Checker(private val context: Context) {
+    private val checkerConfig
+        get() = context.config.checker
+
     fun check(checkedData: CheckerData): List<ScriptWithContent> {
         try {
-            if (!context.config.porcelain) { logger.info { "Check scripts..." } }
+            if (!context.config.logs.porcelain) { logger.info { "Check scripts..." } }
 
             // we want to ensure all rule can be built before to launch the first check,
             // so end the sequence stream by building a list.
-            val rules = context.config.checkRules
+            val rules = checkerConfig.rules
                 .map { buildCheckRule(it) }
                 .toList()
 
@@ -37,7 +40,7 @@ class Checker(private val context: Context) {
             rules.onEach { executeRule(it, checkedData) }
                 .forEach { context.reportBuilder.addValidatedCheckRules(it) }
 
-            if (!context.config.porcelain) {
+            if (!context.config.logs.porcelain) {
                 logger.info { "All check rules were executed!" }
                 logger.info { "" }
             }
@@ -68,7 +71,7 @@ class Checker(private val context: Context) {
     }
 
      private fun executeRule(checkRule: CheckRule, checkerData: CheckerData) {
-         if (!context.config.porcelain) { logger.info { "Execute ${checkRule.getName()}" } }
+         if (!context.config.logs.porcelain) { logger.info { "Execute ${checkRule.getName()}" } }
 
          val scripts = getScriptsFromCheckerDataByType(checkerData, checkRule.scriptType())
 
@@ -84,7 +87,7 @@ class Checker(private val context: Context) {
              }
          }
 
-         if (!context.config.porcelain) { logger.info { "${checkRule.getName()} executed" } }
+         if (!context.config.logs.porcelain) { logger.info { "${checkRule.getName()} executed" } }
      }
 
     private fun getScriptsFromCheckerDataByType(checkerData: CheckerData, scriptType: ScriptType): Sequence<ScriptWithContent> {
