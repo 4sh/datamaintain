@@ -19,15 +19,16 @@ import java.time.ZoneId
 private val logger = KotlinLogging.logger {}
 
 class Datamaintain(config: DatamaintainConfig) {
-    private val reportSender: IExecutionWorkflowMessagesSender?
+    private val reportSender: IExecutionWorkflowMessagesSender? = config.monitoringConfiguration?.let { ExecutionWorkflowMessagesSender(
+        baseUrl = it.apiUrl,
+        clock = Clock.system(ZoneId.systemDefault())
+    ) }
 
     init {
         if (config.logs.verbose && !config.logs.porcelain) {
             config.log()
             config.scanner.log()
         }
-
-        reportSender = ExecutionWorkflowMessagesSender(Clock.system(ZoneId.systemDefault()))
     }
 
     val context = Context(
