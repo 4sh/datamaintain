@@ -70,7 +70,7 @@ internal class UpdateDbTest : BaseCliTest() {
                 runUpdateDb(updateDbArguments)
 
                 // Then
-                expectThat(configWrapper.datamaintainConfig!!.datamaintainMonitoringApiUrl).isEqualTo(datamaintainMonitoringApiUrl)
+                expectThat(configWrapper.datamaintainConfig!!.monitoringConfiguration?.apiUrl).isEqualTo(datamaintainMonitoringApiUrl)
             }
 
             @Nested
