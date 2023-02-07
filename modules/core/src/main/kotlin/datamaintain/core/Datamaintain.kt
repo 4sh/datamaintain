@@ -13,6 +13,8 @@ import datamaintain.domain.report.IExecutionWorkflowMessagesSender
 import datamaintain.domain.report.Report
 import datamaintain.monitoring.ExecutionWorkflowMessagesSender
 import mu.KotlinLogging
+import java.time.Clock
+import java.time.ZoneId
 
 private val logger = KotlinLogging.logger {}
 
@@ -25,7 +27,7 @@ class Datamaintain(config: DatamaintainConfig) {
             config.scanner.log()
         }
 
-        reportSender = ExecutionWorkflowMessagesSender()
+        reportSender = ExecutionWorkflowMessagesSender(Clock.system(ZoneId.systemDefault()))
     }
 
     val context = Context(
