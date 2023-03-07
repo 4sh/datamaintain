@@ -5,6 +5,7 @@ import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.config.MonitoringConfiguration
 import datamaintain.domain.report.ExecutionId
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.mockserver.model.HttpRequest.request
 import org.mockserver.model.HttpResponse.response
@@ -16,21 +17,25 @@ import org.mockserver.model.HttpResponse.response
 class MonitoringSendHttp4KIT: AbstractMonitoringSendWithHttpTest() {
     private val executionId: ExecutionId = 42
 
-    @BeforeEach
-    fun setupStartAnswer() {
-        mockServerClient.`when`(request()
-            .withMethod("POST")
-            .withPath("/public/executions/start"))
-            .respond(response().withBody("{\"executionId\": $executionId}"))
-    }
+    @Nested
+    inner class MonitoringIsReachable {
+        @BeforeEach
+        fun setupStartAnswer() {
+            mockServerClient.`when`(
+                request()
+                    .withMethod("POST")
+                    .withPath("/public/executions/start")
+            ).respond(response().withBody("{\"executionId\": $executionId}"))
+        }
 
-    @Test
-    fun should_send_start_message_to_monitoring() {
-        // When
-        buildDatamaintainWithMonitoringConfiguration().updateDatabase()
+        @Test
+        fun should_send_start_message_to_monitoring() {
+            // When
+            buildDatamaintainWithMonitoringConfiguration().updateDatabase()
 
-        // Then
-        mockServerClient.verify(request().withPath("/public/executions/start"))
+            // Then
+            mockServerClient.verify(request().withPath("/public/executions/start"))
+        }
     }
 
     private fun buildDatamaintainWithMonitoringConfiguration() = Datamaintain(
