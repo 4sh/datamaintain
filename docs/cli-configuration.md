@@ -31,6 +31,7 @@
 |--tag|No default value|✔| |Tag defined using glob path matchers. To define multiple tags, use option multiple times. Syntax example: MYTAG1=[pathMatcher1, pathMatcher2]|```MYTAG1=[pathMatcher1, pathMatcher2]```|
 |--rule|No default value|✔|```SameScriptsAsExecutedCheck```|check rule to play. To define multiple rules, use option multiple times.||
 |--mongo-shell|mongo|✔|```mongo``` or ```mongosh```|mongo binary, can be mongo or mongosh. mongo by default||
+|--mongo-client|No default value|✔|TEXT|mongo binary path. The path must match --mongo-shell value.|```/path/to/mongo```|
 |--porcelain|false|✘|N/A|for each executed script, display relative path to scan path||
 |--flags|No default value|✔|TEXT|add a flag on the executed scripts. To define multiple rules, use option multiple times.||
 |-h, --help|No default value|✘|N/A|Display command help and exit||
@@ -39,6 +40,7 @@
 
 |Names|Default value|Needs argument|Possible arguments|Description|Examples|
 |---|---|---|---|---|---|
+|--mongo-client|No default value|✔|TEXT|mongo binary path. The path must match --mongo-shell value.|```/path/to/mongo```|
 |-h, --help|No default value|✘|N/A|Display command help and exit||
 ## mark-script-as-executed
 ### Options
