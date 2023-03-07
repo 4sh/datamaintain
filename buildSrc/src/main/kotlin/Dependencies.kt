@@ -20,9 +20,6 @@ fun Project.baseProject() {
         "testRuntimeOnly"("org.junit.jupiter:junit-jupiter-engine:${Versions.junit}")
         "testImplementation"("io.strikt:strikt-core:${ Versions.strikt }")
         "testImplementation"("io.mockk:mockk:${ Versions.mockk }")
-        "testImplementation"("org.testcontainers:testcontainers:${Versions.testcontainers}")
-        "testImplementation"("org.testcontainers:junit-jupiter:${Versions.testcontainers}")
-        "testImplementation"("org.testcontainers:mongodb:${Versions.testcontainers}")
     }
 
     tasks.getByPath("test").doFirst({
