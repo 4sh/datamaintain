@@ -6,25 +6,29 @@ import strikt.api.expectThat
 import strikt.assertions.*
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
+import java.nio.file.Paths
 
 class MongoIT : AbstractMongoDbTest() {
+    private val mongoCliDockerPath = javaClass.classLoader.getResource("mongo-cli/mongo_cli.sh")
+        ?.file
+        ?.let { Paths.get(it) }
+        ?: error("Cannot find resources mongo-cli")
 
     @Test
     fun `should execute`() {
         // Given
-        val args = arrayOf(
-                "--db-type", "mongo",
-                "--db-uri", mongoUri(),
-                "update-db",
+
+        // When
+        executeUpdateDbWithMongoClientInDocker(
+            arrayOf("--db-type", "mongo"),
+            arrayOf(
                 "--verbose",
                 "--path", "src/test/resources/integration/ok",
                 "--identifier-regex", "(.*?)_.*",
                 "--print-db-output",
                 "--save-db-output"
+            )
         )
-
-        // When
-        main(args)
 
         // Then
         val coll = database().getCollection("simple")
@@ -41,30 +45,27 @@ class MongoIT : AbstractMongoDbTest() {
     @Test
     fun `should partial execute`() {
         // Given
-        main(arrayOf(
-                "--db-type", "mongo",
-                "--db-uri", mongoUri(),
-                "update-db",
+        executeUpdateDbWithMongoClientInDocker(
+            arrayOf("--db-type", "mongo"),
+            arrayOf(
                 "--verbose",
                 "--path", "src/test/resources/integration/partial",
                 "--identifier-regex", "(.*?)_.*"
-
-        ))
+            )
+        )
 
         expectThat(database().getCollection("simple").countDocuments()).isEqualTo(2)
         expectThat(collection().countDocuments()).isEqualTo(2)
 
-        val args = arrayOf(
-                "--db-type", "mongo",
-                "--db-uri", mongoUri(),
-                "update-db",
+        // When
+        executeUpdateDbWithMongoClientInDocker(
+            arrayOf("--db-type", "mongo"),
+            arrayOf(
                 "--verbose",
                 "--path", "src/test/resources/integration/ok",
                 "--identifier-regex", "(.*?)_.*"
+            )
         )
-
-        // When
-        main(args)
 
         // Then
         expectThat(database().getCollection("simple").countDocuments()).isEqualTo(3)
@@ -80,17 +81,16 @@ class MongoIT : AbstractMongoDbTest() {
     @Test
     fun `should dry run`() {
         // Given
-        val args = arrayOf(
-                "--db-type", "mongo",
-                "--db-uri", mongoUri(),
-                "update-db",
+
+        // When
+        executeUpdateDbWithMongoClientInDocker(
+            arrayOf("--db-type", "mongo"),
+            arrayOf(
                 "--path", "src/test/resources/integration/ok",
                 "--identifier-regex", "(.*?)_.*",
                 "--execution-mode", "DRY"
+            )
         )
-
-        // When
-        main(args)
 
         // Then
         expectThat(database().getCollection("simple").countDocuments()).isEqualTo(0)
@@ -101,19 +101,18 @@ class MongoIT : AbstractMongoDbTest() {
     @Test
     fun `should force mark as executed`() {
         // Given
-        val args = arrayOf(
-                "--db-type", "mongo",
-                "--db-uri", mongoUri(),
-                "update-db",
+
+        // When
+        executeUpdateDbWithMongoClientInDocker(
+            arrayOf("--db-type", "mongo"),
+            arrayOf(
                 "--verbose",
                 "--path", "src/test/resources/integration/ok",
                 "--identifier-regex", "(.*?)_.*",
                 "--execution-mode", "NORMAL",
                 "--action", "MARK_AS_EXECUTED"
+            )
         )
-
-        // When
-        main(args)
 
         // Then
         expectThat(database().getCollection("simple").countDocuments()).isEqualTo(0)
@@ -130,32 +129,29 @@ class MongoIT : AbstractMongoDbTest() {
     @Test
     fun `should override`() {
         // Given
-        main(arrayOf(
-                "--db-type", "mongo",
-                "--db-uri", mongoUri(),
-                "update-db",
+        executeUpdateDbWithMongoClientInDocker(
+            arrayOf("--db-type", "mongo"),
+            arrayOf(
                 "--verbose",
                 "--path", "src/test/resources/integration/partial",
                 "--identifier-regex", "(.*?)_.*"
-
-        ))
+            )
+        )
 
         expectThat(database().getCollection("simple").countDocuments()).isEqualTo(2)
         expectThat(collection().countDocuments()).isEqualTo(2)
 
-        val args = arrayOf(
-                "--db-type", "mongo",
-                "--db-uri", mongoUri(),
-                "update-db",
+        // When
+        executeUpdateDbWithMongoClientInDocker(
+            arrayOf("--db-type", "mongo"),
+            arrayOf(
                 "--verbose",
                 "--path", "src/test/resources/integration/override",
                 "--identifier-regex", "(.*?)_.*",
                 "--execution-mode", "NORMAL",
                 "--allow-auto-override"
+            )
         )
-
-        // When
-        main(args)
 
         // Then
         expectThat(listExecutedFiles())
@@ -168,10 +164,13 @@ class MongoIT : AbstractMongoDbTest() {
     @Test
     fun `should fail with invalid script`() {
         // Given
+        val mongoUri = this.mongoUri().replace("localhost", "host.docker.internal")
+
         val args = listOf(
                 "--db-type", "mongo",
-                "--db-uri", mongoUri(),
+                "--db-uri", mongoUri,
                 "update-db",
+                "--mongo-client", mongoCliDockerPath.toString(),
                 "--verbose",
                 "--path", "src/test/resources/integration/ko",
                 "--identifier-regex", "(.*?)_.*"
@@ -198,16 +197,28 @@ class MongoIT : AbstractMongoDbTest() {
                 .containsExactly("01_file.js")
     }
 
+    private fun executeUpdateDbWithMongoClientInDocker(datamaintainArgs: Array<String>, updateArgs: Array<String>) {
+        // mongo in test container must be call with the host host.docker.internal (over localhost)
+        val mongoUri = this.mongoUri().replace("localhost", "host.docker.internal")
+        val args = datamaintainArgs +
+                arrayOf("--db-uri", mongoUri, "update-db", "--mongo-client", mongoCliDockerPath.toString()) +
+                updateArgs
+
+        main(args)
+    }
+
     private fun listExecutedFiles(): List<String> {
         val out = System.out
         val baos = ByteArrayOutputStream()
         val ps = PrintStream(baos)
         System.setOut(ps)
 
+        val mongoUri = this.mongoUri().replace("localhost", "host.docker.internal")
         main(arrayOf(
                 "--db-type", "mongo",
-                "--db-uri", mongoUri(),
-                "list"
+                "--db-uri", mongoUri,
+                "list",
+                "--mongo-client", mongoCliDockerPath.toString()
         ))
 
         System.setOut(out)

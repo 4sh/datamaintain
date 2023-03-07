@@ -8,6 +8,7 @@ import datamaintain.db.driver.mongo.mapping.toExecutedScriptDb
 import datamaintain.db.driver.mongo.spi.SPI_JSON_MAPPER
 import datamaintain.db.driver.mongo.test.AbstractMongoDbTest
 import org.bson.Document
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import strikt.api.expectCatching
@@ -16,14 +17,30 @@ import strikt.api.expectThrows
 import strikt.assertions.*
 import java.nio.file.Path
 import java.nio.file.Paths
+import kotlin.io.path.*
 
 
 internal class MongoDriverTest : AbstractMongoDbTest() {
+    private val mongoCliDockerFolderPath = javaClass.classLoader.getResource("mongo-cli")
+        ?.file
+        ?.let { Paths.get(it) }
+        ?: error("Cannot find resources mongo-cli")
+
+    // search project path
+    private val tmpFilePath = Path.of("/")
+        .resolve(mongoCliDockerFolderPath.subpath(0, mongoCliDockerFolderPath.indexOfLast { it.name == "datamaintain" } + 1))
+        .resolve("datamaintain.tmp")
+
+    @AfterEach
+    fun afterEach() {
+        tmpFilePath.deleteIfExists()
+    }
+
     @ParameterizedTest
     @MethodSource("provideMongoVersions")
     fun `should list scripts in db`(tag: String, mongoShell: MongoShell) {
         // Given
-        val mongoDriver: MongoDriver = initMongoConnectionAndBuildDriver(tag, mongoShell)
+        val mongoDriver: MongoDriver = initMongoConnectionAndBuildDriverWithMongoClientInDocker(tag, mongoShell)
         insertDataInDb()
 
         // When
@@ -40,7 +57,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
     @MethodSource("provideMongoVersions")
     fun `should mark script as executed`(tag: String, mongoShell: MongoShell) {
         // Given
-        val mongoDriver: MongoDriver = initMongoConnectionAndBuildDriver(tag, mongoShell)
+        val mongoDriver: MongoDriver = initMongoConnectionAndBuildDriverWithMongoClientInDocker(tag, mongoShell)
         insertDataInDb()
         val script3 = ExecutedScript(
                 "script3.js",
@@ -90,7 +107,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
     @MethodSource("provideMongoVersions")
     fun `should override script`(tag: String, mongoShell: MongoShell) {
         // Given
-        val mongoDriver: MongoDriver = initMongoConnectionAndBuildDriver(tag, mongoShell)
+        val mongoDriver: MongoDriver = initMongoConnectionAndBuildDriverWithMongoClientInDocker(tag, mongoShell)
         insertDataInDb()
         val script3 = ExecutedScript(
                 "script1.js",
@@ -131,7 +148,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
     @MethodSource("provideMongoVersions")
     fun `should mark script as executed with flags`(tag: String, mongoShell: MongoShell) {
         // Given
-        val mongoDriver: MongoDriver = initMongoConnectionAndBuildDriver(tag, mongoShell)
+        val mongoDriver: MongoDriver = initMongoConnectionAndBuildDriverWithMongoClientInDocker(tag, mongoShell)
         insertDataInDb()
         val script3 = ExecutedScript(
             "script3.js",
@@ -166,7 +183,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
     @MethodSource("provideMongoVersions")
     fun `should execute correct file script`(tag: String, mongoShell: MongoShell) {
         // Given
-        val mongoDriver: MongoDriver = initMongoConnectionAndBuildDriver(tag, mongoShell)
+        val mongoDriver: MongoDriver = initMongoConnectionAndBuildDriverWithMongoClientInDocker(tag, mongoShell)
         database().getCollection("simple").drop()
         val fileScript = FileScript(
                 Paths.get("src/test/resources/executor_test_files/mongo/mongo_simple_insert.js"),
@@ -196,7 +213,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
     @MethodSource("provideMongoVersions")
     fun `should print output`(tag: String, mongoShell: MongoShell) {
         // Given
-        val mongoDriver: MongoDriver = initMongoConnectionAndBuildDriver(tag,
+        val mongoDriver: MongoDriver = initMongoConnectionAndBuildDriverWithMongoClientInDocker(tag,
             mongoShell,
             printOutput = true,
             saveOutput = true
@@ -220,7 +237,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
     @MethodSource("provideMongoVersions")
     fun `should save output`(tag: String, mongoShell: MongoShell) {
         // Given
-        val mongoDriver: MongoDriver = initMongoConnectionAndBuildDriver(tag,
+        val mongoDriver: MongoDriver = initMongoConnectionAndBuildDriverWithMongoClientInDocker(tag,
             mongoShell,
             printOutput = false,
             saveOutput = true
@@ -255,7 +272,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
     @MethodSource("provideMongoVersions")
     fun `should execute correct in memory script`(tag: String, mongoShell: MongoShell) {
         // Given
-        val mongoDriver: MongoDriver = initMongoConnectionAndBuildDriver(tag, mongoShell)
+        val mongoDriver: MongoDriver = initMongoConnectionAndBuildDriverWithMongoClientInDocker(tag, mongoShell)
         database().getCollection("simple").drop()
         val content = Paths.get("src/test/resources/executor_test_files/mongo/mongo_simple_insert.js").toFile().readText()
         val inMemoryScript = InMemoryScript("test", content, "")
@@ -283,7 +300,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
     @MethodSource("provideMongoVersions")
     fun `should execute incorrect file script`(tag: String, mongoShell: MongoShell) {
         // Given
-        val mongoDriver: MongoDriver = initMongoConnectionAndBuildDriver(tag, mongoShell)
+        val mongoDriver: MongoDriver = initMongoConnectionAndBuildDriverWithMongoClientInDocker(tag, mongoShell)
         database().getCollection("simple").drop()
         val fileScript = FileScript(Paths.get("src/test/resources/executor_test_files/mongo/mongo_error_insert.js"), Regex("(.*)"))
 
@@ -305,7 +322,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
     @MethodSource("provideMongoVersions")
     fun `should truncate execution output when it is too big`(tag: String, mongoShell: MongoShell) {
         // Given
-        val mongoDriver: MongoDriver = initMongoConnectionAndBuildDriver(tag, mongoShell, saveOutput = true)
+        val mongoDriver: MongoDriver = initMongoConnectionAndBuildDriverWithMongoClientInDocker(tag, mongoShell, saveOutput = true)
         val fileScript = FileScript(Paths.get("src/test/resources/executor_test_files/mongo/mongo_print_too_many_logs.js"),
                 Regex("(.*)"))
 
@@ -326,7 +343,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
     fun `should not throw exception when inserting in database() execution of a scripts that logs too much`(tag: String,
                                                                                                             mongoShell: MongoShell) {
         // Given
-        val mongoDriver: MongoDriver = initMongoConnectionAndBuildDriver(tag, mongoShell, saveOutput = true)
+        val mongoDriver: MongoDriver = initMongoConnectionAndBuildDriverWithMongoClientInDocker(tag, mongoShell, saveOutput = true)
         val fileScript = FileScript(Paths.get("src/test/resources/executor_test_files/mongo/mongo_print_too_many_logs.js"),
                 Regex("(.*)"))
 
@@ -342,8 +359,11 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
     @MethodSource("provideMongoVersions")
     fun `should throw proper exception when mark script as executed failed`(tag: String, mongoShell: MongoShell) {
         // Given
-        initMongoConnection(tag)
-        val mongoDriver: MongoDriver = buildMongoDriver(mongoShell = mongoShell, mongoUri = "mongodb://failUri")
+        val mongoDriver: MongoDriver = initMongoConnectionAndBuildDriverWithMongoClientInDocker(
+            tag,
+            mongoShell,
+            customMongoUri = "mongodb://failUri"
+        )
 
         insertDataInDb()
         val script3 = ExecutedScript(
@@ -434,29 +454,42 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
             ScriptAction.RUN
     )
 
-    private fun initMongoConnectionAndBuildDriver(tag: String,
-                                                  mongoShell: MongoShell,
-                                                  printOutput: Boolean = false,
-                                                  saveOutput: Boolean = false,
-                                                  clientPath: Path? = null): MongoDriver {
+    private fun initMongoConnectionAndBuildDriverWithMongoClientInDocker(tag: String,
+                                                                         mongoShell: MongoShell,
+                                                                         printOutput: Boolean = false,
+                                                                         saveOutput: Boolean = false,
+                                                                         customMongoUri: String? = null): MongoDriver {
         initMongoConnection(tag)
+
+        // use a shell script as cli, datamaintain will use a client in docker container with this
+        val mongoVersion = tag.replace(':', '_').replace(".", "_")
+        val mongoCliFileName = "${mongoVersion}_cli_${mongoShell.name.lowercase()}.sh"
+        val mongoCliPath = mongoCliDockerFolderPath.resolve(mongoCliFileName)
+
+        // mongo in test container must be call with the host host.docker.internal (over localhost)
+        val mongoUri = customMongoUri ?: this.mongoUri().replace("localhost", "host.docker.internal")
+
         return buildMongoDriver(
             mongoShell = mongoShell,
+            mongoUri = mongoUri,
             printOutput =  printOutput,
             saveOutput =  saveOutput,
-            clientPath =  clientPath)
+            clientPath = mongoCliPath,
+            tmpFilePath = tmpFilePath)
     }
 
     private fun buildMongoDriver(mongoShell: MongoShell,
                                  mongoUri: String = this.mongoUri(),
                                  printOutput: Boolean = false,
                                  saveOutput: Boolean = false,
-                                 clientPath: Path? = null): MongoDriver {
+                                 clientPath: Path? = null,
+                                 tmpFilePath: Path = Paths.get(MongoConfigKey.DB_MONGO_TMP_PATH.default!!)
+    ): MongoDriver {
         val mongoClientPath = clientPath ?: Paths.get(mongoShell.defaultBinaryName())
 
         return MongoDriver(
             mongoUri = mongoUri,
-            tmpFilePath = Paths.get(MongoConfigKey.DB_MONGO_TMP_PATH.default!!),
+            tmpFilePath = tmpFilePath,
             clientPath = mongoClientPath,
             saveOutput = saveOutput,
             printOutput = printOutput,

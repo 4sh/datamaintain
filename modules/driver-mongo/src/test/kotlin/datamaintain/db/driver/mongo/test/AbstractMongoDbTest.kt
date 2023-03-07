@@ -70,7 +70,7 @@ abstract class AbstractMongoDbTest {
     companion object {
         // List of supported mongo version
         private val mongoVersionSpecs = listOf(
-            MongoVersionSpec("mongo:4.0"),
+            MongoVersionSpec("mongo:4.0", mongoSh = false),
             MongoVersionSpec("mongo:4.2"),
             MongoVersionSpec("mongo:4.4"),
             MongoVersionSpec("mongo:5.0")
