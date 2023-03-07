@@ -61,7 +61,11 @@ class Datamaintain(config: DatamaintainConfig) {
                 }
                 .let { Checker(context).check(checkerData) }
                 .let { scripts -> Executor(context, reportSender).execute(scripts, executionId) }
-                .also { reportSender?.sendReport(executionId!!, it) }
+                .also {
+                    if (executionId != null) {
+                        reportSender?.sendReport(executionId, it)
+                    }
+                }
     }
 
     fun listExecutedScripts() = context.dbDriver.listExecutedScripts()

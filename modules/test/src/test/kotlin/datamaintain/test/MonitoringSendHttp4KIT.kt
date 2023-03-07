@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.mockserver.model.HttpRequest.request
 import org.mockserver.model.HttpResponse.response
+import strikt.api.expectCatching
+import strikt.assertions.isSuccess
 
 /**
  * When monitoring configuration is given an url for monitoring, Executor should send information about
@@ -16,6 +18,15 @@ import org.mockserver.model.HttpResponse.response
  */
 class MonitoringSendHttp4KIT: AbstractMonitoringSendWithHttpTest() {
     private val executionId: ExecutionId = 42
+
+    @Nested
+    inner class MonitoringIsUnreachable {
+        @Test
+        fun should_pursue_execution_when_start_does_not_answer() {
+            expectCatching { buildDatamaintainWithMonitoringConfiguration().updateDatabase() }
+                .isSuccess()
+        }
+    }
 
     @Nested
     inner class MonitoringIsReachable {
