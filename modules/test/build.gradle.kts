@@ -14,4 +14,6 @@ dependencies {
     "testImplementation"("org.testcontainers:testcontainers:${Versions.testcontainers}")
     "testImplementation"("org.testcontainers:junit-jupiter:${Versions.testcontainers}")
     "testImplementation"("org.testcontainers:mongodb:${Versions.testcontainers}")
+    "testImplementation"("org.testcontainers:mockserver:${Versions.testcontainers}")
+    "testImplementation"("org.mock-server:mockserver-client-java:5.15.0")
 }

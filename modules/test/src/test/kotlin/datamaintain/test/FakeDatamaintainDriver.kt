@@ -1,5 +1,6 @@
-package datamaintain.core.db.driver
+package datamaintain.test
 
+import datamaintain.core.db.driver.DatamaintainDriver
 import datamaintain.core.step.executor.Execution
 import datamaintain.domain.script.ExecutedScript
 import datamaintain.domain.script.ScriptWithContent
@@ -13,9 +14,7 @@ class FakeDatamaintainDriver : DatamaintainDriver("") {
         throw NotImplementedError("FakeDatamaintainDriver executeScript method should not be used")
     }
 
-    override fun listExecutedScripts(): Sequence<ExecutedScript> {
-        throw NotImplementedError("FakeDatamaintainDriver listExecutedScripts method should not be used")
-    }
+    override fun listExecutedScripts(): Sequence<ExecutedScript> = sequenceOf()
 
     override fun markAsExecuted(executedScript: ExecutedScript): ExecutedScript {
         throw NotImplementedError("FakeDatamaintainDriver markAsExecuted method should not be used")
