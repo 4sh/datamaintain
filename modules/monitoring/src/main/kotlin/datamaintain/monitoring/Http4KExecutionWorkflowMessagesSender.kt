@@ -15,7 +15,7 @@ import org.http4k.format.Jackson.auto
 import java.time.Clock
 import java.time.Instant
 
-class ExecutionWorkflowMessagesSender(baseUrl: String, private val clock: Clock) : IExecutionWorkflowMessagesSender {
+class Http4KExecutionWorkflowMessagesSender(baseUrl: String, private val clock: Clock) : IExecutionWorkflowMessagesSender {
     private val httpClient = Java8HttpClient()
     private val executionApiBaseUrl = "$baseUrl/public/executions"
 
