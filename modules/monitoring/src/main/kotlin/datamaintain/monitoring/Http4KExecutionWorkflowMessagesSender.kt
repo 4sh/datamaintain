@@ -11,6 +11,7 @@ import org.http4k.client.Java8HttpClient
 import org.http4k.core.Body
 import org.http4k.core.Method
 import org.http4k.core.Request
+import org.http4k.core.Status
 import org.http4k.format.Jackson.auto
 import java.time.Clock
 import java.time.Instant
@@ -19,10 +20,11 @@ class Http4KExecutionWorkflowMessagesSender(baseUrl: String, private val clock: 
     private val httpClient = Java8HttpClient()
     private val executionApiBaseUrl = "$baseUrl/public/executions"
 
-    override fun startExecution(): ExecutionId =
+    override fun startExecution(): ExecutionId? =
         httpClient(Request(Method.POST, "$executionApiBaseUrl/start"))
-            .let(executionStartResponse)
-            .executionId
+            .takeIf { it.status == Status.OK }
+            ?.let(executionStartResponse)
+            ?.executionId
 
     override fun sendReport(executionId: ExecutionId, report: Report) {
         httpClient(Request(Method.PUT, "$executionApiBaseUrl/stop/$executionId").body(report.toMonitoringReport()))
