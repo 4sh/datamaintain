@@ -11,7 +11,7 @@ import datamaintain.core.step.sort.Sorter
 import datamaintain.domain.report.ExecutionId
 import datamaintain.domain.report.IExecutionWorkflowMessagesSender
 import datamaintain.domain.report.Report
-import datamaintain.monitoring.ExecutionWorkflowMessagesSender
+import datamaintain.monitoring.Http4KExecutionWorkflowMessagesSender
 import mu.KotlinLogging
 import java.time.Clock
 import java.time.ZoneId
@@ -19,7 +19,7 @@ import java.time.ZoneId
 private val logger = KotlinLogging.logger {}
 
 class Datamaintain(config: DatamaintainConfig) {
-    private val reportSender: IExecutionWorkflowMessagesSender? = config.monitoringConfiguration?.let { ExecutionWorkflowMessagesSender(
+    private val reportSender: IExecutionWorkflowMessagesSender? = config.monitoringConfiguration?.let { Http4KExecutionWorkflowMessagesSender(
         baseUrl = it.apiUrl,
         clock = Clock.system(ZoneId.systemDefault())
     ) }
