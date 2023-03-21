@@ -17,6 +17,13 @@ include(
 
 includeBuild("../datamaintain-monitoring") {
         dependencySubstitution {
+                substitute(module("io.github.4sh.datamaintain-monitoring:api-execution-report"))
+                        .using(project(":modules:api-execution-report:api"))
+        }
+}
+
+includeBuild("../datamaintain-monitoring") {
+        dependencySubstitution {
                 substitute(module("io.github.4sh.datamaintain-monitoring:api-execution-report")).using(project(":modules:api-execution-report:api"))
         }
 }
