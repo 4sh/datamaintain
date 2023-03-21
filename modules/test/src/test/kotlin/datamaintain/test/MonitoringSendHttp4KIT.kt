@@ -98,6 +98,20 @@ class MonitoringSendHttp4KIT : AbstractMonitoringSendWithHttpTest() {
                     .withBody(subString(subStringExpectedInBody)))
             }
         }
+
+        @Nested
+        inner class ScriptExecutionStopMessage {
+            @Test
+            fun should_send_script_execution_stop_with_execution_id() {
+                // When
+                val executionId = 12
+                setupMockStartAnswer(executionId)
+                buildDatamaintainWithMonitoringConfiguration("src/test/resources/integration/ok").updateDatabase()
+
+                // Then
+                mockServerClient.verify(request().withPath("/public/executions/$executionId/script/stop").withMethod("PUT"))
+            }
+        }
     }
 
     private fun setupMockStartAnswer(executionId: ExecutionId = 42) {
