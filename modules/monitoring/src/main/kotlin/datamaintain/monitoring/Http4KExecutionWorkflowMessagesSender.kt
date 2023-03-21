@@ -1,8 +1,9 @@
 package datamaintain.monitoring
 
-import ExecutionStartResponse
-import MonitoringReport
-import ScriptExecutionStart
+import datamaintain.monitoring.api.execution.report.api.ExecutionStartResponse
+import datamaintain.monitoring.api.execution.report.api.MonitoringReport
+import datamaintain.monitoring.api.execution.report.api.ScriptExecutionStart
+import datamaintain.monitoring.api.execution.report.api.ScriptExecutionStop
 import datamaintain.domain.report.ExecutionId
 import datamaintain.domain.report.IExecutionWorkflowMessagesSender
 import datamaintain.domain.report.Report
