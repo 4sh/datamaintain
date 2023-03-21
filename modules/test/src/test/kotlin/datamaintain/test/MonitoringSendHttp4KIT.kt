@@ -26,7 +26,7 @@ class MonitoringSendHttp4KIT : AbstractMonitoringSendWithHttpTest() {
     @Nested
     inner class MonitoringIsUnreachable {
         @Test
-        fun should_pursue_execution_when_start_does_not_answer() {
+        internal fun should_pursue_execution_when_start_does_not_answer() {
             expectCatching { buildDatamaintainWithMonitoringConfiguration().updateDatabase() }
                 .isSuccess()
         }
@@ -35,7 +35,7 @@ class MonitoringSendHttp4KIT : AbstractMonitoringSendWithHttpTest() {
     @Nested
     inner class MonitoringIsReachable {
         @Test
-        fun should_send_POST_start_message_to_monitoring_on_correct_URL() {
+        internal fun should_send_POST_start_message_to_monitoring_on_correct_URL() {
             // When
             setupMockStartAnswer()
             buildDatamaintainWithMonitoringConfiguration().updateDatabase()
@@ -48,7 +48,7 @@ class MonitoringSendHttp4KIT : AbstractMonitoringSendWithHttpTest() {
         @Nested
         inner class ScriptExecutionStartMessage {
             @Test
-            fun should_send_script_execution_start_with_execution_id() {
+            internal fun should_send_script_execution_start_with_execution_id() {
                 // When
                 val executionId = 12
                 setupMockStartAnswer(executionId)
@@ -59,27 +59,27 @@ class MonitoringSendHttp4KIT : AbstractMonitoringSendWithHttpTest() {
             }
 
             @Test
-            fun should_send_script_name_in_body() {
+            internal fun should_send_script_name_in_body() {
                 checkStartMessageBodyContains("\"name\":\"01_file.js\"")
             }
 
             @Test
-            fun should_send_script_checksum_in_body() {
+            internal fun should_send_script_checksum_in_body() {
                 checkStartMessageBodyContains("\"checksum\":\"24403a1ac36cc57c3cf9857bd8c5f676\"")
             }
 
             @Test
-            fun should_send_script_content_in_body() {
+            internal fun should_send_script_content_in_body() {
                 checkStartMessageBodyContains("\"content\":\"db.simple.insert({ find: \\\"1\\\", data: 'inserted'});\\n\\nprint(\\\"01 OK\\\");\"")
             }
 
             @Test
-            fun should_send_script_start_date_in_body() {
+            internal fun should_send_script_start_date_in_body() {
                 checkStartMessageBodyContains("\"startDate\":\"2023-03-21T11:17:33.337Z\"")
             }
 
             @Test
-            fun should_send_script_tags_in_body() {
+            internal fun should_send_script_tags_in_body() {
                 checkStartMessageBodyContains("\"tags\":[\"myTag\"]")
             }
 
@@ -102,7 +102,7 @@ class MonitoringSendHttp4KIT : AbstractMonitoringSendWithHttpTest() {
         @Nested
         inner class ScriptExecutionStopMessage {
             @Test
-            fun should_send_script_execution_stop_with_execution_id() {
+            internal fun should_send_script_execution_stop_with_execution_id() {
                 // When
                 val executionId = 12
                 setupMockStartAnswer(executionId)
@@ -152,6 +152,38 @@ class MonitoringSendHttp4KIT : AbstractMonitoringSendWithHttpTest() {
 
                 mockServerClient.verify(request()
                     .withPath("/public/executions/$executionId/script/stop")
+                    .withMethod("PUT")
+                    .withBody(subString(subStringExpectedInBody)))
+            }
+        }
+
+        @Nested
+        inner class ExecutionStopMessage {
+            @Test
+            internal fun should_send_script_execution_stop_with_execution_id() {
+                // When
+                val executionId = 12
+                setupMockStartAnswer(executionId)
+                buildDatamaintainWithMonitoringConfiguration("src/test/resources/integration/ok").updateDatabase()
+
+                // Then
+                mockServerClient.verify(request().withPath("/public/executions/stop/$executionId").withMethod("PUT"))
+            }
+
+            @Test
+            internal fun should_send_scripts_executed_number() {
+                checkExecutionStopMessageBodyContains("\"scriptsExecutedNumber\":3")
+            }
+
+            private fun checkExecutionStopMessageBodyContains(subStringExpectedInBody: String) {
+                val executionId = 12
+                setupMockStartAnswer(executionId)
+                buildDatamaintainWithMonitoringConfiguration(
+                    scriptsPath = "src/test/resources/integration/ok"
+                ).updateDatabase()
+
+                mockServerClient.verify(request()
+                    .withPath("/public/executions/stop/$executionId")
                     .withMethod("PUT")
                     .withBody(subString(subStringExpectedInBody)))
             }
