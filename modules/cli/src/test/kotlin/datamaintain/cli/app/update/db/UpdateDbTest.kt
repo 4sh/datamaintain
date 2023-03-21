@@ -1,9 +1,6 @@
 package datamaintain.cli.app.update.db
 
 import datamaintain.cli.app.BaseCliTest
-import datamaintain.core.config.DatamaintainConfig
-import datamaintain.core.script.ScriptAction
-import datamaintain.core.script.Tag
 import datamaintain.core.script.TagMatcher
 import datamaintain.core.step.check.rules.implementations.SameScriptsAsExecutedCheck
 import datamaintain.db.driver.mongo.MongoDriverConfig
@@ -18,7 +15,6 @@ import org.junit.jupiter.params.provider.EnumSource
 import strikt.api.expectThat
 import strikt.assertions.*
 import java.nio.file.Paths
-import kotlin.reflect.KProperty1
 
 internal class UpdateDbTest : BaseCliTest() {
     @Nested

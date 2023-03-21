@@ -2,6 +2,7 @@ package datamaintain.test
 
 import datamaintain.core.Datamaintain
 import datamaintain.core.config.DatamaintainConfig
+import datamaintain.core.config.DatamaintainScannerConfig
 import datamaintain.core.config.MonitoringConfiguration
 import datamaintain.core.script.TagMatcher
 import datamaintain.domain.report.ExecutionId
@@ -88,7 +89,7 @@ class MonitoringSendHttp4KIT : AbstractMonitoringSendWithHttpTest() {
                 setupMockStartAnswer(executionId)
                 buildDatamaintainWithMonitoringConfiguration(
                     scriptsPath = "src/test/resources/integration/ok",
-                    tagMatchers = setOf(TagMatcher(Tag("myTag"), listOf("src/test/resources/integration/ok/*"))),
+                    tagsMatchers = setOf(TagMatcher(Tag("myTag"), listOf("src/test/resources/integration/ok/*"))),
                     clock = Clock.fixed(Instant.parse("2023-03-21T11:17:33.337Z"), ZoneId.systemDefault())
                 ).updateDatabase()
 
@@ -200,12 +201,14 @@ class MonitoringSendHttp4KIT : AbstractMonitoringSendWithHttpTest() {
 
     private fun buildDatamaintainWithMonitoringConfiguration(
         scriptsPath: String = "",
-        tagMatchers: Set<TagMatcher> = setOf(),
+        tagsMatchers: Set<TagMatcher> = setOf(),
         clock: Clock = Clock.system(ZoneId.systemDefault())
     ) = Datamaintain(
         DatamaintainConfig(
-            path = Paths.get(scriptsPath),
-            tagsMatchers = tagMatchers,
+            scanner = DatamaintainScannerConfig(
+                path = Paths.get(scriptsPath),
+                tagsMatchers = tagsMatchers
+            ),
             driverConfig = FakeDriverConfig(),
             monitoringConfiguration = MonitoringConfiguration(mockServerUrl)
         ),

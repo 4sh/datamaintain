@@ -1,7 +1,7 @@
 package datamaintain.core.config
 
-import datamaintain.core.script.ScriptAction
 import datamaintain.core.step.executor.ExecutionMode
+import datamaintain.domain.script.ScriptAction
 import mu.KotlinLogging
 
 private val logger = KotlinLogging.logger {}

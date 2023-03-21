@@ -1,6 +1,6 @@
 package datamaintain.core.config
 
-import datamaintain.core.script.Tag
+import datamaintain.domain.script.Tag
 import mu.KotlinLogging
 
 private val logger = KotlinLogging.logger {}
