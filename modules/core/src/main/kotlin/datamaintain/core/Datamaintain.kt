@@ -18,10 +18,10 @@ import java.time.ZoneId
 
 private val logger = KotlinLogging.logger {}
 
-class Datamaintain(config: DatamaintainConfig) {
+class Datamaintain(config: DatamaintainConfig, clock: Clock = Clock.system(ZoneId.systemDefault())) {
     private val reportSender: IExecutionWorkflowMessagesSender? = config.monitoringConfiguration?.let { Http4KExecutionWorkflowMessagesSender(
         baseUrl = it.apiUrl,
-        clock = Clock.system(ZoneId.systemDefault())
+        clock = clock
     ) }
 
     init {

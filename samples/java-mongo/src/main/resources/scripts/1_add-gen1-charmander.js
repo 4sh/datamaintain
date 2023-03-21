@@ -1,4 +1,4 @@
-db.starters.save({
+db.starters.insertOne({
     "name": "Charmander",
     "types": ["Fire"],
     "hp": 39,
