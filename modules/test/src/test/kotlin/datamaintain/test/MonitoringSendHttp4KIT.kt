@@ -29,13 +29,14 @@ class MonitoringSendHttp4KIT : AbstractMonitoringSendWithHttpTest() {
     @Nested
     inner class MonitoringIsReachable {
         @Test
-        fun should_send_start_message_to_monitoring() {
+        fun should_send_POST_start_message_to_monitoring_on_correct_URL() {
             // When
             setupMockStartAnswer()
             buildDatamaintainWithMonitoringConfiguration().updateDatabase()
 
             // Then
-            mockServerClient.verify(request().withPath("/public/executions/start"))
+            mockServerClient.verify(request().withPath("/public/executions/start")
+                .withMethod("POST"))
         }
 
         @Nested
@@ -48,7 +49,7 @@ class MonitoringSendHttp4KIT : AbstractMonitoringSendWithHttpTest() {
                 buildDatamaintainWithMonitoringConfiguration("src/test/resources/integration/ok").updateDatabase()
 
                 // Then
-                mockServerClient.verify(request().withPath("/public/executions/$executionId/script/start"))
+                mockServerClient.verify(request().withPath("/public/executions/$executionId/script/start").withMethod("PUT"))
             }
         }
     }
