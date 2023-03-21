@@ -1,11 +1,11 @@
 package datamaintain.db.driver.mongo.serialization
 
-import datamaintain.core.script.ExecutionStatus
-import datamaintain.core.script.ScriptAction
 import datamaintain.db.driver.mongo.mapping.ExecutedScriptDb
 import datamaintain.db.driver.mongo.mapping.LightExecutedScriptDb
 import datamaintain.db.driver.mongo.mapping.MongoId
 import datamaintain.db.driver.mongo.mapping.generateMongoId
+import datamaintain.domain.script.ExecutionStatus
+import datamaintain.domain.script.ScriptAction
 import kotlinx.serialization.Serializable
 
 // Copy of DB object for add Serializable annotation

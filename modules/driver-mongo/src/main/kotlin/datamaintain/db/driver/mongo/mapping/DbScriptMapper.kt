@@ -1,7 +1,7 @@
 package datamaintain.db.driver.mongo.mapping
 
-import datamaintain.core.script.ExecutedScript
-import datamaintain.core.script.LightExecutedScript
+import datamaintain.domain.script.ExecutedScript
+import datamaintain.domain.script.LightExecutedScript
 
 fun LightExecutedScriptDb.toLightExecutedScript() = LightExecutedScript(
     name!!,
