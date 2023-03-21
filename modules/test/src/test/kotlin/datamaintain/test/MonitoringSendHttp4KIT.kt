@@ -111,6 +111,50 @@ class MonitoringSendHttp4KIT : AbstractMonitoringSendWithHttpTest() {
                 // Then
                 mockServerClient.verify(request().withPath("/public/executions/$executionId/script/stop").withMethod("PUT"))
             }
+
+            @Test
+            internal fun should_send_script_checksum_in_body() {
+                checkStopMessageBodyContains("\"checksum\":\"24403a1ac36cc57c3cf9857bd8c5f676\"")
+            }
+
+            @Test
+            internal fun should_send_script_execution_duration_in_millis_in_body() {
+                // When
+                val executionId = 12
+                setupMockStartAnswer(executionId)
+                val report = buildDatamaintainWithMonitoringConfiguration(
+                    scriptsPath = "src/test/resources/integration/ok"
+                ).updateDatabase()
+                val script1ExecutionDurationInMillis = report.executedScripts[0].executionDurationInMillis
+
+                mockServerClient.verify(request()
+                    .withPath("/public/executions/$executionId/script/stop")
+                    .withMethod("PUT")
+                    .withBody(subString("\"executionDurationInMillis\":$script1ExecutionDurationInMillis")))
+            }
+
+            @Test
+            internal fun should_send_script_execution_status_in_body() {
+                checkStopMessageBodyContains("\"executionStatus\":\"OK\"")
+            }
+
+            @Test
+            internal fun should_send_script_execution_output_in_body() {
+                checkStopMessageBodyContains("\"executionOutput\":\"$fakeDriverScriptExecutionOutput\"")
+            }
+
+            private fun checkStopMessageBodyContains(subStringExpectedInBody: String) {
+                val executionId = 12
+                setupMockStartAnswer(executionId)
+                buildDatamaintainWithMonitoringConfiguration(
+                    scriptsPath = "src/test/resources/integration/ok"
+                ).updateDatabase()
+
+                mockServerClient.verify(request()
+                    .withPath("/public/executions/$executionId/script/stop")
+                    .withMethod("PUT")
+                    .withBody(subString(subStringExpectedInBody)))
+            }
         }
     }
 

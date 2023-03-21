@@ -7,6 +7,8 @@ import datamaintain.monitoring.api.execution.report.api.ScriptExecutionStop
 import datamaintain.domain.report.ExecutionId
 import datamaintain.domain.report.IExecutionWorkflowMessagesSender
 import datamaintain.domain.report.Report
+import datamaintain.domain.script.ExecutedScript
+import datamaintain.domain.script.ExecutionStatus
 import datamaintain.domain.script.ScriptWithContent
 import org.http4k.client.Java8HttpClient
 import org.http4k.core.Body
@@ -38,11 +40,32 @@ class Http4KExecutionWorkflowMessagesSender(baseUrl: String, private val clock: 
         )
     }
 
+    override fun stopScriptExecution(executionId: ExecutionId, executedScript: ExecutedScript) {
+        httpClient(
+            Request(Method.PUT, "$executionApiBaseUrl/$executionId/script/stop")
+                .body(executedScript.toScriptExecutionStop())
+        )
+    }
+
     companion object {
         val executionStartResponse = Body.auto<ExecutionStartResponse>().toLens()
         val scriptExecutionStart = Body.auto<ScriptExecutionStart>().toLens()
     }
 }
+
+private fun ExecutedScript.toScriptExecutionStop(): ScriptExecutionStop = ScriptExecutionStop(
+    checksum = checksum,
+    executionDurationInMillis = executionDurationInMillis,
+    executionStatus = executionStatus.toMonitoringExecutionStatus(),
+    executionOutput = executionOutput
+)
+
+private fun ExecutionStatus.toMonitoringExecutionStatus(): datamaintain.monitoring.api.execution.report.api.ExecutionStatus =
+    when(this) {
+        ExecutionStatus.OK -> datamaintain.monitoring.api.execution.report.api.ExecutionStatus.OK
+        ExecutionStatus.KO -> datamaintain.monitoring.api.execution.report.api.ExecutionStatus.KO
+    }
+
 
 fun Report.toMonitoringReport() =
     MonitoringReport(this.executedScripts.size)

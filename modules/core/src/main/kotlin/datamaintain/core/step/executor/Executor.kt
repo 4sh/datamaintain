@@ -42,6 +42,10 @@ class Executor(private val context: Context,
                     )
                 )
 
+                if (reportSender != null && executionId != null) {
+                    reportSender.stopScriptExecution(executionId, executedScript)
+                }
+
                 if (executedScript.executionStatus == ExecutionStatus.KO) {
                     if (!context.config.logs.porcelain) { logger.info { "" } }
                     // TODO handle interactive shell
