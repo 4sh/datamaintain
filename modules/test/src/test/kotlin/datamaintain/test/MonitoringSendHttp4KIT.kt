@@ -4,13 +4,13 @@ import datamaintain.core.Datamaintain
 import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.config.MonitoringConfiguration
 import datamaintain.domain.report.ExecutionId
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.mockserver.model.HttpRequest.request
 import org.mockserver.model.HttpResponse.response
 import strikt.api.expectCatching
 import strikt.assertions.isSuccess
+import java.nio.file.Paths
 
 /**
  * When monitoring configuration is given an url for monitoring, Executor should send information about
@@ -28,22 +28,32 @@ class MonitoringSendHttp4KIT : AbstractMonitoringSendWithHttpTest() {
 
     @Nested
     inner class MonitoringIsReachable {
-        @BeforeEach
-        fun setupStartAnswer() {
-            setupMockStartAnswer(42)
-        }
-
         @Test
         fun should_send_start_message_to_monitoring() {
             // When
+            setupMockStartAnswer()
             buildDatamaintainWithMonitoringConfiguration().updateDatabase()
 
             // Then
             mockServerClient.verify(request().withPath("/public/executions/start"))
         }
+
+        @Nested
+        inner class ScriptExecutionMessages {
+            @Test
+            fun should_send_script_execution_start_with_execution_id() {
+                // When
+                val executionId = 12
+                setupMockStartAnswer(executionId)
+                buildDatamaintainWithMonitoringConfiguration("src/test/resources/integration/ok").updateDatabase()
+
+                // Then
+                mockServerClient.verify(request().withPath("/public/executions/$executionId/script/start"))
+            }
+        }
     }
 
-    private fun setupMockStartAnswer(executionId: ExecutionId) {
+    private fun setupMockStartAnswer(executionId: ExecutionId = 42) {
         mockServerClient.`when`(
             request()
                 .withMethod("POST")
@@ -51,8 +61,9 @@ class MonitoringSendHttp4KIT : AbstractMonitoringSendWithHttpTest() {
         ).respond(response().withBody("{\"executionId\": $executionId}"))
     }
 
-    private fun buildDatamaintainWithMonitoringConfiguration() = Datamaintain(
+    private fun buildDatamaintainWithMonitoringConfiguration(scriptsPath: String = "") = Datamaintain(
         DatamaintainConfig(
+            path = Paths.get(scriptsPath),
             driverConfig = FakeDriverConfig(),
             monitoringConfiguration = MonitoringConfiguration(mockServerUrl)
         )
