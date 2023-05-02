@@ -68,16 +68,6 @@ class UpdateDb(runner: (DatamaintainConfig, Boolean) -> Unit = ::defaultUpdateDb
         defaultValue = CoreConfigKey.PRUNE_OVERRIDE_UPDATED_SCRIPTS.default
     ).flag()
 
-    private val verbose: Boolean? by detailedOption("--verbose", "-v",
-        help = "verbose",
-        defaultValue = CliSpecificKey.VERBOSE.default
-    ).flag()
-
-    private val trace: Boolean? by detailedOption("-vv",
-        help = "trace is more verbose than verbose",
-        defaultValue = CliSpecificKey.VERBOSE.default
-    ).flag()
-
     private val saveDbOutput: Boolean? by detailedOption(
         help = "save your script and db output",
         defaultValue = DriverConfigKey.DB_SAVE_OUTPUT.default
@@ -137,8 +127,6 @@ class UpdateDb(runner: (DatamaintainConfig, Boolean) -> Unit = ::defaultUpdateDb
         blacklistedTags?.let { props.put(CoreConfigKey.TAGS_BLACKLISTED.key, it) }
         tagsToPlayAgain?.let { props.put(CoreConfigKey.PRUNE_TAGS_TO_RUN_AGAIN.key, it) }
         createTagsFromFolder?.let { props.put(CoreConfigKey.CREATE_TAGS_FROM_FOLDER.key, it.toString()) }
-        verbose?.let { props.put(CliSpecificKey.VERBOSE.key, it.toString()) }
-        trace?.let { props.put(CliSpecificKey.TRACE.key, it.toString()) }
         saveDbOutput?.let { props.put(DriverConfigKey.DB_SAVE_OUTPUT.key, it.toString()) }
         printDbOutput?.let { props.put(DriverConfigKey.DB_PRINT_OUTPUT.key, it.toString()) }
         executionMode?.let { props.put(CoreConfigKey.EXECUTION_MODE.key, it) }

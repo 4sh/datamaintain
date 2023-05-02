@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory
 import strikt.api.expectThat
 import strikt.assertions.*
 import java.nio.file.Paths
-import kotlin.reflect.KProperty1
 
 internal class UpdateDbTest : BaseCliTest() {
     @Nested
@@ -34,7 +33,7 @@ internal class UpdateDbTest : BaseCliTest() {
                 )
 
                 // When
-                runUpdateDb(updateDbArguments)
+                runUpdateDb(updateDbArguments = updateDbArguments)
 
                 // Then
                 expectThat(configWrapper.datamaintainConfig!!.scanner.path).isEqualTo(Paths.get(path))
@@ -50,7 +49,7 @@ internal class UpdateDbTest : BaseCliTest() {
                     )
 
                 // When
-                runUpdateDb(updateDbArguments)
+                runUpdateDb(updateDbArguments = updateDbArguments)
 
                 // Then
                 expectThat(configWrapper.datamaintainConfig!!.scanner.identifierRegex.pattern).isEqualTo(identifierRegex)
@@ -70,7 +69,7 @@ internal class UpdateDbTest : BaseCliTest() {
                         )
 
                     // When
-                    runUpdateDb(updateDbArguments)
+                    runUpdateDb(updateDbArguments = updateDbArguments)
 
                     // Then
                     expectThat(configWrapper.datamaintainConfig!!.executor.executionMode).isEqualTo(executionMode)
@@ -122,10 +121,10 @@ internal class UpdateDbTest : BaseCliTest() {
                 @Test
                 fun `should build config with trace set to true`() {
                     // Given
-                    val updateDbArguments = listOf("-vv")
+                    val baseArguments = listOf("-vv")
 
                     // When
-                    runUpdateDb(updateDbArguments)
+                    runUpdateDb(baseArguments)
 
                     // Then
                     expectThat(datamaintainLogger.level).isEqualTo(Level.TRACE)
@@ -134,10 +133,10 @@ internal class UpdateDbTest : BaseCliTest() {
                 @Test
                 fun `should build config with trace set to true even if verbose is set`() {
                     // Given
-                    val updateDbArguments = listOf("--verbose", "-vv")
+                    val baseArguments = listOf("--verbose", "-vv")
 
                     // When
-                    runUpdateDb(updateDbArguments)
+                    runUpdateDb(baseArguments)
 
                     // Then
                     expectThat(datamaintainLogger.level).isEqualTo(Level.TRACE)
@@ -152,7 +151,7 @@ internal class UpdateDbTest : BaseCliTest() {
                     val updateDbArguments = listOf("--create-tags-from-folder")
 
                     // When
-                    runUpdateDb(updateDbArguments)
+                    runUpdateDb(updateDbArguments = updateDbArguments)
 
                     // Then
                     expectThat(configWrapper.datamaintainConfig!!.scanner.doesCreateTagsFromFolder).isTrue()
@@ -184,7 +183,7 @@ internal class UpdateDbTest : BaseCliTest() {
                         )
 
                     // When
-                    runUpdateDb(updateDbArguments)
+                    runUpdateDb(updateDbArguments = updateDbArguments)
 
                     // Then
                     expectThat(configWrapper.datamaintainConfig!!.scanner.tagsMatchers)
@@ -221,7 +220,7 @@ internal class UpdateDbTest : BaseCliTest() {
                         )
 
                     // When
-                    runUpdateDb(updateDbArguments)
+                    runUpdateDb(updateDbArguments = updateDbArguments)
 
                     // Then
                     val tags = when (tagsToTest) {
@@ -248,7 +247,7 @@ internal class UpdateDbTest : BaseCliTest() {
                         )
 
                     // When
-                    runUpdateDb(updateDbArguments)
+                    runUpdateDb(updateDbArguments = updateDbArguments)
 
                     // Then
                     expectThat(configWrapper) {
@@ -270,7 +269,7 @@ internal class UpdateDbTest : BaseCliTest() {
                         )
 
                     // When
-                    runUpdateDb(updateDbArguments)
+                    runUpdateDb(updateDbArguments = updateDbArguments)
 
                     // Then
                     expectThat(configWrapper) {
@@ -308,7 +307,7 @@ internal class UpdateDbTest : BaseCliTest() {
                     val updateDbArguments = listOf("--allow-auto-override")
 
                     // When
-                    runUpdateDb(updateDbArguments)
+                    runUpdateDb(updateDbArguments = updateDbArguments)
 
                     // Then
                     expectThat(configWrapper) {
@@ -359,7 +358,7 @@ internal class UpdateDbTest : BaseCliTest() {
                     val updateDbArguments = listOf("--porcelain")
 
                     // When
-                    runUpdateDb(updateDbArguments)
+                    runUpdateDb(updateDbArguments = updateDbArguments)
 
                     // Then
                     expectThat(configWrapper) { get { datamaintainConfig }.isNotNull() }
@@ -378,7 +377,7 @@ internal class UpdateDbTest : BaseCliTest() {
                     )
 
                 // When
-                runUpdateDb(updateDbArguments)
+                runUpdateDb(updateDbArguments = updateDbArguments)
 
                 // Then
                 expectThat(configWrapper.datamaintainConfig!!.executor.defaultScriptAction).isEqualTo(scriptAction)
@@ -395,7 +394,7 @@ internal class UpdateDbTest : BaseCliTest() {
                     val updateDbArguments = listOf("--save-db-output")
 
                     // When
-                    runUpdateDb(updateDbArguments)
+                    runUpdateDb(updateDbArguments = updateDbArguments)
 
                     // Then
                     expectThat((configWrapper.datamaintainConfig!!.driverConfig) as MongoDriverConfig)
@@ -425,7 +424,7 @@ internal class UpdateDbTest : BaseCliTest() {
                     val updateDbArguments = listOf("--print-db-output")
 
                     // When
-                    runUpdateDb(updateDbArguments)
+                    runUpdateDb(updateDbArguments = updateDbArguments)
 
                     // Then
                     expectThat((configWrapper.datamaintainConfig!!.driverConfig) as MongoDriverConfig)
@@ -455,7 +454,7 @@ internal class UpdateDbTest : BaseCliTest() {
                     val updateDbArguments = listOf("--mongo-shell").plus("mongo")
 
                     // When
-                    runUpdateDb(updateDbArguments)
+                    runUpdateDb(updateDbArguments = updateDbArguments)
 
                     // Then
                     expectThat((configWrapper.datamaintainConfig!!.driverConfig) as MongoDriverConfig)
@@ -471,7 +470,7 @@ internal class UpdateDbTest : BaseCliTest() {
                     val updateDbArguments = listOf("--mongo-shell").plus("mongosh")
 
                     // When
-                    runUpdateDb(updateDbArguments)
+                    runUpdateDb(updateDbArguments = updateDbArguments)
 
                     // Then
                     expectThat((configWrapper.datamaintainConfig!!.driverConfig) as MongoDriverConfig)
@@ -491,7 +490,7 @@ internal class UpdateDbTest : BaseCliTest() {
                 val updateDbArguments = listOf("--flags=MY_TEST_FLAG")
 
                 // When
-                runUpdateDb(updateDbArguments)
+                runUpdateDb(updateDbArguments = updateDbArguments)
 
                 // Then
                 expectThat(configWrapper.datamaintainConfig!!.executor.flags) {
@@ -505,7 +504,7 @@ internal class UpdateDbTest : BaseCliTest() {
                 val updateDbArguments = listOf("--flags=MY_TEST_FLAG1,MY_TEST_FLAG2")
 
                 // When
-                runUpdateDb(updateDbArguments)
+                runUpdateDb(updateDbArguments = updateDbArguments)
 
                 // Then
                 expectThat(configWrapper.datamaintainConfig!!.executor.flags) {
@@ -515,7 +514,10 @@ internal class UpdateDbTest : BaseCliTest() {
         }
     }
 
-    private fun runUpdateDb(updateDbArguments: List<String> = listOf()) {
-        runAppWithUpdateDb(listOf("--db-type", "mongo", "--db-uri", "mongo-uri"), updateDbArguments)
+    private fun runUpdateDb(baseArguments: List<String> = listOf(), updateDbArguments: List<String> = listOf()) {
+        runAppWithUpdateDb(
+            listOf("--db-type", "mongo", "--db-uri", "mongo-uri") + baseArguments,
+            updateDbArguments
+        )
     }
 }

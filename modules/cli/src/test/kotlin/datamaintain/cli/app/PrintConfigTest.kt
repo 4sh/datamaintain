@@ -100,6 +100,15 @@ internal class PrintConfigTest : BaseCliTest() {
         // Given
         val path = "/myPath"
 
+        val baseArguments = listOf(
+            "--verbose",
+            "--config",
+            "--db-type",
+            "mongo",
+            "--db-uri",
+            "mongo-uri"
+        )
+
         val updateDbArguments =
                 listOf(
                         "--path", path,
@@ -110,16 +119,11 @@ internal class PrintConfigTest : BaseCliTest() {
                         "--tag", "MYTAG2=/pathMatcher2",
                         "--blacklisted-tags", "MYTAG1",
                         "--whitelisted-tags", "MYTAG2",
-                        "--verbose",
                         "--porcelain"
                 )
 
         // When
-        runAppWithUpdateDb(
-                listOf(
-                        "--config", "--db-type", "mongo", "--db-uri", "mongo-uri"
-                ), updateDbArguments
-        )
+        runAppWithUpdateDb(baseArguments, updateDbArguments)
 
         // Then
         var index = 0
@@ -146,6 +150,16 @@ internal class PrintConfigTest : BaseCliTest() {
         // Given
         val path = "/myPath"
 
+        val baseArguments = listOf(
+            "--verbose",
+            "--config",
+            "--db-type",
+            "mongo",
+            "--db-uri",
+            "mongo-uri",
+            "--config-file-path",
+            "src/test/resources/config-child.properties"
+        )
         val updateDbArguments =
                 listOf(
                         "--path", path,
@@ -155,16 +169,11 @@ internal class PrintConfigTest : BaseCliTest() {
                         "--tag", "MYTAG1=/pathMatcher1",
                         "--blacklisted-tags", "MYTAG1",
                         "--whitelisted-tags", "MYTAG2",
-                        "--verbose",
                         "--porcelain"
                 )
 
         // When
-        runAppWithUpdateDb(
-                listOf(
-                        "--config", "--db-type", "mongo", "--db-uri", "mongo-uri", "--config-file-path", "src/test/resources/config-child.properties"
-                ), updateDbArguments
-        )
+        runAppWithUpdateDb(baseArguments, updateDbArguments)
 
         // Then
         var index = 0

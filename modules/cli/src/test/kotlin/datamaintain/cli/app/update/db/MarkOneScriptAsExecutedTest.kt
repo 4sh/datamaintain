@@ -30,7 +30,7 @@ internal class MarkOneScriptAsExecutedTest : BaseCliTest() {
                     )
 
                 // When
-                runMarkScriptAsExecuted(markScriptAsExecutedArguments)
+                runMarkScriptAsExecuted(markScriptAsExecutedArguments = markScriptAsExecutedArguments)
 
                 // Then
                 expectThat(configWrapper.datamaintainConfig!!.scanner.path).isEqualTo(Paths.get(path))
@@ -58,10 +58,10 @@ internal class MarkOneScriptAsExecutedTest : BaseCliTest() {
                 @Test
                 fun `should build config with verbose set to true`() {
                     // Given
-                    val markScriptAsExecutedArguments = listOf("--verbose")
+                    val baseArguments = listOf("--verbose")
 
                     // When
-                    runMarkScriptAsExecuted(markScriptAsExecutedArguments)
+                    runMarkScriptAsExecuted(baseArguments)
 
                     // Then
                     expectThat(datamaintainLogger.level).isEqualTo(Level.DEBUG)
@@ -81,10 +81,10 @@ internal class MarkOneScriptAsExecutedTest : BaseCliTest() {
                 @Test
                 fun `should build config with trace set to true`() {
                     // Given
-                    val markScriptAsExecutedArguments = listOf("-vv")
+                    val baseArguments = listOf("-vv")
 
                     // When
-                    runMarkScriptAsExecuted(markScriptAsExecutedArguments)
+                    runMarkScriptAsExecuted(baseArguments)
 
                     // Then
                     expectThat(datamaintainLogger.level).isEqualTo(Level.TRACE)
@@ -93,10 +93,10 @@ internal class MarkOneScriptAsExecutedTest : BaseCliTest() {
                 @Test
                 fun `should build config with trace set to true even if verbose is set`() {
                     // Given
-                    val markScriptAsExecutedArguments = listOf("--verbose", "-vv")
+                    val baseArguments = listOf("--verbose", "-vv")
 
                     // When
-                    runMarkScriptAsExecuted(markScriptAsExecutedArguments)
+                    runMarkScriptAsExecuted(baseArguments)
 
                     // Then
                     expectThat(datamaintainLogger.level).isEqualTo(Level.TRACE)
@@ -116,13 +116,13 @@ internal class MarkOneScriptAsExecutedTest : BaseCliTest() {
         }
     }
 
-    private fun runMarkScriptAsExecuted(markScriptAsExecutedArguments: List<String> = listOf()) {
-        runAppWithMarkOneScriptAsExecuted(
-            listOf(
-                    "--db-type", "mongo",
-                    "--db-uri", "mongo-uri"
-            ), markScriptAsExecutedArguments
+    private fun runMarkScriptAsExecuted(baseArguments: List<String> = listOf(), markScriptAsExecutedArguments: List<String> = listOf()) {
+        val base = baseArguments + listOf(
+            "--db-type", "mongo",
+            "--db-uri", "mongo-uri"
         )
+
+        runAppWithMarkOneScriptAsExecuted(base, markScriptAsExecutedArguments)
     }
 }
 

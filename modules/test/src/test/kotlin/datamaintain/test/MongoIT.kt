@@ -20,9 +20,13 @@ class MongoIT : AbstractMongoDbTest() {
 
         // When
         executeUpdateDbWithMongoClientInDocker(
-            arrayOf("--db-type", "mongo"),
+            arrayOf(
+                "--db-type", "mongo",
+                "--db-uri", mongoUri(),
+            ),
             arrayOf(
                 "--verbose",
+                "update-db",
                 "--path", "src/test/resources/integration/ok",
                 "--identifier-regex", "(.*?)_.*",
                 "--print-db-output",
@@ -46,9 +50,13 @@ class MongoIT : AbstractMongoDbTest() {
     fun `should partial execute`() {
         // Given
         executeUpdateDbWithMongoClientInDocker(
-            arrayOf("--db-type", "mongo"),
+            arrayOf(
+                "--db-type", "mongo",
+                "--db-uri", mongoUri(),
+            ),
             arrayOf(
                 "--verbose",
+                "update-db",
                 "--path", "src/test/resources/integration/partial",
                 "--identifier-regex", "(.*?)_.*"
             )
@@ -59,7 +67,10 @@ class MongoIT : AbstractMongoDbTest() {
 
         // When
         executeUpdateDbWithMongoClientInDocker(
-            arrayOf("--db-type", "mongo"),
+            arrayOf(
+                "--db-type", "mongo",
+                "--db-uri", mongoUri(),
+            ),
             arrayOf(
                 "--verbose",
                 "--path", "src/test/resources/integration/ok",
@@ -104,9 +115,13 @@ class MongoIT : AbstractMongoDbTest() {
 
         // When
         executeUpdateDbWithMongoClientInDocker(
-            arrayOf("--db-type", "mongo"),
+            arrayOf(
+                "--db-type", "mongo",
+                "--db-uri", mongoUri(),
+            ),
             arrayOf(
                 "--verbose",
+                "update-db",
                 "--path", "src/test/resources/integration/ok",
                 "--identifier-regex", "(.*?)_.*",
                 "--execution-mode", "NORMAL",
@@ -130,9 +145,13 @@ class MongoIT : AbstractMongoDbTest() {
     fun `should override`() {
         // Given
         executeUpdateDbWithMongoClientInDocker(
-            arrayOf("--db-type", "mongo"),
+            arrayOf(
+                "--db-type", "mongo",
+                "--db-uri", mongoUri(),
+            ),
             arrayOf(
                 "--verbose",
+                "update-db",
                 "--path", "src/test/resources/integration/partial",
                 "--identifier-regex", "(.*?)_.*"
             )
@@ -172,6 +191,7 @@ class MongoIT : AbstractMongoDbTest() {
         val args = listOf(
                 "--db-type", "mongo",
                 "--db-uri", mongoUri,
+                "--verbose",
                 "update-db",
                 "--mongo-client", mongoCliDockerPath.toString(),
                 "--verbose",
