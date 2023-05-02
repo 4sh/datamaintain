@@ -2,7 +2,6 @@
 plugins {
     id("org.jetbrains.kotlin.jvm")
     `maven-publish` // Needed for Jitpack
-    id("com.adarshr.test-logger")
 }
 
 repositories {
