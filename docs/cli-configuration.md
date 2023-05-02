@@ -1,13 +1,15 @@
 # Options
 |Names|Default value|Needs argument|Possible arguments|Description|Examples|
 |---|---|---|---|---|---|
-|--version, --v, -v, -version|No default value|✘|N/A|Show the version and exit||
+|--version, --V, -V, -version|No default value|✘|N/A|Show the version and exit||
 |--working-directory-path, --wd|No default value|✔| |path to the working directory. Can be relative but prefer absolute path. All relative paths configured will be relative to this path if set.||
 |--config-file-path|No default value|✔| |Path to config file. File must exist.|```myProject/src/main/resources/config/datamaintain.properties```|
 |--db-type|mongo|✔|```mongo``` or ```jdbc```|db type||
 |--db-uri|No default value|✔|TEXT|mongo uri with at least database name. Ex: mongodb://localhost:27017/newName|```mongodb://localhost:27017/newName```|
 |--trust-uri|false|✘|N/A|Deactivate all controls on the URI you provide Datamaintain||
 |--mongo-tmp-path|/tmp/datamaintain.tmp|✔|TEXT|mongo tmp file path||
+|--verbose, -v|false|✘|N/A|verbose||
+|-vv|false|✘|N/A|trace is more verbose than verbose||
 |--config|No default value|✘|N/A|Print the configuration without executing the subcommand||
 |-h, --help|No default value|✘|N/A|Display command help and exit||
 # Subcommands
@@ -25,8 +27,6 @@
 |--execution-mode|NORMAL|✔|```NORMAL``` or ```DRY```|execution mode||
 |--action|RUN|✔|```RUN``` or ```MARK_AS_EXECUTED``` or ```OVERRIDE_EXECUTED```|script action||
 |--allow-auto-override|false|✘|N/A|Allow datamaintain to automaticaly override scripts||
-|--verbose, -v|false|✘|N/A|verbose||
-|-vv|false|✘|N/A|trace is more verbose than verbose||
 |--save-db-output|false|✘|N/A|save your script and db output||
 |--print-db-output|false|✘|N/A|print your script and db output||
 |--tag|No default value|✔| |Tag defined using glob path matchers. To define multiple tags, use option multiple times. Syntax example: MYTAG1=[pathMatcher1, pathMatcher2]|```MYTAG1=[pathMatcher1, pathMatcher2]```|
@@ -49,6 +49,4 @@
 |Names|Default value|Needs argument|Possible arguments|Description|Examples|
 |---|---|---|---|---|---|
 |--path|./scripts/|✔|TEXT|path to the script you want to mark as executed|```scripts/myScript1.js```|
-|--verbose, -v|false|✘|N/A|verbose||
-|-vv|false|✘|N/A|trace is more verbose than verbose||
 |-h, --help|No default value|✘|N/A|Display command help and exit||
