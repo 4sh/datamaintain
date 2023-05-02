@@ -42,7 +42,7 @@ class MonitoringSendHttp4KIT : AbstractMonitoringSendWithHttpTest() {
             buildDatamaintainWithMonitoringConfiguration().updateDatabase()
 
             // Then
-            mockServerClient.verify(request().withPath("/public/executions/start")
+            mockServerClient.verify(request().withPath("/v1/executions/start")
                 .withMethod("POST"))
         }
 
@@ -56,7 +56,7 @@ class MonitoringSendHttp4KIT : AbstractMonitoringSendWithHttpTest() {
                 buildDatamaintainWithMonitoringConfiguration("src/test/resources/integration/ok").updateDatabase()
 
                 // Then
-                mockServerClient.verify(request().withPath("/public/executions/$executionId/script/start").withMethod("PUT"))
+                mockServerClient.verify(request().withPath("/v1/executions/$executionId/script/start").withMethod("PUT"))
             }
 
             @Test
@@ -94,7 +94,7 @@ class MonitoringSendHttp4KIT : AbstractMonitoringSendWithHttpTest() {
                 ).updateDatabase()
 
                 mockServerClient.verify(request()
-                    .withPath("/public/executions/$executionId/script/start")
+                    .withPath("/v1/executions/$executionId/script/start")
                     .withMethod("PUT")
                     .withBody(subString(subStringExpectedInBody)))
             }
@@ -110,7 +110,7 @@ class MonitoringSendHttp4KIT : AbstractMonitoringSendWithHttpTest() {
                 buildDatamaintainWithMonitoringConfiguration("src/test/resources/integration/ok").updateDatabase()
 
                 // Then
-                mockServerClient.verify(request().withPath("/public/executions/$executionId/script/stop").withMethod("PUT"))
+                mockServerClient.verify(request().withPath("/v1/executions/$executionId/script/stop").withMethod("PUT"))
             }
 
             @Test
@@ -129,7 +129,7 @@ class MonitoringSendHttp4KIT : AbstractMonitoringSendWithHttpTest() {
                 val script1ExecutionDurationInMillis = report.executedScripts[0].executionDurationInMillis
 
                 mockServerClient.verify(request()
-                    .withPath("/public/executions/$executionId/script/stop")
+                    .withPath("/v1/executions/$executionId/script/stop")
                     .withMethod("PUT")
                     .withBody(subString("\"executionDurationInMillis\":$script1ExecutionDurationInMillis")))
             }
@@ -152,7 +152,7 @@ class MonitoringSendHttp4KIT : AbstractMonitoringSendWithHttpTest() {
                 ).updateDatabase()
 
                 mockServerClient.verify(request()
-                    .withPath("/public/executions/$executionId/script/stop")
+                    .withPath("/v1/executions/$executionId/script/stop")
                     .withMethod("PUT")
                     .withBody(subString(subStringExpectedInBody)))
             }
@@ -168,7 +168,7 @@ class MonitoringSendHttp4KIT : AbstractMonitoringSendWithHttpTest() {
                 buildDatamaintainWithMonitoringConfiguration("src/test/resources/integration/ok").updateDatabase()
 
                 // Then
-                mockServerClient.verify(request().withPath("/public/executions/stop/$executionId").withMethod("PUT"))
+                mockServerClient.verify(request().withPath("/v1/executions/stop/$executionId").withMethod("PUT"))
             }
 
             @Test
@@ -184,7 +184,7 @@ class MonitoringSendHttp4KIT : AbstractMonitoringSendWithHttpTest() {
                 ).updateDatabase()
 
                 mockServerClient.verify(request()
-                    .withPath("/public/executions/stop/$executionId")
+                    .withPath("/v1/executions/stop/$executionId")
                     .withMethod("PUT")
                     .withBody(subString(subStringExpectedInBody)))
             }
@@ -195,7 +195,7 @@ class MonitoringSendHttp4KIT : AbstractMonitoringSendWithHttpTest() {
         mockServerClient.`when`(
             request()
                 .withMethod("POST")
-                .withPath("/public/executions/start")
+                .withPath("/v1/executions/start")
         ).respond(response().withBody("{\"executionId\": $executionId}"))
     }
 
