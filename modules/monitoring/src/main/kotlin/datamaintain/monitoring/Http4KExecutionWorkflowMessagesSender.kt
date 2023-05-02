@@ -21,7 +21,7 @@ import java.time.Instant
 
 class Http4KExecutionWorkflowMessagesSender(baseUrl: String, private val clock: Clock) : IExecutionWorkflowMessagesSender {
     private val httpClient = Java8HttpClient()
-    private val executionApiBaseUrl = "$baseUrl/public/executions"
+    private val executionApiBaseUrl = "$baseUrl/v1/executions"
 
     override fun startExecution(): ExecutionId? =
         httpClient(Request(Method.POST, "$executionApiBaseUrl/start"))
