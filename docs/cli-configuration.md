@@ -9,7 +9,7 @@
 |--trust-uri|false|✘|N/A|Deactivate all controls on the URI you provide Datamaintain||
 |--mongo-tmp-path|/tmp/datamaintain.tmp|✔|TEXT|mongo tmp file path||
 |--verbose, -v|false|✘|N/A|verbose||
-|-vv|false|✘|N/A|trace is more verbose than verbose||
+|-vv|false|✘|N/A|verbose with more details||
 |--config|No default value|✘|N/A|Print the configuration without executing the subcommand||
 |-h, --help|No default value|✘|N/A|Display command help and exit||
 # Subcommands

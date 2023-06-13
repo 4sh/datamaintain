@@ -76,7 +76,7 @@ class App : CliktCommand() {
     ).flag()
 
     private val trace: Boolean? by detailedOption("-vv",
-        help = "trace is more verbose than verbose",
+        help = "verbose with more details",
         defaultValue = CliSpecificKey.VERBOSE.default
     ).flag()
 
