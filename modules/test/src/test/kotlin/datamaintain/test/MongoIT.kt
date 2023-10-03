@@ -1,6 +1,6 @@
 package datamaintain.test
 
-import datamaintain.cli.completion.app.main
+import datamaintain.cli.app.main
 import datamaintain.core.util.execAppInSubprocess
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
