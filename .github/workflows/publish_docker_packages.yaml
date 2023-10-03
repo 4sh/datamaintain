@@ -48,6 +48,7 @@ jobs:
           file: modules/cli/Dockerfile/mongo/3/3.2/Dockerfile
           build-args: MONGO_MAJOR=${{ env.MONGO_VERSION }}
           tags: ${{ env.REGISTRY }}/${{ github.repository }}/datamaintain:${{ github.ref_name }}-mongo-${{ env.MONGO_VERSION }}
+        continue-on-error: true
 
       - name: Build and push (3.6)
         env:
@@ -59,6 +60,7 @@ jobs:
           file: modules/cli/Dockerfile/mongo/3/3.6/Dockerfile
           build-args: MONGO_MAJOR=${{ env.MONGO_VERSION }}
           tags: ${{ env.REGISTRY }}/${{ github.repository }}/datamaintain:${{ github.ref_name }}-mongo-${{ env.MONGO_VERSION }}
+        continue-on-error: true
 
       - name: Build and push (4.0)
         env:
@@ -70,6 +72,7 @@ jobs:
           file: modules/cli/Dockerfile/mongo/4/Dockerfile
           build-args: MONGO_MAJOR=${{ env.MONGO_VERSION }}
           tags: ${{ env.REGISTRY }}/${{ github.repository }}/datamaintain:${{ github.ref_name }}-mongo-${{ env.MONGO_VERSION }}
+        continue-on-error: true
 
       - name: Build and push (4.2)
         env:
@@ -81,6 +84,7 @@ jobs:
           file: modules/cli/Dockerfile/mongo/4/Dockerfile
           build-args: MONGO_MAJOR=${{ env.MONGO_VERSION }}
           tags: ${{ env.REGISTRY }}/${{ github.repository }}/datamaintain:${{ github.ref_name }}-mongo-${{ env.MONGO_VERSION }}
+        continue-on-error: true
 
       - name: Build and push (4.4)
         env:
@@ -92,6 +96,7 @@ jobs:
           file: modules/cli/Dockerfile/mongo/4/Dockerfile
           build-args: MONGO_MAJOR=${{ env.MONGO_VERSION }}
           tags: ${{ env.REGISTRY }}/${{ github.repository }}/datamaintain:${{ github.ref_name }}-mongo-${{ env.MONGO_VERSION }}
+        continue-on-error: true
 
       - name: Build and push (5.0)
         env:
@@ -103,6 +108,7 @@ jobs:
           file: modules/cli/Dockerfile/mongo/5/Dockerfile
           build-args: MONGO_MAJOR=${{ env.MONGO_VERSION }}
           tags: ${{ env.REGISTRY }}/${{ github.repository }}/datamaintain:${{ github.ref_name }}-mongo-${{ env.MONGO_VERSION }}
+        continue-on-error: true
 
       - name: Build and push (6.0)
         env:
@@ -114,3 +120,4 @@ jobs:
           file: modules/cli/Dockerfile/mongo/6/Dockerfile
           build-args: MONGO_MAJOR=${{ env.MONGO_VERSION }}
           tags: ${{ env.REGISTRY }}/${{ github.repository }}/datamaintain:${{ github.ref_name }}-mongo-${{ env.MONGO_VERSION }}
+        continue-on-error: true
