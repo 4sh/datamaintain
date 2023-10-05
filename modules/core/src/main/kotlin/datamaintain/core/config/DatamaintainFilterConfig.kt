@@ -10,8 +10,8 @@ data class DatamaintainFilterConfig @JvmOverloads constructor(
     val blacklistedTags: Set<Tag> = setOf(),
 ) {
     fun log() {
-        whitelistedTags.let { logger.info { "- whitelisted tags -> $it" } }
-        blacklistedTags.let { logger.info { "- blacklisted tags -> $it" } }
+        whitelistedTags.let { logger.debug { "- whitelisted tags -> $it" } }
+        blacklistedTags.let { logger.debug { "- blacklisted tags -> $it" } }
     }
 }
 

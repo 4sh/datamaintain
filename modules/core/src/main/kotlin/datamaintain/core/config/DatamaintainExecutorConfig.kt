@@ -13,10 +13,10 @@ data class DatamaintainExecutorConfig @JvmOverloads constructor(
     val flags: List<String> = emptyList(),
 ) {
     fun log() {
-        executionMode.let { logger.info { "- execution mode -> $it" } }
-        overrideExecutedScripts.let { logger.info { "- allow override executed script -> $it" } }
-        defaultScriptAction.let { logger.info { "- script action -> $it" } }
-        flags.let { logger.info { "- flags -> $it" } }
+        executionMode.let { logger.debug { "- execution mode -> $it" } }
+        overrideExecutedScripts.let { logger.debug { "- allow override executed script -> $it" } }
+        defaultScriptAction.let { logger.debug { "- script action -> $it" } }
+        flags.let { logger.debug { "- flags -> $it" } }
     }
 
     companion object {

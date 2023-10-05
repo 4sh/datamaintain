@@ -17,9 +17,9 @@ class ListExecutedScripts : DatamaintainCliCommand(name = "list") {
         mongoClient?.let { props.put(MongoConfigKey.DB_MONGO_CLIENT_PATH.key, mongoClient) }
     }
 
-    override fun executeCommand(config: DatamaintainConfig) {
+    override fun executeCommand(config: DatamaintainConfig, porcelain: Boolean) {
         Datamaintain(config).listExecutedScripts().forEach {
-            logger.info { "${it.name} (${it.checksum})" }
+            echo("${it.name} (${it.checksum})")
         }
     }
 }

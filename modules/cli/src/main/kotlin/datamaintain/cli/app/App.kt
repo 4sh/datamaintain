@@ -28,7 +28,7 @@ class App : CliktCommand() {
         val message = "datamaintain version $version"
         registerOption(
             EagerOption(
-                names = setOf("--version", "--v", "-v", "-version"),
+                names = setOf("--version", "--V", "-V", "-version"),
                 nvalues =  0,
                 help = "Show the version and exit",
                 hidden =  false,
@@ -70,6 +70,16 @@ class App : CliktCommand() {
         defaultValue = MongoConfigKey.DB_MONGO_TMP_PATH.default
     )
 
+    private val verbose: Boolean? by detailedOption("--verbose", "-v",
+        help = "verbose",
+        defaultValue = CliSpecificKey.VERBOSE.default
+    ).flag()
+
+    private val trace: Boolean? by detailedOption("-vv",
+        help = "verbose with more details",
+        defaultValue = CliSpecificKey.VERBOSE.default
+    ).flag()
+
     private val config: Boolean? by option(help = "Print the configuration without executing the subcommand").flag()
 
     private val props by findObject { Properties() }
@@ -102,6 +112,9 @@ class App : CliktCommand() {
         trustUri?.let { props.put(DriverConfigKey.DB_TRUST_URI.key, it.toString()) }
 
         config?.let { props.put(CliSpecificKey.__PRINT_CONFIG_ONLY.key, it.toString()) }
+
+        verbose?.let { props.put(CliSpecificKey.VERBOSE.key, it.toString()) }
+        trace?.let { props.put(CliSpecificKey.TRACE.key, it.toString()) }
     }
 
 }

@@ -18,7 +18,7 @@ class Executor(private val context: Context) {
         get() = context.config.executor
 
     fun execute(scripts: List<ScriptWithContent>): Report {
-        if (!context.config.logs.porcelain) { logger.info { "Executes scripts.." } }
+        logger.info { "Executes scripts.." }
         try {
             for (script in scripts) {
                 val executedScript = when (executorConfig.executionMode) {
@@ -30,18 +30,17 @@ class Executor(private val context: Context) {
                     context.reportBuilder.addReportExecutedScript(
                         ReportExecutedScript.from(
                             executedScript,
-                            scripts.first { it.checksum == executedScript.checksum }.porcelainName
                         )
                     )
 
                 if (executedScript.executionStatus == ExecutionStatus.KO) {
-                    if (!context.config.logs.porcelain) { logger.info { "" } }
+                    logger.info { "" }
                     // TODO handle interactive shell
                     throw DatamaintainScriptExecutionException(executedScript)
                 }
             }
 
-            if (!context.config.logs.porcelain) { logger.info { "" } }
+            logger.info { "" }
             return context.reportBuilder.toReport()
         } catch (datamaintainException: DatamaintainBaseException) {
             throw DatamaintainException(
@@ -67,7 +66,7 @@ class Executor(private val context: Context) {
 
                 if (executedScript.executionStatus == ExecutionStatus.OK) {
                     markAsExecuted(executedScript)
-                    if (!context.config.logs.porcelain) { logger.info { "${executedScript.name} executed" } }
+                    logger.info { "${executedScript.name} executed" }
                 }
 
                 executedScript
@@ -78,7 +77,7 @@ class Executor(private val context: Context) {
 
                 try {
                     markAsExecuted(executedScript)
-                    if (!context.config.logs.porcelain) { logger.info { "${executedScript.name} only marked as executed (so not executed)" } }
+                    logger.info { "${executedScript.name} only marked as executed (so not executed)" }
                 } catch (e: DatamaintainQueryException) {
                     logger.warn { "Failed to mark script ${executedScript.name} as executed. Use the following command to force mark the script as executed : " +
                             "./datamaintain-cli --db-type ${context.config.driverConfig.dbType} --db-uri ${context.config.driverConfig.uri} update-db --path ${context.config.scanner.path} --action MARK_AS_EXECUTED" }
@@ -91,7 +90,7 @@ class Executor(private val context: Context) {
                 val executedScript = ExecutedScript.build(script, Execution(ExecutionStatus.OK), executorConfig.flags)
 
                 overrideExecuted(executedScript)
-                if (!context.config.logs.porcelain) { logger.info { "${executedScript.name} only marked as executed (so not executed)" } }
+                logger.info { "${executedScript.name} only marked as executed (so not executed)" }
 
                 executedScript
             }
@@ -101,9 +100,9 @@ class Executor(private val context: Context) {
     private fun simulateAction(script: ScriptWithContent): ExecutedScript {
         when (script.action) {
             ScriptAction.RUN ->
-                if (!context.config.logs.porcelain) { logger.info { "${script.name} would have been executed" } }
+                logger.info { "${script.name} would have been executed" }
             ScriptAction.MARK_AS_EXECUTED ->
-                if (!context.config.logs.porcelain) { logger.info { "${script.name} would have been only marked as executed (so not executed)" } }
+                logger.info { "${script.name} would have been only marked as executed (so not executed)" }
         }
 
         return ExecutedScript.simulateExecuted(script, ExecutionStatus.OK, executorConfig.flags)
@@ -113,7 +112,7 @@ class Executor(private val context: Context) {
         try {
             context.dbDriver.markAsExecuted(it)
         } catch (e: Exception) {
-            if (!context.config.logs.porcelain) { logger.error { "error during mark execution of ${it.name} " } }
+            logger.error { "error during mark execution of ${it.name} " }
             throw e
             // TODO handle interactive shell
         }
@@ -123,7 +122,7 @@ class Executor(private val context: Context) {
         try {
             context.dbDriver.overrideScript(it)
         } catch (e: Exception) {
-            if (!context.config.logs.porcelain) { logger.error { "error during override of ${it.fullName()} " } }
+            logger.error { "error during override of ${it.fullName()} " }
             throw e
         }
     }

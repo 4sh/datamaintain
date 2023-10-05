@@ -13,15 +13,14 @@ private val logger = KotlinLogging.logger {}
 class Sorter(private val context: Context) {
     fun sort(scripts: List<ScriptWithContent>): List<ScriptWithContent> {
         try {
-            if (!context.config.logs.porcelain) { logger.info { "Sort scripts..." } }
+            logger.info { "Sort scripts..." }
 
             val sortingStrategy = ByCaseInsensitiveSeparatorFreeAlphabeticalSortingStrategy()
             val sortedScripts = sortingStrategy.sort(scripts, Script::identifier)
 
-            if (!context.config.logs.porcelain) {
-                logger.info { "Scripts sorted" }
-                logger.info { "" }
-            }
+            logger.info { "Scripts sorted" }
+            logger.trace { sortedScripts.map { it.name } }
+            logger.info { "" }
 
             return sortedScripts
         } catch (datamaintainException: DatamaintainBaseException) {

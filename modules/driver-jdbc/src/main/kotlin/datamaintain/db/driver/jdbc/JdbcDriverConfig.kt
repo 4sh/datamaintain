@@ -40,12 +40,12 @@ data class JdbcDriverConfig @JvmOverloads constructor(
     override fun toDriver(connectionString: String) = JdbcDriver(connectionString)
 
     override fun log() {
-        logger.info { "JDBC driver configuration: " }
-        logger.info { "- jdbc uri -> $uri" }
-        logger.info { "- trust uri -> $trustUri" }
-        logger.info { "- print output -> $printOutput" }
-        logger.info { "- save output -> $saveOutput" }
-        logger.info { "" }
+        logger.debug { "JDBC driver configuration: " }
+        logger.debug { "- jdbc uri -> $uri" }
+        logger.debug { "- trust uri -> $trustUri" }
+        logger.debug { "- print output -> $printOutput" }
+        logger.debug { "- save output -> $saveOutput" }
+        logger.debug { "" }
     }
 
     class Builder {

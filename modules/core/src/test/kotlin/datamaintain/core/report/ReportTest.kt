@@ -1,6 +1,8 @@
 package datamaintain.core.report
 
+import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.Logger
+import ch.qos.logback.classic.LoggerContext
 import datamaintain.core.step.Step
 import datamaintain.core.step.check.rules.implementations.AlwaysSucceedCheck
 import datamaintain.test.ScriptWithContentWithFixedChecksum
@@ -19,12 +21,19 @@ import strikt.assertions.map
 
 internal class ReportTest {
     private val logger = LoggerFactory.getLogger("datamaintain.core.report.Report") as Logger
+    private val loggerLevel: Level? = logger.level
     private val testAppender = TestAppender()
 
     @BeforeEach
     fun setupLogger() {
+        logger.level = Level.INFO
         logger.addAppender(testAppender)
         testAppender.start()
+    }
+
+    @AfterEach
+    fun afterEach() {
+        logger.level = loggerLevel
     }
 
     /// builds an example report containining everything
@@ -34,13 +43,8 @@ internal class ReportTest {
              filteredScripts = listOf(ScriptWithContentWithFixedChecksum("Filtered Script 1", "Filter Identifier 1", "CHKFIL2")),
              prunedScripts = listOf(ScriptWithContentWithFixedChecksum("Pruned Script 1", "Prune Identifier 1", "CHKPRUN3")),
              executedScripts = listOf(
-                    buildReportExecutedScript(
-                            "script1",
-                            "porcelainName1"
-                    ), buildReportExecutedScript(
-                    "script2",
-                    "porcelainName2"
-                    )
+                 buildReportExecutedScript("script1"),
+                 buildReportExecutedScript("script2")
              ),
              validatedCheckRules = listOf(AlwaysSucceedCheck())
     )
@@ -48,51 +52,22 @@ internal class ReportTest {
     @Nested
     inner class ExecuteLogs {
         @Test
-        fun `should display relative paths when porcelain is true`() {
+        fun `should print script name in trace`() {
             // Given
             val report = Report(
                 executedScripts = listOf(
                     buildReportExecutedScript(
                         "script1",
-                        "porcelainName1"
                     ), buildReportExecutedScript(
                         "script2",
-                        "porcelainName2"
                     )
                 )
             )
+            // switch to TRACE
+            logger.level = Level.TRACE
 
             // When
-            report.print(verbose = true, porcelain = true)
-
-            // Then
-            expectThat(testAppender.events) {
-                get { get(0).message }.isEqualTo(
-                    "porcelainName1"
-                )
-                get { get(1).message }.isEqualTo(
-                    "porcelainName2"
-                )
-            }
-        }
-
-        @Test
-        fun `should not display relative paths when porcelain is false`() {
-            // Given
-            val report = Report(
-                executedScripts = listOf(
-                    buildReportExecutedScript(
-                        "script1",
-                        "porcelainName1"
-                    ), buildReportExecutedScript(
-                        "script2",
-                        "porcelainName2"
-                    )
-                )
-            )
-
-            // When
-            report.print(verbose = true, porcelain = false)
+            report.print()
 
             // Then
             expectThat(testAppender.events) {
@@ -106,23 +81,71 @@ internal class ReportTest {
         }
 
         @Test
-        fun `should print only summary if neither verbose nor porcelain are set`() {
+        fun `should print only summary`() {
             // Given
             val report = buildReport()
 
             // When
-            report.print(verbose = false, porcelain = false)
+            report.print()
 
             // Then
             expectThat(testAppender.events).map { it.message }.containsExactly(listOf(
                     "Summary => ",
-                    "- 1 files scanned",
-                    "- 1 files filtered",
-                    "- 1 files pruned",
-                    "- 1 check rules validated",
                     "- 2 files executed",
                     " -> script1",
                     " -> script2"
+            ))
+        }
+
+        @Test
+        fun `should print only summary on debug`() {
+            // Given
+            val report = buildReport()
+
+            // switch to DEBUG
+            logger.level = Level.DEBUG
+
+            // When
+            report.print()
+
+            // Then
+            expectThat(testAppender.events).map { it.message }.containsExactly(listOf(
+                "Summary => ",
+                "- 1 files scanned",
+                "- 1 files filtered",
+                "- 1 files pruned",
+                "- 1 check rules validated",
+                "- 2 files executed",
+                " -> script1",
+                " -> script2"
+            ))
+        }
+
+        @Test
+        fun `should print only summary on trace`() {
+            // Given
+            val report = buildReport()
+
+            // switch to TRACE
+            logger.level = Level.TRACE
+
+            // When
+            report.print()
+
+            // Then
+            expectThat(testAppender.events).map { it.message }.containsExactly(listOf(
+                "Summary => ",
+                "- 1 files scanned",
+                " -> Scanned Script 1",
+                "- 1 files filtered",
+                " -> Filtered Script 1",
+                "- 1 files pruned",
+                " -> Pruned Script 1",
+                "- 1 check rules validated",
+                " -> AlwaysSucceed",
+                "- 2 files executed",
+                " -> script1",
+                " -> script2"
             ))
         }
 
@@ -132,8 +155,11 @@ internal class ReportTest {
             // Given
             val report = buildReport()
 
+            // switch to TRACE
+            logger.level = Level.TRACE
+
             // When
-            report.print(verbose = true, porcelain = false)
+            report.print()
 
             // Then
             expectThat(testAppender.events).map { it.message }.containsExactly(listOf(
@@ -157,8 +183,11 @@ internal class ReportTest {
             // Given
             val report = buildReport()
 
+            // switch to TRACE
+            logger.level = Level.TRACE
+
             // When
-            report.print(verbose = true, porcelain = false, maxStepToShow = Step.SCAN)
+            report.print(maxStepToShow = Step.SCAN)
 
             // Then
             expectThat(testAppender.events).map { it.message }.containsExactly(listOf(
@@ -173,8 +202,11 @@ internal class ReportTest {
             // Given
             val report = buildReport()
 
+            // switch to TRACE
+            logger.level = Level.TRACE
+
             // When
-            report.print(verbose = true, porcelain = false, maxStepToShow = Step.FILTER)
+            report.print(maxStepToShow = Step.FILTER)
 
             // Then
             expectThat(testAppender.events).map { it.message }.containsExactly(listOf(
@@ -191,8 +223,11 @@ internal class ReportTest {
             // Given
             val report = buildReport()
 
+            // switch to TRACE
+            logger.level = Level.TRACE
+
             // When
-            report.print(verbose = true, porcelain = false, maxStepToShow = Step.SORT)
+            report.print(maxStepToShow = Step.SORT)
 
             // Then
             expectThat(testAppender.events).map { it.message }.containsExactly(listOf(
@@ -209,8 +244,11 @@ internal class ReportTest {
             // Given
             val report = buildReport()
 
+            // switch to TRACE
+            logger.level = Level.TRACE
+
             // When
-            report.print(verbose = true, porcelain = false, maxStepToShow = Step.PRUNE)
+            report.print(maxStepToShow = Step.PRUNE)
 
             // Then
             expectThat(testAppender.events).map { it.message }.containsExactly(listOf(
@@ -229,8 +267,11 @@ internal class ReportTest {
             // Given
             val report = buildReport()
 
+            // switch to TRACE
+            logger.level = Level.TRACE
+
             // When
-            report.print(verbose = true, porcelain = false, maxStepToShow = Step.CHECK)
+            report.print(maxStepToShow = Step.CHECK)
 
             // Then
             expectThat(testAppender.events).map { it.message }.containsExactly(listOf(
@@ -251,8 +292,11 @@ internal class ReportTest {
             // Given
             val report = buildReport()
 
+            // switch to TRACE
+            logger.level = Level.TRACE
+
             // When
-            report.print(verbose = true, porcelain = false, maxStepToShow = Step.EXECUTE)
+            report.print(maxStepToShow = Step.EXECUTE)
 
             // Then
             expectThat(testAppender.events).map { it.message }.containsExactly(listOf(
@@ -270,7 +314,6 @@ internal class ReportTest {
                     " -> script2"
             ))
         }
-
     }
 
     @AfterEach

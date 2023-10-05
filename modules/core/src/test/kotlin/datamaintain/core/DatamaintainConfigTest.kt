@@ -34,8 +34,6 @@ class DatamaintainConfigTest {
             get { scanner.identifierRegex.pattern }.isEqualTo(CoreConfigKey.SCAN_IDENTIFIER_REGEX.default)
             get { scanner.doesCreateTagsFromFolder }.isEqualTo(CoreConfigKey.CREATE_TAGS_FROM_FOLDER.default!!.toBoolean())
             get { executor.executionMode }.isEqualTo(ExecutionMode.NORMAL)
-            get { logs.verbose }.isFalse()
-            get { logs.porcelain }.isFalse()
             get { name }.isNull()
         }
     }
@@ -45,8 +43,6 @@ class DatamaintainConfigTest {
         System.setProperty("scan.path", "/new")
         System.setProperty(CoreConfigKey.CREATE_TAGS_FROM_FOLDER.key, "false")
         System.setProperty(CoreConfigKey.EXECUTION_MODE.key, "NORMAL")
-        System.setProperty(CoreConfigKey.VERBOSE.key, "FALSE")
-        System.setProperty(CoreConfigKey.PRINT_RELATIVE_PATH_OF_SCRIPT.key, "false")
 
         val config = DatamaintainConfig.buildConfig(DatamaintainConfigTest::class.java.getResourceAsStream("/config/default.properties"),
                 FakeDriverConfig())
@@ -57,15 +53,11 @@ class DatamaintainConfigTest {
             get { filter.blacklistedTags }.isEqualTo(setOf(Tag("un"), Tag("deux")))
             get { pruner.tagsToPlayAgain }.isEqualTo(setOf(Tag("again")))
             get { executor.executionMode }.isEqualTo(ExecutionMode.NORMAL)
-            get { logs.verbose }.isFalse()
-            get { logs.porcelain }.isFalse()
         }
 
         System.clearProperty("scan.path")
         System.clearProperty(CoreConfigKey.CREATE_TAGS_FROM_FOLDER.key)
         System.clearProperty(CoreConfigKey.EXECUTION_MODE.key)
-        System.clearProperty(CoreConfigKey.VERBOSE.key)
-        System.clearProperty(CoreConfigKey.PRINT_RELATIVE_PATH_OF_SCRIPT.key)
     }
 
     @Test
@@ -139,8 +131,6 @@ class DatamaintainConfigTest {
                             expectedPath.resolve(Paths.get("src/test/resources/scanner_test_files/subfolder/03_file3")).toString()
                     ))
             )
-            get { logs.verbose }.isTrue()
-            get { logs.porcelain }.isTrue()
             get { name }.isEqualTo("myDefaultConfig")
         }
     }
@@ -159,8 +149,6 @@ class DatamaintainConfigTest {
                 .withOverrideExecutedScripts(true)
                 .withExecutionMode(ExecutionMode.DRY)
                 .withDefaultScriptAction(ScriptAction.OVERRIDE_EXECUTED)
-                .withVerbose(true)
-                .withPorcelain(true)
                 .addWhitelistedTag(Tag("whitelisted1"))
                 .addWhitelistedTag(Tag("whitelisted2"))
                 .addBlacklistedTag(Tag("blacklisted1"))
@@ -183,8 +171,6 @@ class DatamaintainConfigTest {
                 get { executor.overrideExecutedScripts }.isTrue()
                 get { executor.executionMode } isEqualTo ExecutionMode.DRY
                 get { executor.defaultScriptAction } isEqualTo ScriptAction.OVERRIDE_EXECUTED
-                get { logs.verbose }.isTrue()
-                get { logs.porcelain }.isTrue()
                 get { filter.whitelistedTags }.containsExactlyInAnyOrder(Tag("whitelisted1"), Tag("whitelisted2"))
                 get { filter.blacklistedTags }.containsExactlyInAnyOrder(Tag("blacklisted1"), Tag("blacklisted2"))
                 get { pruner.tagsToPlayAgain }.containsExactlyInAnyOrder(Tag("tagToPlayAgain1"), Tag("tagToPlayAgain2"))
@@ -212,8 +198,6 @@ class DatamaintainConfigTest {
                 get { executor.overrideExecutedScripts } isEqualTo CoreConfigKey.PRUNE_OVERRIDE_UPDATED_SCRIPTS.default!!.toBoolean()
                 get { executor.executionMode } isEqualTo ExecutionMode.NORMAL
                 get { executor.defaultScriptAction } isEqualTo ScriptAction.RUN
-                get { logs.verbose }.isFalse()
-                get { logs.porcelain }.isFalse()
                 get { filter.whitelistedTags }.isEmpty()
                 get { filter.blacklistedTags }.isEmpty()
                 get { pruner.tagsToPlayAgain }.isEmpty()

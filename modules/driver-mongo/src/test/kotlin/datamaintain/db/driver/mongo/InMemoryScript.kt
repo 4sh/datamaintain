@@ -13,7 +13,7 @@ data class InMemoryScript(
         override val identifier: String,
         override val tags: Set<Tag> = setOf(),
         override var action: ScriptAction = DatamaintainExecutorConfig.defaultAction,
-        override val porcelainName: String = "") : ScriptWithContent {
+) : ScriptWithContent {
 
     override val checksum: String by lazy {
         content.hash()

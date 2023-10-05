@@ -10,12 +10,12 @@ open class BaseCliTest {
 
     protected val configWrapper = ConfigWrapper()
 
-    private fun runner(config: DatamaintainConfig) {
+    private fun runner(config: DatamaintainConfig, porcelain: Boolean) {
         configWrapper.datamaintainConfig = config
     }
 
     private fun runAppWithSubCommand(subCommand: DatamaintainCliCommand, argv: List<String>) {
-        App().subcommands(subCommand).main(argv)
+        App().subcommands(subCommand).parse(argv)
     }
 
     protected fun runAppWithUpdateDb(baseArguments: List<String>, updateDbArguments: List<String> = listOf()) {

@@ -26,7 +26,6 @@ data class DatamaintainConfig @JvmOverloads constructor(
     val checker: DatamaintainCheckerConfig = DatamaintainCheckerConfig(),
     val executor: DatamaintainExecutorConfig = DatamaintainExecutorConfig(),
     val driverConfig: DatamaintainDriverConfig,
-    val logs: DatamaintainLogsConfig = DatamaintainLogsConfig(),
 ) {
 
     private constructor(builder: Builder) : this(
@@ -55,10 +54,6 @@ data class DatamaintainConfig @JvmOverloads constructor(
             builder.flags
         ),
         builder.driverConfig,
-        DatamaintainLogsConfig(
-            builder.verbose,
-            builder.porcelain,
-        ),
     )
 
     companion object {
@@ -111,10 +106,6 @@ data class DatamaintainConfig @JvmOverloads constructor(
                     extractList(props.getNullableProperty(FLAGS))
                 ),
                 driverConfig,
-                DatamaintainLogsConfig(
-                    props.getProperty(VERBOSE).toBoolean(),
-                    props.getProperty(PRINT_RELATIVE_PATH_OF_SCRIPT).toBoolean(),
-                ),
             )
         }
 
@@ -187,17 +178,16 @@ data class DatamaintainConfig @JvmOverloads constructor(
     }
 
     fun log() {
-        logger.info { "Configuration: " }
+        logger.debug { "Configuration: " }
 
-        workingDirectory.also { logger.info { "- working directory -> $it" } }
-        name?.also { logger.info { "- name -> $it" } }
+        workingDirectory.also { logger.debug { "- working directory -> $it" } }
+        name?.also { logger.debug { "- name -> $it" } }
         scanner.log()
         filter.log()
         pruner.log()
         checker.log()
         executor.log()
-        logs.log()
-        logger.info { "" }
+        logger.debug { "" }
     }
 
     class Builder {
@@ -232,10 +222,6 @@ data class DatamaintainConfig @JvmOverloads constructor(
             private set
         var defaultScriptAction: ScriptAction = DatamaintainExecutorConfig.defaultAction
             private set
-        var verbose: Boolean = VERBOSE.default!!.toBoolean()
-            private set
-        var porcelain: Boolean = PRINT_RELATIVE_PATH_OF_SCRIPT.default!!.toBoolean()
-            private set
         var flags: MutableList<String> = mutableListOf()
             private set
 
@@ -248,8 +234,6 @@ data class DatamaintainConfig @JvmOverloads constructor(
         fun withExecutionMode(executionMode: ExecutionMode) = apply { this.executionMode = executionMode }
         fun withDefaultScriptAction(defaultScriptAction: ScriptAction) = apply { this.defaultScriptAction = defaultScriptAction }
         fun withDriverConfig(driverConfig: DatamaintainDriverConfig) = apply { this.driverConfig = driverConfig }
-        fun withVerbose(verbose: Boolean) = apply { this.verbose = verbose }
-        fun withPorcelain(porcelain: Boolean) = apply { this.porcelain = porcelain }
 
         // Collection
         fun addWhitelistedTag(whitelistedTag: Tag) = apply { this.whitelistedTags.add(whitelistedTag) }
@@ -291,9 +275,7 @@ enum class CoreConfigKey(override val key: String,
     WORKING_DIRECTORY_PATH("working.directory.path", System.getProperty("user.dir")),
     PARENT_CONFIG_PATH("parent.config.path"),
     DB_TYPE("db.type", "mongo"),
-    VERBOSE("verbose", "false"),
     DEFAULT_SCRIPT_ACTION("default.script.action", "RUN"),
-    PRINT_RELATIVE_PATH_OF_SCRIPT("porcelain", "false"),
     FLAGS("flags"),
 
     // SCAN

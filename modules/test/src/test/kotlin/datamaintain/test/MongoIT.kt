@@ -1,5 +1,6 @@
 package datamaintain.test
 
+import datamaintain.cli.app.datamaintainApp
 import datamaintain.cli.app.main
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
@@ -20,9 +21,12 @@ class MongoIT : AbstractMongoDbTest() {
 
         // When
         executeUpdateDbWithMongoClientInDocker(
-            arrayOf("--db-type", "mongo"),
             arrayOf(
+                "--db-type", "mongo",
+                "--db-uri", mongoUri(),
                 "--verbose",
+            ),
+            arrayOf(
                 "--path", "src/test/resources/integration/ok",
                 "--identifier-regex", "(.*?)_.*",
                 "--print-db-output",
@@ -46,9 +50,12 @@ class MongoIT : AbstractMongoDbTest() {
     fun `should partial execute`() {
         // Given
         executeUpdateDbWithMongoClientInDocker(
-            arrayOf("--db-type", "mongo"),
             arrayOf(
+                "--db-type", "mongo",
+                "--db-uri", mongoUri(),
                 "--verbose",
+            ),
+            arrayOf(
                 "--path", "src/test/resources/integration/partial",
                 "--identifier-regex", "(.*?)_.*"
             )
@@ -59,9 +66,12 @@ class MongoIT : AbstractMongoDbTest() {
 
         // When
         executeUpdateDbWithMongoClientInDocker(
-            arrayOf("--db-type", "mongo"),
             arrayOf(
+                "--db-type", "mongo",
+                "--db-uri", mongoUri(),
                 "--verbose",
+            ),
+            arrayOf(
                 "--path", "src/test/resources/integration/ok",
                 "--identifier-regex", "(.*?)_.*"
             )
@@ -104,9 +114,12 @@ class MongoIT : AbstractMongoDbTest() {
 
         // When
         executeUpdateDbWithMongoClientInDocker(
-            arrayOf("--db-type", "mongo"),
             arrayOf(
+                "--db-type", "mongo",
+                "--db-uri", mongoUri(),
                 "--verbose",
+            ),
+            arrayOf(
                 "--path", "src/test/resources/integration/ok",
                 "--identifier-regex", "(.*?)_.*",
                 "--execution-mode", "NORMAL",
@@ -130,9 +143,12 @@ class MongoIT : AbstractMongoDbTest() {
     fun `should override`() {
         // Given
         executeUpdateDbWithMongoClientInDocker(
-            arrayOf("--db-type", "mongo"),
             arrayOf(
+                "--db-type", "mongo",
+                "--db-uri", mongoUri(),
                 "--verbose",
+            ),
+            arrayOf(
                 "--path", "src/test/resources/integration/partial",
                 "--identifier-regex", "(.*?)_.*"
             )
@@ -143,9 +159,12 @@ class MongoIT : AbstractMongoDbTest() {
 
         // When
         executeUpdateDbWithMongoClientInDocker(
-            arrayOf("--db-type", "mongo"),
             arrayOf(
+                "--db-type", "mongo",
+                "--db-uri", mongoUri(),
                 "--verbose",
+            ),
+            arrayOf(
                 "--path", "src/test/resources/integration/override",
                 "--identifier-regex", "(.*?)_.*",
                 "--execution-mode", "NORMAL",
@@ -169,9 +188,9 @@ class MongoIT : AbstractMongoDbTest() {
         val args = listOf(
                 "--db-type", "mongo",
                 "--db-uri", mongoUri,
+                "--verbose",
                 "update-db",
                 "--mongo-client", mongoCliDockerPath.toString(),
-                "--verbose",
                 "--path", "src/test/resources/integration/ko",
                 "--identifier-regex", "(.*?)_.*"
         )
@@ -204,7 +223,7 @@ class MongoIT : AbstractMongoDbTest() {
                 arrayOf("--db-uri", mongoUri, "update-db", "--mongo-client", mongoCliDockerPath.toString()) +
                 updateArgs
 
-        main(args)
+        datamaintainApp.parse(args)
     }
 
     private fun listExecutedFiles(): List<String> {

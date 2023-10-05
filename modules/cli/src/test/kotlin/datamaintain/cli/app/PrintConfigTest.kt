@@ -19,7 +19,7 @@ internal class PrintConfigTest : BaseCliTest() {
     }
 
     @Test
-    fun `should print config when command is mark-script-as-exectued`() {
+    fun `should print config when command is mark-script-as-executed`() {
         // Given
         val path = "/myPath"
 
@@ -52,8 +52,6 @@ internal class PrintConfigTest : BaseCliTest() {
             get { get(index++).message }.isEqualTo("- allow override executed script -> false")
             get { get(index++).message }.isEqualTo("- script action -> MARK_AS_EXECUTED")
             get { get(index++).message }.isEqualTo("- flags -> []")
-            get { get(index++).message }.isEqualTo("- verbose -> false")
-            get { get(index++).message }.isEqualTo("- porcelain -> false")
         }
     }
 
@@ -94,8 +92,6 @@ internal class PrintConfigTest : BaseCliTest() {
             get { get(index++).message }.isEqualTo("- allow override executed script -> false")
             get { get(index++).message }.isEqualTo("- script action -> MARK_AS_EXECUTED")
             get { get(index++).message }.isEqualTo("- flags -> []")
-            get { get(index++).message }.isEqualTo("- verbose -> false")
-            get { get(index++).message }.isEqualTo("- porcelain -> false")
         }
     }
 
@@ -103,6 +99,15 @@ internal class PrintConfigTest : BaseCliTest() {
     fun `should print config when command is update-db`() {
         // Given
         val path = "/myPath"
+
+        val baseArguments = listOf(
+            "--verbose",
+            "--config",
+            "--db-type",
+            "mongo",
+            "--db-uri",
+            "mongo-uri"
+        )
 
         val updateDbArguments =
                 listOf(
@@ -114,16 +119,11 @@ internal class PrintConfigTest : BaseCliTest() {
                         "--tag", "MYTAG2=/pathMatcher2",
                         "--blacklisted-tags", "MYTAG1",
                         "--whitelisted-tags", "MYTAG2",
-                        "--verbose",
                         "--porcelain"
                 )
 
         // When
-        runAppWithUpdateDb(
-                listOf(
-                        "--config", "--db-type", "mongo", "--db-uri", "mongo-uri"
-                ), updateDbArguments
-        )
+        runAppWithUpdateDb(baseArguments, updateDbArguments)
 
         // Then
         var index = 0
@@ -142,8 +142,6 @@ internal class PrintConfigTest : BaseCliTest() {
             get { get(index++).message }.isEqualTo("- allow override executed script -> false")
             get { get(index++).message }.isEqualTo("- script action -> RUN")
             get { get(index++).message }.isEqualTo("- flags -> []")
-            get { get(index++).message }.isEqualTo("- verbose -> true")
-            get { get(index++).message }.isEqualTo("- porcelain -> true")
         }
     }
 
@@ -152,6 +150,16 @@ internal class PrintConfigTest : BaseCliTest() {
         // Given
         val path = "/myPath"
 
+        val baseArguments = listOf(
+            "--verbose",
+            "--config",
+            "--db-type",
+            "mongo",
+            "--db-uri",
+            "mongo-uri",
+            "--config-file-path",
+            "src/test/resources/config-child.properties"
+        )
         val updateDbArguments =
                 listOf(
                         "--path", path,
@@ -161,16 +169,11 @@ internal class PrintConfigTest : BaseCliTest() {
                         "--tag", "MYTAG1=/pathMatcher1",
                         "--blacklisted-tags", "MYTAG1",
                         "--whitelisted-tags", "MYTAG2",
-                        "--verbose",
                         "--porcelain"
                 )
 
         // When
-        runAppWithUpdateDb(
-                listOf(
-                        "--config", "--db-type", "mongo", "--db-uri", "mongo-uri", "--config-file-path", "src/test/resources/config-child.properties"
-                ), updateDbArguments
-        )
+        runAppWithUpdateDb(baseArguments, updateDbArguments)
 
         // Then
         var index = 0
@@ -192,8 +195,6 @@ internal class PrintConfigTest : BaseCliTest() {
             get { get(index++).message }.isEqualTo("- allow override executed script -> false")
             get { get(index++).message }.isEqualTo("- script action -> RUN")
             get { get(index++).message }.isEqualTo("- flags -> []")
-            get { get(index++).message }.isEqualTo("- verbose -> true")
-            get { get(index++).message }.isEqualTo("- porcelain -> true")
         }
     }
 }

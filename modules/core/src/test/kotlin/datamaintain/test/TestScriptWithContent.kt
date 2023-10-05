@@ -9,7 +9,6 @@ class TestScriptWithContent(
         override val identifier: String,
         override val tags: Set<Tag> = setOf(),
         override var action: ScriptAction = ScriptAction.RUN,
-        override val porcelainName: String
 ) : ScriptWithContent {
     override val checksum: String
         get() = name.hashCode().toString()

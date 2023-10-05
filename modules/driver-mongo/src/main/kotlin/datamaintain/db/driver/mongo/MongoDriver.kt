@@ -45,29 +45,33 @@ class MongoDriver(mongoUri: String,
 
         var executionOutput: String? = null
 
-        val exitCode = listOf(clientPath.toString(), uri, "--quiet", scriptPath.toString()).runProcess() { inputStream ->
-            executionOutput = processDriverOutput(inputStream)
+        val exitCode = listOf(clientPath.toString(), uri, "--quiet", scriptPath.toString()).runProcess { outputLines ->
+            executionOutput = processDriverOutput(outputLines)
         }
 
-        return Execution(if (exitCode == 0) ExecutionStatus.OK else ExecutionStatus.KO, executionOutput)
+        return if (exitCode == 0) {
+            Execution(ExecutionStatus.OK, executionOutput)
+        } else {
+            Execution(ExecutionStatus.KO, executionOutput)
+        }
     }
 
-    private fun processDriverOutput(inputStream: InputStream): String? {
+    private fun processDriverOutput(outputLines: Sequence<String>): String? {
         if (saveOutput || printOutput) {
-            val lines = inputStream.bufferedReader().lines().asSequence()
-                    .onEach {
-                        if (printOutput) {
-                            logger.info { it }
-                        }
+            val lines = outputLines
+                .onEach {
+                    if (printOutput) {
+                        logger.info { it }
                     }
-                    .toList()
+                }
+                .toList()
             if (saveOutput) {
                 val totalOutputSize = lines.map { line -> line.length }.foldRight(0, Int::plus)
                 var dropped = 0
                 return lines
                         .dropLastWhile { line ->
                             val drop = totalOutputSize - dropped > OUTPUT_MAX_SIZE
-                            if(drop) {
+                            if (drop) {
                                 dropped += line.length
                             }
                             drop
@@ -123,15 +127,13 @@ class MongoDriver(mongoUri: String,
         }
 
         // Execute
-        val exitCode = listOf(clientPath.toString(), uri, "--quiet", "--eval", evalQuery).runProcess { inputStream ->
-            var lines = inputStream.bufferedReader().lines().toList()
-
+        val exitCode = listOf(clientPath.toString(), uri, "--quiet", "--eval", evalQuery).runProcess { outputLines ->
             // Dropwhile is a workaround to fix this issue: https://jira.mongodb.org/browse/SERVER-27159
             if (mongoShell == MongoShell.MONGO) {
-                lines = lines.dropWhile { !(it.startsWith("[").or(it.startsWith("{"))) }
+               outputLines.dropWhile { !(it.startsWith("[").or(it.startsWith("{"))) }
             }
 
-            executionOutput = lines.joinToString("\n")
+            executionOutput = outputLines.joinToString("\n")
         }
 
         if (exitCode != 0 || executionOutput == null) {

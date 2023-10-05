@@ -2,8 +2,7 @@ package datamaintain.cli.app
 
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.findObject
-import datamaintain.cli.app.utils.CliSpecificKey
-import datamaintain.cli.app.utils.loadConfig
+import datamaintain.cli.app.utils.*
 import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.exception.DatamaintainBaseException
 import java.util.*
@@ -17,10 +16,24 @@ abstract class DatamaintainCliCommand(name: String, help: String = "") : CliktCo
             overloadProps(props)
             val config = loadConfig(props)
 
-            if (props.getProperty(CliSpecificKey.__PRINT_CONFIG_ONLY.key, CliSpecificKey.__PRINT_CONFIG_ONLY.default)!!.toBoolean()) {
+            val isPrintConfigOnly = props.getBooleanCliProperty(CliSpecificKey.__PRINT_CONFIG_ONLY)
+            if (isPrintConfigOnly) {
+                // config log nothing in INFO level so apply DEBUG level
+                applyLoggerLevel(CliDatamaintainLoggerLevel.VERBOSE)
                 config.log()
             } else {
-                executeCommand(config)
+                val level = if (props.getBooleanCliProperty(CliSpecificKey.TRACE)) {
+                    CliDatamaintainLoggerLevel.TRACE
+                } else if (props.getBooleanCliProperty(CliSpecificKey.VERBOSE)) {
+                    CliDatamaintainLoggerLevel.VERBOSE
+                } else if (props.getBooleanCliProperty(CliSpecificKey.PORCELAIN)) {
+                    CliDatamaintainLoggerLevel.PORCELAIN
+                } else {
+                    CliDatamaintainLoggerLevel.INFO
+                }
+                applyLoggerLevel(level)
+
+                executeCommand(config, level == CliDatamaintainLoggerLevel.PORCELAIN)
             }
         } catch (e: DatamaintainBaseException) {
             echo(e.message, err = true)
@@ -37,5 +50,5 @@ abstract class DatamaintainCliCommand(name: String, help: String = "") : CliktCo
 
     protected abstract fun overloadProps(props: Properties)
 
-    protected abstract fun executeCommand(config: DatamaintainConfig)
+    protected abstract fun executeCommand(config: DatamaintainConfig, porcelain: Boolean)
 }

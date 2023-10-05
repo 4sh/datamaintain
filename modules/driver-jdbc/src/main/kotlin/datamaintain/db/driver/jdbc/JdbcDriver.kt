@@ -4,11 +4,14 @@ import datamaintain.core.db.driver.DatamaintainDriver
 import datamaintain.core.script.*
 import datamaintain.core.step.executor.Execution
 import datamaintain.db.driver.jdbc.exception.JdbcQueryException
+import mu.KotlinLogging
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.ResultSet
 import java.sql.SQLException
 import java.util.*
+
+private val logger = KotlinLogging.logger {}
 
 /**
  * @param jdbcUri uri of the jdbc to use
@@ -29,11 +32,13 @@ class JdbcDriver(jdbcUri: String,
             connection.createStatement().executeUpdate(script.content)
             Execution(ExecutionStatus.OK, null)
         } catch (e: SQLException) {
+            logger.debug { "Script ${script.name} - KO - ${e.message}" }
             Execution(ExecutionStatus.KO, e.message)
         }
     }
 
     override fun listExecutedScripts(): Sequence<LightExecutedScript> {
+        logger.debug { "Fetching executed scripts" }
         createExecutedScriptsTableIfNotExists()
 
         val statement = connection.createStatement()
@@ -46,6 +51,7 @@ class JdbcDriver(jdbcUri: String,
     }
 
     override fun markAsExecuted(executedScript: ExecutedScript): ExecutedScript {
+        logger.debug { "Script ${executedScript.name} - Mark as executed" }
         val insertStmt = connection.prepareStatement("""
             INSERT INTO $EXECUTED_SCRIPTS_TABLE (id, name, checksum, identifier, executionStatus, action) 
             VALUES (?, ?, ?, ?, ?, ?)"""
@@ -71,6 +77,7 @@ class JdbcDriver(jdbcUri: String,
     }
 
     fun createExecutedScriptsTableIfNotExists() {
+        logger.debug { "Creating table $EXECUTED_SCRIPTS_TABLE" }
         val tableCreationStatement = connection.prepareStatement("""
             CREATE TABLE IF NOT EXISTS $EXECUTED_SCRIPTS_TABLE (
                 id VARCHAR(255) NOT NULL,
@@ -87,6 +94,7 @@ class JdbcDriver(jdbcUri: String,
     }
 
     override fun overrideScript(executedScript: ExecutedScript): ExecutedScript {
+        logger.debug { "Script ${executedScript.name} - Overriding executed script" }
         connection.prepareStatement("""
             UPDATE $EXECUTED_SCRIPTS_TABLE SET
             action = '${ScriptAction.OVERRIDE_EXECUTED.name}',
