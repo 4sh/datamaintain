@@ -5,6 +5,10 @@ plugins {
 
 baseProject()
 
+kotlin {
+    jvmToolchain(17)
+}
+
 dependencies {
     implementation(project(":modules:cli"))
     implementation(project(":modules:core"))
