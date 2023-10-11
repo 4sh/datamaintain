@@ -42,10 +42,3 @@ allprojects {
         apply(from = rootProject.file("buildScripts/gradle/publishing.gradle.kts"))
     }
 }
-
-
-configure(subprojects) {
-    tasks.withType<KotlinJvmCompile>().all {
-        kotlinOptions.jvmTarget = "1.8"
-    }
-}

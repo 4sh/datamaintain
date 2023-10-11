@@ -11,6 +11,10 @@ plugins {
 
 baseProject()
 
+kotlin {
+    jvmToolchain(17)
+}
+
 dependencies {
     implementation(project(":modules:core"))
     implementation(project(":modules:driver-mongo"))
