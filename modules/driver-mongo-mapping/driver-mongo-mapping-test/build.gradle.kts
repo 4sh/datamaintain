@@ -14,8 +14,8 @@ repositories {
 }
 
 dependencies {
-    compileOnly(project(":modules:core"))
-    compileOnly(project(":modules:driver-mongo"))
+    compileOnly(projects.modules.core)
+    compileOnly(projects.modules.driverMongo)
     compileOnly(libs.junit.jupiter.api)
 
     implementation(libs.jsonPath)

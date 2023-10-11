@@ -41,12 +41,12 @@ dependencies {
     testImplementation(libs.testContainers.jupiter)
     testImplementation(libs.testContainers.mongodb)
 
-    compileOnly(project(":modules:core"))
-    testImplementation(project(":modules:core"))
+    compileOnly(projects.modules.core)
+    testImplementation(projects.modules.core)
 
     testImplementation(libs.mongoDriver.sync)
 
     // Use kotlinx-serialization implementation
-    testImplementation(project(":modules:driver-mongo-mapping:driver-mongo-mapping-serialization"))
+    testImplementation(projects.modules.driverMongoMapping.driverMongoMappingSerialization)
     testImplementation(libs.kotlinx.serialization.json)
 }

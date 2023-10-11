@@ -28,8 +28,8 @@ dependencies {
     testImplementation(libs.testContainers.jupiter)
     testImplementation(libs.testContainers.mongodb)
 
-    implementation(project(":modules:cli"))
-    implementation(project(":modules:core"))
-    implementation(project(":modules:driver-mongo"))
+    implementation(projects.modules.cli)
+    implementation(projects.modules.core)
+    implementation(projects.modules.driverMongo)
     implementation(libs.mongoDriver.sync)
 }
