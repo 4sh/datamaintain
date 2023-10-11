@@ -45,7 +45,7 @@ dependencies {
     testImplementation(libs.testContainers.jupiter)
     testImplementation(libs.testContainers.mongodb)
 
-    compileOnly(project(":modules:core"))
-    testImplementation(project(":modules:core"))
+    compileOnly(projects.modules.core)
+    testImplementation(projects.modules.core)
     testImplementation(libs.h2database)
 }

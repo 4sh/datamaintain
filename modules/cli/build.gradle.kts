@@ -34,16 +34,16 @@ dependencies {
     testImplementation(libs.testContainers.jupiter)
     testImplementation(libs.testContainers.mongodb)
 
-    implementation(project(":modules:core"))
-    implementation(project(":modules:driver-mongo"))
-    implementation(project(":modules:driver-mongo-mapping:driver-mongo-mapping-serialization"))
-    implementation(project(":modules:driver-jdbc"))
+    implementation(projects.modules.core)
+    implementation(projects.modules.driverMongo)
+    implementation(projects.modules.driverMongoMapping.driverMongoMappingSerialization)
+    implementation(projects.modules.driverJdbc)
 
     implementation(libs.clikt)
     implementation(libs.logbackClassic)
     implementation(libs.kotlinx.serialization.json)
 
-    testImplementation(project(":modules:test"))
+    testImplementation(projects.modules.test)
 }
 
 application {
