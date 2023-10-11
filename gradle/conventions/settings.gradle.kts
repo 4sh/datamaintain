@@ -8,4 +8,6 @@ dependencyResolutionManagement {
     }
 }
 
-include()
+include(
+    "base",
+)

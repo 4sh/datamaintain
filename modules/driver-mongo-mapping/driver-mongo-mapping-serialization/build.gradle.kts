@@ -1,5 +1,6 @@
 plugins {
-    alias(libs.plugins.kotlin.jvm)
+    id("datamaintain.conventions.kotlin")
+
     alias(libs.plugins.kotlinx.serialization)
     alias(libs.plugins.testLogger)
 
