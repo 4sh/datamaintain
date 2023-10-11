@@ -29,3 +29,11 @@ version = if (lastTag != "") {
 repositories {
     mavenCentral()
 }
+
+kotlin {
+    jvmToolchain(libs.versions.java.get().toInt())
+}
+
+tasks.test {
+    useJUnitPlatform()
+}

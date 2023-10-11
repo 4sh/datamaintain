@@ -6,16 +6,6 @@ plugins {
     `maven-publish` // Needed for Jitpack
 }
 
-tasks.getByPath("test").doFirst({
-    with<org.gradle.api.tasks.testing.Test, kotlin.Unit>(this as Test) {
-        this.useJUnitPlatform()
-    }
-})
-
-kotlin {
-    jvmToolchain(17)
-}
-
 publishing {
     publications {
         create<MavenPublication>("maven") {
@@ -26,10 +16,6 @@ publishing {
             from(components["java"])
         }
     }
-}
-
-repositories {
-    mavenCentral()
 }
 
 dependencies {
