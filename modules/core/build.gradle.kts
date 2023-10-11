@@ -1,29 +1,11 @@
 plugins {
-    id("org.jetbrains.kotlin.jvm")
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.testLogger)
     `maven-publish` // Needed for Jitpack
-    id("com.adarshr.test-logger")
 }
 
 repositories {
     mavenCentral()
-}
-
-dependencies {
-    "api"((this.platform("org.jetbrains.kotlin:kotlin-bom:${Versions.kotlin}")))
-    "implementation"("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-}
-
-dependencies {
-    "implementation"("io.github.microutils:kotlin-logging:${Versions.kotlinLogging}")
-
-    "testImplementation"("org.junit.jupiter:junit-jupiter-api:${Versions.junit}")
-    "testImplementation"("org.junit.jupiter:junit-jupiter-params:${Versions.junit}")
-    "testRuntimeOnly"("org.junit.jupiter:junit-jupiter-engine:${Versions.junit}")
-    "testImplementation"("io.strikt:strikt-core:${Versions.strikt}")
-    "testImplementation"("io.mockk:mockk:${Versions.mockk}")
-    "testImplementation"("org.testcontainers:testcontainers:${Versions.testcontainers}")
-    "testImplementation"("org.testcontainers:junit-jupiter:${Versions.testcontainers}")
-    "testImplementation"("org.testcontainers:mongodb:${Versions.testcontainers}")
 }
 
 tasks.getByPath("test").doFirst({
@@ -49,5 +31,19 @@ publishing {
 }
 
 dependencies {
-    "testImplementation"("ch.qos.logback:logback-classic:${Versions.logbackClassic}")
+    api(platform(libs.kotlin.bom))
+    implementation(libs.kotlin.jdk8)
+
+    implementation(libs.kotlinLogging)
+
+    testImplementation(libs.junit.jupiter.api)
+    testImplementation(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testImplementation(libs.strikt)
+    testImplementation(libs.mockk)
+    testImplementation(libs.testContainers)
+    testImplementation(libs.testContainers.jupiter)
+    testImplementation(libs.testContainers.mongodb)
+
+    testImplementation(libs.logbackClassic)
 }
