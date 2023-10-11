@@ -1,7 +1,8 @@
 plugins {
-    id("org.jetbrains.kotlin.jvm")
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.testLogger)
+
     `maven-publish` // Needed for Jitpack
-    id("com.adarshr.test-logger")
 }
 
 kotlin {
@@ -15,7 +16,7 @@ repositories {
 dependencies {
     compileOnly(project(":modules:core"))
     compileOnly(project(":modules:driver-mongo"))
-    compileOnly("org.junit.jupiter:junit-jupiter-api:${Versions.junit}")
+    compileOnly(libs.junit.jupiter.api)
 
-    implementation("com.jayway.jsonpath:json-path:2.7.0")
+    implementation(libs.jsonPath)
 }
