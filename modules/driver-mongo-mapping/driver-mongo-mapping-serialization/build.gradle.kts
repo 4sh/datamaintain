@@ -1,10 +1,9 @@
 plugins {
     id("datamaintain.conventions.kotlin")
+    id("datamaintain.conventions.publishing")
 
     alias(libs.plugins.kotlinx.serialization)
     alias(libs.plugins.testLogger)
-
-    `maven-publish` // Needed for Jitpack
 }
 
 dependencies {
