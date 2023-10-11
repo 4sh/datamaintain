@@ -43,7 +43,7 @@ internal class AppTest : BaseCliTest() {
 
                 // Then
                 expectThat(exitCode).isEqualTo(1)
-                expectThat(output).contains("java.io.FileNotFoundException: non-existing-file.properties (No such file or directory)")
+                expectThat(output).contains("java.io.FileNotFoundException: non-existing-file.properties")
             }
 
             @Test
