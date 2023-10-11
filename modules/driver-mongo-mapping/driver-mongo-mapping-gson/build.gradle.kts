@@ -1,17 +1,13 @@
 plugins {
     id("datamaintain.conventions.kotlin")
     id("datamaintain.conventions.publishing")
+    id("datamaintain.conventions.driver")
+    id("datamaintain.conventions.driver.mongo")
 
     alias(libs.plugins.testLogger)
 }
 
 dependencies {
-    compileOnly(projects.modules.core)
-    compileOnly(projects.modules.driverMongo)
     compileOnly(libs.gson)
-
-    testImplementation(projects.modules.core)
-    testImplementation(projects.modules.driverMongo)
-    testImplementation(projects.modules.driverMongoMapping.driverMongoMappingTest)
     testImplementation(libs.gson)
 }
