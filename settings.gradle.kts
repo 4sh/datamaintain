@@ -17,3 +17,5 @@ include(
         "samples:java-mongo",
         "samples:java-postgresql"
 )
+
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")

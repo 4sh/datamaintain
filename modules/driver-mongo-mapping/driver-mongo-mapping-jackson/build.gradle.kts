@@ -34,12 +34,12 @@ dependencies {
     testImplementation(libs.testContainers.jupiter)
     testImplementation(libs.testContainers.mongodb)
 
-    compileOnly(project(":modules:core"))
-    compileOnly(project(":modules:driver-mongo"))
+    compileOnly(projects.modules.core)
+    compileOnly(projects.modules.driverMongo)
     compileOnly(libs.jackson.databind)
 
-    testImplementation(project(":modules:core"))
-    testImplementation(project(":modules:driver-mongo"))
-    testImplementation(project(":modules:driver-mongo-mapping:driver-mongo-mapping-test"))
+    testImplementation(projects.modules.core)
+    testImplementation(projects.modules.driverMongo)
+    testImplementation(projects.modules.driverMongoMapping.driverMongoMappingTest)
     testImplementation(libs.jackson.databind)
 }
