@@ -11,6 +11,10 @@ repositories {
 
 baseProject()
 
+kotlin {
+    jvmToolchain(8)
+}
+
 publishing {
     publications {
         create<MavenPublication>("maven") {
@@ -26,4 +30,3 @@ publishing {
 dependencies {
     "testImplementation"("ch.qos.logback:logback-classic:${Versions.logbackClassic}")
 }
-
