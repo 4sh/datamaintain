@@ -67,7 +67,7 @@ tasks.register<Exec>("graalCheckNative") {
     }
 }
 
-task("rebuildCliDocumentation", JavaExec::class) {
+tasks.register("rebuildCliDocumentation", JavaExec::class) {
     mainClass.set("datamaintain.cli.documentation.RebuildDocumentationKt")
     classpath = sourceSets["main"].runtimeClasspath
 }
@@ -82,19 +82,19 @@ sourceSets {
     }
 }
 
-task("generateVersionProperties") {
-    val env = System.getProperty("env")
-    if (env == "prod") {
-        delete("$generatedVersionDir/version.properties")
-        doLast {
+tasks.register("generateVersionProperties") {
+    doLast {
+        val env = System.getProperty("env")
+        if (env == "prod") {
+            delete("$generatedVersionDir/version.properties")
             val propertiesFile = file("$generatedVersionDir/version.properties")
             propertiesFile.parentFile.mkdirs()
             val properties = Properties()
             properties.setProperty("version", rootProject.version.toString())
             val out = FileOutputStream(propertiesFile)
             properties.store(out, null)
+        } else {
+            delete("$generatedVersionDir/version.properties")
         }
-    } else {
-        delete("$generatedVersionDir/version.properties")
     }
 }
