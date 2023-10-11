@@ -6,14 +6,6 @@ plugins {
     `maven-publish` // Needed for Jitpack
 }
 
-kotlin {
-    jvmToolchain(17)
-}
-
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     compileOnly(projects.modules.core)
     compileOnly(projects.modules.driverMongo)
