@@ -34,6 +34,24 @@ kotlin {
     jvmToolchain(libs.versions.java.get().toInt())
 }
 
+dependencies {
+    api(platform(libs.kotlin.bom))
+
+    implementation(libs.kotlinLogging)
+
+    testImplementation(libs.junit.jupiter.api)
+    testImplementation(libs.junit.jupiter.engine)
+    testImplementation(libs.junit.jupiter.params)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testImplementation(libs.strikt)
+    testImplementation(libs.mockk)
+    testImplementation(libs.testContainers)
+    testImplementation(libs.testContainers.jupiter)
+    testImplementation(libs.testContainers.mongodb)
+
+    testImplementation(libs.logbackClassic)
+}
+
 tasks.test {
     useJUnitPlatform()
 }
