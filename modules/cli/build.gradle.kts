@@ -3,8 +3,10 @@ import java.io.FileOutputStream
 import java.util.*
 
 plugins {
-    alias(libs.plugins.kotlin.jvm)
+    id("datamaintain.conventions.kotlin")
+
     alias(libs.plugins.palantir.graal)
+
     application
     `maven-publish`
 }

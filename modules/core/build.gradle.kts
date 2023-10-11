@@ -1,6 +1,8 @@
 plugins {
-    alias(libs.plugins.kotlin.jvm)
+    id("datamaintain.conventions.kotlin")
+
     alias(libs.plugins.testLogger)
+
     `maven-publish` // Needed for Jitpack
 }
 

@@ -22,12 +22,17 @@ json-path = "2.7.0"
 # use this to specify latest release
 versionLatest = "latest.integration"
 
+# Plugins
+gradle-palantir-graal = "0.10.0"
+gradle-palantir-git = "0.12.3"
+gradle-testLogger = "3.1.0"
+
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-palantir-graal = { id = "com.palantir.graal", version = "0.10.0" }
-palantir-git = { id = "com.palantir.git-version", version = "0.12.3" }
-testLogger = { id = "com.adarshr.test-logger", version = "3.1.0" }
+palantir-graal = { id = "com.palantir.graal", version.ref = "gradle-palantir-graal" }
+palantir-git = { id = "com.palantir.git-version", version.ref = "gradle-palantir-git" }
+testLogger = { id = "com.adarshr.test-logger", version.ref = "gradle-testLogger" }
 
 [libraries]
 kotlin-bom = { module = "org.jetbrains.kotlin:kotlin-bom", version.ref = "kotlin" }
@@ -54,5 +59,9 @@ clikt = { module = "com.github.ajalt:clikt", version.ref = "clickt" }
 testContainers = { module = "org.testcontainers:testcontainers", version.ref = "testContainers" }
 testContainers-jupiter = { module = "org.testcontainers:junit-jupiter", version.ref = "testContainers" }
 testContainers-mongodb = { module = "org.testcontainers:mongodb", version.ref = "testContainers" }
+
+# Plugins imported in convention plugins must be imported as libs for now
+gradle-palantir-git = { module = "com.palantir.gradle.gitversion:gradle-git-version", version.ref = "gradle-palantir-git" }
+gradle-kotlin-jvm = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 
 [bundles]
