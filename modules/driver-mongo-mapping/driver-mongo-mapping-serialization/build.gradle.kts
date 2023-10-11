@@ -5,7 +5,6 @@ plugins {
     id("datamaintain.conventions.driver.mongo")
 
     alias(libs.plugins.kotlinx.serialization)
-    alias(libs.plugins.testLogger)
 }
 
 dependencies {
