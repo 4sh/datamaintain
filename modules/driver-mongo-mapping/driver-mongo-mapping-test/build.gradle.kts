@@ -4,6 +4,10 @@ plugins {
     id("com.adarshr.test-logger")
 }
 
+kotlin {
+    jvmToolchain(17)
+}
+
 repositories {
     mavenCentral()
 }
