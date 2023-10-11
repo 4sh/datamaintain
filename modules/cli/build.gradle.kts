@@ -72,7 +72,7 @@ tasks.register("rebuildCliDocumentation", JavaExec::class) {
     classpath = sourceSets["main"].runtimeClasspath
 }
 
-val generatedVersionDir = "${buildDir}/generated-version"
+val generatedVersionDir = project.layout.buildDirectory.dir("generated-version")
 
 sourceSets {
     main {
