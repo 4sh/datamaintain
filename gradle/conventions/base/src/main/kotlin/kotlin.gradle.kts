@@ -9,6 +9,8 @@ val libs = the<LibrariesForLibs>()
 plugins {
     kotlin("jvm")
     id("com.palantir.git-version")
+
+    id("com.adarshr.test-logger")
 }
 
 group = "io.github.4sh.datamaintain"

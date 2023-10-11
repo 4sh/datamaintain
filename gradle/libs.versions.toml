@@ -63,5 +63,6 @@ testContainers-mongodb = { module = "org.testcontainers:mongodb", version.ref = 
 # Plugins imported in convention plugins must be imported as libs for now
 gradle-palantir-git = { module = "com.palantir.gradle.gitversion:gradle-git-version", version.ref = "gradle-palantir-git" }
 gradle-kotlin-jvm = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+gradle-testLogger = { module = "com.adarshr:gradle-test-logger-plugin", version.ref = "gradle-testLogger" }
 
 [bundles]
