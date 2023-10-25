@@ -128,7 +128,7 @@ internal class AppTest : BaseCliTest() {
 
                 // Then
                 expectThat(exitCode).isEqualTo(1)
-                expectThat(output).contains("props.getProperty(\"db.type\") must not be null")
+                expectThat(output).contains("getProperty(...) must not be null")
             }
         }
 
