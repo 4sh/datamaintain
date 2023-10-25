@@ -8,7 +8,6 @@ dependencies {
     testImplementation(libs.mongoDriver.sync)
 
     // Use kotlinx-serialization implementation
-    testImplementation(projects.modules.driverMongoMapping.driverMongoMappingSerialization)
     testImplementation(libs.kotlinx.serialization.json)
 
     testImplementation(libs.testContainers)
