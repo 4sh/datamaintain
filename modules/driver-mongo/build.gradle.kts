@@ -5,6 +5,8 @@ plugins {
 }
 
 dependencies {
+    testImplementation(projects.modules.driverMongoMapping.driverMongoMappingSerialization)
+
     testImplementation(libs.mongoDriver.sync)
 
     // Use kotlinx-serialization implementation
