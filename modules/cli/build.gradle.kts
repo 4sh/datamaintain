@@ -68,6 +68,7 @@ tasks.register<Exec>("graalCheckNative") {
 }
 
 tasks.register("rebuildCliDocumentation", JavaExec::class) {
+    javaLauncher.set(javaToolchains.launcherFor(java.toolchain))
     mainClass.set("datamaintain.cli.documentation.RebuildDocumentationKt")
     classpath = sourceSets["main"].runtimeClasspath
 }
