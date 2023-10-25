@@ -9,4 +9,7 @@ dependencies {
     implementation(projects.modules.core)
     implementation(projects.modules.driverMongo)
     implementation(libs.mongoDriver.sync)
+    testImplementation(libs.testContainers)
+    testImplementation(libs.testContainers.jupiter)
+    testImplementation(libs.testContainers.mongodb)
 }
