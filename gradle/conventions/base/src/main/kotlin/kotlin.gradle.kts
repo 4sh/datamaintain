@@ -47,9 +47,6 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
     testImplementation(libs.strikt)
     testImplementation(libs.mockk)
-    testImplementation(libs.testContainers)
-    testImplementation(libs.testContainers.jupiter)
-    testImplementation(libs.testContainers.mongodb)
 
     testImplementation(libs.logbackClassic)
 }

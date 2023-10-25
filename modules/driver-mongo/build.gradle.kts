@@ -10,4 +10,8 @@ dependencies {
     // Use kotlinx-serialization implementation
     testImplementation(projects.modules.driverMongoMapping.driverMongoMappingSerialization)
     testImplementation(libs.kotlinx.serialization.json)
+
+    testImplementation(libs.testContainers)
+    testImplementation(libs.testContainers.jupiter)
+    testImplementation(libs.testContainers.mongodb)
 }
