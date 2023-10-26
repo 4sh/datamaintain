@@ -24,7 +24,7 @@ versionLatest = "latest.integration"
 
 # Plugins
 gradle-palantir-graal = "0.10.0"
-gradle-palantir-git = "0.12.3"
+gradle-palantir-git = "3.0.0"
 gradle-testLogger = "3.1.0"
 
 [plugins]
