@@ -19,7 +19,8 @@ include(
         "modules:driver-jdbc",
         "modules:test",
         "samples:java-mongo",
-        "samples:java-postgresql"
-)
+        "samples:java-postgresql",
+        "samples:java-spring-boot-postgresql"
+    )
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")

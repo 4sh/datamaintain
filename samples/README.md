@@ -12,6 +12,7 @@ Find documented samples about workflows :
 Find java samples :
 - [Mongo](./java-mongo)
 - [PostgreSQL](./java-postgresql)
+- [PostgreSQL and spring boot](./java-spring-boot-mongo)
 
 ## Issues
 
