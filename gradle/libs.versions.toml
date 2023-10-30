@@ -14,7 +14,7 @@ mongo = "4.0.13"
 mongoDriver = "4.11.0"
 jongo = "1.4.1"
 
-h2Database = "1.4.200"
+h2Database = "2.2.224"
 postgresql = "42.1.4"
 
 json-path = "2.7.0"
