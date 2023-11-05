@@ -18,6 +18,7 @@ h2Database = "2.2.224"
 postgresql = "42.1.4"
 
 json-path = "2.8.0"
+json-smart = "2.4.10"
 
 # use this to specify latest release
 versionLatest = "latest.integration"
@@ -46,6 +47,7 @@ gson = { module = "com.google.code.gson:gson", version.ref = "versionLatest" }
 jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "versionLatest" }
 
 jsonPath = { module = "com.jayway.jsonpath:json-path", version.ref = "json-path" }
+jsonSmart = { module = "net.minidev:json-smart", version.ref = "json-smart" }
 
 h2database = { module = "com.h2database:h2", version.ref = "h2Database" }
 mongoDriver-sync = { module = "org.mongodb:mongodb-driver-sync", version.ref = "mongoDriver" }

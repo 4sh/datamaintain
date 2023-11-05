@@ -9,4 +9,5 @@ dependencies {
     compileOnly(libs.junit.jupiter.api)
 
     implementation(libs.jsonPath)
+    implementation(libs.jsonSmart)
 }
