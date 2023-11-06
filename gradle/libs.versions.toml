@@ -8,7 +8,7 @@ junit = "5.10.0"
 testContainers = "1.19.1"
 strikt = "0.32.0"
 mockk = "1.9.3"
-clickt = "2.3.0"
+clickt = "2.8.0"
 
 mongo = "4.0.13"
 mongoDriver = "4.11.0"
