@@ -18,7 +18,7 @@ h2Database = "2.2.224"
 postgresql = "42.1.4"
 
 json-path = "2.8.0"
-json-smart = "2.4.10"
+json-smart = "2.5.0"
 
 # use this to specify latest release
 versionLatest = "latest.integration"
