@@ -11,7 +11,7 @@ mockk = "1.9.3"
 clickt = "2.8.0"
 
 mongo = "4.0.13"
-mongoDriver = "4.11.0"
+mongoDriver = "4.11.1"
 jongo = "1.4.1"
 
 h2Database = "2.2.224"
