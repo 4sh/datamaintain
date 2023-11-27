@@ -14,7 +14,7 @@ repositories {
 dependencies {
     implementation(project(":modules:core"))
     implementation(project(":modules:driver-jdbc"))
-    implementation("org.postgresql:postgresql:42.1.4")
+    implementation("org.postgresql:postgresql:42.7.0")
 
     implementation(platform("org.springframework.boot:spring-boot-dependencies:3.1.5"))
     implementation("org.springframework.boot:spring-boot-starter")
