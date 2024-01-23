@@ -40,6 +40,9 @@ jobs:
     needs: build-and-test
     # the build-and-test job might be skipped, we don't need to run this job then
     if: success() || failure()
+    permissions:
+      checks: write
+      pull-requests: write
 
     steps:
       - name: Download Artifacts
