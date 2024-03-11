@@ -7,7 +7,7 @@ logbackClassic = "1.5.2"
 junit = "5.10.2"
 testContainers = "1.19.6"
 strikt = "0.34.1"
-mockk = "1.13.9"
+mockk = "1.13.10"
 clickt = "2.8.0"
 
 mongo = "4.0.13"
