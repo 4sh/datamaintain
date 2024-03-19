@@ -15,19 +15,14 @@ import kotlin.system.measureTimeMillis
 
 private val logger = KotlinLogging.logger {}
 
-class Executor(private val context: Context,
-               private val reportSender: IExecutionWorkflowMessagesSender?
-) {
+class Executor(private val context: Context) {
     private val executorConfig
         get() = context.config.executor
 
-    fun execute(scripts: List<ScriptWithContent>, executionId: ExecutionId?): Report {
+    fun execute(scripts: List<ScriptWithContent>): Report {
         if (!context.config.logs.porcelain) { logger.info { "Executes scripts.." } }
         try {
             for (script in scripts) {
-                if (reportSender != null && executionId != null) {
-                    reportSender.startScriptExecution(executionId, script)
-                }
 
                 val executedScript = when (executorConfig.executionMode) {
                     ExecutionMode.NORMAL -> doAction(script)
@@ -41,10 +36,6 @@ class Executor(private val context: Context,
                         scripts.first { it.checksum == executedScript.checksum }.porcelainName
                     )
                 )
-
-                if (reportSender != null && executionId != null) {
-                    reportSender.stopScriptExecution(executionId, executedScript)
-                }
 
                 if (executedScript.executionStatus == ExecutionStatus.KO) {
                     if (!context.config.logs.porcelain) { logger.info { "" } }

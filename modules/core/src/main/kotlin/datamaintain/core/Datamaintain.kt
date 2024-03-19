@@ -11,7 +11,6 @@ import datamaintain.core.step.sort.Sorter
 import datamaintain.domain.report.ExecutionId
 import datamaintain.domain.report.IExecutionWorkflowMessagesSender
 import datamaintain.domain.report.Report
-import datamaintain.monitoring.Http4KExecutionWorkflowMessagesSender
 import mu.KotlinLogging
 import java.time.Clock
 import java.time.ZoneId
@@ -19,10 +18,10 @@ import java.time.ZoneId
 private val logger = KotlinLogging.logger {}
 
 class Datamaintain(config: DatamaintainConfig, clock: Clock = Clock.system(ZoneId.systemDefault())) {
-    private val reportSender: IExecutionWorkflowMessagesSender? = config.monitoringConfiguration?.let { Http4KExecutionWorkflowMessagesSender(
-        baseUrl = it.apiUrl,
-        clock = clock
-    ) }
+//    private val reportSender: IExecutionWorkflowMessagesSender? = config.monitoringConfiguration?.let { Http4KExecutionWorkflowMessagesSender(
+//        baseUrl = it.apiUrl,
+//        clock = clock
+//    ) }
 
     init {
         if (config.logs.verbose && !config.logs.porcelain) {
@@ -38,7 +37,6 @@ class Datamaintain(config: DatamaintainConfig, clock: Clock = Clock.system(ZoneI
 
     fun updateDatabase(): Report {
         val checkerData = CheckerData()
-        val executionId: ExecutionId? = reportSender?.startExecution()
 
         return Scanner(context).scan()
                 .let { scannedScripts ->
@@ -60,12 +58,7 @@ class Datamaintain(config: DatamaintainConfig, clock: Clock = Clock.system(ZoneI
                     checkerData.prunedScripts = prunedScripts.asSequence()
                 }
                 .let { Checker(context).check(checkerData) }
-                .let { scripts -> Executor(context, reportSender).execute(scripts, executionId) }
-                .also {
-                    if (executionId != null) {
-                        reportSender?.sendReport(executionId, it)
-                    }
-                }
+                .let { scripts -> Executor(context).execute(scripts) }
     }
 
     fun listExecutedScripts() = context.dbDriver.listExecutedScripts()

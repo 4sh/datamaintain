@@ -12,7 +12,6 @@ include(
         "modules:core",
         "modules:cli",
         "modules:domain-report",
-        "modules:monitoring",
         "modules:driver-mongo",
         "modules:driver-mongo-mapping:driver-mongo-mapping-test",
         "modules:driver-mongo-mapping:driver-mongo-mapping-serialization",
@@ -26,16 +25,3 @@ include(
     )
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
-
-includeBuild("../datamaintain-monitoring") {
-        dependencySubstitution {
-                substitute(module("io.github.4sh.datamaintain-monitoring:api-execution-report"))
-                        .using(project(":modules:api-execution-report:api"))
-        }
-}
-
-includeBuild("../datamaintain-monitoring") {
-        dependencySubstitution {
-                substitute(module("io.github.4sh.datamaintain-monitoring:api-execution-report")).using(project(":modules:api-execution-report:api"))
-        }
-}

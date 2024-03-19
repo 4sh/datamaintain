@@ -5,5 +5,5 @@ plugins {
 
 dependencies {
     api(projects.modules.domainReport)
-    implementation(projects.modules.monitoring)
+//    implementation(projects.modules.monitoring)
 }

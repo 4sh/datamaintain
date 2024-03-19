@@ -299,9 +299,9 @@ internal class ExecutorTest {
         }
     }
 
-    private fun buildExecutor(context: Context, reportSender: IExecutionWorkflowMessagesSender? = null) =
-        Executor(context, reportSender)
+    private fun buildExecutor(context: Context) =
+        Executor(context)
 
     private fun Executor.execute(scripts: List<ScriptWithContent>): Report =
-        this.execute(scripts, null)
+        this.execute(scripts)
 }
