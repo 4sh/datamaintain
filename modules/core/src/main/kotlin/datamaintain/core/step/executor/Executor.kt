@@ -24,9 +24,9 @@ class Executor(private val context: Context,
     fun execute(scripts: List<ScriptWithContent>, executionId: ExecutionId?): Report {
         if (!context.config.logs.porcelain) { logger.info { "Executes scripts.." } }
         try {
-            for (script in scripts) {
+            for ((index, script) in scripts.withIndex()) {
                 if (reportSender != null && executionId != null) {
-                    reportSender.startScriptExecution(executionId, script)
+                    reportSender.startScriptExecution(executionId, script, index)
                 }
 
                 val executedScript = when (executorConfig.executionMode) {

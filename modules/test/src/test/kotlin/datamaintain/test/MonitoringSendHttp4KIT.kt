@@ -18,6 +18,7 @@ import java.nio.file.Paths
 import java.time.Clock
 import java.time.Instant
 import java.time.ZoneId
+import java.util.*
 
 /**
  * When monitoring configuration is given an url for monitoring, Executor should send information about
@@ -51,7 +52,7 @@ class MonitoringSendHttp4KIT : AbstractMonitoringSendWithHttpTest() {
             @Test
             internal fun should_send_script_execution_start_with_execution_id() {
                 // When
-                val executionId = 12
+                val executionId = UUID.randomUUID()
                 setupMockStartAnswer(executionId)
                 buildDatamaintainWithMonitoringConfiguration("src/test/resources/integration/ok").updateDatabase()
 
@@ -85,7 +86,7 @@ class MonitoringSendHttp4KIT : AbstractMonitoringSendWithHttpTest() {
             }
 
             private fun checkStartMessageBodyContains(subStringExpectedInBody: String) {
-                val executionId = 12
+                val executionId = UUID.randomUUID()
                 setupMockStartAnswer(executionId)
                 buildDatamaintainWithMonitoringConfiguration(
                     scriptsPath = "src/test/resources/integration/ok",
@@ -105,7 +106,7 @@ class MonitoringSendHttp4KIT : AbstractMonitoringSendWithHttpTest() {
             @Test
             internal fun should_send_script_execution_stop_with_execution_id() {
                 // When
-                val executionId = 12
+                val executionId = UUID.randomUUID()
                 setupMockStartAnswer(executionId)
                 buildDatamaintainWithMonitoringConfiguration("src/test/resources/integration/ok").updateDatabase()
 
@@ -121,7 +122,7 @@ class MonitoringSendHttp4KIT : AbstractMonitoringSendWithHttpTest() {
             @Test
             internal fun should_send_script_execution_duration_in_millis_in_body() {
                 // When
-                val executionId = 12
+                val executionId = UUID.randomUUID()
                 setupMockStartAnswer(executionId)
                 val report = buildDatamaintainWithMonitoringConfiguration(
                     scriptsPath = "src/test/resources/integration/ok"
@@ -145,7 +146,7 @@ class MonitoringSendHttp4KIT : AbstractMonitoringSendWithHttpTest() {
             }
 
             private fun checkStopMessageBodyContains(subStringExpectedInBody: String) {
-                val executionId = 12
+                val executionId = UUID.randomUUID()
                 setupMockStartAnswer(executionId)
                 buildDatamaintainWithMonitoringConfiguration(
                     scriptsPath = "src/test/resources/integration/ok"
@@ -163,7 +164,7 @@ class MonitoringSendHttp4KIT : AbstractMonitoringSendWithHttpTest() {
             @Test
             internal fun should_send_script_execution_stop_with_execution_id() {
                 // When
-                val executionId = 12
+                val executionId = UUID.randomUUID()
                 setupMockStartAnswer(executionId)
                 buildDatamaintainWithMonitoringConfiguration("src/test/resources/integration/ok").updateDatabase()
 
@@ -177,7 +178,7 @@ class MonitoringSendHttp4KIT : AbstractMonitoringSendWithHttpTest() {
             }
 
             private fun checkExecutionStopMessageBodyContains(subStringExpectedInBody: String) {
-                val executionId = 12
+                val executionId = UUID.randomUUID()
                 setupMockStartAnswer(executionId)
                 buildDatamaintainWithMonitoringConfiguration(
                     scriptsPath = "src/test/resources/integration/ok"
@@ -191,7 +192,7 @@ class MonitoringSendHttp4KIT : AbstractMonitoringSendWithHttpTest() {
         }
     }
 
-    private fun setupMockStartAnswer(executionId: ExecutionId = 42) {
+    private fun setupMockStartAnswer(executionId: ExecutionId = UUID.randomUUID()) {
         mockServerClient.`when`(
             request()
                 .withMethod("POST")

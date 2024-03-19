@@ -33,17 +33,17 @@ class Http4KExecutionWorkflowMessagesSender(baseUrl: String, private val clock: 
         httpClient(Request(Method.PUT, "$executionApiBaseUrl/stop/$executionId").body(report.toMonitoringReport()))
     }
 
-    override fun startScriptExecution(executionId: ExecutionId, script: ScriptWithContent) {
+    override fun startScriptExecution(executionId: ExecutionId, script: ScriptWithContent, orderIndex: Int) {
         httpClient(
             Request(Method.PUT, "$executionApiBaseUrl/$executionId/script/start")
-                .body(script.toScriptExecutionStart(clock.instant()))
+                .body(script.toScriptExecutionStart(clock.instant(), orderIndex))
         )
     }
 
     override fun stopScriptExecution(executionId: ExecutionId, executedScript: ExecutedScript) {
         httpClient(
             Request(Method.PUT, "$executionApiBaseUrl/$executionId/script/stop")
-                .body(executedScript.toScriptExecutionStop())
+                .body(executedScript.toScriptExecutionStop(clock.instant()))
         )
     }
 
@@ -53,11 +53,10 @@ class Http4KExecutionWorkflowMessagesSender(baseUrl: String, private val clock: 
     }
 }
 
-private fun ExecutedScript.toScriptExecutionStop(): ScriptExecutionStop = ScriptExecutionStop(
-    checksum = checksum,
-    executionDurationInMillis = executionDurationInMillis,
+private fun ExecutedScript.toScriptExecutionStop(endDate: Instant): ScriptExecutionStop = ScriptExecutionStop(
     executionStatus = executionStatus.toMonitoringExecutionStatus(),
-    executionOutput = executionOutput
+    executionOutput = executionOutput,
+    executionEndDate = endDate
 )
 
 private fun ExecutionStatus.toMonitoringExecutionStatus(): datamaintain.monitoring.api.execution.report.api.ExecutionStatus =
@@ -70,13 +69,13 @@ private fun ExecutionStatus.toMonitoringExecutionStatus(): datamaintain.monitori
 fun Report.toMonitoringReport() =
     MonitoringReport(this.executedScripts.size)
 
-fun ScriptWithContent.toScriptExecutionStart(startDate: Instant) =
+fun ScriptWithContent.toScriptExecutionStart(startDate: Instant, orderIndex: Int) =
     ScriptExecutionStart(
         name = this.name,
-        checksum = this.checksum,
         content = this.content,
         startDate = startDate,
-        tags = this.tags.map { it.name }
+        tags = this.tags.map { it.name },
+        executionOrderIndex = orderIndex
     )
 
 fun <T : Any> Request.body(payload: T) =
