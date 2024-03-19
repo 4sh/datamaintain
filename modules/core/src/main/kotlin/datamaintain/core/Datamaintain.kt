@@ -21,7 +21,8 @@ private val logger = KotlinLogging.logger {}
 class Datamaintain(config: DatamaintainConfig, clock: Clock = Clock.system(ZoneId.systemDefault())) {
     private val reportSender: IExecutionWorkflowMessagesSender? = config.monitoringConfiguration?.let { Http4KExecutionWorkflowMessagesSender(
         baseUrl = it.apiUrl,
-        clock = clock
+        clock = clock,
+        moduleEnvironmentToken = it.moduleEnvironmentToken
     ) }
 
     init {
@@ -39,26 +40,36 @@ class Datamaintain(config: DatamaintainConfig, clock: Clock = Clock.system(ZoneI
     fun updateDatabase(): Report {
         val executionId: ExecutionId? = reportSender?.startExecution()
 
-        val scannedScripts = Scanner(context).scan()
-        val filteredScripts = Filter(context).filter(scannedScripts)
-        val sortedScripts = Sorter(context).sort(filteredScripts)
-        val prunedScripts = Pruner(context).prune(sortedScripts)
+        try {
+            val scannedScripts = Scanner(context).scan()
+            val filteredScripts = Filter(context).filter(scannedScripts)
+            val sortedScripts = Sorter(context).sort(filteredScripts)
+            val prunedScripts = Pruner(context).prune(sortedScripts)
 
-        Checker(context).check(CheckerData(
-            scannedScripts.asSequence(),
-            filteredScripts.asSequence(),
-            sortedScripts.asSequence(),
-            prunedScripts.asSequence()
-        ))
+            Checker(context).check(
+                CheckerData(
+                    scannedScripts.asSequence(),
+                    filteredScripts.asSequence(),
+                    sortedScripts.asSequence(),
+                    prunedScripts.asSequence()
+                )
+            )
 
-        val report = Executor(context, reportSender).execute(prunedScripts, executionId)
+            val report = Executor(context, reportSender).execute(prunedScripts, executionId)
 
-        if (executionId != null) {
-            reportSender?.sendReport(executionId, report)
+            if (executionId != null) {
+                reportSender?.sendSuccessReport(executionId)
+            }
+
+            return report
+        } catch (throwable: Throwable) {
+            if (executionId != null) {
+                reportSender?.sendFailReport(executionId)
+            }
+            throw throwable
         }
-
-        return report
     }
+
 
     fun listExecutedScripts() = context.dbDriver.listExecutedScripts()
 }

@@ -25,8 +25,10 @@ class Executor(private val context: Context,
         if (!context.config.logs.porcelain) { logger.info { "Executes scripts.." } }
         try {
             for ((index, script) in scripts.withIndex()) {
-                if (reportSender != null && executionId != null) {
+                val scriptExecutionId = if (reportSender != null && executionId != null) {
                     reportSender.startScriptExecution(executionId, script, index)
+                } else {
+                    null
                 }
 
                 val executedScript = when (executorConfig.executionMode) {
@@ -42,8 +44,8 @@ class Executor(private val context: Context,
                     )
                 )
 
-                if (reportSender != null && executionId != null) {
-                    reportSender.stopScriptExecution(executionId, executedScript)
+                if (reportSender != null && scriptExecutionId != null) {
+                    reportSender.stopScriptExecution(scriptExecutionId, executedScript)
                 }
 
                 if (executedScript.executionStatus == ExecutionStatus.KO) {
