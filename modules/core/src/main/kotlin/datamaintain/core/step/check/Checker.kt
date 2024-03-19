@@ -100,7 +100,7 @@ class Checker(private val context: Context) {
     }
 }
 
-data class CheckerData(var scannedScripts: Sequence<ScriptWithContent> = emptySequence(),
-                       var filteredScripts: Sequence<ScriptWithContent> = emptySequence(),
-                       var sortedScripts: Sequence<ScriptWithContent> = emptySequence(),
-                       var prunedScripts: Sequence<ScriptWithContent> = emptySequence())
+data class CheckerData(val scannedScripts: Sequence<ScriptWithContent>,
+                       val filteredScripts: Sequence<ScriptWithContent>,
+                       val sortedScripts: Sequence<ScriptWithContent>,
+                       val prunedScripts: Sequence<ScriptWithContent>)

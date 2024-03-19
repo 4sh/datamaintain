@@ -37,35 +37,27 @@ class Datamaintain(config: DatamaintainConfig, clock: Clock = Clock.system(ZoneI
     )
 
     fun updateDatabase(): Report {
-        val checkerData = CheckerData()
         val executionId: ExecutionId? = reportSender?.startExecution()
 
-        return Scanner(context).scan()
-                .let { scannedScripts ->
-                    checkerData.scannedScripts = scannedScripts.asSequence()
-                    scannedScripts
-                }
-                .let { scannedScripts ->
-                    val filteredScripts = Filter(context).filter(scannedScripts)
-                    checkerData.filteredScripts = filteredScripts.asSequence()
-                    filteredScripts
-                }
-                .let { filteredScripts ->
-                    val sortedScripts = Sorter(context).sort(filteredScripts)
-                    checkerData.sortedScripts = sortedScripts.asSequence()
-                    sortedScripts
-                }
-                .let { sortedScripts ->
-                    val prunedScripts = Pruner(context).prune(sortedScripts)
-                    checkerData.prunedScripts = prunedScripts.asSequence()
-                }
-                .let { Checker(context).check(checkerData) }
-                .let { scripts -> Executor(context, reportSender).execute(scripts, executionId) }
-                .also {
-                    if (executionId != null) {
-                        reportSender?.sendReport(executionId, it)
-                    }
-                }
+        val scannedScripts = Scanner(context).scan()
+        val filteredScripts = Filter(context).filter(scannedScripts)
+        val sortedScripts = Sorter(context).sort(filteredScripts)
+        val prunedScripts = Pruner(context).prune(sortedScripts)
+
+        Checker(context).check(CheckerData(
+            scannedScripts.asSequence(),
+            filteredScripts.asSequence(),
+            sortedScripts.asSequence(),
+            prunedScripts.asSequence()
+        ))
+
+        val report = Executor(context, reportSender).execute(prunedScripts, executionId)
+
+        if (executionId != null) {
+            reportSender?.sendReport(executionId, report)
+        }
+
+        return report
     }
 
     fun listExecutedScripts() = context.dbDriver.listExecutedScripts()
