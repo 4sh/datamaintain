@@ -1,17 +1,14 @@
 plugins {
-    id("org.jetbrains.kotlin.jvm")
-    `maven-publish` // Needed for Jitpack
-    id("com.adarshr.test-logger")
-}
-
-repositories {
-    mavenCentral()
+    id("datamaintain.conventions.kotlin")
+    id("datamaintain.conventions.publishing")
+    id("datamaintain.conventions.driver")
 }
 
 dependencies {
-    compileOnly(project(":modules:core"))
-    compileOnly(project(":modules:driver-mongo"))
-    compileOnly("org.junit.jupiter:junit-jupiter-api:${Versions.junit}")
+    compileOnly(projects.modules.domain)
+    compileOnly(projects.modules.driverMongo)
+    compileOnly(libs.junit.jupiter.api)
 
-    implementation("com.jayway.jsonpath:json-path:2.7.0")
+    implementation(libs.jsonPath)
+    implementation(libs.jsonSmart)
 }

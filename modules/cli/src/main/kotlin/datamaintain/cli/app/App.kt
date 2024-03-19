@@ -28,7 +28,7 @@ class App : CliktCommand() {
         val message = "datamaintain version $version"
         registerOption(
             EagerOption(
-                names = setOf("--version", "--v", "-v", "-version"),
+                names = arrayOf("--version", "--v", "-v", "-version"),
                 nvalues =  0,
                 help = "Show the version and exit",
                 hidden =  false,

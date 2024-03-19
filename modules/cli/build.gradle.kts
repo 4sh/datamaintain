@@ -3,25 +3,25 @@ import java.io.FileOutputStream
 import java.util.*
 
 plugins {
-    id("org.jetbrains.kotlin.jvm")
+    id("datamaintain.conventions.kotlin")
+
+    alias(libs.plugins.palantir.graal)
+
     application
     `maven-publish`
-    id("com.palantir.graal")
 }
 
-baseProject()
-
 dependencies {
-    implementation(project(":modules:core"))
-    implementation(project(":modules:driver-mongo"))
-    implementation(project(":modules:driver-mongo-mapping:driver-mongo-mapping-serialization"))
-    implementation(project(":modules:driver-jdbc"))
+    implementation(projects.modules.core)
+    implementation(projects.modules.driverMongo)
+    implementation(projects.modules.driverMongoMapping.driverMongoMappingSerialization)
+    implementation(projects.modules.driverJdbc)
 
-    implementation("com.github.ajalt:clikt:${Versions.clikt}")
-    implementation("ch.qos.logback:logback-classic:${Versions.logbackClassic}")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:${Versions.kotlinxSerialization}")
+    implementation(libs.clikt)
+    implementation(libs.logbackClassic)
+    implementation(libs.kotlinx.serialization.json)
 
-    testImplementation(project(":modules:test"))
+    testImplementation(projects.modules.test)
 }
 
 application {
@@ -67,12 +67,13 @@ tasks.register<Exec>("graalCheckNative") {
     }
 }
 
-task("rebuildCliDocumentation", JavaExec::class) {
-    main = "datamaintain.cli.documentation.RebuildDocumentationKt"
+tasks.register("rebuildCliDocumentation", JavaExec::class) {
+    javaLauncher.set(javaToolchains.launcherFor(java.toolchain))
+    mainClass.set("datamaintain.cli.documentation.RebuildDocumentationKt")
     classpath = sourceSets["main"].runtimeClasspath
 }
 
-val generatedVersionDir = "${buildDir}/generated-version"
+val generatedVersionDir = project.layout.buildDirectory.dir("generated-version")
 
 sourceSets {
     main {
@@ -82,19 +83,19 @@ sourceSets {
     }
 }
 
-task("generateVersionProperties") {
-    val env = System.getProperty("env")
-    if (env == "prod") {
-        delete("$generatedVersionDir/version.properties")
-        doLast {
+tasks.register("generateVersionProperties") {
+    doLast {
+        val env = System.getProperty("env")
+        if (env == "prod") {
+            delete("$generatedVersionDir/version.properties")
             val propertiesFile = file("$generatedVersionDir/version.properties")
             propertiesFile.parentFile.mkdirs()
             val properties = Properties()
             properties.setProperty("version", rootProject.version.toString())
             val out = FileOutputStream(propertiesFile)
             properties.store(out, null)
+        } else {
+            delete("$generatedVersionDir/version.properties")
         }
-    } else {
-        delete("$generatedVersionDir/version.properties")
     }
 }

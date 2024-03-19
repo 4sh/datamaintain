@@ -29,29 +29,20 @@ Your ```build.gradle.kts``` should contain at least this:
 
 ```kotlin
 plugins {
-    id("org.jetbrains.kotlin.jvm")
-    maven // Needed for Jitpack
-}
-
-baseProject()
-
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    compileOnly(project(":modules:core"))
-    testImplementation(project(":modules:core"))
+    id("datamaintain.conventions.kotlin")
+    id("datamaintain.conventions.publishing")
+    id("datamaintain.conventions.driver")
 }
 ```
 Add your module in the [root project settings](../settings.gradle.kts):
 ```kotlin
 rootProject.name = "datamaintain"
-   include(
-           ...
-           "modules:driver-<DBMS name>",
-           ...
-   )
+
+include(
+    ...
+    "modules:driver-<DBMS name>",
+    ...
+)
 ```
 
 ## Implement the drivers interfaces
@@ -100,10 +91,7 @@ Your ```build.gradle.kts``` should contain at least:
 ```kotlin
 plugins {
     id("org.jetbrains.kotlin.jvm")
-    maven // Needed for Jitpack
 }
-
-baseProject()
 
 repositories {
     mavenCentral()

@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.Clock;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -29,7 +30,7 @@ public class JavaPostgresSampleMain {
         final DatamaintainConfig config = DatamaintainConfig.buildConfig(datamaintainDriverConfig, properties);
 
         // Launch database update
-        new Datamaintain(config).updateDatabase();
+        new Datamaintain(config, Clock.systemDefaultZone()).updateDatabase();
 
         // Print starters
         try {
