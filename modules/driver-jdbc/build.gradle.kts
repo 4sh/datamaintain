@@ -1,29 +1,9 @@
 plugins {
-    id("org.jetbrains.kotlin.jvm")
-    `maven-publish` // Needed for Jitpack
-    id("com.adarshr.test-logger")
-}
-
-baseProject()
-
-publishing {
-    publications {
-        create<MavenPublication>("maven") {
-            groupId = project.group.toString()
-            artifactId = "datamaintain-" + project.name
-            version = project.version.toString()
-
-            from(components["java"])
-        }
-    }
-}
-
-repositories {
-    mavenCentral()
+    id("datamaintain.conventions.kotlin")
+    id("datamaintain.conventions.publishing")
+    id("datamaintain.conventions.driver")
 }
 
 dependencies {
-    compileOnly(project(":modules:core"))
-    testImplementation(project(":modules:core"))
-    testImplementation("com.h2database:h2:${Versions.h2Database}")
+    testImplementation(libs.h2database)
 }

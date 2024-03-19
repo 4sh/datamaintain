@@ -1,19 +1,15 @@
 plugins {
-    id("org.jetbrains.kotlin.jvm")
-    id("com.adarshr.test-logger")
+    id("datamaintain.conventions.kotlin")
+
+    alias(libs.plugins.testLogger)
 }
 
-baseProject()
-
 dependencies {
-    implementation(project(":modules:cli"))
-    implementation(project(":modules:core"))
-    implementation(project(":modules:driver-mongo"))
-    implementation("org.mongodb:mongodb-driver-sync:${Versions.mongoDriver}")
-
-    "testImplementation"("org.testcontainers:testcontainers:${Versions.testcontainers}")
-    "testImplementation"("org.testcontainers:junit-jupiter:${Versions.testcontainers}")
-    "testImplementation"("org.testcontainers:mongodb:${Versions.testcontainers}")
-    "testImplementation"("org.testcontainers:mockserver:${Versions.testcontainers}")
-    "testImplementation"("org.mock-server:mockserver-client-java:5.15.0")
+    implementation(projects.modules.cli)
+    implementation(projects.modules.core)
+    implementation(projects.modules.driverMongo)
+    implementation(libs.mongoDriver.sync)
+    testImplementation(libs.testContainers)
+    testImplementation(libs.testContainers.jupiter)
+    testImplementation(libs.testContainers.mongodb)
 }

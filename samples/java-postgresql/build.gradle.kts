@@ -2,7 +2,9 @@ plugins {
     id("org.jetbrains.kotlin.jvm")
 }
 
-baseProject()
+kotlin {
+    jvmToolchain(17)
+}
 
 repositories {
     mavenCentral()
@@ -11,5 +13,5 @@ repositories {
 dependencies {
     implementation(project(":modules:core"))
     implementation(project(":modules:driver-jdbc"))
-    implementation("org.postgresql:postgresql:${Versions.postgresql}")
+    implementation("org.postgresql:postgresql:42.7.2")
 }

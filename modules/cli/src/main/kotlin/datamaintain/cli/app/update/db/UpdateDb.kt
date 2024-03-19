@@ -110,6 +110,11 @@ class UpdateDb(runner: (DatamaintainConfig) -> Unit = ::defaultUpdateDbRunner) :
         defaultValue = MongoConfigKey.DB_MONGO_SHELL.default?.toLowerCase()
     ).choice(MongoShell.values().map { it.name }.map { it.toLowerCase() }.associateWith { it })
 
+    private val mongoClient: String? by detailedOption(
+        help = "mongo binary path. The path must match --mongo-shell value.",
+        example = "/path/to/mongo"
+    )
+
     private val porcelain: Boolean? by detailedOption(
         help = "for each executed script, display relative path to scan path",
         defaultValue = CoreConfigKey.PRINT_RELATIVE_PATH_OF_SCRIPT.default
@@ -143,6 +148,7 @@ class UpdateDb(runner: (DatamaintainConfig) -> Unit = ::defaultUpdateDbRunner) :
         mongoShell?.let { props.put(MongoConfigKey.DB_MONGO_SHELL.key, it.toUpperCase()) }
         flags?.let { props.put(CoreConfigKey.FLAGS.key, it.optionListToString()) }
         datamaintainMonitoringApiUrl?.let { props.put(CoreConfigKey.DATAMAINTAIN_MONITORING_API_URL.key, it) }
+        mongoClient?.let { props.put(MongoConfigKey.DB_MONGO_CLIENT_PATH.key, mongoClient) }
     }
 
     fun List<String>.optionListToString(): String = this.joinToString(",")

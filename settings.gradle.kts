@@ -1,4 +1,13 @@
 rootProject.name = "datamaintain"
+
+pluginManagement {
+    includeBuild("gradle/conventions")
+}
+
+plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
+}
+
 include(
         "modules:core",
         "modules:cli",
@@ -12,8 +21,11 @@ include(
         "modules:driver-jdbc",
         "modules:test",
         "samples:java-mongo",
-        "samples:java-postgresql"
-)
+        "samples:java-postgresql",
+        "samples:java-spring-boot-postgresql"
+    )
+
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 includeBuild("../datamaintain-monitoring") {
         dependencySubstitution {

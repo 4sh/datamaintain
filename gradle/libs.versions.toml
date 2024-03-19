@@ -1,0 +1,77 @@
+[versions]
+java = "17"
+kotlin = "1.9.23"
+kotlinx-serialization = "1.6.3"
+kotlinLogging = "3.0.5"
+logbackClassic = "1.5.3"
+junit = "5.10.2"
+testContainers = "1.19.7"
+strikt = "0.34.1"
+mockk = "1.13.10"
+clickt = "2.8.0"
+
+mongo = "4.0.13"
+mongoDriver = "5.0.0"
+jongo = "1.4.1"
+
+h2Database = "2.2.224"
+postgresql = "42.1.4"
+
+json-path = "2.9.0"
+json-smart = "2.5.0"
+
+http4k = "4.3.4.1"
+jacksonDatatype = "2.12.2"
+
+# use this to specify latest release
+versionLatest = "latest.integration"
+
+# Plugins
+gradle-palantir-graal = "0.12.0"
+gradle-palantir-git = "3.0.0"
+gradle-testLogger = "3.1.0"
+
+[plugins]
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+palantir-graal = { id = "com.palantir.graal", version.ref = "gradle-palantir-graal" }
+palantir-git = { id = "com.palantir.git-version", version.ref = "gradle-palantir-git" }
+testLogger = { id = "com.adarshr.test-logger", version.ref = "gradle-testLogger" }
+
+[libraries]
+kotlin-bom = { module = "org.jetbrains.kotlin:kotlin-bom", version.ref = "kotlin" }
+
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
+
+kotlinLogging = { module = "io.github.microutils:kotlin-logging", version.ref = "kotlinLogging" }
+logbackClassic = { module = "ch.qos.logback:logback-classic", version.ref = "logbackClassic" }
+
+gson = { module = "com.google.code.gson:gson", version.ref = "versionLatest" }
+jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "versionLatest" }
+
+jsonPath = { module = "com.jayway.jsonpath:json-path", version.ref = "json-path" }
+jsonSmart = { module = "net.minidev:json-smart", version.ref = "json-smart" }
+
+h2database = { module = "com.h2database:h2", version.ref = "h2Database" }
+mongoDriver-sync = { module = "org.mongodb:mongodb-driver-sync", version.ref = "mongoDriver" }
+
+http4kCore = { module = "org.http4k:http4k-core", version.ref = "http4k" }
+http4kJackson = { module = "org.http4k:http4k-format-jackson", version.ref = "http4k" }
+jackson-datatype-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310", version.ref = "jacksonDatatype" }
+
+junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
+junit-jupiter-params = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "junit" }
+junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
+strikt = { module = "io.strikt:strikt-core", version.ref = "strikt" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+clikt = { module = "com.github.ajalt:clikt", version.ref = "clickt" }
+testContainers = { module = "org.testcontainers:testcontainers", version.ref = "testContainers" }
+testContainers-jupiter = { module = "org.testcontainers:junit-jupiter", version.ref = "testContainers" }
+testContainers-mongodb = { module = "org.testcontainers:mongodb", version.ref = "testContainers" }
+
+# Plugins imported in convention plugins must be imported as libs for now
+gradle-palantir-git = { module = "com.palantir.gradle.gitversion:gradle-git-version", version.ref = "gradle-palantir-git" }
+gradle-kotlin-jvm = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+gradle-testLogger = { module = "com.adarshr:gradle-test-logger-plugin", version.ref = "gradle-testLogger" }
+
+[bundles]
