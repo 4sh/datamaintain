@@ -1,4 +1,4 @@
-package datamaintain.core.step
+package datamaintain.core.step.execute
 
 import ch.qos.logback.classic.Logger
 import datamaintain.core.Context
@@ -8,17 +8,20 @@ import datamaintain.core.config.DatamaintainScannerConfig
 import datamaintain.core.db.driver.DatamaintainDriver
 import datamaintain.core.db.driver.FakeDriverConfig
 import datamaintain.core.exception.DatamaintainException
-import datamaintain.core.report.Report
-import datamaintain.core.script.ExecutedScript
-import datamaintain.core.script.ExecutionStatus.KO
-import datamaintain.core.script.ExecutionStatus.OK
 import datamaintain.core.script.InMemoryScript
-import datamaintain.core.script.ScriptAction
 import datamaintain.core.step.executor.Execution
 import datamaintain.core.step.executor.ExecutionMode
 import datamaintain.core.step.executor.Executor
+import datamaintain.core.step.executor.buildExecutedScript
 import datamaintain.core.util.exception.DatamaintainQueryException
+import datamaintain.domain.report.IExecutionWorkflowMessagesSender
 import datamaintain.test.TestAppender
+import datamaintain.domain.report.Report
+import datamaintain.domain.script.ExecutedScript
+import datamaintain.domain.script.ExecutionStatus.KO
+import datamaintain.domain.script.ExecutionStatus.OK
+import datamaintain.domain.script.ScriptAction
+import datamaintain.domain.script.ScriptWithContent
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -41,7 +44,7 @@ internal class ExecutorTest {
             dbDriver = dbDriverMock
     )
 
-    private val executor = Executor(context)
+    private val executor = buildExecutor(context)
 
     private val script1 = InMemoryScript("1", "1", "1")
     private val script2 = InMemoryScript("2", "2", "2")
@@ -106,7 +109,7 @@ internal class ExecutorTest {
     fun `should execute forcing mark as executed`() {
         // Given
         every { dbDriverMock.markAsExecuted(any()) }.returnsArgument(0)
-        val executor = Executor(context)
+        val executor = buildExecutor(context)
 
         val scripts = listOf(
                 script1.copy(action = ScriptAction.MARK_AS_EXECUTED),
@@ -171,7 +174,7 @@ internal class ExecutorTest {
                 driverConfig = FakeDriverConfig()),
             dbDriver = dbDriverMock
         )
-        val executor = Executor(context)
+        val executor = buildExecutor(context)
 
         // When
         val report = executor.execute(listOf(script1, script2, script3))
@@ -214,7 +217,7 @@ internal class ExecutorTest {
             dbDriver = dbDriverMock
         )
 
-        val executor = Executor(context)
+        val executor = buildExecutor(context)
 
         every { dbDriverMock.executeScript(any()) }.answers { Execution(OK) }
         every { dbDriverMock.markAsExecuted(any()) }.answers { it.invocation.args.first() as ExecutedScript }
@@ -271,13 +274,13 @@ internal class ExecutorTest {
                 driverConfig = FakeDriverConfig()),
             dbDriver = dbDriverMock
         )
-        val executor = Executor(context)
+        val executor = buildExecutor(context)
 
         val scripts = listOf(
             script1.copy(action = ScriptAction.MARK_AS_EXECUTED)
         )
 
-        val executedScript = ExecutedScript.build(scripts[0], Execution(OK), context.config.executor.flags)
+        val executedScript = buildExecutedScript(scripts[0], Execution(OK), context.config.executor.flags)
 
         // When
         val report: Report = executor.execute(scripts)
@@ -295,4 +298,10 @@ internal class ExecutorTest {
             )
         }
     }
+
+    private fun buildExecutor(context: Context, reportSender: IExecutionWorkflowMessagesSender? = null) =
+        Executor(context, reportSender)
+
+    private fun Executor.execute(scripts: List<ScriptWithContent>): Report =
+        this.execute(scripts, null)
 }

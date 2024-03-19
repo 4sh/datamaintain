@@ -4,35 +4,49 @@ import datamaintain.core.Context
 import datamaintain.core.exception.DatamaintainBaseException
 import datamaintain.core.exception.DatamaintainException
 import datamaintain.core.exception.DatamaintainScriptExecutionException
-import datamaintain.core.report.Report
-import datamaintain.core.script.*
 import datamaintain.core.step.Step
+import datamaintain.domain.report.Report
+import datamaintain.domain.script.*
 import datamaintain.core.util.exception.DatamaintainQueryException
+import datamaintain.domain.report.ExecutionId
+import datamaintain.domain.report.IExecutionWorkflowMessagesSender
 import mu.KotlinLogging
 import kotlin.system.measureTimeMillis
 
 private val logger = KotlinLogging.logger {}
 
-class Executor(private val context: Context) {
+class Executor(private val context: Context,
+               private val reportSender: IExecutionWorkflowMessagesSender?
+) {
     private val executorConfig
         get() = context.config.executor
 
-    fun execute(scripts: List<ScriptWithContent>): Report {
+    fun execute(scripts: List<ScriptWithContent>, executionId: ExecutionId?): Report {
         if (!context.config.logs.porcelain) { logger.info { "Executes scripts.." } }
         try {
-            for (script in scripts) {
+            for ((index, script) in scripts.withIndex()) {
+                val scriptExecutionId = if (reportSender != null && executionId != null) {
+                    reportSender.startScriptExecution(executionId, script, index)
+                } else {
+                    null
+                }
+
                 val executedScript = when (executorConfig.executionMode) {
                     ExecutionMode.NORMAL -> doAction(script)
                     ExecutionMode.DRY -> simulateAction(script)
                     else -> throw IllegalStateException("Should not be in that case")
                 }
 
-                    context.reportBuilder.addReportExecutedScript(
-                        ReportExecutedScript.from(
-                            executedScript,
-                            scripts.first { it.checksum == executedScript.checksum }.porcelainName
-                        )
+                context.reportBuilder.addReportExecutedScript(
+                    ReportExecutedScript.from(
+                        executedScript,
+                        scripts.first { it.checksum == executedScript.checksum }.porcelainName
                     )
+                )
+
+                if (reportSender != null && scriptExecutionId != null) {
+                    reportSender.stopScriptExecution(scriptExecutionId, executedScript)
+                }
 
                 if (executedScript.executionStatus == ExecutionStatus.KO) {
                     if (!context.config.logs.porcelain) { logger.info { "" } }
@@ -63,7 +77,7 @@ class Executor(private val context: Context) {
                     execution = context.dbDriver.executeScript(script)
                 }
 
-                val executedScript = ExecutedScript.build(script, execution, executionDurationInMillis, executorConfig.flags)
+                val executedScript = buildExecutedScript(script, execution, executionDurationInMillis, executorConfig.flags)
 
                 if (executedScript.executionStatus == ExecutionStatus.OK) {
                     markAsExecuted(executedScript)
@@ -74,7 +88,7 @@ class Executor(private val context: Context) {
             }
             ScriptAction.MARK_AS_EXECUTED -> {
                 logger.info {"start marking script ${script.name} as executed"}
-                val executedScript = ExecutedScript.build(script, Execution(ExecutionStatus.OK), executorConfig.flags)
+                val executedScript = buildExecutedScript(script, Execution(ExecutionStatus.OK), executorConfig.flags)
 
                 try {
                     markAsExecuted(executedScript)
@@ -88,7 +102,7 @@ class Executor(private val context: Context) {
             }
             ScriptAction.OVERRIDE_EXECUTED -> {
                 logger.info {"start overriding script ${script.name} execution"}
-                val executedScript = ExecutedScript.build(script, Execution(ExecutionStatus.OK), executorConfig.flags)
+                val executedScript = buildExecutedScript(script, Execution(ExecutionStatus.OK), executorConfig.flags)
 
                 overrideExecuted(executedScript)
                 if (!context.config.logs.porcelain) { logger.info { "${executedScript.name} only marked as executed (so not executed)" } }
@@ -108,7 +122,7 @@ class Executor(private val context: Context) {
                 if (!context.config.logs.porcelain) { logger.info { "${script.name} execution would have been overridden" } }
         }
 
-        return ExecutedScript.simulateExecuted(script, ExecutionStatus.OK, executorConfig.flags)
+        return buildSimulatedExecutedScript(script, ExecutionStatus.OK, executorConfig.flags)
     }
 
     private fun markAsExecuted(it: ExecutedScript) {
@@ -125,8 +139,35 @@ class Executor(private val context: Context) {
         try {
             context.dbDriver.overrideScript(it)
         } catch (e: Exception) {
-            if (!context.config.logs.porcelain) { logger.error { "error during override of ${it.fullName()} " } }
+            if (!context.config.logs.porcelain) {
+                logger.error { "error during override of ${it.fullName()} " }
+            }
             throw e
         }
     }
 }
+
+fun buildSimulatedExecutedScript(script: ScriptWithContent, executionStatus: ExecutionStatus, flags: List<String>) =
+    ExecutedScript(
+        script.name,
+        script.checksum,
+        script.identifier,
+        executionStatus,
+        script.action,
+        flags = flags
+    )
+
+fun buildExecutedScript(script: ScriptWithContent, execution: Execution, flags: List<String>) =
+    buildSimulatedExecutedScript(script, execution.executionStatus, flags)
+
+fun buildExecutedScript(script: ScriptWithContent, execution: Execution, executionDurationInMillis: Long, flags: List<String>) =
+    ExecutedScript(
+        script.name,
+        script.checksum,
+        script.identifier,
+        execution.executionStatus,
+        script.action,
+        executionDurationInMillis,
+        execution.executionOutput,
+        flags = flags
+    )

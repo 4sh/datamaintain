@@ -1,10 +1,10 @@
 package datamaintain.core.step.check.rules.implementations
 
 import datamaintain.core.exception.DatamaintainCheckException
-import datamaintain.core.script.LightExecutedScript
-import datamaintain.core.script.ScriptWithContent
-import datamaintain.core.step.check.rules.ScriptType
 import datamaintain.core.step.check.rules.contracts.FullContextCheckRule
+import datamaintain.domain.ScriptType
+import datamaintain.domain.script.LightExecutedScript
+import datamaintain.domain.script.ScriptWithContent
 
 class SameScriptsAsExecutedCheck(
         executedScripts: Sequence<LightExecutedScript>

@@ -1,4 +1,4 @@
-package datamaintain.core.script
+package datamaintain.domain.script
 
 enum class ScriptAction {
 

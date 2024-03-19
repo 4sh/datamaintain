@@ -1,7 +1,7 @@
 package datamaintain.db.driver.mongo.mapping
 
-import datamaintain.core.script.ExecutionStatus
-import datamaintain.core.script.ScriptAction
+import datamaintain.domain.script.ExecutionStatus
+import datamaintain.domain.script.ScriptAction
 import java.util.*
 
 typealias MongoId = String

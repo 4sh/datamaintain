@@ -30,6 +30,7 @@ version = if (lastTag != "") {
 
 repositories {
     mavenCentral()
+    mavenLocal()
 }
 
 kotlin {

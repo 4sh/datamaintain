@@ -1,4 +1,4 @@
-package datamaintain.core.step.check.rules
+package datamaintain.domain
 
 interface CheckRule {
     fun getName(): String

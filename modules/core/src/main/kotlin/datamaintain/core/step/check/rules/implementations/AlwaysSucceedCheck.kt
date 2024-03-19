@@ -1,8 +1,8 @@
 package datamaintain.core.step.check.rules.implementations
 
-import datamaintain.core.script.ScriptWithContent
-import datamaintain.core.step.check.rules.ScriptType
 import datamaintain.core.step.check.rules.contracts.ScriptCheckRule
+import datamaintain.domain.ScriptType
+import datamaintain.domain.script.ScriptWithContent
 
 class AlwaysSucceedCheck: ScriptCheckRule() {
     override fun check(script: ScriptWithContent) {

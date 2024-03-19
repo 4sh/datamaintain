@@ -9,6 +9,7 @@ import org.jongo.Jongo;
 import org.jongo.MongoCollection;
 
 import java.io.IOException;
+import java.time.Clock;
 import java.util.Properties;
 
 public class JavaMongoSampleMain {
@@ -26,7 +27,7 @@ public class JavaMongoSampleMain {
         final DatamaintainConfig config = DatamaintainConfig.buildConfig(datamaintainDriverConfig, properties);
 
         // Launch database update
-        new Datamaintain(config).updateDatabase();
+        new Datamaintain(config, Clock.systemDefaultZone()).updateDatabase();
 
         // Print Charmander
         System.out.println(loadCharmander());

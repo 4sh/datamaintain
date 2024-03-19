@@ -4,10 +4,10 @@ import datamaintain.core.config.CoreConfigKey
 import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.db.driver.FakeDriverConfig
 import datamaintain.core.exception.DatamaintainBuilderMandatoryException
-import datamaintain.core.script.ScriptAction
-import datamaintain.core.script.Tag
 import datamaintain.core.script.TagMatcher
 import datamaintain.core.step.executor.ExecutionMode
+import datamaintain.domain.script.ScriptAction
+import datamaintain.domain.script.Tag
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
@@ -37,6 +37,7 @@ class DatamaintainConfigTest {
             get { logs.verbose }.isFalse()
             get { logs.porcelain }.isFalse()
             get { name }.isNull()
+            get { monitoringConfiguration }.isNull()
         }
     }
 
@@ -47,6 +48,8 @@ class DatamaintainConfigTest {
         System.setProperty(CoreConfigKey.EXECUTION_MODE.key, "NORMAL")
         System.setProperty(CoreConfigKey.VERBOSE.key, "FALSE")
         System.setProperty(CoreConfigKey.PRINT_RELATIVE_PATH_OF_SCRIPT.key, "false")
+        System.setProperty(CoreConfigKey.DATAMAINTAIN_MONITORING_API_URL.key, "myUrl")
+        System.setProperty(CoreConfigKey.DATAMAINTAIN_MONITORING_MODULE_ENVIRONMENT_TOKEN.key, "myToken")
 
         val config = DatamaintainConfig.buildConfig(DatamaintainConfigTest::class.java.getResourceAsStream("/config/default.properties"),
                 FakeDriverConfig())
@@ -59,6 +62,8 @@ class DatamaintainConfigTest {
             get { executor.executionMode }.isEqualTo(ExecutionMode.NORMAL)
             get { logs.verbose }.isFalse()
             get { logs.porcelain }.isFalse()
+            get { monitoringConfiguration?.apiUrl }.isEqualTo("myUrl")
+            get { monitoringConfiguration?.moduleEnvironmentToken }.isEqualTo("myToken")
         }
 
         System.clearProperty("scan.path")
@@ -66,6 +71,8 @@ class DatamaintainConfigTest {
         System.clearProperty(CoreConfigKey.EXECUTION_MODE.key)
         System.clearProperty(CoreConfigKey.VERBOSE.key)
         System.clearProperty(CoreConfigKey.PRINT_RELATIVE_PATH_OF_SCRIPT.key)
+        System.clearProperty(CoreConfigKey.DATAMAINTAIN_MONITORING_API_URL.key)
+        System.clearProperty(CoreConfigKey.DATAMAINTAIN_MONITORING_MODULE_ENVIRONMENT_TOKEN.key)
     }
 
     @Test
@@ -130,18 +137,27 @@ class DatamaintainConfigTest {
             get { scanner.doesCreateTagsFromFolder }.isTrue()
             get { executor.executionMode }.isEqualTo(ExecutionMode.DRY)
             get { scanner.tagsMatchers }.containsExactlyInAnyOrder(
-                    TagMatcher(Tag("TOTO"), setOf(
-                            expectedPath.resolve(Paths.get("src/test/resources/scanner_test_files/01_file1")).toString(),
-                            expectedPath.resolve(Paths.get("src/test/resources/scanner_test_files/subfolder/*")).toString()
-                    )),
-                    TagMatcher(Tag("potato"), setOf(
-                            expectedPath.resolve(Paths.get("src/test/resources/scanner_test_files/*")).toString(),
-                            expectedPath.resolve(Paths.get("src/test/resources/scanner_test_files/subfolder/03_file3")).toString()
-                    ))
+                TagMatcher(
+                    Tag("TOTO"), setOf(
+                        expectedPath.resolve(Paths.get("src/test/resources/scanner_test_files/01_file1")).toString(),
+                        expectedPath.resolve(Paths.get("src/test/resources/scanner_test_files/subfolder/*")).toString()
+                    )
+                ),
+                TagMatcher(
+                    Tag("potato"), setOf(
+                        expectedPath.resolve(Paths.get("src/test/resources/scanner_test_files/*")).toString(),
+                        expectedPath.resolve(Paths.get("src/test/resources/scanner_test_files/subfolder/03_file3"))
+                            .toString()
+                    )
+                )
             )
             get { logs.verbose }.isTrue()
             get { logs.porcelain }.isTrue()
             get { name }.isEqualTo("myDefaultConfig")
+            get { monitoringConfiguration }.isNotNull().and {
+                get { apiUrl }.isEqualTo("https://datamaintain-monitoring.com")
+                get { moduleEnvironmentToken }.isEqualTo("ea374cb2-1d62-45d0-98ae-5fe3fea9c292")
+            }
         }
     }
 
@@ -172,6 +188,8 @@ class DatamaintainConfigTest {
                 .addCheckRule("checkRules")
                 .addFlag("1")
                 .addFlag("2")
+                .withDatamaintainMonitoringApiUrl("https://url.com")
+                .withDatamaintainMonitoringModuleEnvironmentToken("109a2c08-e836-451a-86ef-d67be8ffc648")
                 .build()
 
             expectThat(config).and {
@@ -194,6 +212,10 @@ class DatamaintainConfigTest {
                 )
                 get { checker.rules }.containsExactlyInAnyOrder("checkRules")
                 get { executor.flags }.containsExactlyInAnyOrder("1", "2")
+                get { monitoringConfiguration }.isNotNull().and {
+                    get { apiUrl }.isEqualTo("https://url.com")
+                    get { moduleEnvironmentToken }.isEqualTo("109a2c08-e836-451a-86ef-d67be8ffc648")
+                }
             }
         }
 
@@ -220,6 +242,7 @@ class DatamaintainConfigTest {
                 get { scanner.tagsMatchers }.isEmpty()
                 get { checker.rules }.isEmpty()
                 get { executor.flags }.isEmpty()
+                get { monitoringConfiguration }.isNull()
             }
         }
 

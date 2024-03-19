@@ -1,12 +1,12 @@
 package datamaintain.cli.app.update.db
 
 import datamaintain.cli.app.BaseCliTest
-import datamaintain.core.script.ScriptAction
-import datamaintain.core.script.Tag
 import datamaintain.core.script.TagMatcher
 import datamaintain.core.step.check.rules.implementations.SameScriptsAsExecutedCheck
 import datamaintain.db.driver.mongo.MongoDriverConfig
 import datamaintain.db.driver.mongo.MongoShell
+import datamaintain.domain.script.ScriptAction
+import datamaintain.domain.script.Tag
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -15,7 +15,6 @@ import org.junit.jupiter.params.provider.EnumSource
 import strikt.api.expectThat
 import strikt.assertions.*
 import java.nio.file.Paths
-import kotlin.reflect.KProperty1
 
 internal class UpdateDbTest : BaseCliTest() {
     @Nested
@@ -52,6 +51,65 @@ internal class UpdateDbTest : BaseCliTest() {
 
                 // Then
                 expectThat(configWrapper.datamaintainConfig!!.scanner.identifierRegex.pattern).isEqualTo(identifierRegex)
+            }
+
+            @Nested
+            inner class DatamaintainMonitoringConfiguration {
+                // Check all the configuration because when giving one value without the other, the configuration is ignored
+                @Test
+                fun `should build config with datamaintain monitoring configuration`() {
+                    // Given
+                    val datamaintainMonitoringApiUrl = "https://url.com"
+                    val datamaintainMonitoringModuleEnvironmentToken = "a78e96a7-6748-4f01-9691-ea3bf851ad43"
+
+                    val updateDbArguments = listOf(
+                        "--datamaintain-monitoring-api-url", datamaintainMonitoringApiUrl,
+                        "--datamaintain-monitoring-module-environment-token", datamaintainMonitoringModuleEnvironmentToken
+                    )
+
+                    // When
+                    runUpdateDb(updateDbArguments)
+
+                    // Then
+                    expectThat(configWrapper.datamaintainConfig!!.monitoringConfiguration).isNotNull().and {
+                        get { apiUrl }.isEqualTo(datamaintainMonitoringApiUrl)
+                        get { moduleEnvironmentToken }.isEqualTo(datamaintainMonitoringModuleEnvironmentToken)
+                    }
+                }
+
+
+                @Test
+                fun `should ignore config when only given module environment token`() {
+                    // Given
+                    val datamaintainMonitoringModuleEnvironmentToken = "a78e96a7-6748-4f01-9691-ea3bf851ad43"
+
+                    val updateDbArguments = listOf(
+                        "--datamaintain-monitoring-module-environment-token", datamaintainMonitoringModuleEnvironmentToken
+                    )
+
+                    // When
+                    runUpdateDb(updateDbArguments)
+
+                    // Then
+                    expectThat(configWrapper.datamaintainConfig!!.monitoringConfiguration).isNull()
+                }
+
+
+                @Test
+                fun `should ignore config when only given api url`() {
+                    // Given
+                    val datamaintainMonitoringApiUrl = "https://url.com"
+
+                    val updateDbArguments = listOf(
+                        "--datamaintain-monitoring-api-url", datamaintainMonitoringApiUrl,
+                    )
+
+                    // When
+                    runUpdateDb(updateDbArguments)
+
+                    // Then
+                    expectThat(configWrapper.datamaintainConfig!!.monitoringConfiguration).isNull()
+                }
             }
 
             @Nested

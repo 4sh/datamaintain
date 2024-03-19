@@ -5,6 +5,7 @@ plugins {
 }
 
 dependencies {
+    compileOnly(projects.modules.domain)
     compileOnly(projects.modules.driverMongo)
     compileOnly(libs.junit.jupiter.api)
 

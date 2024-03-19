@@ -1,11 +1,14 @@
 package datamaintain.core.script
 
-import java.math.BigInteger
 import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.config.DatamaintainExecutorConfig
 import datamaintain.core.exception.DatamaintainFileIdentifierPatternException
 import datamaintain.core.util.extractRelativePath
+import datamaintain.domain.script.ScriptAction
+import datamaintain.domain.script.ScriptWithContent
+import datamaintain.domain.script.Tag
 import java.io.File
+import java.math.BigInteger
 import java.nio.file.Path
 import java.security.MessageDigest
 

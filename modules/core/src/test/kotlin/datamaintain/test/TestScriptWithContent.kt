@@ -1,8 +1,8 @@
 package datamaintain.test
 
-import datamaintain.core.script.ScriptAction
-import datamaintain.core.script.ScriptWithContent
-import datamaintain.core.script.Tag
+import datamaintain.domain.script.ScriptAction
+import datamaintain.domain.script.ScriptWithContent
+import datamaintain.domain.script.Tag
 
 class TestScriptWithContent(
         override val name: String,

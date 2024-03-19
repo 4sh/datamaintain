@@ -1,6 +1,7 @@
 package datamaintain.core.report
 
 import ch.qos.logback.classic.Logger
+import datamaintain.domain.report.Report
 import datamaintain.core.step.Step
 import datamaintain.core.step.check.rules.implementations.AlwaysSucceedCheck
 import datamaintain.test.ScriptWithContentWithFixedChecksum

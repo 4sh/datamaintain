@@ -4,10 +4,10 @@ import com.jayway.jsonpath.Configuration
 import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import com.jayway.jsonpath.Option
-import datamaintain.core.script.ExecutionStatus
-import datamaintain.core.script.ScriptAction
 import datamaintain.db.driver.mongo.mapping.ExecutedScriptDb
 import datamaintain.db.driver.mongo.mapping.LightExecutedScriptDb
+import datamaintain.domain.script.ExecutionStatus
+import datamaintain.domain.script.ScriptAction
 import net.minidev.json.JSONArray
 import net.minidev.json.JSONObject
 import org.junit.jupiter.api.Test

@@ -9,11 +9,11 @@ import datamaintain.cli.app.utils.detailedOption
 import datamaintain.core.config.CoreConfigKey
 import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.db.driver.DriverConfigKey
-import datamaintain.core.script.ScriptAction
 import datamaintain.core.step.check.allCheckRuleNames
 import datamaintain.core.step.executor.ExecutionMode
 import datamaintain.db.driver.mongo.MongoConfigKey
 import datamaintain.db.driver.mongo.MongoShell
+import datamaintain.domain.script.ScriptAction
 import java.util.*
 
 class UpdateDb(runner: (DatamaintainConfig) -> Unit = ::defaultUpdateDbRunner) : DatamaintainCliUpdateDbCommand(
@@ -124,6 +124,12 @@ class UpdateDb(runner: (DatamaintainConfig) -> Unit = ::defaultUpdateDbRunner) :
             "To define multiple rules, use option multiple times.")
         .multiple()
 
+    private val datamaintainMonitoringApiUrl: String? by option(help = "Url to contact the datamaintain monitoring app." +
+            "Will be used to send all reports on executions")
+
+    private val datamaintainMonitoringModuleEnvironmentToken: String? by option(help = "Token given in the Datamaintain monitoring app " +
+            "to identify the module and environment on which you are executing your scripts")
+
     override fun overloadProps(props: Properties) {
         path?.let { props.put(CoreConfigKey.SCAN_PATH.key, it) }
         identifierRegex?.let { props.put(CoreConfigKey.SCAN_IDENTIFIER_REGEX.key, it) }
@@ -144,6 +150,8 @@ class UpdateDb(runner: (DatamaintainConfig) -> Unit = ::defaultUpdateDbRunner) :
         porcelain?.let { props.put(CoreConfigKey.PRINT_RELATIVE_PATH_OF_SCRIPT.key, it.toString()) }
         mongoShell?.let { props.put(MongoConfigKey.DB_MONGO_SHELL.key, it.toUpperCase()) }
         flags?.let { props.put(CoreConfigKey.FLAGS.key, it.optionListToString()) }
+        datamaintainMonitoringApiUrl?.let { props.put(CoreConfigKey.DATAMAINTAIN_MONITORING_API_URL.key, it) }
+        datamaintainMonitoringModuleEnvironmentToken?.let { props.put(CoreConfigKey.DATAMAINTAIN_MONITORING_MODULE_ENVIRONMENT_TOKEN.key, it) }
         mongoClient?.let { props.put(MongoConfigKey.DB_MONGO_CLIENT_PATH.key, mongoClient) }
     }
 

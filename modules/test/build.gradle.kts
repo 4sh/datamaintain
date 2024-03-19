@@ -12,4 +12,6 @@ dependencies {
     testImplementation(libs.testContainers)
     testImplementation(libs.testContainers.jupiter)
     testImplementation(libs.testContainers.mongodb)
+    testImplementation(libs.testContainers.mockserver)
+    testImplementation(libs.mockserver)
 }

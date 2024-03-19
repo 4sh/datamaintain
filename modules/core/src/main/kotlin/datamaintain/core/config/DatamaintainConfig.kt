@@ -4,10 +4,10 @@ import datamaintain.core.config.ConfigKey.Companion.overrideBySystemProperties
 import datamaintain.core.config.CoreConfigKey.*
 import datamaintain.core.db.driver.DatamaintainDriverConfig
 import datamaintain.core.exception.DatamaintainBuilderMandatoryException
-import datamaintain.core.script.ScriptAction
-import datamaintain.core.script.Tag
 import datamaintain.core.script.TagMatcher
 import datamaintain.core.step.executor.ExecutionMode
+import datamaintain.domain.script.ScriptAction
+import datamaintain.domain.script.Tag
 import mu.KotlinLogging
 import java.io.File
 import java.io.InputStream
@@ -27,38 +27,40 @@ data class DatamaintainConfig @JvmOverloads constructor(
     val executor: DatamaintainExecutorConfig = DatamaintainExecutorConfig(),
     val driverConfig: DatamaintainDriverConfig,
     val logs: DatamaintainLogsConfig = DatamaintainLogsConfig(),
+    val monitoringConfiguration: DatamaintainMonitoringConfiguration? = null
 ) {
 
     private constructor(builder: Builder) : this(
-        builder.name,
-        builder.workingDirectory,
-        DatamaintainScannerConfig(
+        name = builder.name,
+        workingDirectory = builder.workingDirectory,
+        scanner = DatamaintainScannerConfig(
             builder.path,
             builder.identifierRegex,
             builder.doesCreateTagsFromFolder,
             builder.tagsMatchers,
         ),
-        DatamaintainFilterConfig(
+        filter = DatamaintainFilterConfig(
             builder.whitelistedTags,
             builder.blacklistedTags,
         ),
-        DatamaintainPrunerConfig(
+        pruner = DatamaintainPrunerConfig(
             builder.tagsToPlayAgain,
         ),
-        DatamaintainCheckerConfig(
+        checker = DatamaintainCheckerConfig(
             builder.checkRules.toList(),
         ),
-        DatamaintainExecutorConfig(
+        executor = DatamaintainExecutorConfig(
             builder.executionMode,
             builder.overrideExecutedScripts,
             builder.defaultScriptAction,
             builder.flags
         ),
-        builder.driverConfig,
-        DatamaintainLogsConfig(
+        driverConfig = builder.driverConfig,
+        logs = DatamaintainLogsConfig(
             builder.verbose,
             builder.porcelain,
         ),
+        monitoringConfiguration = builder.buildMonitoringConfig(builder)
     )
 
     companion object {
@@ -83,38 +85,49 @@ data class DatamaintainConfig @JvmOverloads constructor(
 
             val scanPath = buildAbsoluteScanPath(workingDirectoryPath, props)
 
+            val apiUrl = props.getNullableProperty(DATAMAINTAIN_MONITORING_API_URL)
+            val moduleEnvironmentToken = props.getNullableProperty(DATAMAINTAIN_MONITORING_MODULE_ENVIRONMENT_TOKEN)
+            val monitoringConfiguration = if (apiUrl != null && moduleEnvironmentToken != null) {
+                DatamaintainMonitoringConfiguration(
+                    apiUrl = apiUrl, moduleEnvironmentToken = moduleEnvironmentToken
+                )
+            } else {
+                null
+            }
+
             return DatamaintainConfig(
-                props.getProperty(CONFIG_NAME.key),
-                workingDirectoryPath,
-                DatamaintainScannerConfig(
+                name = props.getProperty(CONFIG_NAME.key),
+                workingDirectory = workingDirectoryPath,
+                scanner = DatamaintainScannerConfig(
                     scanPath,
                     Regex(props.getProperty(SCAN_IDENTIFIER_REGEX)),
                     props.getProperty(CREATE_TAGS_FROM_FOLDER).toBoolean(),
+
                     props.getStringPropertiesByPrefix(TAG.key)
                         .map { TagMatcher.parse(it.first.replace("${TAG.key}.", ""), it.second, scanPath) }
                         .toSet(),
                 ),
-                DatamaintainFilterConfig(
+                filter = DatamaintainFilterConfig(
                     extractTags(props.getNullableProperty(TAGS_WHITELISTED)),
                     extractTags(props.getNullableProperty(TAGS_BLACKLISTED)),
                 ),
-                DatamaintainPrunerConfig(
+                pruner = DatamaintainPrunerConfig(
                     extractTags(props.getNullableProperty(PRUNE_TAGS_TO_RUN_AGAIN)),
                 ),
-                DatamaintainCheckerConfig(
+                checker = DatamaintainCheckerConfig(
                     extractList(props.getNullableProperty(CHECK_RULES)),
                 ),
-                DatamaintainExecutorConfig(
+                executor = DatamaintainExecutorConfig(
                     executionMode,
                     props.getProperty(PRUNE_OVERRIDE_UPDATED_SCRIPTS).toBoolean(),
                     scriptAction,
                     extractList(props.getNullableProperty(FLAGS))
                 ),
-                driverConfig,
-                DatamaintainLogsConfig(
-                    props.getProperty(VERBOSE).toBoolean(),
+                driverConfig = driverConfig,
+                logs = DatamaintainLogsConfig(props.getProperty(VERBOSE).toBoolean(),
                     props.getProperty(PRINT_RELATIVE_PATH_OF_SCRIPT).toBoolean(),
                 ),
+                monitoringConfiguration = monitoringConfiguration
             )
         }
 
@@ -238,6 +251,11 @@ data class DatamaintainConfig @JvmOverloads constructor(
             private set
         var flags: MutableList<String> = mutableListOf()
             private set
+        var datamaintainMonitoringApiUrl: String? = null
+            private set
+        var datamaintainMonitoringModuleEnvironmentToken: String? = null
+            private set
+
 
         fun withName(name: String) = apply { this.name = name }
         fun withWorkingDirectory(workingDirectory: Path) = apply { this.workingDirectory = workingDirectory }
@@ -250,6 +268,8 @@ data class DatamaintainConfig @JvmOverloads constructor(
         fun withDriverConfig(driverConfig: DatamaintainDriverConfig) = apply { this.driverConfig = driverConfig }
         fun withVerbose(verbose: Boolean) = apply { this.verbose = verbose }
         fun withPorcelain(porcelain: Boolean) = apply { this.porcelain = porcelain }
+        fun withDatamaintainMonitoringApiUrl(datamaintainMonitoringApiUrl: String) = apply { this.datamaintainMonitoringApiUrl = datamaintainMonitoringApiUrl }
+        fun withDatamaintainMonitoringModuleEnvironmentToken(datamaintainMonitoringModuleEnvironmentToken: String) = apply { this.datamaintainMonitoringModuleEnvironmentToken = datamaintainMonitoringModuleEnvironmentToken }
 
         // Collection
         fun addWhitelistedTag(whitelistedTag: Tag) = apply { this.whitelistedTags.add(whitelistedTag) }
@@ -265,6 +285,20 @@ data class DatamaintainConfig @JvmOverloads constructor(
             }
 
             return DatamaintainConfig(this)
+        }
+
+        internal fun buildMonitoringConfig(builder: Builder): DatamaintainMonitoringConfiguration? {
+            val apiUrl = builder.datamaintainMonitoringApiUrl
+            val moduleEnvironmentToken = builder.datamaintainMonitoringModuleEnvironmentToken
+
+            return if (apiUrl != null && moduleEnvironmentToken != null) {
+                DatamaintainMonitoringConfiguration(
+                    apiUrl = apiUrl,
+                    moduleEnvironmentToken = moduleEnvironmentToken
+                )
+            } else {
+                null
+            }
         }
     }
 }
@@ -295,6 +329,8 @@ enum class CoreConfigKey(override val key: String,
     DEFAULT_SCRIPT_ACTION("default.script.action", "RUN"),
     PRINT_RELATIVE_PATH_OF_SCRIPT("porcelain", "false"),
     FLAGS("flags"),
+    DATAMAINTAIN_MONITORING_API_URL("datamaintain.monitoring.api.url", null),
+    DATAMAINTAIN_MONITORING_MODULE_ENVIRONMENT_TOKEN("datamaintain.monitoring.module.environment.token", null),
 
     // SCAN
     SCAN_PATH("scan.path", "./scripts/"),

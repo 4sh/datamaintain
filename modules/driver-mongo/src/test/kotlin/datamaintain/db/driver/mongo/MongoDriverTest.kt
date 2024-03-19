@@ -2,11 +2,16 @@ package datamaintain.db.driver.mongo
 
 import com.mongodb.client.model.Filters
 import datamaintain.core.exception.DatamaintainMongoQueryException
-import datamaintain.core.script.*
+import datamaintain.core.script.FileScript
+import datamaintain.core.step.executor.buildExecutedScript
 import datamaintain.db.driver.mongo.mapping.ExecutedScriptDb
 import datamaintain.db.driver.mongo.mapping.toExecutedScriptDb
 import datamaintain.db.driver.mongo.spi.SPI_JSON_MAPPER
 import datamaintain.db.driver.mongo.test.AbstractMongoDbTest
+import datamaintain.domain.script.ExecutedScript
+import datamaintain.domain.script.ExecutionStatus
+import datamaintain.domain.script.LightExecutedScript
+import datamaintain.domain.script.ScriptAction
 import org.bson.Document
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.params.ParameterizedTest
@@ -351,7 +356,7 @@ internal class MongoDriverTest : AbstractMongoDbTest() {
         val execution = mongoDriver.executeScript(fileScript)
 
         // Then
-        expectCatching { mongoDriver.markAsExecuted(ExecutedScript.build(fileScript, execution, 0, listOf())) }
+        expectCatching { mongoDriver.markAsExecuted(buildExecutedScript(fileScript, execution, 0, listOf())) }
                 .succeeded()
     }
 

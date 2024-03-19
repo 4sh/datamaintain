@@ -160,7 +160,7 @@ internal class CheckerTest {
         val checker = Checker(context)
 
         // WhenThen
-        expectThrows<DatamaintainException> { checker.check(CheckerData()) }
+        expectThrows<DatamaintainException> { checker.check(CheckerData(emptySequence(), emptySequence(), emptySequence(), emptySequence())) }
                 .get { message }
                 .isEqualTo("Aborting - Check rule `${badRuleName}` not found")
     }
