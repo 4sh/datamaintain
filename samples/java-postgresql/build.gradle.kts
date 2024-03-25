@@ -13,5 +13,5 @@ repositories {
 dependencies {
     implementation(project(":modules:core"))
     implementation(project(":modules:driver-jdbc"))
-    implementation("org.postgresql:postgresql:42.7.2")
+    implementation("org.postgresql:postgresql:42.7.3")
 }
