@@ -102,6 +102,8 @@ class Executor(private val context: Context) {
                 if (!context.config.porcelain) { logger.info { "${script.name} would have been executed" } }
             ScriptAction.MARK_AS_EXECUTED ->
                 if (!context.config.porcelain) { logger.info { "${script.name} would have been only marked as executed (so not executed)" } }
+            ScriptAction.OVERRIDE_EXECUTED ->
+                if (!context.config.porcelain) { logger.info { "${script.name}'s execution would have been overridden in database" } }
         }
 
         return buildSimulatedExecutedScript(script, ExecutionStatus.OK, context.config.flags)
