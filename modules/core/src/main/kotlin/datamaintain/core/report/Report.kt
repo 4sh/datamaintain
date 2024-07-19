@@ -2,7 +2,7 @@ package datamaintain.core.report
 
 import datamaintain.core.step.Step
 import datamaintain.domain.report.Report
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 private val logger = KotlinLogging.logger {}
 

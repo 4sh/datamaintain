@@ -1,6 +1,6 @@
 object Versions {
     const val kotlin = "1.6.21"
-    const val kotlinLogging = "3.0.1"
+    const val kotlinLogging = "4.0.2"
     const val logbackClassic = "1.3.3"
     const val junit = "5.7.0"
     const val testcontainers = "1.17.4"

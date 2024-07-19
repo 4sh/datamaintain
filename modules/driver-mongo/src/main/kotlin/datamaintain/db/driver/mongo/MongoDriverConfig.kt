@@ -6,7 +6,7 @@ import datamaintain.core.db.driver.DatamaintainDriverConfig
 import datamaintain.core.db.driver.DriverConfigKey
 import datamaintain.core.exception.DatamaintainBuilderMandatoryException
 import datamaintain.db.driver.mongo.exception.DatamaintainMongoClientNotFound
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths

@@ -9,7 +9,7 @@ import datamaintain.core.step.check.CheckerData
 import datamaintain.core.step.executor.Executor
 import datamaintain.core.step.sort.Sorter
 import datamaintain.domain.report.Report
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 private val logger = KotlinLogging.logger {}
 

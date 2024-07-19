@@ -8,7 +8,7 @@ import datamaintain.core.step.Step
 import datamaintain.domain.report.Report
 import datamaintain.domain.script.*
 import datamaintain.core.util.exception.DatamaintainQueryException
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlin.system.measureTimeMillis
 
 private val logger = KotlinLogging.logger {}

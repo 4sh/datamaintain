@@ -9,7 +9,7 @@ import datamaintain.core.script.TagMatcher
 import datamaintain.core.step.executor.ExecutionMode
 import datamaintain.domain.script.ScriptAction
 import datamaintain.domain.script.Tag
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.io.File
 import java.io.InputStream
 import java.nio.file.Path

@@ -10,7 +10,7 @@ import datamaintain.domain.script.ExecutedScript
 import datamaintain.domain.script.ExecutionStatus
 import datamaintain.domain.script.LightExecutedScript
 import datamaintain.domain.script.ScriptWithContent
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.io.InputStream
 import java.nio.file.Path
 import kotlin.streams.asSequence

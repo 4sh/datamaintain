@@ -6,7 +6,7 @@ import datamaintain.core.db.driver.DBType
 import datamaintain.core.db.driver.DatamaintainDriverConfig
 import datamaintain.core.db.driver.DriverConfigKey
 import datamaintain.core.exception.DatamaintainBuilderMandatoryException
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.util.*
 
 private val logger = KotlinLogging.logger {}

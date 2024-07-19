@@ -7,7 +7,7 @@ import datamaintain.core.exception.DatamaintainException
 import datamaintain.core.script.FileScript
 import datamaintain.domain.script.ScriptWithContent
 import datamaintain.domain.script.Tag
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.io.File
 import java.nio.file.Path
 

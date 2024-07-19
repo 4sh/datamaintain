@@ -6,7 +6,7 @@ import datamaintain.core.exception.DatamaintainException
 import datamaintain.core.step.Step
 import datamaintain.domain.script.Script
 import datamaintain.domain.script.ScriptWithContent
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 private val logger = KotlinLogging.logger {}
 

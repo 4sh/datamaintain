@@ -14,7 +14,7 @@ import datamaintain.core.step.check.rules.implementations.SameScriptsAsExecutedC
 import datamaintain.domain.CheckRule
 import datamaintain.domain.ScriptType
 import datamaintain.domain.script.ScriptWithContent
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 private val logger = KotlinLogging.logger {}
 
